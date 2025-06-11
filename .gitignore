@@ -1,0 +1,17 @@
+# Vite build output
+dist/
+
+# Node.js
+node_modules/
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
