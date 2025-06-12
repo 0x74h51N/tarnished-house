@@ -336,7 +336,7 @@ const fireLightHelper = new THREE.PointLightHelper(fireLight, 0.2);
 // Directional light
 const directionalLight = new THREE.DirectionalLight(
   params.directionalLightColor,
-  1.5
+  params.directionalLightIntensity
 );
 directionalLight.position.set(
   params.directionalLightX,
