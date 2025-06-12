@@ -140,7 +140,12 @@ const initialFar = directionalLight.shadow.camera.far*2;
   });
 
   document.getElementById("shadowEnabled").addEventListener("change", (e) => {
-    renderer.shadowMap.enabled = e.target.checked;
+const v = e.target.checked;
+      shadowDispose();
+      directionalLight.castShadow = v;
+      directionalLight.shadow.camera.visible = v;
+       renderer.shadowMap.enabled = v;
+      renderer.shadowMap.needsUpdate = true;
   });
 
 
