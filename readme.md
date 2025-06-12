@@ -64,6 +64,18 @@ npm run build
   - **License:** CC-BY 3.0
 
 - **Smoke Sprites**
+
   - **Authors:** Fupi
   - **Source:** [OpenGameArt - Smoke Vapor Particles](https://opengameart.org/content/smoke-vapor-particles)
+  - **License:** CC0
+
+- **Ambiance Sound**
+
+  - **Authors:** dobroide
+  - **Source:** [Freesound - 20060706.night.forest02.flac](https://freesound.org/people/dobroide/sounds/20575)
+  - **License:** CC-BY 4.0
+
+- **Fire Sound**
+  - **Authors:** NoOneIsReal
+  - **Source:** [Freesound - The Fireplace 3.wav](https://freesound.org/people/NoOneIsReal/sounds/387128/)
   - **License:** CC0
