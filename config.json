@@ -1,27 +1,28 @@
 {
   "params": {
+    "volume": 0.6,
     "toneMapping": "ACESFilmic",
     "toneMappingExposure": 0.9,
     "shadowEnabled": true,
     "shadowType": "PCFSoftShadowMap",
     "shadowMapSize": 1024,
     "directionalLightColor": "#b0c4de",
-    "directionalLightIntensity": 4.5,
+    "directionalLightIntensity": 5,
     "directionalLightX": 4,
     "directionalLightY": 5.5,
     "directionalLightZ": 12,
     "directionalLightHelper": false,
-    "shadowCameraWidth": 20,
-    "shadowCameraHeight": 10,
+    "shadowCameraWidth": 16,
+    "shadowCameraHeight": 15,
     "shadowCameraNear": 0.1,
     "shadowCameraFar": 20,
     "shadowBias": 0.0005,
     "shadowNormalBias": 0.05,
-    "graveCount": 25,
+    "graveCount": 20,
     "bushCount": 30,
     "treeCount": 10,
     "fireLightHelper": false,
-    "fireLightIntensity": 14,
+    "fireLightIntensity": 15,
     "fireLightDistance": 60,
     "fireLightDecay": 2,
     "fireLightAnimation": {
@@ -37,9 +38,9 @@
     "cameraFov": 45,
     "cameraNear": 0.1,
     "cameraFar": 100,
-    "cameraX": 6.7,
-    "cameraY": 2.2,
-    "cameraZ": 10,
+    "cameraX": 7,
+    "cameraY": 5,
+    "cameraZ": 11,
     "cameraHelper": false
   },
   "bushOptions": {
@@ -53,8 +54,8 @@
     "scaleMin": 0.0018,
     "scaleMax": 0.0019,
     "radiusMin": 6,
-    "radiusMax": 13.5,
-    "minDistance": 1.9
+    "radiusMax": 13,
+    "minDistance": 2
   },
   "treeOptions": {
     "scaleMin": 0.0048,

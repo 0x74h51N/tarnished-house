@@ -1,13 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haunted House</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tarnished House</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div class="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading...</div>
+      </div>
+    </div>
+    <div id="intro-modal" class="hidden">
+      <div class="modal-content-wrapper">
+        <div class="modal-content">
+          <span id="close-intro" class="close-modal">&times;</span>
+          <div class="modal-inner">
+            <p id="intro-text">
+              In lands forsaken by light, where silence weaves through crumbling
+              halls,<br />
+              a lone soul, burdened yet unbroken, dared to shape the unknown.<br /><br />
+              Thus was the Tarnished House born—<br />
+              a realm wrought from fading memory and undying will.<br />
+              May those who enter seek purpose, and find it wanting.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-container">
+      <button id="credits-btn">Credits</button>
+      <button id="sound-toggle-btn" aria-label="Toggle sound">
+        <img id="sound-toggle-icon" src="/sound-off.svg" alt="Sound off" />
+      </button>
+    </div>
+    <div id="credits-modal" class="hidden">
+      <div class="modal-content-wrapper">
+        <div class="modal-content">
+          <span id="close-credits" class="close-modal">&times;</span>
+          <div class="modal-inner">
+            <h2>Credits</h2>
+            <div class="project-info">
+              <p>
+                <strong>Tarnished House</strong> is a work wrought by
+                <strong>Tahsin Önemli</strong>, inspired by the
+                <strong>Three.js Journey Haunted House</strong>
+                lesson.<br /><br />
+                Though the spark was borrowed, every stone and shadow within
+                these halls was crafted anew, by hand and mind alone.<br /><br />
+                Forged in but four days and three restless nights, these
+                accursed halls stand as testament to a fevered will.<br />
+                <br />
+                <br />
+                <em
+                  >Below lie the relics and tools—assets and knowledge—gathered
+                  in the making of this domain.
+                </em>
+                <br />
+                <br />
+                <span class="license-normal"
+                  >GNU General Public License (GPL)</span
+                >
+              </p>
+              <div class="logos">
+                <a
+                  href="https://github.com/0x74h51N/tarnished-house"
+                  target="_blank"
+                  ><img src="./github.svg" alt="Github Repo" /></a
+                ><br />
+                <a href="https://crunchypix.com" target="_blank"
+                  ><img src="./web.svg" alt="Webpage" height="40px"
+                /></a>
+              </div>
+            </div>
+            <h2 style="margin-top: 2rem">Assets</h2>
+            <ul class="asset-list" id="asset-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
     <canvas class="webgl"></canvas>
     <script type="module" src="./script.js"></script>
-</body>
+  </body>
 </html>

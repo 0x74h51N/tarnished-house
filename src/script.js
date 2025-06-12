@@ -17,8 +17,56 @@ import {
   rootPositions,
   treeOptions,
 } from ".././config.json";
+import assets from ".././assets.json";
 
-const gltfLoader = new GLTFLoader();
+//
+//#region credits
+//
+
+const creditsBtn = document.getElementById("credits-btn");
+const creditsModal = document.getElementById("credits-modal");
+const closeModal = document.getElementById("close-credits");
+
+creditsBtn.addEventListener("click", () => {
+  creditsModal.classList.add("active");
+  creditsModal.classList.remove("hidden");
+});
+
+closeModal.addEventListener("click", () => {
+  creditsModal.classList.remove("active");
+  setTimeout(() => creditsModal.classList.add("hidden"), 400);
+});
+
+creditsModal.addEventListener("click", (e) => {
+  if (e.target === creditsModal) {
+    creditsModal.classList.remove("active");
+    setTimeout(() => creditsModal.classList.add("hidden"), 400);
+  }
+});
+
+function renderAssetList() {
+  const assetList = document.getElementById("asset-list");
+  assetList.innerHTML = assets
+    .map(
+      (asset) => `
+    <li class="asset-card">
+      <strong>${asset.type}</strong>
+      <div class="asset-author">Author: ${asset.author}</div>
+      <div class="asset-source">
+        Source: <a href="${asset.source.url}" target="_blank">${asset.source.name}</a>
+      </div>
+      <div class="asset-license">License: ${asset.license}</div>
+    </li>
+  `
+    )
+    .join("");
+}
+
+renderAssetList();
+
+//
+//
+// #endregion
 
 const canvas = document.querySelector("canvas.webgl");
 
@@ -31,8 +79,37 @@ const scene = new THREE.Scene();
 /**
  * Texture Load
  */
+const closeIntro = document.getElementById("close-intro");
+const introModal = document.getElementById("intro-modal");
 
-const texLoader = new THREE.TextureLoader();
+if (closeIntro && introModal) {
+  closeIntro.addEventListener("click", () => {
+    introModal.classList.remove("active");
+    setTimeout(() => introModal.classList.add("hidden"), 400);
+  });
+}
+
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onLoad = () => {
+  const loadingScreen = document.getElementById("loading-screen");
+  if (loadingScreen) {
+    loadingScreen.classList.add("hidden");
+    setTimeout(() => {
+      loadingScreen.style.display = "none";
+    }, 600);
+  }
+
+  if (introModal) {
+    introModal.classList.remove("hidden");
+    introModal.classList.add("active");
+    setTimeout(() => {
+      introModal.classList.remove("active");
+      introModal.classList.add("hidden");
+    }, 9000);
+  }
+};
+
+const texLoader = new THREE.TextureLoader(loadingManager);
 const baseColorTex = texLoader.load(
   "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_diff_1k.webp"
 );
@@ -51,6 +128,7 @@ const floorAlphaTex = texLoader.load("./floor/alpha.jpg");
 // /**
 //  * House
 //  */
+const gltfLoader = new GLTFLoader(loadingManager);
 
 gltfLoader.load("./abandoned_house/scene.gltf", (gltf) => {
   const house = gltf.scene;
@@ -164,7 +242,6 @@ gltfLoader.load("./pineroots/pine_roots.gltf", (gltf) => {
 
 gltfLoader.load("./bonfire/bonfire_dark_souls_saga.glb", (g) => {
   const bonfire = g.scene.children[0];
-  console.log(bonfire);
   bonfire.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
@@ -173,6 +250,7 @@ gltfLoader.load("./bonfire/bonfire_dark_souls_saga.glb", (g) => {
 
   bonfire.scale.setScalar(0.4);
   bonfire.position.set(0, 0.32, 1.5);
+  bonfire.add(positionalSound);
   scene.add(bonfire);
 });
 
@@ -418,6 +496,58 @@ renderer.toneMappingExposure = 0.9;
 //
 
 //
+//#region sounds
+//
+const listener = new THREE.AudioListener();
+camera.add(listener);
+
+const audioLoader = new THREE.AudioLoader(loadingManager);
+
+const positionalSound = new THREE.PositionalAudio(listener);
+let soundLoaded = false;
+audioLoader.load("/sounds/fire.wav", (buffer) => {
+  console.log(buffer);
+  positionalSound.setBuffer(buffer);
+  positionalSound.setRefDistance(5);
+  positionalSound.setLoop(true);
+  positionalSound.setVolume(params.volume);
+  soundLoaded = true;
+});
+
+const ambianceSound = new THREE.Audio(listener);
+let ambianceLoaded = false;
+audioLoader.load("/sounds/ambiance.flac", (buffer) => {
+  ambianceSound.setBuffer(buffer);
+  ambianceSound.setLoop(true);
+  ambianceSound.setVolume(params.volume * 0.7);
+  ambianceLoaded = true;
+});
+
+const soundBtn = document.getElementById("sound-toggle-btn");
+const soundIcon = document.getElementById("sound-toggle-icon");
+let isMuted = true;
+
+soundBtn.addEventListener("click", () => {
+  isMuted = !isMuted;
+  if (isMuted) {
+    positionalSound.setVolume(0);
+    ambianceSound.setVolume(0);
+    soundIcon.src = "/sound-off.svg";
+    soundIcon.alt = "Sound off";
+  } else {
+    positionalSound.setVolume(params.volume);
+    ambianceSound.setVolume(params.volume * 0.8);
+    if (soundLoaded && !positionalSound.isPlaying) positionalSound.play();
+    if (ambianceLoaded && !ambianceSound.isPlaying) ambianceSound.play();
+    soundIcon.src = "/sound.svg";
+    soundIcon.alt = "Sound on";
+  }
+});
+//
+//#endregion
+//
+
+//
 //#region particles
 //
 
@@ -431,14 +561,14 @@ const flameTextures = flamePath.map((p) => texLoader.load(p));
 
 const flame = createSimpleParticles({
   parent: scene,
-  area: 0.24,
-  size: 0.3,
-  maxCount: 14,
-  spawnRate: 18,
-  yStart: 0.3,
+  area: 0.25,
+  size: 0.4,
+  maxCount: 15,
+  spawnRate: 22,
+  yStart: 0.35,
   textures: flameTextures,
   camera,
-  opacity: 0.4,
+  opacity: 0.3,
 });
 flame.points.forEach((p) => (p.position.z = 1.5));
 
@@ -454,14 +584,15 @@ const smokeTextures = smokePath.map((p) => texLoader.load(p));
 const smoke = createSimpleParticles({
   parent: scene,
   area: 0.3,
-  size: 0.75,
-  maxCount: 30,
+  size: 0.7,
+  maxCount: 40,
   spawnRate: 3,
-  yStart: 1.3,
+  yStart: 1.1,
   textures: smokeTextures,
   camera,
-  opacity: 0.7,
+  opacity: 0.45,
   color: 0x444444,
+  sizeGrowth: 0.4,
 });
 smoke.points.forEach((p) => (p.position.z = 1.5));
 
@@ -470,8 +601,8 @@ const sparks = createSimpleParticles({
   color: "#fff",
   area: 0.3,
   size: 0.007,
-  maxCount: 500,
-  spawnRate: 15,
+  maxCount: 300,
+  spawnRate: 13,
   yStart: 0.15,
   camera,
 });
@@ -511,6 +642,18 @@ setupGUI({
   treeGLTF,
   treeOptions,
   antialias,
+  onVolumeChange: (v) => {
+    positionalSound.setVolume(v);
+    ambianceSound.setVolume(v * 0.8);
+    if (soundLoaded && !positionalSound.isPlaying) {
+      positionalSound.play();
+      soundIcon.src = "/sound.svg";
+      soundIcon.alt = "Sound on";
+    }
+    if (ambianceLoaded && !ambianceSound.isPlaying) {
+      ambianceSound.play();
+    }
+  },
 });
 
 // #endregion

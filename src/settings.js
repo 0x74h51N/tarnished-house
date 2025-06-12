@@ -26,8 +26,16 @@ export function setupGUI({
   treeGLTF,
   treeOptions,
   antialias,
+  onVolumeChange,
 }) {
   const gui = new GUI({ title: "Settings" }).close();
+
+  gui
+    .add(params, "volume", 0, 1.5, 0.1)
+    .name("Volume")
+    .onChange((v) => {
+      if (onVolumeChange) onVolumeChange(v);
+    });
 
   const antialiasObj = { antialias };
 

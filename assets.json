@@ -1,0 +1,101 @@
+[
+  {
+    "type": "Bushes",
+    "author": "James Ray Cock, Jenelle van Heerden",
+    "source": {
+      "name": "Poly Haven - Searsia Burchellii",
+      "url": "https://polyhaven.com/a/searsia_burchellii"
+    },
+    "license": "CC0"
+  },
+  {
+    "type": "Roots",
+    "author": "Rob Tuytel",
+    "source": {
+      "name": "Poly Haven - Pine Roots",
+      "url": "https://www.polyhaven.com/a/pine_roots"
+    },
+    "license": "CC0"
+  },
+  {
+    "type": "Gravestones",
+    "author": "AO-INTERACTIVE",
+    "source": {
+      "name": "Sketchfab - Grave Stones",
+      "url": "https://sketchfab.com/3d-models/grave-stones-743bddbaca8e4a2caabd08c727be51ed"
+    },
+    "license": "CC-BY 4.0"
+  },
+  {
+    "type": "Trees",
+    "author": "DjMaesen",
+    "source": {
+      "name": "Sketchfab - Trees Pack",
+      "url": "https://sketchfab.com/3d-models/trees-eed7470843504aa592514554a6100fbc"
+    },
+    "license": "CC-BY 4.0"
+  },
+  {
+    "type": "House",
+    "author": "Sengchor",
+    "source": {
+      "name": "Sketchfab - Abandoned House",
+      "url": "https://sketchfab.com/3d-models/abandoned-house-a0c01ce35a474545b805c0739806aace"
+    },
+    "license": "CC-BY 4.0"
+  },
+  {
+    "type": "Bonfire",
+    "author": "cenfe",
+    "source": {
+      "name": "Sketchfab - Bonfire Dark Souls Saga",
+      "url": "https://sketchfab.com/3d-models/bonfire-dark-souls-saga-439c3f9208e94641be651165b94c523e"
+    },
+    "license": "CC-BY 4.0"
+  },
+  {
+    "type": "Ground Texture",
+    "author": "Rob Tuytel",
+    "source": {
+      "name": "Poly Haven - Coast Sand Rocks 02",
+      "url": "https://polyhaven.com/a/coast_sand_rocks_02"
+    },
+    "license": "CC0"
+  },
+  {
+    "type": "Flame Sprites",
+    "author": "Keith333",
+    "source": {
+      "name": "OpenGameArt - Flame Particle Set",
+      "url": "https://opengameart.org/content/flame-particle-set-4-in-total"
+    },
+    "license": "CC-BY 3.0"
+  },
+  {
+    "type": "Smoke Sprites",
+    "author": "Fupi",
+    "source": {
+      "name": "OpenGameArt - Smoke Vapor Particles",
+      "url": "https://opengameart.org/content/smoke-vapor-particles"
+    },
+    "license": "CC0"
+  },
+  {
+    "type": "Ambiance Sound",
+    "author": "dobroide",
+    "source": {
+      "name": "Freesound - 20060706.night.forest02.flac",
+      "url": "https://freesound.org/people/dobroide/sounds/20575"
+    },
+    "license": "CC-BY 4.0"
+  },
+  {
+    "type": "Fire Sound",
+    "author": "NoOneIsReal",
+    "source": {
+      "name": "Freesound - The Fireplace 3.wav",
+      "url": "https://freesound.org/people/NoOneIsReal/sounds/387128/"
+    },
+    "license": "CC0"
+  }
+]

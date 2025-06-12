@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-// this createSimpleParticles function inspired from SimonDevYoutube
+// This createSimpleParticles function inspired from SimonDevYoutube
 // https://github.com/simondevyoutube/ThreeJS_Tutorial_ParticleSystems/blob/master/main.js
 // VertexShader and FragmentShader directly copied from that repo.
 
@@ -71,6 +71,7 @@ export function createSimpleParticles({
   yStart = 0,
   textures = null,
   camera,
+  sizeGrowth = 0,
 }) {
   const textureArray = textures
     ? Array.isArray(textures)
@@ -163,10 +164,16 @@ export function createSimpleParticles({
       positions[i3 + 0] += velocities[i3 + 0] * delta;
       positions[i3 + 1] += velocities[i3 + 1] * delta;
       positions[i3 + 2] += velocities[i3 + 2] * delta;
+
+      const y = positions[i3 + 1];
+      sizesArray[i] = Math.max(0.01, size + y * sizeGrowth);
     }
 
     for (const p of pointsArr) {
       p.geometry.attributes.position.needsUpdate = true;
+      if (sizeGrowth !== 0) {
+        p.geometry.attributes.size.needsUpdate = true;
+      }
     }
   }
 
