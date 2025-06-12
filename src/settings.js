@@ -189,12 +189,19 @@ shadowMapDistance.addEventListener("input", (e) => {
 
 
   document.getElementById("shadowResolution").addEventListener("change", (e) => {
-    const res = parseInt(e.target.value);
-    directionalLight.shadow.mapSize.set(res, res);
+    const res = Number(e.target.value);
+    if (directionalLight.shadow.map){ 
+      directionalLight.shadow.map.dispose();
+        directionalLight.shadow.map = null;
+    }
+    if (fireLight.shadow.map) {
+      fireLight.shadow.map.dispose()
+      fireLight.shadow.map = null;
+    };
     fireLight.shadow.mapSize.set(res, res);
+    directionalLight.shadow.mapSize.set(res, res);
     params.shadowMapSize = res;
-    if (directionalLight.shadow.map) directionalLight.shadow.map.dispose();
-    if (fireLight.shadow.map) fireLight.shadow.map.dispose();
+    renderer.shadowMap.needsUpdate = true;
   });
 
   document.getElementById("shadowType").addEventListener("change", (e) => {
