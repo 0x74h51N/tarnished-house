@@ -48347,10 +48347,10 @@
   ],
   "images": [
     {
-      "uri": "textures/Material.001_baseColor.png"
+      "uri": "textures/Material.001_baseColor.jpg"
     },
     {
-      "uri": "textures/Material.001_metallicRoughness.png"
+      "uri": "textures/Material.001_metallicRoughness.jpg"
     },
     {
       "uri": "textures/Material.001_normal.png"
