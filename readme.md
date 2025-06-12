@@ -1,17 +1,10 @@
-# Three.js Journey
+# Tarnished House
+Tarnished House is a project by Tahsin Önemli, inspired by the Three.js Journey Haunted House lesson.
 
-## Setup
+While the idea was inspired by the course, every detail—from the geometry to the lighting—was built from scratch.
 
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
+Below, you’ll find the assets and resources used during development.
 
-```bash
-npm install
-
-npm run dev
-
-npm run build
-```
 
 ## Credits
 
