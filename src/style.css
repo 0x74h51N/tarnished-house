@@ -140,8 +140,7 @@ body {
   pointer-events: none;
 }
 
-#credits-btn,
-#sound-toggle-btn {
+.btn {
   height: 50px;
   color: var(--color-gold);
 
@@ -155,8 +154,7 @@ body {
   z-index: 10001;
   transition: background 0.2s, color 0.2s;
 }
-#credits-btn:hover,
-#sound-toggle-btn:hover {
+.btn:hover{
   background: var(--color-gold);
   color: var(--color-black);
 }
@@ -164,8 +162,7 @@ body {
   max-width: 800px !important;
 }
 /* Modal Overlay */
-#credits-modal,
-#intro-modal {
+.modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -181,8 +178,7 @@ body {
   transition: opacity 0.4s;
 }
 
-#credits-modal.active,
-#intro-modal.active {
+.modal.active{
   opacity: 1;
   pointer-events: all;
 }
@@ -190,10 +186,59 @@ body {
 .modal-content,
 .asset-card,
 .project-info,
-#credits-btn,
-#sound-toggle-btn {
+.btn {
   background: var(--color-bg-modal);
 }
+
+/* Settings */
+
+#settings label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+#settings input[type="range"] {
+  flex: 1;
+  margin-left: 10px;
+  accent-color: #ffd700;
+}
+
+#settings input[type="checkbox"] {
+  accent-color: #ffd700;
+  width: 18px;
+  height: 18px;
+}
+
+#settings select {
+  background: #23242c;
+  color: #ffd700;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 1rem;
+  margin-left: 10px;
+}
+
+#settings span {
+  min-width: 32px;
+  display: inline-block;
+  text-align: right;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+#settings-modal.hidden {
+  display: none;
+  opacity: 0;
+}
+
+#settings-modal.active {
+  display: flex;
+  opacity: 1;
+}
+
 
 /* Modal Content */
 .modal-content-wrapper {

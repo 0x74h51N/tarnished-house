@@ -28,8 +28,231 @@ export function setupGUI({
   antialias,
   onVolumeChange,
 }) {
-  const gui = new GUI({ title: "Settings" }).close();
 
+//
+//#region settingsDiv
+//
+
+const settingsDiv = document.getElementById("settings");
+
+const settingsBtn = document.getElementById("settings-btn");
+const settingsModal = document.getElementById("settings-modal");
+const closeSettings = document.getElementById("close-settings");
+
+settingsBtn.addEventListener("click", () => {
+  settingsModal.classList.add("active");
+  settingsModal.classList.remove("hidden");
+});
+
+closeSettings.addEventListener("click", () => {
+  settingsModal.classList.remove("active");
+  setTimeout(() => settingsModal.classList.add("hidden"), 400);
+});
+
+settingsModal.addEventListener("click", (e) => {
+  if (e.target === settingsModal) {
+    settingsModal.classList.remove("active");
+    setTimeout(() => settingsModal.classList.add("hidden"), 400);
+  }
+});
+const initialVolume = typeof params.volume === "number" ? params.volume*100 : 1;
+
+const initialWidth = (directionalLight.shadow.camera.right - directionalLight.shadow.camera.left)*2;
+const initialHeight = (directionalLight.shadow.camera.top - directionalLight.shadow.camera.bottom)*2;
+const initialFar = directionalLight.shadow.camera.far*2;
+
+  settingsDiv.innerHTML = `
+  <label>
+    Volume:
+    <input type="range" id="volume" min="0" max="100" step="1" value="${initialVolume}" />
+    <span id="volumeValue">${initialVolume}</span>
+  </label><br/>
+    <h3>Graphics Settings</h3>
+    <label>
+      <input type="checkbox" id="antialiasing" ${antialias ? "checked" : ""}/>
+      Antialiasing
+    </label><br/>
+    <label>
+      <input type="checkbox" id="shadowEnabled" ${renderer.shadowMap.enabled ? "checked" : ""}/>
+      Enable Shadows
+    </label><br/>
+    <label>
+    Shadow Map Width:
+    <input type="range" id="shadowDistanceWidth" min="10" max="100" value="${initialWidth}" />
+    <span id="shadowDistanceWidthValue">${initialWidth}</span>
+   </label><br/>
+    <label>
+    Shadow Map Height:
+    <input type="range" id="shadowDistanceHeight" min="10" max="100" value="${initialHeight}" />
+    <span id="shadowDistanceHeightValue">${initialHeight}</span>
+    </label><br/>
+      <label>
+    Shadow Map Distance:
+    <input type="range" id="shadowMapDistance" min="1" max="100" value="${initialFar}" />
+    <span id="shadowMapDistanceValue">${initialFar}</span>
+  </label><br/>
+      <label>
+      Shadow Resolution:
+      <select id="shadowResolution">
+        <option value="512" ${params.shadowMapSize==512?"selected":""}>512</option>
+        <option value="1024" ${params.shadowMapSize==1024?"selected":""}>1024</option>
+        <option value="2048" ${params.shadowMapSize==2048?"selected":""}>2048</option>
+        <option value="4096" ${params.shadowMapSize==4096?"selected":""}>4096</option>
+      </select>
+    </label><br/>
+    <label>
+      Shadow Type:
+      <select id="shadowType">
+        <option value="BasicShadowMap" ${renderer.shadowMap.type===THREE.BasicShadowMap?"selected":""}>Basic</option>
+        <option value="PCFShadowMap" ${renderer.shadowMap.type===THREE.PCFShadowMap?"selected":""}>PCF</option>
+        <option value="PCFSoftShadowMap" ${renderer.shadowMap.type===THREE.PCFSoftShadowMap?"selected":""}>PCF Soft</option>
+      </select>
+    </label><br/>
+    <label>
+      Texture Quality:
+      <select id="quality">
+        <option value="low">Low</option>
+        <option value="medium" selected>Medium</option>
+        <option value="high">High (Detailed Texture)</option>
+      </select>
+    </label><br/>
+    <label>
+      Brightness:
+      <input type="range" id="brightness" min="0" max="3" step="0.01" value="${params.ambientLightIntensity}" />
+      <span id="brightnessValue">${params.ambientLightIntensity}</span>
+    </label><br/>
+    <label>
+      Tone Mapping:
+      <select id="toneMapping">
+        <option value="NoToneMapping" ${renderer.toneMapping===THREE.NoToneMapping?"selected":""}>None</option>
+        <option value="LinearToneMapping" ${renderer.toneMapping===THREE.LinearToneMapping?"selected":""}>Linear</option>
+        <option value="ReinhardToneMapping" ${renderer.toneMapping===THREE.ReinhardToneMapping?"selected":""}>Reinhard</option>
+        <option value="CineonToneMapping" ${renderer.toneMapping===THREE.CineonToneMapping?"selected":""}>Cineon</option>
+        <option value="ACESFilmicToneMapping" ${renderer.toneMapping===THREE.ACESFilmicToneMapping?"selected":""}>ACES</option>
+      </select>
+    </label>
+  `;
+
+
+  document.getElementById("antialiasing").addEventListener("change", (e) => {
+    localStorage.setItem("antialias", e.target.checked);
+    window.location.reload();
+  });
+
+  document.getElementById("shadowEnabled").addEventListener("change", (e) => {
+    renderer.shadowMap.enabled = e.target.checked;
+  });
+
+
+const volumeInput = document.getElementById("volume");
+const volumeValue = document.getElementById("volumeValue");
+volumeInput.addEventListener("input", (e) => {
+  const vol = Number(e.target.value);
+  volumeValue.textContent = vol;
+  params.volume = vol / 100;
+  if (typeof onVolumeChange === "function") onVolumeChange(vol / 100);
+});
+
+
+const shadowDistanceWidth = document.getElementById("shadowDistanceWidth");
+const shadowDistanceWidthValue = document.getElementById("shadowDistanceWidthValue");
+shadowDistanceWidth.addEventListener("input", (e) => {
+  const width = Number(e.target.value);
+  shadowDistanceWidthValue.textContent = width;
+  directionalLight.shadow.camera.left = -width / 4;
+  directionalLight.shadow.camera.right = width / 4;
+  params.shadowCameraWidth = width;
+  directionalLight.shadow.camera.updateProjectionMatrix();
+});
+
+const shadowDistanceHeight = document.getElementById("shadowDistanceHeight");
+const shadowDistanceHeightValue = document.getElementById("shadowDistanceHeightValue");
+shadowDistanceHeight.addEventListener("input", (e) => {
+  const height = Number(e.target.value);
+  shadowDistanceHeightValue.textContent = height;
+  directionalLight.shadow.camera.top = height / 4;
+  directionalLight.shadow.camera.bottom = -height / 4;
+  params.shadowCameraHeight = height/2;
+  params.shadowCameraFar = height/2;
+  directionalLight.shadow.camera.updateProjectionMatrix();
+});
+
+const shadowMapDistance = document.getElementById("shadowMapDistance");
+const shadowMapDistanceValue = document.getElementById("shadowMapDistanceValue");
+shadowMapDistance.addEventListener("input", (e) => {
+  const far = Number(e.target.value);
+  shadowMapDistanceValue.textContent = far;
+  directionalLight.shadow.camera.far = far/2;
+  params.shadowCameraFar = far/2;
+  directionalLight.shadow.camera.updateProjectionMatrix();
+});
+
+
+  document.getElementById("shadowResolution").addEventListener("change", (e) => {
+    const res = parseInt(e.target.value);
+    directionalLight.shadow.mapSize.set(res, res);
+    fireLight.shadow.mapSize.set(res, res);
+    params.shadowMapSize = res;
+    if (directionalLight.shadow.map) directionalLight.shadow.map.dispose();
+    if (fireLight.shadow.map) fireLight.shadow.map.dispose();
+  });
+
+  document.getElementById("shadowType").addEventListener("change", (e) => {
+    const val = e.target.value;
+    renderer.shadowMap.type = THREE[val];
+  });
+
+
+  document.getElementById("quality").addEventListener("change", (e) => {
+    let bias, normalBias;
+    if (e.target.value === "high") {
+      bias = -0.0005;
+      normalBias = 0.005;
+    } else if (e.target.value === "medium") {
+      bias = -0.001;
+      normalBias = 0.01;
+    } else {
+      bias = -0.002;
+      normalBias = 0.02;
+    }
+    directionalLight.shadow.bias = bias;
+    directionalLight.shadow.normalBias = normalBias;
+    fireLight.shadow.bias = bias;
+    fireLight.shadow.normalBias = normalBias;
+    params.shadowBias = bias;
+    params.shadowNormalBias = normalBias;
+  });
+
+
+  const brightness = document.getElementById("brightness");
+  const brightnessValue = document.getElementById("brightnessValue");
+  brightness.addEventListener("input", (e) => {
+    const val = Number(e.target.value);
+    brightnessValue.textContent = val;
+    ambientLight.intensity = val;
+    params.ambientLightIntensity = val;
+  });
+
+
+  document.getElementById("toneMapping").addEventListener("change", (e) => {
+    renderer.toneMapping = THREE[e.target.value];
+  });
+
+//
+//#endregion
+//
+
+  const gui = new GUI({ title: "Settings" }).close();
+  gui.hide();
+  document.addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === "h") {
+      if (gui._hidden || gui.hidden) {
+        gui.show();
+      } else {
+        gui.hide();
+      }
+    }
+  });
   gui
     .add(params, "volume", 0, 1.5, 0.1)
     .name("Volume")
@@ -108,7 +331,7 @@ export function setupGUI({
       renderer.shadowMap.needsUpdate = true;
     });
   graphics
-    .add(params, "shadowMapSize", [256, 512, 1024, 2048, 4096, 8192])
+    .add(params, "shadowMapSize", [256, 512, 1024, 2048, 4096])
     .name("Shadow Resolution")
     .onChange((v) => {
       shadowDispose();

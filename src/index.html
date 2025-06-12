@@ -22,7 +22,7 @@
         <div class="loading-text">Loading...</div>
       </div>
     </div>
-    <div id="intro-modal" class="hidden">
+    <div class="modal" id="intro-modal" class="hidden">
       <div class="modal-content-wrapper">
         <div class="modal-content">
           <span id="close-intro" class="close-modal">&times;</span>
@@ -40,12 +40,24 @@
       </div>
     </div>
     <div class="btn-container">
-      <button id="credits-btn">Credits</button>
-      <button id="sound-toggle-btn" aria-label="Toggle sound">
+      <button class="btn" id="settings-btn">Settings</button>
+      <button class="btn" id="credits-btn">Credits</button>
+      <button class="btn" id="sound-toggle-btn" aria-label="Toggle sound">
         <img id="sound-toggle-icon" src="/sound-off.svg" alt="Sound off" />
       </button>
     </div>
-    <div id="credits-modal" class="hidden">
+     <div class="modal" id="settings-modal" class="hidden">
+      <div class="modal-content-wrapper">
+        <div class="modal-content">
+          <span id="close-settings" class="close-modal">&times;</span>
+          <div class="modal-inner">
+            <h2>Settings</h2>
+            <div class="project-info" id="settings"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="credits-modal" class="hidden">
       <div class="modal-content-wrapper">
         <div class="modal-content">
           <span id="close-credits" class="close-modal">&times;</span>

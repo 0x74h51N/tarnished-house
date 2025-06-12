@@ -475,7 +475,7 @@ function clampCameraPosition() {
 //#region renderer
 //
 let antialias = localStorage.getItem("antialias");
-if (antialias === null) antialias = "true";
+if (antialias === null) antialias = "false";
 antialias = antialias === "true";
 
 const renderer = new THREE.WebGLRenderer({
@@ -563,8 +563,8 @@ const flame = createSimpleParticles({
   parent: scene,
   area: 0.25,
   size: 0.4,
-  maxCount: 15,
-  spawnRate: 22,
+  maxCount: 10,
+  spawnRate: 18,
   yStart: 0.35,
   textures: flameTextures,
   camera,
@@ -585,14 +585,14 @@ const smoke = createSimpleParticles({
   parent: scene,
   area: 0.3,
   size: 0.7,
-  maxCount: 40,
-  spawnRate: 3,
+  maxCount: 30,
+  spawnRate: 2,
   yStart: 1.1,
   textures: smokeTextures,
   camera,
-  opacity: 0.45,
+  opacity: 0.4,
   color: 0x444444,
-  sizeGrowth: 0.4,
+  sizeGrowth: 0.3,
 });
 smoke.points.forEach((p) => (p.position.z = 1.5));
 
@@ -601,8 +601,8 @@ const sparks = createSimpleParticles({
   color: "#fff",
   area: 0.3,
   size: 0.007,
-  maxCount: 300,
-  spawnRate: 13,
+  maxCount: 200,
+  spawnRate: 11,
   yStart: 0.15,
   camera,
 });
