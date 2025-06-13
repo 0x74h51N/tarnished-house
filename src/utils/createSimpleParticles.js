@@ -101,10 +101,12 @@ export function createSimpleParticles({
 
     sizesArray[i] = size;
     anglesArray[i] = Math.random() * Math.PI * 2;
-    coloursArray[i * 4 + 0] = baseCol.r;
-    coloursArray[i * 4 + 1] = baseCol.g;
-    coloursArray[i * 4 + 2] = baseCol.b;
-    coloursArray[i * 4 + 3] = opacity;
+
+    const i4 = i * 4;
+    coloursArray[i4 + 0] = baseCol.r;
+    coloursArray[i4 + 1] = baseCol.g;
+    coloursArray[i4 + 2] = baseCol.b;
+    coloursArray[i4 + 3] = opacity;
   }
 
   const pointsArr = [];
@@ -130,7 +132,6 @@ export function createSimpleParticles({
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute("velocity", new THREE.BufferAttribute(velocities, 3));
     geometry.setAttribute("variant", new THREE.BufferAttribute(variants, 1));
     geometry.setAttribute("size", new THREE.BufferAttribute(sizesArray, 1));
     geometry.setAttribute("angle", new THREE.BufferAttribute(anglesArray, 1));

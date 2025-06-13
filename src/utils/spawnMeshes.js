@@ -13,7 +13,9 @@ export function spawnMeshes(
   group,
   count,
   options = {},
-  isGraveyard = false
+  isGraveyard = false,
+  castShadow = true,
+  receiveShadow = true
 ) {
   const {
     scaleMin = 1,
@@ -44,8 +46,8 @@ export function spawnMeshes(
     if (i >= baseMeshes.length) {
       mesh.traverse((child) => {
         if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
+          child.castShadow = castShadow;
+          child.receiveShadow = receiveShadow;
           if (child.material) {
             child.material = child.material.clone();
           }
@@ -54,8 +56,8 @@ export function spawnMeshes(
     } else {
       mesh.traverse((child) => {
         if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
+          child.castShadow = castShadow;
+          child.receiveShadow = receiveShadow;
         }
       });
     }
@@ -64,11 +66,11 @@ export function spawnMeshes(
     mesh.scale.setScalar(scale);
     mesh.position.set(0, 0, 0);
 
+    const angle = (i / count) * Math.PI * 2;
     let positionFound = false;
     let x, z;
     let tryCount = 0;
     while (!positionFound && tryCount < 100) {
-      const angle = (i / count) * Math.PI * 2;
       const radius = radiusMin + Math.random() * (radiusMax - radiusMin);
       x = Math.cos(angle) * radius;
       z = Math.sin(angle) * radius;
@@ -76,7 +78,7 @@ export function spawnMeshes(
         positionFound = placedPositions.every(([px, pz]) => {
           const dx = x - px;
           const dz = z - pz;
-          return Math.sqrt(dx * dx + dz * dz) >= minDistance;
+          return dx * dx + dz * dz >= minDistance * minDistance;
         });
       } else {
         positionFound = true;
