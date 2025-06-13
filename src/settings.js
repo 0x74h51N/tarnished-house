@@ -27,6 +27,9 @@ export function setupGUI({
   treeOptions,
   antialias,
   onVolumeChange,
+  skyUniforms,
+  bloomPass,
+  fogOnChange,
 }) {
   //
   //#region settingsDiv
@@ -79,6 +82,17 @@ export function setupGUI({
       Antialiasing
     </label><br/>
     <label>
+      <input type="checkbox" id="bloomEnabled" ${
+        params.bloomParams.enabled ? "checked" : ""
+      }/>
+      Bloom
+    </label><br/>
+    <label>
+  <input type="checkbox" id="fogToggle" ${params.fog ? "checked" : ""}/>
+  Fog Effect
+</label><br/>
+
+    <label>
       <input type="checkbox" id="shadowEnabled" ${
         renderer.shadowMap.enabled ? "checked" : ""
       }/>
@@ -102,6 +116,9 @@ export function setupGUI({
       <label>
       Shadow Resolution:
       <select id="shadowResolution">
+       <option value="256" ${
+         params.shadowMapSize == 256 ? "selected" : ""
+       }>256</option>
         <option value="512" ${
           params.shadowMapSize == 512 ? "selected" : ""
         }>512</option>
@@ -140,10 +157,10 @@ export function setupGUI({
     </label><br/>
     <label>
       Brightness:
-      <input type="range" id="brightness" min="0" max="3" step="0.01" value="${
-        params.ambientLightIntensity
+      <input type="range" id="brightness" min="0" max="1" step="0.01" value="${
+        params.toneMappingExposure
       }" />
-      <span id="brightnessValue">${params.ambientLightIntensity}</span>
+      <span id="brightnessValue">${params.toneMappingExposure}</span>
     </label><br/>
     <label>
       Tone Mapping:
@@ -171,6 +188,15 @@ export function setupGUI({
     localStorage.setItem("antialias", e.target.checked);
     window.location.reload();
   });
+
+  document
+    .getElementById("bloomEnabled")
+    .addEventListener("change", function (e) {
+      params.bloomParams.enabled = e.target.checked;
+    });
+
+  const fogToggle = document.getElementById("fogToggle");
+  fogToggle.addEventListener("change", fogOnChange);
 
   document.getElementById("shadowEnabled").addEventListener("change", (e) => {
     const v = e.target.checked;
@@ -277,8 +303,8 @@ export function setupGUI({
   brightness.addEventListener("input", (e) => {
     const val = Number(e.target.value);
     brightnessValue.textContent = val;
-    ambientLight.intensity = val;
-    params.ambientLightIntensity = val;
+    renderer.toneMappingExposure = val;
+    params.toneMappingExposure = val;
   });
 
   document.getElementById("toneMapping").addEventListener("change", (e) => {
@@ -309,6 +335,30 @@ export function setupGUI({
 
   const antialiasObj = { antialias };
 
+  if (skyUniforms) {
+    const skyFolder = gui.addFolder("Sky");
+
+    skyFolder
+      .add(skyUniforms["turbidity"], "value", 0, 50, 0.01)
+      .name("Turbidity");
+    skyFolder
+      .add(skyUniforms["rayleigh"], "value", 0, 10, 0.01)
+      .name("Rayleigh");
+    skyFolder
+      .add(skyUniforms["mieCoefficient"], "value", 0, 0.2, 0.001)
+      .name("Mie Coefficient");
+    skyFolder
+      .add(skyUniforms["mieDirectionalG"], "value", 0, 1, 0.01)
+      .name("Mie DirectionalG");
+
+    const sunPos = skyUniforms["sunPosition"].value;
+    skyFolder.add(sunPos, "x", -100, 10, 0.01).name("Sun X");
+    skyFolder.add(sunPos, "y", -100, 10, 0.01).name("Sun Y");
+    skyFolder.add(sunPos, "z", -100, 10, 0.01).name("Sun Z");
+
+    skyFolder.open();
+  }
+
   const graphics = gui.addFolder("Graphics Settings");
   graphics.close();
   graphics
@@ -325,6 +375,19 @@ export function setupGUI({
     Cineon: THREE.CineonToneMapping,
     ACESFilmic: THREE.ACESFilmicToneMapping,
   };
+
+  //bloom
+  const bloomParams = params.bloomParams;
+  graphics.add(bloomParams, "enabled").name("Enable Bloom");
+  graphics
+    .add(bloomParams, "strength", 0, 5)
+    .onChange((v) => (bloomPass.strength = v));
+  graphics
+    .add(bloomParams, "radius", 0, 2)
+    .onChange((v) => (bloomPass.radius = v));
+  graphics
+    .add(bloomParams, "threshold", 0, 1)
+    .onChange((v) => (bloomPass.threshold = v));
 
   graphics
     .add(params, "toneMapping", Object.keys(toneMappings))

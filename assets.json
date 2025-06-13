@@ -97,5 +97,14 @@
       "url": "https://freesound.org/people/NoOneIsReal/sounds/387128/"
     },
     "license": "CC0"
+  },
+  {
+    "type": "Moon Photo",
+    "author": "0x74h51n - by me :)",
+    "source": {
+      "name": "Github",
+      "url": "https://github.com/0x74h51N/tarnished-house/tree/master/static/moon.jpg"
+    },
+    "license": "CC-BY 4.0"
   }
 ]

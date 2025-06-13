@@ -18,6 +18,10 @@ import {
   treeOptions,
 } from ".././config.json";
 import assets from ".././assets.json";
+import { Sky } from "three/examples/jsm/Addons.js";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
 //
 //#region credits
@@ -280,7 +284,7 @@ displacementTex.repeat.set(repeat, repeat);
 displacementTex.wrapS = THREE.RepeatWrapping;
 displacementTex.wrapT = THREE.RepeatWrapping;
 
-const floorGeometry = new THREE.PlaneGeometry(35, 35, 100, 100);
+const floorGeometry = new THREE.PlaneGeometry(40, 40, 100, 100);
 const floorMaterial = new THREE.MeshStandardMaterial({
   alphaMap: floorAlphaTex,
   transparent: true,
@@ -427,6 +431,49 @@ if (params.cameraHelper) scene.add(cameraHelper);
 //
 
 //
+//#region sky
+//
+
+const sky = new Sky();
+sky.scale.setScalar(100);
+scene.add(sky);
+
+const skyUniforms = sky.material.uniforms;
+skyUniforms["turbidity"].value = 50;
+skyUniforms["rayleigh"].value = 0;
+skyUniforms["mieCoefficient"].value = 0.2;
+skyUniforms["mieDirectionalG"].value = 0;
+skyUniforms["sunPosition"].value.set(0, -0.08, -1);
+
+const moonTexture = texLoader.load("/moon.jpg");
+
+const moon = new THREE.Mesh(
+  new THREE.PlaneGeometry(4, 4),
+  new THREE.MeshPhysicalMaterial({
+    map: moonTexture,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    color: 0xffffff,
+    opacity: 1,
+    alphaMap: moonTexture,
+    emissive: 0xffffff,
+    emissiveIntensity: 20,
+    toneMapped: false,
+  })
+);
+
+const moonDistance = directionalLight.position.length() * 2;
+const moonDirection = directionalLight.position.clone().normalize();
+moon.position.copy(moonDirection.multiplyScalar(moonDistance));
+
+moon.lookAt(camera.position);
+scene.add(moon);
+
+//
+//#endregion
+//
+
+//
 //#region controls
 //
 
@@ -487,10 +534,42 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.9;
+renderer.toneMappingExposure = params.toneMappingExposure;
 
 //
 
+//
+//#endregion
+//
+
+//
+//#region postprocessing
+//
+
+const composer = new EffectComposer(renderer);
+
+composer.addPass(new RenderPass(scene, camera));
+const bloomParams = params.bloomParams;
+
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  bloomParams.strength,
+  bloomParams.radius,
+  bloomParams.threshold
+);
+composer.addPass(bloomPass);
+
+const fog = new THREE.FogExp2(directionalLight.color, 0.02);
+scene.fog = fog;
+function fogOnChange(e) {
+  if (e.target.checked) {
+    params.fog = true;
+    scene.fog = fog;
+  } else {
+    params.fog = false;
+    scene.fog = null;
+  }
+}
 //
 //#endregion
 //
@@ -506,7 +585,6 @@ const audioLoader = new THREE.AudioLoader(loadingManager);
 const positionalSound = new THREE.PositionalAudio(listener);
 let soundLoaded = false;
 audioLoader.load("/sounds/fire.wav", (buffer) => {
-  console.log(buffer);
   positionalSound.setBuffer(buffer);
   positionalSound.setRefDistance(5);
   positionalSound.setLoop(true);
@@ -654,6 +732,9 @@ setupGUI({
       ambianceSound.play();
     }
   },
+  skyUniforms,
+  bloomPass,
+  fogOnChange,
 });
 
 // #endregion
@@ -681,6 +762,7 @@ const tick = () => {
   clampCameraPosition();
 
   const delta = timer.getDelta();
+  moon.lookAt(camera.position);
 
   // Shadow enabled
   sparks.step(delta);
@@ -706,7 +788,14 @@ const tick = () => {
     Math.sin(elapsedTime * firelightAnimation.distanceSpeed) *
       firelightAnimation.distanceAmp;
   // Render
-  renderer.render(scene, camera);
+
+  if (params.bloomParams.enabled && !composer.passes.includes(bloomPass)) {
+    composer.addPass(bloomPass);
+  }
+  if (!params.bloomParams.enabled && composer.passes.includes(bloomPass)) {
+    composer.passes.splice(composer.passes.indexOf(bloomPass), 1);
+  }
+  composer.render();
 
   stats.end();
   window.requestAnimationFrame(tick);
