@@ -30,6 +30,7 @@ export function setupGUI({
   skyUniforms,
   bloomPass,
   fogOnChange,
+  scene
 }) {
   //
   //#region settingsDiv
@@ -76,6 +77,13 @@ export function setupGUI({
     <input type="range" id="volume" min="0" max="100" step="1" value="${initialVolume}" />
     <span id="volumeValue">${initialVolume}</span>
   </label><br/>
+   <label>
+      Brightness:
+      <input type="range" id="brightness" min="0" max="1" step="0.01" value="${
+        params.toneMappingExposure
+      }" />
+      <span id="brightnessValue">${params.toneMappingExposure}</span>
+    </label><br/>
     <h3>Graphics Settings</h3>
     <label>
       <input type="checkbox" id="antialiasing" ${antialias ? "checked" : ""}/>
@@ -90,29 +98,21 @@ export function setupGUI({
     <label>
   <input type="checkbox" id="fogToggle" ${params.fog ? "checked" : ""}/>
   Fog Effect
-</label><br/>
-
-    <label>
-      <input type="checkbox" id="shadowEnabled" ${
-        renderer.shadowMap.enabled ? "checked" : ""
-      }/>
-      Enable Shadows
-    </label><br/>
-    <label>
-    Shadow Map Width:
-    <input type="range" id="shadowDistanceWidth" min="10" max="100" value="${initialWidth}" />
-    <span id="shadowDistanceWidthValue">${initialWidth}</span>
-   </label><br/>
-    <label>
-    Shadow Map Height:
-    <input type="range" id="shadowDistanceHeight" min="10" max="100" value="${initialHeight}" />
-    <span id="shadowDistanceHeightValue">${initialHeight}</span>
-    </label><br/>
-      <label>
-    Shadow Map Distance:
-    <input type="range" id="shadowMapDistance" min="1" max="100" value="${initialFar}" />
-    <span id="shadowMapDistanceValue">${initialFar}</span>
   </label><br/>
+      <label>
+        <input type="checkbox" id="shadowEnabled" ${
+          renderer.shadowMap.enabled ? "checked" : ""
+        }/>
+        Enable Shadows
+      </label><br/>
+        <label>
+      Shadow Distance:
+      <select id="shadowDistance">
+      <option value="half" ${params.shadowCameraWidth== 16 && params.shadowCameraFar == 20 ? "selected" : ""}>Half</option>
+      <option value="quarters" ${params.shadowCameraWidth== 28 && params.shadowCameraFar == 25 ? "selected" : ""}>Three Quarters</option>
+      <option value="full" ${params.shadowCameraWidth== 36 && params.shadowCameraFar == 30 ? "selected" : ""}>Full</option>
+    </select>
+    </label><br/>
       <label>
       Shadow Resolution:
       <select id="shadowResolution">
@@ -152,15 +152,8 @@ export function setupGUI({
       <select id="quality">
         <option value="low">Low</option>
         <option value="medium" selected>Medium</option>
-        <option value="high">High (Detailed Texture)</option>
+        <option value="high">High</option>
       </select>
-    </label><br/>
-    <label>
-      Brightness:
-      <input type="range" id="brightness" min="0" max="1" step="0.01" value="${
-        params.toneMappingExposure
-      }" />
-      <span id="brightnessValue">${params.toneMappingExposure}</span>
     </label><br/>
     <label>
       Tone Mapping:
@@ -215,44 +208,35 @@ export function setupGUI({
     params.volume = vol / 100;
     if (typeof onVolumeChange === "function") onVolumeChange(vol / 100);
   });
-
-  const shadowDistanceWidth = document.getElementById("shadowDistanceWidth");
-  const shadowDistanceWidthValue = document.getElementById(
-    "shadowDistanceWidthValue"
-  );
-  shadowDistanceWidth.addEventListener("input", (e) => {
-    const width = Number(e.target.value);
-    shadowDistanceWidthValue.textContent = width;
-    directionalLight.shadow.camera.left = -width / 4;
-    directionalLight.shadow.camera.right = width / 4;
-    params.shadowCameraWidth = width;
-    directionalLight.shadow.camera.updateProjectionMatrix();
-  });
-
-  const shadowDistanceHeight = document.getElementById("shadowDistanceHeight");
-  const shadowDistanceHeightValue = document.getElementById(
-    "shadowDistanceHeightValue"
-  );
-  shadowDistanceHeight.addEventListener("input", (e) => {
-    const height = Number(e.target.value);
-    shadowDistanceHeightValue.textContent = height;
-    directionalLight.shadow.camera.top = height / 4;
-    directionalLight.shadow.camera.bottom = -height / 4;
-    params.shadowCameraHeight = height / 2;
-    params.shadowCameraFar = height / 2;
-    directionalLight.shadow.camera.updateProjectionMatrix();
-  });
-
-  const shadowMapDistance = document.getElementById("shadowMapDistance");
-  const shadowMapDistanceValue = document.getElementById(
-    "shadowMapDistanceValue"
-  );
-  shadowMapDistance.addEventListener("input", (e) => {
-    const far = Number(e.target.value);
-    shadowMapDistanceValue.textContent = far;
-    directionalLight.shadow.camera.far = far / 2;
-    params.shadowCameraFar = far / 2;
-    directionalLight.shadow.camera.updateProjectionMatrix();
+  
+  document.getElementById("shadowDistance").addEventListener("input", (e) => {
+     let left, right, far;
+    if(e.target.value === "half"){
+      params.shadowCameraWidth = 16;
+      params.shadowCameraFar = 20;
+        left = -8;
+        right = 8;
+        far = 20;
+    };
+     if(e.target.value === "quarters"){
+      params.shadowCameraWidth = 28;
+      params.shadowCameraFar = 25;
+        left = -14;
+        right = 14;
+        far = 25;
+    };
+       if(e.target.value === "full"){
+      params.shadowCameraWidth = 36;
+      params.shadowCameraFar = 30;
+        left = -18;
+        right = 18;
+        far = 30;
+    }
+      directionalLight.shadow.camera.left = left;
+      directionalLight.shadow.camera.right = right;
+      directionalLight.shadow.camera.far = far;
+      directionalLight.shadow.camera.updateProjectionMatrix();
+      directionalLightCameraHelper.update();
   });
 
   document
@@ -523,7 +507,7 @@ export function setupGUI({
     });
 
   directionalLightGui
-    .add(params, "shadowCameraWidth", 2, 40, 0.1)
+    .add(params, "shadowCameraWidth", 2, 45, 0.1)
     .name("Shadow Camera Width")
     .onChange((v) => {
       const half = v / 2;

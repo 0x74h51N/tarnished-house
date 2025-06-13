@@ -2,9 +2,9 @@
   "params": {
     "bloomParams": {
       "enabled": true,
-      "strength": 0.25,
+      "strength": 0.2,
       "radius": 1.25,
-      "threshold": 0.2
+      "threshold": 0.3
     },
     "fog": true,
     "volume": 0.6,
@@ -19,15 +19,15 @@
     "directionalLightY": 5.5,
     "directionalLightZ": 12,
     "directionalLightHelper": false,
-    "shadowCameraWidth": 20,
+    "shadowCameraWidth": 16,
     "shadowCameraHeight": 16,
-    "shadowCameraNear": 0.1,
-    "shadowCameraFar": 35,
-    "shadowBias": 0.0005,
-    "shadowNormalBias": 0.05,
-    "graveCount": 20,
-    "bushCount": 30,
-    "treeCount": 17,
+    "shadowCameraNear": 1,
+    "shadowCameraFar": 20,
+    "shadowBias":  -0.001,
+    "shadowNormalBias": 0.01,
+    "graveCount": 25,
+    "bushCount": 35,
+    "treeCount": 15,
     "fireLightHelper": false,
     "fireLightIntensity": 19,
     "fireLightDistance": 50,
@@ -54,22 +54,22 @@
     "scaleMin": 0.2,
     "scaleMax": 0.4,
     "radiusMin": 3,
-    "radiusMax": 17,
+    "radiusMax": 18,
     "minDistance": 1
   },
   "graveOptions": {
     "scaleMin": 0.0018,
     "scaleMax": 0.0019,
     "radiusMin": 6,
-    "radiusMax": 15,
-    "minDistance": 2
+    "radiusMax": 18,
+    "minDistance": 3
   },
   "treeOptions": {
     "scaleMin": 0.0048,
     "scaleMax": 0.0049,
     "radiusMin": 6.8,
-    "radiusMax": 18,
-    "minDistance": 1.3
+    "radiusMax": 17.5,
+    "minDistance": 2.3
   },
   "rootPositions": [
     [4, 0.1, 7],

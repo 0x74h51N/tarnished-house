@@ -253,7 +253,7 @@ gltfLoader.load("./bonfire/bonfire_dark_souls_saga.glb", (g) => {
   });
 
   bonfire.scale.setScalar(0.4);
-  bonfire.position.set(0, 0.32, 1.5);
+  bonfire.position.set(0, 0.25, 1.5);
   bonfire.add(positionalSound);
   scene.add(bonfire);
 });
@@ -266,7 +266,7 @@ gltfLoader.load("./bonfire/bonfire_dark_souls_saga.glb", (g) => {
 //#region floor
 //
 
-const repeat = 8;
+const repeat = 12;
 baseColorTex.colorSpace = THREE.SRGBColorSpace;
 baseColorTex.repeat.set(repeat, repeat);
 baseColorTex.wrapS = THREE.RepeatWrapping;
@@ -284,7 +284,7 @@ displacementTex.repeat.set(repeat, repeat);
 displacementTex.wrapS = THREE.RepeatWrapping;
 displacementTex.wrapT = THREE.RepeatWrapping;
 
-const floorGeometry = new THREE.PlaneGeometry(40, 40, 100, 100);
+const floorGeometry = new THREE.PlaneGeometry(43, 43, 250, 250);
 const floorMaterial = new THREE.MeshStandardMaterial({
   alphaMap: floorAlphaTex,
   transparent: true,
@@ -294,7 +294,7 @@ const floorMaterial = new THREE.MeshStandardMaterial({
   metalnessMap: armTex,
   roughnessMap: armTex,
   displacementMap: displacementTex,
-  displacementScale: 0.3,
+  displacementScale: 0.2,
   side: THREE.DoubleSide,
   color: 0xcccccc,
 });
@@ -323,7 +323,7 @@ scene.add(ambientLight);
 const fireLight = new THREE.PointLight(
   0xffa500,
   params.fireLightIntensity,
-  60,
+  params.fireLightDistance,
   2
 );
 fireLight.castShadow = true;
@@ -479,7 +479,12 @@ scene.add(moon);
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-controls.enablePan = false;
+controls.dampingFactor = 0.08;
+controls.screenSpacePanning = true;
+controls.enablePan = true;
+controls.panSpeed = 0.6;
+controls.rotateSpeed = 0.8;
+
 controls.minDistance = 2;
 controls.maxDistance = 50;
 controls.minPolarAngle = Math.PI / 6;
@@ -487,11 +492,11 @@ controls.maxPolarAngle = Math.PI / 2;
 
 const limits = {
   minY: 1,
-  maxY: 10,
-  minX: -20,
-  maxX: 20,
-  minZ: -20,
-  maxZ: 20,
+  maxY: 12,
+  minX: -15,
+  maxX: 15,
+  minZ: -15,
+  maxZ: 15,
 };
 
 function clampCameraPosition() {
@@ -639,7 +644,7 @@ const flameTextures = flamePath.map((p) => texLoader.load(p));
 
 const flame = createSimpleParticles({
   parent: scene,
-  area: 0.25,
+  area: 0.2,
   size: 0.4,
   maxCount: 8,
   spawnRate: 18,
@@ -735,6 +740,7 @@ setupGUI({
   skyUniforms,
   bloomPass,
   fogOnChange,
+  scene
 });
 
 // #endregion
