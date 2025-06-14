@@ -209,7 +209,7 @@ gltfLoader.load("./gravestones/scene.gltf", (gltf) => {
 //  */
 
 gltfLoader.load("./pineroots/pine_roots.gltf", (gltf) => {
-  const groupCount = 10;
+  const groupCount = 9;
 
   for (let i = 0; i < groupCount; i++) {
     const group = new THREE.Group();
