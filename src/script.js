@@ -136,7 +136,8 @@ const gltfLoader = new GLTFLoader(loadingManager);
 
 gltfLoader.load("./abandoned_house/scene.gltf", (gltf) => {
   const house = gltf.scene;
-  house.position.set(0, 0.26, -4.5);
+  house.position.set(0.02, 0.25, -5.5);
+  house.scale.setScalar(1.2);
   gltf.scene.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
@@ -156,7 +157,7 @@ let treeBaseMeshes = [];
 gltfLoader.load("./trees/trees.glb", (gltf) => {
   treeGLTF = gltf;
   treeBaseMeshes = treeGLTF.scene.children[0].children[0].children[0].children;
-  spawnMeshes(treeBaseMeshes, treesGroup, params.treeCount, treeOptions, true);
+  spawnMeshes(treeBaseMeshes, treesGroup, params.treeCount, treeOptions);
   scene.add(treesGroup);
 });
 
@@ -199,13 +200,7 @@ gltfLoader.load("./gravestones/scene.gltf", (gltf) => {
     }
   });
 
-  spawnMeshes(
-    graveBaseMeshes,
-    graveGroup,
-    params.graveCount,
-    graveOptions,
-    true
-  );
+  spawnMeshes(graveBaseMeshes, graveGroup, params.graveCount, graveOptions);
   scene.add(graveGroup);
 });
 
@@ -214,7 +209,7 @@ gltfLoader.load("./gravestones/scene.gltf", (gltf) => {
 //  */
 
 gltfLoader.load("./pineroots/pine_roots.gltf", (gltf) => {
-  const groupCount = 7;
+  const groupCount = 10;
 
   for (let i = 0; i < groupCount; i++) {
     const group = new THREE.Group();
@@ -446,9 +441,9 @@ skyUniforms["mieDirectionalG"].value = 0;
 skyUniforms["sunPosition"].value.set(0, -0.08, -1);
 
 const moonTexture = texLoader.load("/moon.jpg");
-
+const emissiveMap = texLoader.load("/moon-emissive.jpg");
 const moon = new THREE.Mesh(
-  new THREE.PlaneGeometry(4, 4),
+  new THREE.PlaneGeometry(1.7, 1.7),
   new THREE.MeshPhysicalMaterial({
     map: moonTexture,
     transparent: true,
@@ -457,8 +452,9 @@ const moon = new THREE.Mesh(
     opacity: 1,
     alphaMap: moonTexture,
     emissive: 0xffffff,
-    emissiveIntensity: 20,
+    emissiveIntensity: 6,
     toneMapped: false,
+    emissiveMap: emissiveMap,
   })
 );
 
@@ -634,26 +630,45 @@ soundBtn.addEventListener("click", () => {
 //#region particles
 //
 
-const flamePath = [
-  "fire/flame1.jpg",
-  "fire/flame2.jpg",
-  "fire/flame3.jpg",
-  "fire/flame4.jpg",
+const flamePath = ["fire/flame1.jpg", "fire/flame2.jpg", "fire/flame3.jpg"];
+const flameAlphaPath = [
+  "fire/flame1-alpha.png",
+  "fire/flame2-alpha.png",
+  "fire/flame3-alpha.png",
 ];
-const flameTextures = flamePath.map((p) => texLoader.load(p));
+
+const flameTextures = flamePath.map((p) => {
+  const tex = texLoader.load(p, (t) => {
+    t.encoding = THREE.sRGBEncoding;
+  });
+  return tex;
+});
+const maskTextures = flameAlphaPath.map((p) => {
+  const tex = texLoader.load(p, (t) => {
+    t.generateMipmaps = false;
+    t.minFilter = THREE.LinearFilter;
+    t.magFilter = THREE.LinearFilter;
+    t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+    t.format = THREE.RGBAFormat;
+  });
+  return tex;
+});
 
 const flame = createSimpleParticles({
   parent: scene,
   area: 0.2,
   size: 0.4,
-  maxCount: 8,
+  maxCount: 7,
   spawnRate: 18,
-  yStart: 0.4,
+  yStart: 0.35,
   textures: flameTextures,
+  maskTextures,
   camera,
-  opacity: 0.3,
+  opacity: 0.26,
 });
-flame.points.forEach((p) => (p.position.z = 1.5));
+flame.points.forEach((p) => {
+  p.position.z = 1.5;
+});
 
 const smokePath = [
   "smoke/smoke1.png",
@@ -683,7 +698,7 @@ const sparks = createSimpleParticles({
   parent: scene,
   color: "#fff",
   area: 0.3,
-  size: 0.007,
+  size: 0.001,
   maxCount: 100,
   spawnRate: 11,
   yStart: 0.15,
@@ -740,7 +755,7 @@ setupGUI({
   skyUniforms,
   bloomPass,
   fogOnChange,
-  scene
+  scene,
 });
 
 // #endregion

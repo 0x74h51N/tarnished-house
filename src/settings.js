@@ -30,7 +30,7 @@ export function setupGUI({
   skyUniforms,
   bloomPass,
   fogOnChange,
-  scene
+  scene,
 }) {
   //
   //#region settingsDiv
@@ -60,16 +60,6 @@ export function setupGUI({
   });
   const initialVolume =
     typeof params.volume === "number" ? params.volume * 100 : 1;
-
-  const initialWidth =
-    (directionalLight.shadow.camera.right -
-      directionalLight.shadow.camera.left) *
-    2;
-  const initialHeight =
-    (directionalLight.shadow.camera.top -
-      directionalLight.shadow.camera.bottom) *
-    2;
-  const initialFar = directionalLight.shadow.camera.far * 2;
 
   settingsDiv.innerHTML = `
   <label>
@@ -108,9 +98,21 @@ export function setupGUI({
         <label>
       Shadow Distance:
       <select id="shadowDistance">
-      <option value="half" ${params.shadowCameraWidth== 16 && params.shadowCameraFar == 20 ? "selected" : ""}>Half</option>
-      <option value="quarters" ${params.shadowCameraWidth== 28 && params.shadowCameraFar == 25 ? "selected" : ""}>Three Quarters</option>
-      <option value="full" ${params.shadowCameraWidth== 36 && params.shadowCameraFar == 30 ? "selected" : ""}>Full</option>
+      <option value="half" ${
+        params.shadowCameraWidth == 16 && params.shadowCameraFar == 20
+          ? "selected"
+          : ""
+      }>Half</option>
+      <option value="quarters" ${
+        params.shadowCameraWidth == 30 && params.shadowCameraFar == 27
+          ? "selected"
+          : ""
+      }>3/4</option>
+      <option value="full" ${
+        params.shadowCameraWidth == 40 && params.shadowCameraFar == 36
+          ? "selected"
+          : ""
+      }>Full</option>
     </select>
     </label><br/>
       <label>
@@ -208,35 +210,35 @@ export function setupGUI({
     params.volume = vol / 100;
     if (typeof onVolumeChange === "function") onVolumeChange(vol / 100);
   });
-  
+
   document.getElementById("shadowDistance").addEventListener("input", (e) => {
-     let left, right, far;
-    if(e.target.value === "half"){
+    let left, right, far;
+    if (e.target.value === "half") {
       params.shadowCameraWidth = 16;
       params.shadowCameraFar = 20;
-        left = -8;
-        right = 8;
-        far = 20;
-    };
-     if(e.target.value === "quarters"){
-      params.shadowCameraWidth = 28;
-      params.shadowCameraFar = 25;
-        left = -14;
-        right = 14;
-        far = 25;
-    };
-       if(e.target.value === "full"){
-      params.shadowCameraWidth = 36;
-      params.shadowCameraFar = 30;
-        left = -18;
-        right = 18;
-        far = 30;
+      left = -8;
+      right = 8;
+      far = 20;
     }
-      directionalLight.shadow.camera.left = left;
-      directionalLight.shadow.camera.right = right;
-      directionalLight.shadow.camera.far = far;
-      directionalLight.shadow.camera.updateProjectionMatrix();
-      directionalLightCameraHelper.update();
+    if (e.target.value === "quarters") {
+      params.shadowCameraWidth = 30;
+      params.shadowCameraFar = 27;
+      left = -15;
+      right = 15;
+      far = 27;
+    }
+    if (e.target.value === "full") {
+      params.shadowCameraWidth = 40;
+      params.shadowCameraFar = 36;
+      left = -20;
+      right = 20;
+      far = 36;
+    }
+    directionalLight.shadow.camera.left = left;
+    directionalLight.shadow.camera.right = right;
+    directionalLight.shadow.camera.far = far;
+    directionalLight.shadow.camera.updateProjectionMatrix();
+    directionalLightCameraHelper.update();
   });
 
   document

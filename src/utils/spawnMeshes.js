@@ -13,7 +13,6 @@ export function spawnMeshes(
   group,
   count,
   options = {},
-  isGraveyard = false,
   castShadow = true,
   receiveShadow = true
 ) {
@@ -37,7 +36,7 @@ export function spawnMeshes(
   group.clear();
   group.clear();
   const placedPositions = [];
-  const yPosition = isGraveyard ? 0.25 : 0.1;
+  const yPosition = 0.12;
 
   for (let i = 0; i < count; i++) {
     const base = baseMeshes[Math.floor(Math.random() * baseMeshes.length)];

@@ -176,7 +176,7 @@ body {
   right: -2px;
 }
 
-.btn:hover{
+.btn:hover {
   background: var(--color-gold);
   color: var(--color-black);
 }
@@ -200,7 +200,7 @@ body {
   transition: opacity 0.4s;
 }
 
-.modal.active{
+.modal.active {
   opacity: 1;
   pointer-events: all;
 }
@@ -245,6 +245,7 @@ body {
   border-radius: 6px;
   padding: 4px 8px;
   font-size: 1rem;
+  width: 104px;
 }
 
 #settings span {
@@ -264,7 +265,6 @@ body {
   display: flex;
   opacity: 1;
 }
-
 
 /* Modal Content */
 .modal-content-wrapper {

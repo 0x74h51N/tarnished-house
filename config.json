@@ -2,9 +2,9 @@
   "params": {
     "bloomParams": {
       "enabled": true,
-      "strength": 0.2,
-      "radius": 1.25,
-      "threshold": 0.3
+      "strength": 0.4,
+      "radius": 1.4,
+      "threshold": 0.5
     },
     "fog": true,
     "volume": 0.6,
@@ -19,19 +19,19 @@
     "directionalLightY": 5.5,
     "directionalLightZ": 12,
     "directionalLightHelper": false,
-    "shadowCameraWidth": 16,
-    "shadowCameraHeight": 16,
+    "shadowCameraWidth": 30,
+    "shadowCameraHeight": 18,
     "shadowCameraNear": 1,
-    "shadowCameraFar": 20,
-    "shadowBias":  -0.001,
+    "shadowCameraFar": 27,
+    "shadowBias": -0.001,
     "shadowNormalBias": 0.01,
     "graveCount": 25,
     "bushCount": 35,
     "treeCount": 15,
     "fireLightHelper": false,
-    "fireLightIntensity": 19,
+    "fireLightIntensity": 11,
     "fireLightDistance": 50,
-    "fireLightDecay": 2,
+    "fireLightDecay": 2.5,
     "fireLightAnimation": {
       "intensitySpeed": 10,
       "intensityAmp": 3,
@@ -69,15 +69,18 @@
     "scaleMax": 0.0049,
     "radiusMin": 6.8,
     "radiusMax": 17.5,
-    "minDistance": 2.3
+    "minDistance": 2.5
   },
   "rootPositions": [
-    [4, 0.1, 7],
-    [-4.5, 0, 2],
-    [0, 0.1, -5],
-    [7, 0.1, -3],
-    [-6, 0.1, 8],
-    [1, 0.1, 5],
-    [3, 0.1, -3]
+    [4, -0.1, 7],
+    [-4.5, -0.2, 2],
+    [0, -0.2, -5],
+    [7, -0.2, -3],
+    [-6, -0.2, 8],
+    [1, -0.2, 5],
+    [3, -0.2, -3],
+    [10, -0.2, 9],
+    [-9, -0.2, 5],
+    [13, -0.2, 6]
   ]
 }

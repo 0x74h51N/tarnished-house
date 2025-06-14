@@ -21,15 +21,21 @@ void main() {
 `;
 
 const _FS = `
-uniform sampler2D diffuseTexture;
-varying vec4 vColour;
-varying vec2 vAngle;
-void main() {
-  vec2 coords = (gl_PointCoord - 0.5) 
-    * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x) + 0.5;
-  gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
-}
-`;
+    uniform sampler2D diffuseTexture;
+    uniform sampler2D maskTexture;
+    varying vec4 vColour;
+    varying vec2 vAngle;
+    void main() {
+      vec2 coords = (gl_PointCoord - 0.5)
+        * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x)
+        + 0.5;
+
+      vec4 col = texture2D(diffuseTexture, coords) * vColour;
+      float mask = texture2D(maskTexture, coords).r;
+      if (mask < 0.01) discard;
+      gl_FragColor = vec4(col.rgb, col.a * mask);
+    }
+  `;
 
 const defaultTexture = new THREE.DataTexture(
   new Uint8Array([255, 255, 255, 255]),
@@ -70,6 +76,7 @@ export function createSimpleParticles({
   size = 0.05,
   yStart = 0,
   textures = null,
+  maskTextures = null,
   camera,
   sizeGrowth = 0,
 }) {
@@ -78,7 +85,13 @@ export function createSimpleParticles({
       ? textures
       : [textures]
     : [];
-  const numVariants = textureArray.length || 1;
+  const maskArray = maskTextures
+    ? Array.isArray(maskTextures)
+      ? maskTextures
+      : [maskTextures]
+    : textureArray.map(() => defaultTexture);
+
+  const numVariants = Math.max(textureArray.length, maskArray.length, 1);
 
   const positions = new Float32Array(maxCount * 3);
   const velocities = new Float32Array(maxCount * 3);
@@ -114,20 +127,30 @@ export function createSimpleParticles({
     nextIndex = 0;
 
   for (let v = 0; v < numVariants; v++) {
-    const diffuseTex = textureArray[v] || defaultTexture;
+    const dTex = textureArray[v] || defaultTexture;
+    const mTex = maskArray[v] || defaultTexture;
+    [mTex, dTex].forEach((t) => {
+      t.generateMipmaps = false;
+      t.minFilter = THREE.LinearFilter;
+      t.magFilter = THREE.LinearFilter;
+      t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+    });
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
         pointMultiplier: {
           value: window.innerHeight / Math.tan((camera.fov * Math.PI) / 360),
         },
-        diffuseTexture: { value: diffuseTex },
+        diffuseTexture: { value: dTex },
+        maskTexture: { value: mTex },
       },
       vertexShader: _VS,
       fragmentShader: _FS,
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
+      alphaTest: 0.01,
+      dithering: true,
     });
 
     const geometry = new THREE.BufferGeometry();
