@@ -587,9 +587,9 @@ const positionalSound = new THREE.PositionalAudio(listener);
 let soundLoaded = false;
 audioLoader.load("/sounds/fire.wav", (buffer) => {
   positionalSound.setBuffer(buffer);
-  positionalSound.setRefDistance(5);
+  positionalSound.setRefDistance(3);
   positionalSound.setLoop(true);
-  positionalSound.setVolume(params.volume);
+  positionalSound.setVolume(params.volume * 0.8);
   soundLoaded = true;
 });
 
@@ -598,7 +598,7 @@ let ambianceLoaded = false;
 audioLoader.load("/sounds/ambiance.flac", (buffer) => {
   ambianceSound.setBuffer(buffer);
   ambianceSound.setLoop(true);
-  ambianceSound.setVolume(params.volume * 0.7);
+  ambianceSound.setVolume(params.volume);
   ambianceLoaded = true;
 });
 
@@ -614,8 +614,8 @@ soundBtn.addEventListener("click", () => {
     soundIcon.src = "/sound-off.svg";
     soundIcon.alt = "Sound off";
   } else {
-    positionalSound.setVolume(params.volume);
-    ambianceSound.setVolume(params.volume * 0.8);
+    positionalSound.setVolume(params.volume * 0.8);
+    ambianceSound.setVolume(params.volume);
     if (soundLoaded && !positionalSound.isPlaying) positionalSound.play();
     if (ambianceLoaded && !ambianceSound.isPlaying) ambianceSound.play();
     soundIcon.src = "/sound.svg";

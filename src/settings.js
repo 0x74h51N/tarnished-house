@@ -58,126 +58,190 @@ export function setupGUI({
       setTimeout(() => settingsModal.classList.add("hidden"), 400);
     }
   });
+
   const initialVolume =
     typeof params.volume === "number" ? params.volume * 100 : 1;
 
-  settingsDiv.innerHTML = `
-  <label>
-    Volume:
-    <input type="range" id="volume" min="0" max="100" step="1" value="${initialVolume}" />
-    <span id="volumeValue">${initialVolume}</span>
-  </label><br/>
-   <label>
-      Brightness:
-      <input type="range" id="brightness" min="0" max="1" step="0.01" value="${
-        params.toneMappingExposure
-      }" />
-      <span id="brightnessValue">${params.toneMappingExposure}</span>
-    </label><br/>
-    <h3>Graphics Settings</h3>
-    <label>
-      <input type="checkbox" id="antialiasing" ${antialias ? "checked" : ""}/>
-      Antialiasing
-    </label><br/>
-    <label>
-      <input type="checkbox" id="bloomEnabled" ${
-        params.bloomParams.enabled ? "checked" : ""
-      }/>
-      Bloom
-    </label><br/>
-    <label>
-  <input type="checkbox" id="fogToggle" ${params.fog ? "checked" : ""}/>
-  Fog Effect
-  </label><br/>
-      <label>
-        <input type="checkbox" id="shadowEnabled" ${
-          renderer.shadowMap.enabled ? "checked" : ""
-        }/>
-        Enable Shadows
-      </label><br/>
-        <label>
-      Shadow Distance:
-      <select id="shadowDistance">
-      <option value="half" ${
-        params.shadowCameraWidth == 16 && params.shadowCameraFar == 20
-          ? "selected"
-          : ""
-      }>Half</option>
-      <option value="quarters" ${
-        params.shadowCameraWidth == 30 && params.shadowCameraFar == 27
-          ? "selected"
-          : ""
-      }>3/4</option>
-      <option value="full" ${
-        params.shadowCameraWidth == 40 && params.shadowCameraFar == 36
-          ? "selected"
-          : ""
-      }>Full</option>
-    </select>
-    </label><br/>
-      <label>
-      Shadow Resolution:
-      <select id="shadowResolution">
-       <option value="256" ${
-         params.shadowMapSize == 256 ? "selected" : ""
-       }>256</option>
-        <option value="512" ${
-          params.shadowMapSize == 512 ? "selected" : ""
-        }>512</option>
-        <option value="1024" ${
-          params.shadowMapSize == 1024 ? "selected" : ""
-        }>1024</option>
-        <option value="2048" ${
-          params.shadowMapSize == 2048 ? "selected" : ""
-        }>2048</option>
-        <option value="4096" ${
-          params.shadowMapSize == 4096 ? "selected" : ""
-        }>4096</option>
-      </select>
-    </label><br/>
-    <label>
-      Shadow Type:
-      <select id="shadowType">
-        <option value="BasicShadowMap" ${
-          renderer.shadowMap.type === THREE.BasicShadowMap ? "selected" : ""
-        }>Basic</option>
-        <option value="PCFShadowMap" ${
-          renderer.shadowMap.type === THREE.PCFShadowMap ? "selected" : ""
-        }>PCF</option>
-        <option value="PCFSoftShadowMap" ${
-          renderer.shadowMap.type === THREE.PCFSoftShadowMap ? "selected" : ""
-        }>PCF Soft</option>
-      </select>
-    </label><br/>
-    <label>
-      Texture Quality:
-      <select id="quality">
-        <option value="low">Low</option>
-        <option value="medium" selected>Medium</option>
-        <option value="high">High</option>
-      </select>
-    </label><br/>
-    <label>
-      Tone Mapping:
-      <select id="toneMapping">
-        <option value="NoToneMapping" ${
-          renderer.toneMapping === THREE.NoToneMapping ? "selected" : ""
-        }>None</option>
-        <option value="LinearToneMapping" ${
-          renderer.toneMapping === THREE.LinearToneMapping ? "selected" : ""
-        }>Linear</option>
-        <option value="ReinhardToneMapping" ${
-          renderer.toneMapping === THREE.ReinhardToneMapping ? "selected" : ""
-        }>Reinhard</option>
-        <option value="CineonToneMapping" ${
-          renderer.toneMapping === THREE.CineonToneMapping ? "selected" : ""
-        }>Cineon</option>
-        <option value="ACESFilmicToneMapping" ${
-          renderer.toneMapping === THREE.ACESFilmicToneMapping ? "selected" : ""
-        }>ACES</option>
-      </select>
-    </label>
-  `;
+  const shadowMapSizes = [256, 512, 1024, 2048, 4096];
+  const shadowDistOpt = [
+    {
+      n: "Half",
+      w: 16,
+      f: 20,
+    },
+    {
+      n: "3/4",
+      w: 30,
+      f: 27,
+    },
+    {
+      n: "Full",
+      w: 40,
+      f: 36,
+    },
+  ];
+
+  const shadowTypes = {
+    Basic: THREE.BasicShadowMap,
+    PCF: THREE.PCFShadowMap,
+    PCFSoft: THREE.PCFSoftShadowMap,
+    VSM: THREE.VSMShadowMap,
+  };
+
+  const shadowDispose = () => {
+    if (fireLight.shadow.map) {
+      fireLight.shadow.map.dispose();
+      fireLight.shadow.map = null;
+    }
+    if (directionalLight.shadow.map) {
+      directionalLight.shadow.map.dispose();
+      directionalLight.shadow.map = null;
+    }
+  };
+
+  const controls = [
+    {
+      type: "range",
+      id: "volume",
+      label: "Volume",
+      min: 0,
+      max: 100,
+      step: 1,
+      value: initialVolume,
+      span: "volumeValue",
+    },
+    {
+      type: "range",
+      id: "brightness",
+      label: "Brightness",
+      min: 0,
+      max: 1,
+      step: 0.01,
+      value: params.toneMappingExposure,
+      span: "brightnessValue",
+    },
+    {
+      type: "checkbox",
+      id: "antialiasing",
+      label: "Antialiasing",
+      checked: antialias,
+    },
+    {
+      type: "checkbox",
+      id: "bloomEnabled",
+      label: "Bloom",
+      checked: params.bloomParams.enabled,
+    },
+    {
+      type: "checkbox",
+      id: "fogToggle",
+      label: "Fog Effect",
+      checked: params.fog,
+    },
+    {
+      type: "checkbox",
+      id: "shadowEnabled",
+      label: "Enable Shadows",
+      checked: renderer.shadowMap.enabled,
+    },
+    {
+      type: "select",
+      id: "shadowDistance",
+      label: "Shadow Distance",
+      options: shadowDistOpt.map((o) => ({
+        v: o.n.toLowerCase(),
+        t: o.n,
+        s: params.shadowCameraWidth == o.w && params.shadowCameraFar == o.f,
+      })),
+    },
+    {
+      type: "select",
+      id: "shadowResolution",
+      label: "Shadow Resolution",
+      options: shadowMapSizes.map((siz) => ({
+        v: siz,
+        t: siz,
+        s: params.shadowMapSize == siz,
+      })),
+    },
+    {
+      type: "select",
+      id: "shadowType",
+      label: "Shadow Type",
+      options: Object.entries(shadowTypes).map(([v, typeConst]) => ({
+        v,
+        t: v === "PCFSoft" ? "PCF Soft" : v,
+        s: renderer.shadowMap.type === typeConst,
+      })),
+    },
+    {
+      type: "select",
+      id: "quality",
+      label: "Texture Quality",
+      options: [
+        { v: "low", t: "Low", s: false },
+        { v: "medium", t: "Medium", s: true },
+        { v: "high", t: "High", s: false },
+      ],
+    },
+    {
+      type: "select",
+      id: "toneMapping",
+      label: "Tone Mapping",
+      options: [
+        {
+          v: "NoToneMapping",
+          t: "None",
+          s: renderer.toneMapping === THREE.NoToneMapping,
+        },
+        {
+          v: "LinearToneMapping",
+          t: "Linear",
+          s: renderer.toneMapping === THREE.LinearToneMapping,
+        },
+        {
+          v: "ReinhardToneMapping",
+          t: "Reinhard",
+          s: renderer.toneMapping === THREE.ReinhardToneMapping,
+        },
+        {
+          v: "CineonToneMapping",
+          t: "Cineon",
+          s: renderer.toneMapping === THREE.CineonToneMapping,
+        },
+        {
+          v: "ACESFilmicToneMapping",
+          t: "ACES",
+          s: renderer.toneMapping === THREE.ACESFilmicToneMapping,
+        },
+      ],
+    },
+  ];
+
+  settingsDiv.innerHTML = controls
+    .map((c) =>
+      c.type === "range"
+        ? `<label>${c.label}:<input type="range" id="${c.id}" 
+        min="${c.min}" max="${c.max}" step="${c.step}" 
+        value="${c.value}"/><span id="${c.span}">${c.value}
+        </span>
+        </label><br/>`
+        : c.type === "checkbox"
+        ? `<label><input type="checkbox" id="${c.id}"${
+            c.checked ? " checked" : ""
+          }/> ${c.label}</label><br/>`
+        : c.type === "select"
+        ? `<label>${c.label}:<select id="${c.id}">${c.options
+            .map(
+              (o) =>
+                `<option value="${o.v}"${o.s ? " selected" : ""}>${
+                  o.t
+                }</option>`
+            )
+            .join("")}</select></label><br/>`
+        : ""
+    )
+    .join("");
 
   document.getElementById("antialiasing").addEventListener("change", (e) => {
     localStorage.setItem("antialias", e.target.checked);
@@ -210,30 +274,15 @@ export function setupGUI({
     params.volume = vol / 100;
     if (typeof onVolumeChange === "function") onVolumeChange(vol / 100);
   });
-
   document.getElementById("shadowDistance").addEventListener("input", (e) => {
-    let left, right, far;
-    if (e.target.value === "half") {
-      params.shadowCameraWidth = 16;
-      params.shadowCameraFar = 20;
-      left = -8;
-      right = 8;
-      far = 20;
-    }
-    if (e.target.value === "quarters") {
-      params.shadowCameraWidth = 30;
-      params.shadowCameraFar = 27;
-      left = -15;
-      right = 15;
-      far = 27;
-    }
-    if (e.target.value === "full") {
-      params.shadowCameraWidth = 40;
-      params.shadowCameraFar = 36;
-      left = -20;
-      right = 20;
-      far = 36;
-    }
+    const opt = shadowDistOpt.find((o) => o.n.toLowerCase() === e.target.value);
+    if (!opt) return;
+    params.shadowCameraWidth = opt.w;
+    params.shadowCameraFar = opt.f;
+    const left = -opt.w / 2;
+    const right = opt.w / 2;
+    const far = opt.f;
+
     directionalLight.shadow.camera.left = left;
     directionalLight.shadow.camera.right = right;
     directionalLight.shadow.camera.far = far;
@@ -245,14 +294,7 @@ export function setupGUI({
     .getElementById("shadowResolution")
     .addEventListener("change", (e) => {
       const res = Number(e.target.value);
-      if (directionalLight.shadow.map) {
-        directionalLight.shadow.map.dispose();
-        directionalLight.shadow.map = null;
-      }
-      if (fireLight.shadow.map) {
-        fireLight.shadow.map.dispose();
-        fireLight.shadow.map = null;
-      }
+      shadowDispose();
       fireLight.shadow.mapSize.set(res, res);
       directionalLight.shadow.mapSize.set(res, res);
       params.shadowMapSize = res;
@@ -261,7 +303,8 @@ export function setupGUI({
 
   document.getElementById("shadowType").addEventListener("change", (e) => {
     const val = e.target.value;
-    renderer.shadowMap.type = THREE[val];
+    shadowDispose();
+    renderer.shadowMap.type = shadowTypes[val];
   });
 
   document.getElementById("quality").addEventListener("change", (e) => {
@@ -390,23 +433,6 @@ export function setupGUI({
       renderer.toneMappingExposure = v;
     });
 
-  const shadowTypes = {
-    Basic: THREE.BasicShadowMap,
-    PCF: THREE.PCFShadowMap,
-    PCFSoft: THREE.PCFSoftShadowMap,
-    VSM: THREE.VSMShadowMap,
-  };
-
-  const shadowDispose = () => {
-    if (fireLight.shadow.map) {
-      fireLight.shadow.map.dispose();
-      fireLight.shadow.map = null;
-    }
-    if (directionalLight.shadow.map) {
-      directionalLight.shadow.map.dispose();
-      directionalLight.shadow.map = null;
-    }
-  };
   graphics
     .add(params, "shadowEnabled")
     .name("Shadow Enabled")
@@ -427,7 +453,7 @@ export function setupGUI({
       renderer.shadowMap.needsUpdate = true;
     });
   graphics
-    .add(params, "shadowMapSize", [256, 512, 1024, 2048, 4096])
+    .add(params, "shadowMapSize", shadowMapSizes)
     .name("Shadow Resolution")
     .onChange((v) => {
       shadowDispose();
