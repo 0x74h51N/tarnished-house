@@ -1,8 +1,14 @@
 import GUI from "lil-gui";
 import * as THREE from "three";
+import { spawnMeshes, controlHelper } from "./utils/_index";
+import {
+  params,
+  bushOptions,
+  graveOptions,
+  treeOptions,
+} from ".././config.json";
 
 export function setupGUI({
-  params,
   renderer,
   fireLight,
   fireLightHelper,
@@ -12,19 +18,9 @@ export function setupGUI({
   ambientLight,
   camera,
   cameraHelper,
-  spawnMeshes,
-  graveBaseMeshes,
-  graveGroup,
-  graveGLTF,
-  graveOptions,
-  bushBaseMeshes,
-  bushGroup,
-  bushGLTF,
-  bushOptions,
-  treeBaseMeshes,
-  treesGroup,
-  treeGLTF,
-  treeOptions,
+  graves,
+  bushes,
+  trees,
   antialias,
   onVolumeChange,
   skyUniforms,
@@ -120,6 +116,8 @@ export function setupGUI({
       value: params.toneMappingExposure,
       span: "brightnessValue",
     },
+  ];
+  const graphicsControl = [
     {
       type: "checkbox",
       id: "antialiasing",
@@ -218,30 +216,70 @@ export function setupGUI({
     },
   ];
 
-  settingsDiv.innerHTML = controls
-    .map((c) =>
-      c.type === "range"
-        ? `<label>${c.label}:<input type="range" id="${c.id}" 
-        min="${c.min}" max="${c.max}" step="${c.step}" 
-        value="${c.value}"/><span id="${c.span}">${c.value}
-        </span>
-        </label><br/>`
-        : c.type === "checkbox"
-        ? `<label><input type="checkbox" id="${c.id}"${
-            c.checked ? " checked" : ""
-          }/> ${c.label}</label><br/>`
-        : c.type === "select"
-        ? `<label>${c.label}:<select id="${c.id}">${c.options
-            .map(
-              (o) =>
-                `<option value="${o.v}"${o.s ? " selected" : ""}>${
-                  o.t
-                }</option>`
-            )
-            .join("")}</select></label><br/>`
-        : ""
-    )
-    .join("");
+  const sceneControls = [
+    {
+      type: "range",
+      id: "graveCount",
+      label: "Grave Count",
+      min: 1,
+      max: 100,
+      step: 1,
+      value: params.graveCount,
+      span: "graveCountValue",
+      onChange: (val) => {
+        if (graves.graveBaseMeshes.length > 0 && graves.graveGLTF) {
+          spawnMeshes(
+            graves.graveBaseMeshes,
+            graves.graveGroup,
+            val,
+            graveOptions
+          );
+        }
+      },
+    },
+    {
+      type: "range",
+      id: "bushCount",
+      label: "Bush Count",
+      min: 1,
+      max: 100,
+      step: 1,
+      value: params.bushCount,
+      span: "bushCountValue",
+      onChange: (val) => {
+        if (bushes.bushBaseMeshes.length > 0 && bushes.bushGLTF) {
+          spawnMeshes(
+            bushes.bushBaseMeshes,
+            bushes.bushGroup,
+            val,
+            bushOptions
+          );
+        }
+      },
+    },
+    {
+      type: "range",
+      id: "treeCount",
+      label: "Tree Count",
+      min: 1,
+      max: 100,
+      step: 1,
+      value: params.treeCount,
+      span: "treeCountValue",
+      onChange: (val) => {
+        if (trees.treeBaseMeshes.length > 0 && trees.treeGLTF) {
+          spawnMeshes(trees.treeBaseMeshes, trees.treesGroup, val, treeOptions);
+        }
+      },
+    },
+  ];
+
+  settingsDiv.innerHTML =
+    controls.map((c) => controlHelper(c)).join("") +
+    " <h3>Graphics Settings</h3>" +
+    graphicsControl.map((c) => controlHelper(c)).join("") +
+    "<h3>Scene Options</h3>" +
+    sceneControls.map((c) => controlHelper(c)).join("");
 
   document.getElementById("antialiasing").addEventListener("change", (e) => {
     localStorage.setItem("antialias", e.target.checked);
@@ -338,6 +376,17 @@ export function setupGUI({
 
   document.getElementById("toneMapping").addEventListener("change", (e) => {
     renderer.toneMapping = THREE[e.target.value];
+  });
+
+  sceneControls.forEach((c) => {
+    const input = document.getElementById(c.id);
+    const span = document.getElementById(c.span);
+    if (!input || !span) return;
+    input.addEventListener("input", (e) => {
+      const val = Number(e.target.value);
+      span.textContent = val;
+      c.onChange && c.onChange(val);
+    });
   });
 
   //
@@ -642,30 +691,45 @@ export function setupGUI({
     .add(params, "graveCount", 1, 100, 1)
     .name("Grave Count")
     .onChange(() => {
-      graveBaseMeshes.length > 0 &&
-        graveGLTF &&
+      if (
+        graves.graveBaseMeshes.length > 0 &&
+        graves.graveGLTF &&
+        spawnMeshes
+      ) {
         spawnMeshes(
-          graveBaseMeshes,
-          graveGroup,
+          graves.graveBaseMeshes,
+          graves.graveGroup,
           params.graveCount,
           graveOptions
         );
+      }
     });
+
   sceneOptions
     .add(params, "bushCount", 1, 100, 1)
     .name("Bush Count")
     .onChange(() => {
-      bushBaseMeshes.length > 0 &&
-        bushGLTF &&
-        spawnMeshes(bushBaseMeshes, bushGroup, params.bushCount, bushOptions);
+      if (bushes.bushBaseMeshes.length > 0 && bushes.bushGLTF) {
+        spawnMeshes(
+          bushes.bushBaseMeshes,
+          bushes.bushGroup,
+          params.bushCount,
+          bushOptions
+        );
+      }
     });
   sceneOptions
     .add(params, "treeCount", 1, 100, 1)
     .name("Tree Count")
     .onChange(() => {
-      treeBaseMeshes.length > 0 &&
-        treeGLTF &&
-        spawnMeshes(treeBaseMeshes, treesGroup, params.treeCount, treeOptions);
+      if (trees.treeBaseMeshes.length > 0 && trees.treeGLTF) {
+        spawnMeshes(
+          trees.treeBaseMeshes,
+          trees.treesGroup,
+          params.treeCount,
+          treeOptions
+        );
+      }
     });
 
   //camera settings

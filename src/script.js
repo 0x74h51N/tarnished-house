@@ -151,14 +151,23 @@ gltfLoader.load("./abandoned_house/scene.gltf", (gltf) => {
 //  * Trees
 //  */
 const treesGroup = new THREE.Group();
-let treeGLTF = null;
-let treeBaseMeshes = [];
+const trees = {
+  treeBaseMeshes: [],
+  treeGLTF: null,
+  treesGroup,
+};
 
 gltfLoader.load("./trees/trees.glb", (gltf) => {
-  treeGLTF = gltf;
-  treeBaseMeshes = treeGLTF.scene.children[0].children[0].children[0].children;
-  spawnMeshes(treeBaseMeshes, treesGroup, params.treeCount, treeOptions);
-  scene.add(treesGroup);
+  trees.treeGLTF = gltf;
+  trees.treeBaseMeshes =
+    trees.treeGLTF.scene.children[0].children[0].children[0].children;
+  spawnMeshes(
+    trees.treeBaseMeshes,
+    trees.treesGroup,
+    params.treeCount,
+    treeOptions
+  );
+  scene.add(trees.treesGroup);
 });
 
 // /**
@@ -166,42 +175,58 @@ gltfLoader.load("./trees/trees.glb", (gltf) => {
 //  */
 
 const bushGroup = new THREE.Group();
-let bushGLTF = null;
-let bushBaseMeshes = [];
+const bushes = {
+  bushBaseMeshes: [],
+  busheGLTF: null,
+  bushGroup,
+};
 gltfLoader.load("./burchellii/searsia_burchellii_1k.gltf", (gltf) => {
-  bushGLTF = gltf;
-  bushBaseMeshes = [
+  bushes.bushGLTF = gltf;
+  bushes.bushBaseMeshes = [
     gltf.scene.children[0],
     gltf.scene.children[1],
     gltf.scene.children[2],
   ];
-  spawnMeshes(bushBaseMeshes, bushGroup, params.bushCount, bushOptions);
-  scene.add(bushGroup);
+  spawnMeshes(
+    bushes.bushBaseMeshes,
+    bushes.bushGroup,
+    params.bushCount,
+    bushOptions
+  );
+  scene.add(bushes.bushGroup);
 });
 
 // /**
 //  * Graves
 //  */
-
 const graveGroup = new THREE.Group();
-let graveGLTF = null;
-let graveBaseMeshes = [];
+
+const graves = {
+  graveBaseMeshes: [],
+  graveGLTF: null,
+  graveGroup,
+};
 
 gltfLoader.load("./gravestones/scene.gltf", (gltf) => {
-  graveGLTF = gltf;
-  graveBaseMeshes = [];
+  graves.graveGLTF = gltf;
+  graves.graveBaseMeshes = [];
   gltf.scene.traverse((child) => {
     if (child.isMesh) {
       centerGeometryXZ(child.geometry);
       child.position.set(0, 0, 0);
       child.rotation.set(0, 0, 0);
       child.rotateY(Math.PI * 0.5);
-      graveBaseMeshes.push(child);
+      graves.graveBaseMeshes.push(child);
     }
   });
 
-  spawnMeshes(graveBaseMeshes, graveGroup, params.graveCount, graveOptions);
-  scene.add(graveGroup);
+  spawnMeshes(
+    graves.graveBaseMeshes,
+    graves.graveGroup,
+    params.graveCount,
+    graveOptions
+  );
+  scene.add(graves.graveGroup);
 });
 
 // /**
@@ -716,7 +741,6 @@ sparks.points.forEach((p) => (p.position.z = 1.5));
 //#region Settings
 
 setupGUI({
-  params,
   renderer,
   fireLight,
   fireLightHelper,
@@ -727,18 +751,9 @@ setupGUI({
   camera,
   cameraHelper,
   spawnMeshes,
-  graveBaseMeshes,
-  graveGroup,
-  graveGLTF,
-  graveOptions,
-  bushBaseMeshes,
-  bushGroup,
-  bushGLTF,
-  bushOptions,
-  treeBaseMeshes,
-  treesGroup,
-  treeGLTF,
-  treeOptions,
+  graves,
+  bushes,
+  trees,
   antialias,
   onVolumeChange: (v) => {
     positionalSound.setVolume(v);
