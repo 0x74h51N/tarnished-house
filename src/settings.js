@@ -111,8 +111,8 @@ export function setupGUI({
       id: "brightness",
       label: "Brightness",
       min: 0,
-      max: 1,
-      step: 0.01,
+      max: 2,
+      step: 0.1,
       value: params.toneMappingExposure,
       span: "brightnessValue",
     },
@@ -178,8 +178,8 @@ export function setupGUI({
       label: "Texture Quality",
       options: [
         { v: "low", t: "Low", s: false },
-        { v: "medium", t: "Medium", s: true },
-        { v: "high", t: "High", s: false },
+        { v: "medium", t: "Medium", s: false },
+        { v: "high", t: "High", s: true },
       ],
     },
     {
@@ -349,13 +349,13 @@ export function setupGUI({
     let bias, normalBias;
     if (e.target.value === "high") {
       bias = -0.0005;
-      normalBias = 0.005;
+      normalBias = 0.06;
     } else if (e.target.value === "medium") {
-      bias = -0.001;
-      normalBias = 0.01;
+      bias = -0.0008;
+      normalBias = 0.11;
     } else {
-      bias = -0.002;
-      normalBias = 0.02;
+      bias = -0.02;
+      normalBias = 0.2;
     }
     directionalLight.shadow.bias = bias;
     directionalLight.shadow.normalBias = normalBias;

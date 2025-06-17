@@ -36,8 +36,8 @@
     "license": "CC-BY 4.0"
   },
   {
-    "type": "House",
-    "author": "Sengchor",
+    "type": "Abandoned House",
+    "author": "Sengchor & 0x74h51n",
     "source": {
       "name": "Sketchfab - Abandoned House",
       "url": "https://sketchfab.com/3d-models/abandoned-house-a0c01ce35a474545b805c0739806aace"
@@ -46,10 +46,10 @@
   },
   {
     "type": "Bonfire",
-    "author": "cenfe",
+    "author": "UselessViking",
     "source": {
-      "name": "Sketchfab - Bonfire Dark Souls Saga",
-      "url": "https://sketchfab.com/3d-models/bonfire-dark-souls-saga-439c3f9208e94641be651165b94c523e"
+      "name": "Sketchfab - Dark Souls - Bonfire",
+      "url": "https://sketchfab.com/3d-models/dark-souls-bonfire-b0d68c8f4cd0487da3d1fb8327ab1044"
     },
     "license": "CC-BY 4.0"
   },
@@ -62,6 +62,34 @@
     },
     "license": "CC0"
   },
+  {
+    "type": "Abandoned House Textures",
+    "author": "Rob Tuytel",
+    "source": {
+      "name": "Poly Haven - Rough Plaster Brick",
+      "url": "https://polyhaven.com/a/rough_plaster_brick"
+    },
+    "license": "CC0"
+  },
+  {
+    "type": "Abandoned House Textures",
+    "author": "Rob Tuytel",
+    "source": {
+      "name": "Poly Haven - Rough Wood",
+      "url": "https://polyhaven.com/a/rough_wood"
+    },
+    "license": "CC0"
+  },
+  {
+    "type": "Abandoned House Textures",
+    "author": "Dimitrios Savva & Rob Tuytel",
+    "source": {
+      "name": "Poly Haven - Wood Peeling Paint Weathered",
+      "url": "https://polyhaven.com/a/wood_peeling_paint_weathered"
+    },
+    "license": "CC0"
+  },
+
   {
     "type": "Flame Sprites",
     "author": "Keith333",

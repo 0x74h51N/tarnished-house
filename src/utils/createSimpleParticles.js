@@ -3,39 +3,37 @@ import * as THREE from "three";
 // This createSimpleParticles function inspired from SimonDevYoutube
 // https://github.com/simondevyoutube/ThreeJS_Tutorial_ParticleSystems/blob/master/main.js
 // VertexShader and FragmentShader directly copied from that repo.
-
-const _VS = `  
+const _VS = `
 uniform float pointMultiplier;
+
 attribute float size;
 attribute float angle;
 attribute vec4 colour;
+
 varying vec4 vColour;
 varying vec2 vAngle;
+
 void main() {
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+
   gl_Position = projectionMatrix * mvPosition;
   gl_PointSize = size * pointMultiplier / gl_Position.w;
+
   vAngle = vec2(cos(angle), sin(angle));
   vColour = colour;
-}
-`;
+}`;
 
 const _FS = `
-    uniform sampler2D diffuseTexture;
-    uniform sampler2D maskTexture;
-    varying vec4 vColour;
-    varying vec2 vAngle;
-    void main() {
-      vec2 coords = (gl_PointCoord - 0.5)
-        * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x)
-        + 0.5;
 
-      vec4 col = texture2D(diffuseTexture, coords) * vColour;
-      float mask = texture2D(maskTexture, coords).r;
-      if (mask < 0.01) discard;
-      gl_FragColor = vec4(col.rgb, col.a * mask);
-    }
-  `;
+uniform sampler2D diffuseTexture;
+
+varying vec4 vColour;
+varying vec2 vAngle;
+
+void main() {
+  vec2 coords = (gl_PointCoord - 0.5) * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x) + 0.5;
+  gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
+}`;
 
 const defaultTexture = new THREE.DataTexture(
   new Uint8Array([255, 255, 255, 255]),
@@ -151,6 +149,7 @@ export function createSimpleParticles({
       blending: THREE.AdditiveBlending,
       alphaTest: 0.01,
       dithering: true,
+      vertexColors: true,
     });
 
     const geometry = new THREE.BufferGeometry();
@@ -161,6 +160,7 @@ export function createSimpleParticles({
     geometry.setAttribute("colour", new THREE.BufferAttribute(coloursArray, 4));
 
     const points = new THREE.Points(geometry, material);
+    points.renderOrder = 999;
     parent.add(points);
     pointsArr.push(points);
   }

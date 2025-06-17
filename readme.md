@@ -1,10 +1,10 @@
 # Tarnished House
+
 Tarnished House is a project by Tahsin Önemli, inspired by the Three.js Journey Haunted House lesson.
 
 While the idea was inspired by the course, every detail—from the geometry to the lighting—was built from scratch.
 
 Below, you’ll find the assets and resources used during development.
-
 
 ## Credits
 
@@ -32,22 +32,40 @@ Below, you’ll find the assets and resources used during development.
   - **Source:** [Sketchfab - Trees Pack](https://sketchfab.com/3d-models/trees-eed7470843504aa592514554a6100fbc)
   - **License:** CC-BY 4.0
 
-- **House**
+- **Abandoned House**
 
-  - **Authors:** Sengchor
+  - **Authors:** Sengchor & 0x74h51n
   - **Source:** [Sketchfab - Abandoned House](https://sketchfab.com/3d-models/abandoned-house-a0c01ce35a474545b805c0739806aace)
   - **License:** CC-BY 4.0
 
 - **Bonfire**
 
-  - **Authors:** cenfe
-  - **Source:** [Sketchfab - Bonfire Dark Souls Saga](https://sketchfab.com/3d-models/bonfire-dark-souls-saga-439c3f9208e94641be651165b94c523e)
+  - **Authors:** UselessViking
+  - **Source:** [Sketchfab - Dark Souls - Bonfire](https://sketchfab.com/3d-models/dark-souls-bonfire-b0d68c8f4cd0487da3d1fb8327ab1044)
   - **License:** CC-BY 4.0
 
 - **Ground Texture**
 
   - **Authors:** Rob Tuytel
   - **Source:** [Poly Haven - Coast Sand Rocks 02](https://polyhaven.com/a/coast_sand_rocks_02)
+  - **License:** CC0
+
+- **Abandoned House Textures**
+
+  - **Authors:** Rob Tuytel
+  - **Source:** [Poly Haven - Rough Plaster Brick](https://polyhaven.com/a/rough_plaster_brick)
+  - **License:** CC0
+
+- **Abandoned House Textures**
+
+  - **Authors:** Rob Tuytel
+  - **Source:** [Poly Haven - Rough Wood](https://polyhaven.com/a/rough_wood)
+  - **License:** CC0
+
+- **Abandoned House Textures**
+
+  - **Authors:** Dimitrios Savva & Rob Tuytel
+  - **Source:** [Poly Haven - Wood Peeling Paint Weathered](https://polyhaven.com/a/wood_peeling_paint_weathered)
   - **License:** CC0
 
 - **Flame Sprites**
@@ -69,6 +87,11 @@ Below, you’ll find the assets and resources used during development.
   - **License:** CC-BY 4.0
 
 - **Fire Sound**
+
   - **Authors:** NoOneIsReal
   - **Source:** [Freesound - The Fireplace 3.wav](https://freesound.org/people/NoOneIsReal/sounds/387128/)
   - **License:** CC0
+
+- **Moon Photo**
+  - **Authors:** 0x74h51n (by me!)
+  - **Source:** [Github]()

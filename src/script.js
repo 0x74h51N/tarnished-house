@@ -22,7 +22,7 @@ import { Sky } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 //
 //#region credits
 //
@@ -109,39 +109,51 @@ loadingManager.onLoad = () => {
     setTimeout(() => {
       introModal.classList.remove("active");
       introModal.classList.add("hidden");
-    }, 9000);
+    }, 15000);
   }
 };
 
 const texLoader = new THREE.TextureLoader(loadingManager);
-const baseColorTex = texLoader.load(
-  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_diff_1k.webp"
-);
-const normalTex = texLoader.load(
-  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_nor_gl_1k.webp"
-);
-const armTex = texLoader.load(
-  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_arm_1k.webp"
-);
-const displacementTex = texLoader.load(
-  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_disp_1k.webp"
-);
+const baseColorTex = texLoader.load("./floor/textures/ground-diff.avif");
+const normalTex = texLoader.load("./floor/textures/ground-norm.avif");
+const armTex = texLoader.load("./floor/textures/ground-arm.avif");
+const displacementTex = texLoader.load("./floor/textures/ground-disp.avif");
 
 const floorAlphaTex = texLoader.load("./floor/alpha.jpg");
 
 // /**
 //  * House
 //  */
-const gltfLoader = new GLTFLoader(loadingManager);
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderConfig({ type: "js" });
+dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
 
-gltfLoader.load("./abandoned_house/scene.gltf", (gltf) => {
+const gltfLoader = new GLTFLoader(loadingManager);
+gltfLoader.setDRACOLoader(dracoLoader);
+
+gltfLoader.load("./abandoned_house/abandonedHouse.gltf", (gltf) => {
   const house = gltf.scene;
-  house.position.set(0.02, 0.25, -5.5);
+  house.position.set(0.02, 0.25, -5);
   house.scale.setScalar(1.2);
   gltf.scene.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
       child.receiveShadow = true;
+      const mat = child.material;
+      if (mat.map) {
+        mat.map.encoding = THREE.sRGBEncoding;
+        mat.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        mat.map.minFilter = THREE.LinearMipmapLinearFilter;
+        mat.map.magFilter = THREE.LinearFilter;
+        mat.map.generateMipmaps = false;
+      }
+      if (mat.normalMap) {
+        mat.normalMap.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        mat.normalMap.minFilter = THREE.LinearMipmapLinearFilter;
+        mat.normalMap.magFilter = THREE.LinearFilter;
+        mat.normalMap.generateMipmaps = false;
+      }
+      mat.needsUpdate = true;
     }
   });
   scene.add(house);
@@ -157,7 +169,7 @@ const trees = {
   treesGroup,
 };
 
-gltfLoader.load("./trees/trees.glb", (gltf) => {
+gltfLoader.load("./trees/trees.gltf", (gltf) => {
   trees.treeGLTF = gltf;
   trees.treeBaseMeshes =
     trees.treeGLTF.scene.children[0].children[0].children[0].children;
@@ -180,21 +192,32 @@ const bushes = {
   busheGLTF: null,
   bushGroup,
 };
-gltfLoader.load("./burchellii/searsia_burchellii_1k.gltf", (gltf) => {
-  bushes.bushGLTF = gltf;
-  bushes.bushBaseMeshes = [
-    gltf.scene.children[0],
-    gltf.scene.children[1],
-    gltf.scene.children[2],
-  ];
-  spawnMeshes(
-    bushes.bushBaseMeshes,
-    bushes.bushGroup,
-    params.bushCount,
-    bushOptions
-  );
-  scene.add(bushes.bushGroup);
-});
+gltfLoader.load(
+  "./burchellii/bushes.gltf",
+  (gltf) => {
+    console.log(gltf);
+
+    bushes.bushGLTF = gltf;
+    bushes.bushBaseMeshes = [
+      gltf.scene.children[0],
+      gltf.scene.children[1],
+      gltf.scene.children[2],
+    ];
+    spawnMeshes(
+      bushes.bushBaseMeshes,
+      bushes.bushGroup,
+      params.bushCount,
+      bushOptions
+    );
+    scene.add(bushes.bushGroup);
+  },
+  (xhr) => {
+    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+  },
+  (error) => {
+    console.error("An error happened", error);
+  }
+);
 
 // /**
 //  * Graves
@@ -264,19 +287,25 @@ gltfLoader.load("./pineroots/pine_roots.gltf", (gltf) => {
 //  * Bonfire
 //  */
 
-gltfLoader.load("./bonfire/bonfire_dark_souls_saga.glb", (g) => {
-  const bonfire = g.scene.children[0];
-  bonfire.traverse((child) => {
-    if (child.isMesh) {
-      child.castShadow = true;
-    }
-  });
+gltfLoader.load(
+  "./bonfire/bonfire.gltf",
+  (g) => {
+    const bonfire = g.scene.children[0];
+    bonfire.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+      }
+    });
 
-  bonfire.scale.setScalar(0.4);
-  bonfire.position.set(0, 0.25, 1.5);
-  bonfire.add(positionalSound);
-  scene.add(bonfire);
-});
+    bonfire.scale.setScalar(2.2);
+    bonfire.position.set(0, 0.21, 1.5);
+    bonfire.add(positionalSound);
+    scene.add(bonfire);
+  },
+  (error) => {
+    console.error("An error happened", error);
+  }
+);
 
 //
 //#endregion
@@ -344,11 +373,11 @@ const fireLight = new THREE.PointLight(
   0xffa500,
   params.fireLightIntensity,
   params.fireLightDistance,
-  2
+  params.fireLightDecay
 );
 fireLight.castShadow = true;
 fireLight.shadow.mapSize.set(params.shadowMapSize, params.shadowMapSize);
-fireLight.position.set(0, 1, 1.5);
+fireLight.position.set(0, params.fireLightY, 1.5);
 
 fireLight.shadow.bias = params.shadowBias;
 fireLight.shadow.normalBias = params.shadowNormalBias;
@@ -477,7 +506,7 @@ const moon = new THREE.Mesh(
     opacity: 1,
     alphaMap: moonTexture,
     emissive: 0xffffff,
-    emissiveIntensity: 6,
+    emissiveIntensity: 10,
     toneMapped: false,
     emissiveMap: emissiveMap,
   })
@@ -585,7 +614,7 @@ const bloomPass = new UnrealBloomPass(
 );
 composer.addPass(bloomPass);
 
-const fog = new THREE.FogExp2(directionalLight.color, 0.02);
+const fog = new THREE.FogExp2("#57767d", 0.02);
 scene.fog = fog;
 function fogOnChange(e) {
   if (e.target.checked) {
@@ -610,7 +639,7 @@ const audioLoader = new THREE.AudioLoader(loadingManager);
 
 const positionalSound = new THREE.PositionalAudio(listener);
 let soundLoaded = false;
-audioLoader.load("/sounds/fire.wav", (buffer) => {
+audioLoader.load("/sounds/fire.mp3", (buffer) => {
   positionalSound.setBuffer(buffer);
   positionalSound.setRefDistance(3);
   positionalSound.setLoop(true);
@@ -620,7 +649,7 @@ audioLoader.load("/sounds/fire.wav", (buffer) => {
 
 const ambianceSound = new THREE.Audio(listener);
 let ambianceLoaded = false;
-audioLoader.load("/sounds/ambiance.flac", (buffer) => {
+audioLoader.load("/sounds/ambiance.mp3", (buffer) => {
   ambianceSound.setBuffer(buffer);
   ambianceSound.setLoop(true);
   ambianceSound.setVolume(params.volume);
@@ -655,12 +684,8 @@ soundBtn.addEventListener("click", () => {
 //#region particles
 //
 
-const flamePath = ["fire/flame1.jpg", "fire/flame2.jpg", "fire/flame3.jpg"];
-const flameAlphaPath = [
-  "fire/flame1-alpha.png",
-  "fire/flame2-alpha.png",
-  "fire/flame3-alpha.png",
-];
+const flamePath = ["fire/flame2.jpg", "fire/flame3.jpg"];
+const flameAlphaPath = ["fire/flame2-alpha.png", "fire/flame3-alpha.png"];
 
 const flameTextures = flamePath.map((p) => {
   const tex = texLoader.load(p, (t) => {
@@ -681,15 +706,15 @@ const maskTextures = flameAlphaPath.map((p) => {
 
 const flame = createSimpleParticles({
   parent: scene,
-  area: 0.2,
+  area: 0.21,
   size: 0.4,
-  maxCount: 7,
-  spawnRate: 18,
-  yStart: 0.35,
+  maxCount: 9,
+  spawnRate: 17,
+  yStart: 0.45,
   textures: flameTextures,
   maskTextures,
   camera,
-  opacity: 0.26,
+  opacity: 0.19,
 });
 flame.points.forEach((p) => {
   p.position.z = 1.5;
@@ -815,7 +840,7 @@ const tick = () => {
       firelightAnimation.intensityAmp;
 
   fireLight.position.y =
-    1 +
+    params.fireLightY +
     Math.sin(elapsedTime * firelightAnimation.positionSpeed) *
       firelightAnimation.positionAmp;
 

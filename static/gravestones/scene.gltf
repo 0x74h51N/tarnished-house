@@ -797,13 +797,13 @@
   ],
   "images": [
     {
-      "uri": "textures/Graves_baseColor.jpeg"
+      "uri": "textures/Graves_baseColor.avif"
     },
     {
-      "uri": "textures/Graves_metallicRoughness.jpg"
+      "uri": "textures/Graves_metallicRoughness.avif"
     },
     {
-      "uri": "textures/Graves_normal.jpg"
+      "uri": "textures/Graves_normal.avif"
     }
   ],
   "materials": [
