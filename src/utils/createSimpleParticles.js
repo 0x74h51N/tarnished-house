@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-// This createSimpleParticles function inspired from SimonDevYoutube
+// This createParticles function inspired from SimonDevYoutube
 // https://github.com/simondevyoutube/ThreeJS_Tutorial_ParticleSystems/blob/master/main.js
 // VertexShader and FragmentShader directly copied from that repo.
 const _VS = `
@@ -44,27 +44,31 @@ const defaultTexture = new THREE.DataTexture(
 defaultTexture.needsUpdate = true;
 
 /**
- * Creates and manages a simple GPU‐accelerated particle system.
- * Particles are emitted from a box area around yStart, move with velocity,
- * and fade out over their lifetime. Uses custom shaders for size, rotation,
- * and color tinting.
+ * Creates a GPU-accelerated particle system using Three.js.
+ * Particles emit around a start position (`startPozs`), move upwards with velocity,
+ * and optionally grow or fade as they move. Custom shaders control particle size,
+ * rotation, and color tint.
  *
  * @param {Object} options
- * @param {THREE.Object3D} options.parent    – Three.js scene or group to attach the particle Points.
- * @param {THREE.Color|number|string} options.color    – Base tint color for all particles.
- * @param {number} [options.opacity=1]      - Default 1
- * @param {number} [options.maxCount=200]   – Max number of particles to allocate.
- * @param {number} [options.spawnRate=50]   – How many particles spawn per second.
- * @param {number} [options.area=1]         – Half‐width of the spawning box (x/z direction).
- * @param {number} [options.size=0.05]      – Base size of each particle (in world units).
- * @param {number} [options.yStart=0]       – Y‐coordinate where new particles appear.
+ * @param {THREE.Object3D} options.parent           – Parent object (scene or group) to attach particles.
+ * @param {THREE.Color|number|string} options.color – Base color for particles.
+ * @param {number} [options.opacity=1]              – Starting opacity for particles.
+ * @param {number} [options.maxCount=200]           – Maximum particle count.
+ * @param {number} [options.spawnRate=50]           – Particle spawn rate per second.
+ * @param {number} [options.area=1]                 – Spawn area size around start position (X/Z).
+ * @param {number} [options.size=0.05]              – Base particle size.
+ * @param {Array<number>} [options.startPozs=[0,0,0]] – XYZ coordinates of initial particle spawn center.
  * @param {Array<THREE.Texture>|THREE.Texture|null} [options.textures=null]
- *                                           – Optional array of textures to randomly assign.
- * @param {THREE.Camera} options.camera    – Camera used to compute size attenuation.
+ *                                                  – Optional particle textures.
+ * @param {Array<THREE.Texture>|THREE.Texture|null} [options.maskTextures=null]
+ *                                                  – Optional mask textures (currently unused).
+ * @param {THREE.Camera} options.camera             – Camera reference for particle scaling.
+ * @param {number} [options.sizeGrowth=0]           – Particle size increase rate with height.
+ * @param {number} [options.fadeRate=0]             – Opacity fade rate with height.
  *
- * @returns {Object} controller with `.start()` and `.stop()` methods to control emission.
+ * @returns {Object} Particle system with `.points` (THREE.Points) and `.step(delta)` to update per frame.
  */
-export function createSimpleParticles({
+export function createParticles({
   parent,
   color,
   opacity = 1,
@@ -72,11 +76,12 @@ export function createSimpleParticles({
   spawnRate = 50,
   area = 1,
   size = 0.05,
-  yStart = 0,
+  startPozs = [0, 0, 0],
   textures = null,
   maskTextures = null,
   camera,
   sizeGrowth = 0,
+  fadeRate = 0,
 }) {
   const textureArray = textures
     ? Array.isArray(textures)
@@ -91,33 +96,26 @@ export function createSimpleParticles({
 
   const numVariants = Math.max(textureArray.length, maskArray.length, 1);
 
-  const positions = new Float32Array(maxCount * 3);
-  const velocities = new Float32Array(maxCount * 3);
+  const pos = new Float32Array(maxCount * 3);
+  const v = new Float32Array(maxCount * 3);
   const variants = new Uint8Array(maxCount);
 
-  const sizesArray = new Float32Array(maxCount);
+  const sizeArr = new Float32Array(maxCount);
   const anglesArray = new Float32Array(maxCount);
-  const coloursArray = new Float32Array(maxCount * 4);
+  const colsArr = new Float32Array(maxCount * 4);
   const baseCol = new THREE.Color(color);
 
   for (let i = 0; i < maxCount; i++) {
     variants[i] = i % numVariants;
     const i3 = i * 3;
-    positions[i3 + 0] = (Math.random() * 2 - 1) * area;
-    positions[i3 + 1] = yStart;
-    positions[i3 + 2] = (Math.random() * 2 - 1) * area;
-    velocities[i3 + 0] = 0;
-    velocities[i3 + 1] = Math.random() * 0.5 + 0.2;
-    velocities[i3 + 2] = 0;
 
-    sizesArray[i] = size;
+    startPos(startPozs, pos, i3, area);
+    startV(v, i3, true);
+
+    sizeArr[i] = size;
     anglesArray[i] = Math.random() * Math.PI * 2;
 
-    const i4 = i * 4;
-    coloursArray[i4 + 0] = baseCol.r;
-    coloursArray[i4 + 1] = baseCol.g;
-    coloursArray[i4 + 2] = baseCol.b;
-    coloursArray[i4 + 3] = opacity;
+    colUpt(i, colsArr, baseCol, opacity);
   }
 
   const pointsArr = [];
@@ -153,14 +151,14 @@ export function createSimpleParticles({
     });
 
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     geometry.setAttribute("variant", new THREE.BufferAttribute(variants, 1));
-    geometry.setAttribute("size", new THREE.BufferAttribute(sizesArray, 1));
+    geometry.setAttribute("size", new THREE.BufferAttribute(sizeArr, 1));
     geometry.setAttribute("angle", new THREE.BufferAttribute(anglesArray, 1));
-    geometry.setAttribute("colour", new THREE.BufferAttribute(coloursArray, 4));
+    geometry.setAttribute("colour", new THREE.BufferAttribute(colsArr, 4));
 
     const points = new THREE.Points(geometry, material);
-    points.renderOrder = 999;
+    points.renderOrder = 9;
     parent.add(points);
     pointsArr.push(points);
   }
@@ -173,33 +171,56 @@ export function createSimpleParticles({
     for (let s = 0; s < toSpawn; s++) {
       const i = nextIndex % maxCount;
       const i3 = i * 3;
-      positions[i3 + 0] = (Math.random() * 2 - 1) * area;
-      positions[i3 + 1] = yStart;
-      positions[i3 + 2] = (Math.random() * 2 - 1) * area;
-      velocities[i3 + 0] = (Math.random() - 0.5) * 0.2;
-      velocities[i3 + 1] = Math.random() * 0.5 + 0.2;
-      velocities[i3 + 2] = (Math.random() - 0.5) * 0.2;
+
+      startPos(startPozs, pos, i3, area);
+      startV(v, i3);
+
       variants[i] = i % numVariants;
       nextIndex++;
     }
 
     for (let i = 0; i < maxCount; i++) {
       const i3 = i * 3;
-      positions[i3 + 0] += velocities[i3 + 0] * delta;
-      positions[i3 + 1] += velocities[i3 + 1] * delta;
-      positions[i3 + 2] += velocities[i3 + 2] * delta;
+      pos[i3] += v[i3] * delta;
+      pos[i3 + 1] += v[i3 + 1] * delta;
+      pos[i3 + 2] += v[i3 + 2] * delta;
 
-      const y = positions[i3 + 1];
-      sizesArray[i] = Math.max(0.01, size + y * sizeGrowth);
+      const y = pos[i3 + 1];
+
+      if (sizeGrowth !== 0) sizeArr[i] = size + y * sizeGrowth;
+
+      if (fadeRate !== 0) {
+        const newOp = opacity - y * fadeRate;
+        colUpt(i, colsArr, baseCol, Math.max(0, newOp));
+      }
     }
 
     for (const p of pointsArr) {
       p.geometry.attributes.position.needsUpdate = true;
-      if (sizeGrowth !== 0) {
-        p.geometry.attributes.size.needsUpdate = true;
-      }
+      p.geometry.attributes.size.needsUpdate = sizeGrowth !== 0;
+      p.geometry.attributes.colour.needsUpdate = fadeRate !== 0;
     }
   }
 
   return { points: pointsArr, step };
+}
+
+function startPos(startPozs = [], pos = [], i3 = 0, area) {
+  pos[i3] = startPozs[0] + (Math.random() * 2 - 1) * area;
+  pos[i3 + 1] = startPozs[1];
+  pos[i3 + 2] = startPozs[2] + (Math.random() * 2 - 1) * area;
+}
+
+function startV(v = [], i3 = 0, f = false) {
+  v[i3] = f ? 0 : (Math.random() - 0.5) * 0.2;
+  v[i3 + 1] = Math.random() * 0.5 + 0.2;
+  v[i3 + 2] = f ? 0 : (Math.random() - 0.5) * 0.2;
+}
+
+function colUpt(i, colsArr, baseCol, opacity) {
+  const i4 = i * 4;
+  colsArr[i4] = baseCol.r;
+  colsArr[i4 + 1] = baseCol.g;
+  colsArr[i4 + 2] = baseCol.b;
+  colsArr[i4 + 3] = opacity;
 }

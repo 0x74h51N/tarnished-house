@@ -2,7 +2,7 @@
   "params": {
     "bloomParams": {
       "enabled": true,
-      "strength": 0.45,
+      "strength": 0.5,
       "radius": 1.4,
       "threshold": 0.5
     },

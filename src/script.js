@@ -7,7 +7,7 @@ import {
   spawnMeshes,
   addRoots,
   centerGeometryXZ,
-  createSimpleParticles,
+  createParticles,
 } from "./utils/_index.js";
 import Stats from "stats.js";
 import {
@@ -106,10 +106,6 @@ loadingManager.onLoad = () => {
   if (introModal) {
     introModal.classList.remove("hidden");
     introModal.classList.add("active");
-    setTimeout(() => {
-      introModal.classList.remove("active");
-      introModal.classList.add("hidden");
-    }, 15000);
   }
 };
 
@@ -133,8 +129,8 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 gltfLoader.load("./abandoned_house/abandonedHouse.gltf", (gltf) => {
   const house = gltf.scene;
-  house.position.set(0.02, 0.25, -5);
-  house.scale.setScalar(1.2);
+  house.position.set(0.02, 0.2, -6);
+  house.scale.setScalar(1.3);
   gltf.scene.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
@@ -195,8 +191,6 @@ const bushes = {
 gltfLoader.load(
   "./burchellii/bushes.gltf",
   (gltf) => {
-    console.log(gltf);
-
     bushes.bushGLTF = gltf;
     bushes.bushBaseMeshes = [
       gltf.scene.children[0],
@@ -495,29 +489,52 @@ skyUniforms["mieDirectionalG"].value = 0;
 skyUniforms["sunPosition"].value.set(0, -0.08, -1);
 
 const moonTexture = texLoader.load("/moon.jpg");
+
+moonTexture.encoding = THREE.sRGBEncoding;
+
 const emissiveMap = texLoader.load("/moon-emissive.jpg");
+
+emissiveMap.encoding = THREE.LinearEncoding;
+
+const alphaMap = texLoader.load("/moon.jpg");
+
+alphaMap.minFilter = THREE.LinearFilter;
+alphaMap.magFilter = THREE.LinearFilter;
+alphaMap.generateMipmaps = false;
+
+alphaMap.encoding = THREE.LinearEncoding;
+
 const moon = new THREE.Mesh(
-  new THREE.PlaneGeometry(1.7, 1.7),
+  new THREE.PlaneGeometry(2, 2),
   new THREE.MeshPhysicalMaterial({
     map: moonTexture,
     transparent: true,
-    blending: THREE.AdditiveBlending,
     color: 0xffffff,
     opacity: 1,
-    alphaMap: moonTexture,
+    alphaMap: alphaMap,
     emissive: 0xffffff,
     emissiveIntensity: 10,
     toneMapped: false,
     emissiveMap: emissiveMap,
+    sizeAttenuation: false,
   })
 );
 
-const moonDistance = directionalLight.position.length() * 2;
+const moonDistance = directionalLight.position.length() * 3;
 const moonDirection = directionalLight.position.clone().normalize();
 moon.position.copy(moonDirection.multiplyScalar(moonDistance));
 
 moon.lookAt(camera.position);
 scene.add(moon);
+
+const desiredAngularSize = THREE.MathUtils.degToRad(0.75);
+
+function updateMoonScale() {
+  const d = camera.position.distanceTo(moon.position);
+
+  const worldDiameter = 2 * d * Math.tan(desiredAngularSize);
+  moon.scale.setScalar(worldDiameter);
+}
 
 //
 //#endregion
@@ -704,20 +721,17 @@ const maskTextures = flameAlphaPath.map((p) => {
   return tex;
 });
 
-const flame = createSimpleParticles({
+const flame = createParticles({
   parent: scene,
   area: 0.21,
-  size: 0.4,
+  size: 0.41,
   maxCount: 9,
   spawnRate: 17,
-  yStart: 0.45,
+  startPozs: [0, 0.45, 1.5],
   textures: flameTextures,
   maskTextures,
   camera,
   opacity: 0.19,
-});
-flame.points.forEach((p) => {
-  p.position.z = 1.5;
 });
 
 const smokePath = [
@@ -729,32 +743,31 @@ const smokePath = [
 
 const smokeTextures = smokePath.map((p) => texLoader.load(p));
 
-const smoke = createSimpleParticles({
+const smoke = createParticles({
   parent: scene,
-  area: 0.3,
-  size: 0.7,
+  area: 0.2,
+  size: 0.6,
   maxCount: 30,
   spawnRate: 2,
-  yStart: 1.1,
+  startPozs: [0, 1.3, 1.5],
   textures: smokeTextures,
   camera,
   opacity: 0.4,
   color: 0x444444,
-  sizeGrowth: 0.3,
+  sizeGrowth: 0.5,
+  fadeRate: 0.05,
 });
-smoke.points.forEach((p) => (p.position.z = 1.5));
 
-const sparks = createSimpleParticles({
+const sparks = createParticles({
   parent: scene,
   color: "#fff",
   area: 0.3,
-  size: 0.001,
+  size: 0.007,
   maxCount: 100,
   spawnRate: 11,
-  yStart: 0.15,
+  startPozs: [0, 0.15, 1.5],
   camera,
 });
-sparks.points.forEach((p) => (p.position.z = 1.5));
 
 //
 
@@ -823,7 +836,8 @@ const tick = () => {
   clampCameraPosition();
 
   const delta = timer.getDelta();
-  moon.lookAt(camera.position);
+
+  updateMoonScale();
 
   // Shadow enabled
   sparks.step(delta);
@@ -862,6 +876,7 @@ const tick = () => {
   window.requestAnimationFrame(tick);
 };
 
+// window.addEventListener("click", tick);
 tick();
 
 //
