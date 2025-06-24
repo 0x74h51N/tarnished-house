@@ -122,7 +122,9 @@ const floorAlphaTex = texLoader.load("./floor/alpha.jpg");
 //  */
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderConfig({ type: "js" });
-dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+dracoLoader.setDecoderPath(
+  "https://www.gstatic.com/draco/versioned/decoders/1.5.7/"
+);
 
 const gltfLoader = new GLTFLoader(loadingManager);
 gltfLoader.setDRACOLoader(dracoLoader);
@@ -206,7 +208,7 @@ gltfLoader.load(
     scene.add(bushes.bushGroup);
   },
   (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+    console.log("bushes " + (xhr.loaded / xhr.total) * 100 + "% loaded");
   },
   (error) => {
     console.error("An error happened", error);
@@ -295,6 +297,9 @@ gltfLoader.load(
     bonfire.position.set(0, 0.21, 1.5);
     bonfire.add(positionalSound);
     scene.add(bonfire);
+  },
+  (xhr) => {
+    console.log("bonfire " + (xhr.loaded / xhr.total) * 100 + "% loaded");
   },
   (error) => {
     console.error("An error happened", error);
