@@ -59,15 +59,34 @@ defaultTexture.needsUpdate = true;
  * @param {number} [options.size=0.05]              – Base particle size.
  * @param {Array<number>} [options.startPozs=[0,0,0]] – XYZ coordinates of initial particle spawn center.
  * @param {Array<THREE.Texture>|THREE.Texture|null} [options.textures=null]
- *                                                  – Optional particle textures.
- * @param {Array<THREE.Texture>|THREE.Texture|null} [options.maskTextures=null]
- *                                                  – Optional mask textures (currently unused).
+
  * @param {THREE.Camera} options.camera             – Camera reference for particle scaling.
  * @param {number} [options.sizeGrowth=0]           – Particle size increase rate with height.
  * @param {number} [options.fadeRate=0]             – Opacity fade rate with height.
  *
  * @returns {Object} Particle system with `.points` (THREE.Points) and `.step(delta)` to update per frame.
  */
+
+interface CreateParticlesInterface {
+  parent: THREE.Object3D;
+  color?: THREE.Color | number | string;
+  opacity?: number;
+  maxCount?: number;
+  spawnRate?: number;
+  area?: number;
+  size?: number;
+  startPozs?: number[];
+  textures?: THREE.Texture[] | THREE.Texture | null;
+  camera: THREE.PerspectiveCamera;
+  sizeGrowth?: number;
+  fadeRate?: number;
+}
+
+interface CreateParticlesReturn {
+  points: THREE.Points[];
+  step: (delta: number) => void;
+}
+
 export function createParticles({
   parent,
   color,
@@ -78,23 +97,17 @@ export function createParticles({
   size = 0.05,
   startPozs = [0, 0, 0],
   textures = null,
-  maskTextures = null,
   camera,
   sizeGrowth = 0,
   fadeRate = 0,
-}) {
+}: CreateParticlesInterface): CreateParticlesReturn {
   const textureArray = textures
     ? Array.isArray(textures)
       ? textures
       : [textures]
     : [];
-  const maskArray = maskTextures
-    ? Array.isArray(maskTextures)
-      ? maskTextures
-      : [maskTextures]
-    : textureArray.map(() => defaultTexture);
 
-  const numVariants = Math.max(textureArray.length, maskArray.length, 1);
+  const numVariants = textureArray.length;
 
   const pos = new Float32Array(maxCount * 3);
   const v = new Float32Array(maxCount * 3);
@@ -118,14 +131,17 @@ export function createParticles({
     colUpt(i, colsArr, baseCol, opacity);
   }
 
-  const pointsArr = [];
+  const pointsArr: THREE.Points<
+    THREE.BufferGeometry<THREE.NormalBufferAttributes>,
+    THREE.ShaderMaterial,
+    THREE.Object3DEventMap
+  >[] = [];
   let spawnAccumulator = 0,
     nextIndex = 0;
 
   for (let v = 0; v < numVariants; v++) {
     const dTex = textureArray[v] || defaultTexture;
-    const mTex = maskArray[v] || defaultTexture;
-    [mTex, dTex].forEach((t) => {
+    [dTex].forEach((t) => {
       t.generateMipmaps = false;
       t.minFilter = THREE.LinearFilter;
       t.magFilter = THREE.LinearFilter;
@@ -138,7 +154,6 @@ export function createParticles({
           value: window.innerHeight / Math.tan((camera.fov * Math.PI) / 360),
         },
         diffuseTexture: { value: dTex },
-        maskTexture: { value: mTex },
       },
       vertexShader: _VS,
       fragmentShader: _FS,
@@ -163,7 +178,7 @@ export function createParticles({
     pointsArr.push(points);
   }
 
-  function step(delta) {
+  function step(delta: number) {
     spawnAccumulator += delta * spawnRate;
     const toSpawn = Math.floor(spawnAccumulator);
     spawnAccumulator -= toSpawn;
@@ -205,19 +220,29 @@ export function createParticles({
   return { points: pointsArr, step };
 }
 
-function startPos(startPozs = [], pos = [], i3 = 0, area) {
+function startPos(
+  startPozs: number[] = [0, 0, 0],
+  pos: Float32Array,
+  i3: number = 0,
+  area: number
+) {
   pos[i3] = startPozs[0] + (Math.random() * 2 - 1) * area;
   pos[i3 + 1] = startPozs[1];
   pos[i3 + 2] = startPozs[2] + (Math.random() * 2 - 1) * area;
 }
 
-function startV(v = [], i3 = 0, f = false) {
+function startV(v: Float32Array, i3 = 0, f = false) {
   v[i3] = f ? 0 : (Math.random() - 0.5) * 0.2;
   v[i3 + 1] = Math.random() * 0.5 + 0.2;
   v[i3 + 2] = f ? 0 : (Math.random() - 0.5) * 0.2;
 }
 
-function colUpt(i, colsArr, baseCol, opacity) {
+function colUpt(
+  i: number,
+  colsArr: Float32Array,
+  baseCol: THREE.Color,
+  opacity: number
+) {
   const i4 = i * 4;
   colsArr[i4] = baseCol.r;
   colsArr[i4 + 1] = baseCol.g;

@@ -3,7 +3,7 @@
   "description": "First three.js project, inspired by threejs-journey tutorial",
   "author": "Tahsin Önemli aka 0x74h51n <mr.tahsin@windowslive.com>",
   "private": false,
-  "version": "0.1",
+  "version": "0.14",
   "repository": {
     "type": "git",
     "url": "https://github.com/0x74h51N/tarnished-house"
@@ -14,12 +14,16 @@
     "build": "vite build"
   },
   "devDependencies": {
+    "@types/node": "^24.0.4",
+    "@types/three": "^0.177.0",
+    "typescript": "^5.8.3",
     "vite": "^6.2.2",
+    "vite-plugin-checker": "^0.9.3",
     "vite-plugin-restart": "^0.4.2"
   },
   "dependencies": {
     "lil-gui": "^0.20.0",
     "stats.js": "^0.17.0",
-    "three": "^0.174.0"
+    "three": "^0.177.0"
   }
 }

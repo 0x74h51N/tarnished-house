@@ -1,0 +1,230 @@
+import * as THREE from "three";
+import { Timer } from "three/examples/jsm/misc/Timer.js";
+import Stats from "stats.js";
+import { params } from "../config.json";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import {
+  intro,
+  credits,
+  setupGUI,
+  loadAssets,
+  createSky,
+  particles,
+  lights,
+  cameraControl,
+  settings,
+  createSound,
+} from "./components/_index.js";
+
+const canvas = document.querySelector("canvas.webgl");
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+};
+
+window.addEventListener("resize", () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+const scene = new THREE.Scene();
+const loadingManager = new THREE.LoadingManager();
+const texLoader = new THREE.TextureLoader(loadingManager);
+
+intro(loadingManager);
+
+credits();
+
+const { camera, cameraHelper, controls, clampCameraPosition } = cameraControl({
+  scene,
+  canvas: canvas as HTMLCanvasElement,
+  sizes,
+});
+
+const {
+  ambientLight,
+  fireLight,
+  fireLightHelper,
+  directionalLight,
+  directionalLightHelper,
+  directionalLightCameraHelper,
+} = lights(scene);
+
+//
+//#region renderer
+//
+let antialias = localStorage.getItem("antialias") || false;
+antialias = antialias === "true";
+
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvas as HTMLCanvasElement,
+  antialias: antialias,
+});
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = params.toneMappingExposure;
+
+//Postprocessing
+
+const composer = new EffectComposer(renderer);
+
+composer.addPass(new RenderPass(scene, camera));
+const bloomParams = params.bloomParams;
+
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  bloomParams.strength,
+  bloomParams.radius,
+  bloomParams.threshold
+);
+composer.addPass(bloomPass);
+
+//
+//#endregion
+//
+
+const { positionalSound, onVolumeChange } = createSound({
+  camera,
+  loadingManager,
+  toggleButtonId: "sound-toggle-btn",
+  iconId: "sound-toggle-icon",
+});
+
+const { trees, bushes, graves } = loadAssets({
+  scene,
+  loadingManager,
+  renderer,
+  positionalSound,
+  texLoader,
+});
+
+const { update: updateMoon, skyUniforms } = createSky({
+  scene,
+  texLoader,
+  directionalLight,
+  camera,
+});
+
+const { flame, smoke, sparks } = particles({ scene, texLoader, camera });
+
+//
+//#region Settings
+//
+const lightArr = [fireLight, directionalLight];
+
+const stats = new Stats();
+stats.showPanel(1);
+stats.showPanel(0);
+
+setupGUI({
+  renderer,
+  fireLightHelper,
+  directionalLightHelper,
+  directionalLightCameraHelper,
+  ambientLight,
+  camera,
+  cameraHelper: cameraHelper as THREE.CameraHelper,
+  graves,
+  bushes,
+  trees,
+  antialias,
+  onVolumeChange,
+  bloomPass,
+  scene,
+  lights: lightArr,
+});
+
+settings({
+  lights: lightArr,
+  renderer,
+  graves,
+  bushes,
+  trees,
+  antialias,
+  onVolumeChange,
+  scene,
+  stats,
+});
+
+// #endregion
+//
+
+//
+//#region Animate
+//
+
+const firelightAnimation = params.fireLightAnimation;
+
+const timer = new Timer();
+
+const tick = () => {
+  //fps
+  stats.begin();
+  // Timer
+  timer.update();
+  const elapsedTime = timer.getElapsed();
+
+  // Update controls
+  controls.update();
+  clampCameraPosition();
+
+  const delta = timer.getDelta();
+
+  updateMoon();
+
+  // Shadow enabled
+  sparks.step(delta);
+  flame.step(delta);
+  smoke.step(delta);
+
+  // helpers
+  directionalLightHelper.update();
+  directionalLightCameraHelper.update();
+
+  fireLight.intensity =
+    params.fireLightIntensity +
+    Math.sin(elapsedTime * firelightAnimation.intensitySpeed) *
+      firelightAnimation.intensityAmp;
+
+  fireLight.position.y =
+    params.fireLightY +
+    Math.sin(elapsedTime * firelightAnimation.positionSpeed) *
+      firelightAnimation.positionAmp;
+
+  fireLight.distance =
+    params.fireLightDistance +
+    Math.sin(elapsedTime * firelightAnimation.distanceSpeed) *
+      firelightAnimation.distanceAmp;
+
+  // Render
+
+  if (params.bloomParams.enabled && !composer.passes.includes(bloomPass)) {
+    composer.addPass(bloomPass);
+  }
+  if (!params.bloomParams.enabled && composer.passes.includes(bloomPass)) {
+    composer.passes.splice(composer.passes.indexOf(bloomPass), 1);
+  }
+  composer.render();
+
+  stats.end();
+  window.requestAnimationFrame(tick);
+};
+
+tick();
+
+//
+//
+//
+//#endregion
+//

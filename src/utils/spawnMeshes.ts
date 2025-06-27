@@ -1,0 +1,117 @@
+import * as THREE from "three";
+import type { AssetOptionsTypes } from "../types";
+
+/**
+ * Mesh multiplication and random placement utility function.
+ * @param {THREE.Object3D[]} baseMeshes
+ * @param {THREE.Group} group
+ * @param {number} count
+ * @param {object} options
+ * @param {boolean} isGraveyard
+ */
+
+interface SpawnMeshesInterface {
+  baseMeshes: THREE.Mesh[];
+  group: THREE.Group;
+  count: number;
+  options: AssetOptionsTypes;
+  castShadow?: boolean;
+  receiveShadow?: boolean;
+}
+
+export function spawnMeshes({
+  group,
+  count,
+  options,
+  castShadow = true,
+  receiveShadow = true,
+}: SpawnMeshesInterface) {
+  const {
+    scaleMin = 1,
+    scaleMax = 1,
+    radiusMin = 1,
+    radiusMax = 1,
+    minDistance = 0,
+  } = options;
+  group.children.forEach((child) => {
+    if ((child as THREE.Mesh).isMesh) {
+      const mesh = child as THREE.Mesh;
+      if (mesh.geometry) mesh.geometry.dispose();
+      if (mesh.material) {
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach((m) => {
+            if (m && typeof m.dispose === "function") m.dispose();
+          });
+        } else {
+          mesh.material.dispose();
+        }
+      }
+    }
+  });
+  group.clear();
+  group.clear();
+  const placedPositions = [];
+  const yPosition = 0.12;
+
+  for (let i = 0; i < count; i++) {
+    const base = (arguments[0] as SpawnMeshesInterface).baseMeshes[
+      Math.floor(
+        Math.random() * (arguments[0] as SpawnMeshesInterface).baseMeshes.length
+      )
+    ];
+    const mesh = base.clone(true);
+
+    if (i >= (arguments[0] as SpawnMeshesInterface).baseMeshes.length) {
+      mesh.traverse((child: THREE.Object3D) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const meshChild = child as THREE.Mesh;
+          meshChild.castShadow = castShadow;
+          meshChild.receiveShadow = receiveShadow;
+          if (meshChild.material) {
+            if (Array.isArray(meshChild.material)) {
+              meshChild.material = meshChild.material.map((m) => m.clone());
+            } else {
+              meshChild.material = meshChild.material.clone();
+            }
+          }
+        }
+      });
+    } else {
+      mesh.traverse((child: THREE.Object3D) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const meshChild = child as THREE.Mesh;
+          meshChild.castShadow = castShadow;
+          meshChild.receiveShadow = receiveShadow;
+        }
+      });
+    }
+
+    const scale = scaleMin + Math.random() * (scaleMax - scaleMin);
+    mesh.scale.setScalar(scale);
+    mesh.position.set(0, 0, 0);
+
+    const angle = (i / count) * Math.PI * 2;
+    let positionFound = false;
+    let x: number;
+    let z: number;
+    let tryCount = 0;
+    while (!positionFound && tryCount < 100) {
+      const radius = radiusMin + Math.random() * (radiusMax - radiusMin);
+      x = Math.cos(angle) * radius;
+      z = Math.sin(angle) * radius;
+      if (minDistance > 0) {
+        positionFound = placedPositions.every(([px, pz]) => {
+          const dx = x - (px ?? 0);
+          const dz = z - (pz ?? 0);
+          return dx * dx + dz * dz >= minDistance * minDistance;
+        });
+      } else {
+        positionFound = true;
+      }
+      tryCount++;
+    }
+    mesh.position.set(x!, yPosition, z!);
+    placedPositions.push([x!, z!]);
+    group.add(mesh);
+  }
+}

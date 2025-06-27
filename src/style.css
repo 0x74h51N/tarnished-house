@@ -1,6 +1,10 @@
 * {
   margin: 0;
   padding: 0;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
 
 html,
@@ -32,24 +36,25 @@ body {
   --color-shadow-card: #0007;
   --color-white: #fff;
   --color-black: #222;
-  --color-link: #ffd700;
   --color-link-hover: #fffbe0;
 }
 
-#loading-screen {
+#loading-screen,
+.modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: var(--color-bg-dark);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1009;
   transition: opacity 0.6s;
 }
-
+#loading-screen {
+  background: var(--color-bg-dark);
+}
 #loading-screen.hidden {
   opacity: 0;
   pointer-events: none;
@@ -100,13 +105,6 @@ body {
   }
 }
 
-* {
-  scrollbar-width: none;
-}
-*::-webkit-scrollbar {
-  display: none;
-}
-
 #intro-text {
   color: var(--color-gold-text) !important;
   font-family: "UnifrakturCook", cursive;
@@ -123,6 +121,7 @@ body {
   opacity: 0;
   pointer-events: none;
 }
+
 .btn-container {
   position: fixed;
   right: 30px;
@@ -137,6 +136,13 @@ body {
   width: 20px;
   user-select: none;
   pointer-events: none;
+}
+
+.btn,
+.modal-content,
+.asset-card,
+.project-info {
+  background: var(--color-bg-modal);
 }
 
 .btn {
@@ -162,7 +168,6 @@ body {
   filter: drop-shadow(0 0 1px var(--color-gold-shadow-strong))
     drop-shadow(0 0 1px var(--color-gold-shadow-bright)) brightness(1)
     sepia(0.1) hue-rotate(-40deg) saturate(2);
-
   z-index: 40;
   pointer-events: none;
 }
@@ -180,20 +185,13 @@ body {
   background: var(--color-gold);
   color: var(--color-black);
 }
+
 #intro-modal .modal-content {
   max-width: 800px !important;
 }
-/* Modal Overlay */
+
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   background: var(--color-bg-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 10010;
   opacity: 0;
   pointer-events: none;
@@ -203,67 +201,6 @@ body {
 .modal.active {
   opacity: 1;
   pointer-events: all;
-}
-
-.modal-content,
-.asset-card,
-.project-info,
-.btn {
-  background: var(--color-bg-modal);
-}
-
-/* Settings */
-
-#settings label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  cursor: pointer;
-}
-#settings label:has(input[type="checkbox"]) {
-  justify-content: flex-start;
-  gap: 10px;
-}
-
-#settings input[type="range"] {
-  flex: 1;
-  margin-left: 10px;
-  accent-color: #ffd700;
-}
-
-#settings input[type="checkbox"] {
-  accent-color: #ffd700;
-  width: 18px;
-  height: 18px;
-}
-
-#settings select {
-  background: #23242c;
-  color: #ffd700;
-  border: 1px solid #444;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 1rem;
-  width: 104px;
-}
-
-#settings span {
-  min-width: 32px;
-  display: inline-block;
-  text-align: right;
-  color: #ffd700;
-  font-weight: bold;
-}
-
-#settings-modal.hidden {
-  display: none;
-  opacity: 0;
-}
-
-#settings-modal.active {
-  display: flex;
-  opacity: 1;
 }
 
 /* Modal Content */
@@ -282,7 +219,6 @@ body {
   filter: drop-shadow(0 0 4px var(--color-gold-shadow-strong))
     drop-shadow(0 0 4px var(--color-gold-shadow-bright)) brightness(1.2)
     sepia(0.1) hue-rotate(-40deg) saturate(2);
-
   z-index: 40;
   pointer-events: none;
 }
@@ -295,6 +231,7 @@ body {
   bottom: -28px;
   right: -28px;
 }
+
 .modal-content {
   border-radius: 18px;
   padding: 2.5rem 2.2rem 2rem 2.2rem;
@@ -310,6 +247,7 @@ body {
   box-sizing: border-box;
   z-index: 2;
 }
+
 .modal-inner h2,
 .project-title {
   font-family: "UnifrakturCook", cursive;
@@ -321,6 +259,7 @@ body {
   display: block;
   margin-bottom: 0.5em;
 }
+
 .project-info {
   border-radius: 10px;
   border: 1.5px solid var(--color-gold-soft);
@@ -335,7 +274,8 @@ body {
   letter-spacing: 0.5px;
 }
 
-.project-info strong {
+.project-info strong,
+.asset-card strong {
   font-weight: 700;
   color: var(--color-gold);
 }
@@ -350,13 +290,17 @@ body {
   color: var(--color-gold-text);
 }
 
-.project-info a {
-  color: var(--color-link);
+.project-info a,
+.asset-list a {
+  color: var(--color-gold);
   text-decoration: underline;
+  transition: color 0.2s;
 }
-.project-info a:hover {
+.project-info a:hover,
+.asset-list a:hover {
   color: var(--color-white);
 }
+
 .credits-footer {
   display: flex;
   justify-content: space-between;
@@ -364,6 +308,7 @@ body {
   margin-top: 5rem;
   margin-bottom: -0.5rem;
 }
+
 .logos {
   display: flex;
   gap: 0.5rem;
@@ -447,26 +392,12 @@ body {
   gap: 0.2rem;
 }
 
-.asset-card strong {
-  font-size: 1.08em;
-  color: var(--color-gold);
-}
-
 .asset-card .asset-author,
 .asset-card .asset-license,
 .asset-card .asset-source {
   color: var(--color-gold-text);
   font-size: 0.8em;
   margin-left: 0.2em;
-}
-
-.asset-list a {
-  color: var(--color-link);
-  text-decoration: underline;
-  transition: color 0.2s;
-}
-.asset-list a:hover {
-  color: var(--color-link-hover);
 }
 
 /* Close Button */
@@ -497,4 +428,62 @@ body {
 }
 #credits-modal.hidden {
   display: none;
+}
+
+/* Settings */
+#settings label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+#settings label:has(input[type="checkbox"]) {
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+#settings input[type="range"] {
+  flex: 1;
+  margin-left: 10px;
+  accent-color: var(--color-gold);
+}
+
+#settings input[type="checkbox"] {
+  accent-color: var(--color-gold);
+  width: 18px;
+  height: 18px;
+}
+
+#settings select {
+  background: var(--color-bg-dark);
+  color: var(--color-gold);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 1rem;
+  width: 104px;
+}
+
+#settings select option {
+  background: var(--color-bg-dark);
+  color: var(--color-gold);
+}
+
+#settings span {
+  min-width: 32px;
+  display: inline-block;
+  text-align: right;
+  color: var(--color-gold);
+  font-weight: bold;
+}
+
+#settings-modal.hidden {
+  display: none;
+  opacity: 0;
+}
+
+#settings-modal.active {
+  display: flex;
+  opacity: 1;
 }

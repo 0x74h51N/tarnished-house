@@ -1,5 +1,6 @@
 {
   "params": {
+    "fpsCounter": false,
     "bloomParams": {
       "enabled": true,
       "strength": 0.5,
@@ -27,15 +28,15 @@
     "shadowNormalBias": 0.07,
     "graveCount": 32,
     "bushCount": 35,
-    "treeCount": 18,
+    "treeCount": 20,
     "fireLightHelper": false,
     "fireLightY": 0.85,
-    "fireLightIntensity": 29,
-    "fireLightDistance": 23,
-    "fireLightDecay": 1.6,
+    "fireLightIntensity": 28,
+    "fireLightDistance": 21,
+    "fireLightDecay": 1,
     "fireLightAnimation": {
       "intensitySpeed": 10,
-      "intensityAmp": 3,
+      "intensityAmp": 5,
       "positionSpeed": 8,
       "positionAmp": 0.05,
       "distanceSpeed": 8,
@@ -54,22 +55,22 @@
   "bushOptions": {
     "scaleMin": 0.2,
     "scaleMax": 0.4,
-    "radiusMin": 5.3,
-    "radiusMax": 18,
+    "radiusMin": 7,
+    "radiusMax": 20,
     "minDistance": 1
   },
   "graveOptions": {
     "scaleMin": 0.0018,
     "scaleMax": 0.0019,
-    "radiusMin": 6,
-    "radiusMax": 18,
+    "radiusMin": 8,
+    "radiusMax": 21,
     "minDistance": 3
   },
   "treeOptions": {
     "scaleMin": 0.0048,
     "scaleMax": 0.0049,
-    "radiusMin": 6.8,
-    "radiusMax": 18,
+    "radiusMin": 7.8,
+    "radiusMax": 21,
     "minDistance": 2.5
   },
   "rootPositions": [
