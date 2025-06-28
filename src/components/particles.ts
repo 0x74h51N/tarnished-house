@@ -1,20 +1,19 @@
-import * as THREE from "three";
+import { Scene, TextureLoader, PerspectiveCamera, SRGBColorSpace } from "three";
 import { createParticles } from "../utils/_index";
 
 interface ParticlesInterface {
-  scene: THREE.Scene;
-  texLoader: THREE.TextureLoader;
-  camera: THREE.PerspectiveCamera;
+  scene: Scene;
+  texLoader: TextureLoader;
+  camera: PerspectiveCamera;
 }
 
 export function particles({ scene, texLoader, camera }: ParticlesInterface) {
   // Flame
   const flamePath = ["fire/flame2.jpg", "fire/flame3.jpg"];
-  const flameAlphaPath = ["fire/flame2-alpha.png", "fire/flame3-alpha.png"];
 
   const flameTextures = flamePath.map((p) =>
     texLoader.load(p, (t) => {
-      t.colorSpace = THREE.SRGBColorSpace;
+      t.colorSpace = SRGBColorSpace;
     })
   );
 

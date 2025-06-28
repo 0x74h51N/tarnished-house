@@ -1,18 +1,29 @@
-import * as THREE from "three";
 import { shadowDistOpt, shadowTypes, fog } from "./settingsData.js";
 import { shadowDispose, spawnMeshes } from "../../utils/_index";
 import { params } from "../../../config.json";
 import { AssetOptionsTypes, AssetTypes } from "types";
-
+import {
+  Light,
+  WebGLRenderer,
+  Scene,
+  DirectionalLight,
+  NoToneMapping,
+  LinearToneMapping,
+  ReinhardToneMapping,
+  CineonToneMapping,
+  ACESFilmicToneMapping,
+  ToneMapping,
+} from "three";
+import { toneMappingMap } from "./settingsData";
 interface SettingsControllerInterface {
-  lights: THREE.Light[];
-  renderer: THREE.WebGLRenderer;
+  lights: Light[];
+  renderer: WebGLRenderer;
   countConfigs: Record<
     string,
     { manager: AssetTypes; opts: AssetOptionsTypes }
   >;
   onVolumeChange: (v: number) => void;
-  scene: THREE.Scene;
+  scene: Scene;
   stats: Stats;
 }
 
@@ -90,7 +101,7 @@ export function settingsController({
       if (!opt) return;
       params.shadowCameraWidth = opt.w;
       params.shadowCameraFar = opt.f;
-      const dirLight = lights.find((l) => l instanceof THREE.DirectionalLight);
+      const dirLight = lights.find((l) => l instanceof DirectionalLight);
       if (dirLight) {
         const halfW = opt.w / 2;
         dirLight.shadow.camera.left = -halfW;
@@ -135,9 +146,8 @@ export function settingsController({
       params.shadowNormalBias = normalBias;
     },
     toneMapping: (e: Event & { target: HTMLSelectElement }) => {
-      renderer.toneMapping = THREE[
-        e.target.value as keyof typeof THREE
-      ] as THREE.ToneMapping;
+      const value = e.target.value as keyof typeof toneMappingMap;
+      renderer.toneMapping = toneMappingMap[value] as ToneMapping;
     },
   };
 

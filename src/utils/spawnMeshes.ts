@@ -1,18 +1,18 @@
-import * as THREE from "three";
+import { Mesh, Group, Object3D } from "three";
 import type { AssetOptionsTypes } from "../types";
 
 /**
  * Mesh multiplication and random placement utility function.
- * @param {THREE.Object3D[]} baseMeshes
- * @param {THREE.Group} group
+ * @param {Object3D[]} baseMeshes
+ * @param {Group} group
  * @param {number} count
  * @param {object} options
  * @param {boolean} isGraveyard
  */
 
 interface SpawnMeshesInterface {
-  baseMeshes: THREE.Mesh[];
-  group: THREE.Group;
+  baseMeshes: Mesh[];
+  group: Group;
   count: number;
   options: AssetOptionsTypes;
   castShadow?: boolean;
@@ -34,8 +34,8 @@ export function spawnMeshes({
     minDistance = 0,
   } = options;
   group.children.forEach((child) => {
-    if ((child as THREE.Mesh).isMesh) {
-      const mesh = child as THREE.Mesh;
+    if ((child as Mesh).isMesh) {
+      const mesh = child as Mesh;
       if (mesh.geometry) mesh.geometry.dispose();
       if (mesh.material) {
         if (Array.isArray(mesh.material)) {
@@ -62,9 +62,9 @@ export function spawnMeshes({
     const mesh = base.clone(true);
 
     if (i >= (arguments[0] as SpawnMeshesInterface).baseMeshes.length) {
-      mesh.traverse((child: THREE.Object3D) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const meshChild = child as THREE.Mesh;
+      mesh.traverse((child: Object3D) => {
+        if ((child as Mesh).isMesh) {
+          const meshChild = child as Mesh;
           meshChild.castShadow = castShadow;
           meshChild.receiveShadow = receiveShadow;
           if (meshChild.material) {
@@ -77,9 +77,9 @@ export function spawnMeshes({
         }
       });
     } else {
-      mesh.traverse((child: THREE.Object3D) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const meshChild = child as THREE.Mesh;
+      mesh.traverse((child: Object3D) => {
+        if ((child as Mesh).isMesh) {
+          const meshChild = child as Mesh;
           meshChild.castShadow = castShadow;
           meshChild.receiveShadow = receiveShadow;
         }

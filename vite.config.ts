@@ -1,21 +1,42 @@
 import { defineConfig } from "vite";
 import restart from "vite-plugin-restart";
 import checker from "vite-plugin-checker";
+import { visualizer } from "rollup-plugin-visualizer";
 
-export default defineConfig({
-  root: "src/", // Sources files (typically where index.html is)
-  publicDir: "../static/", // Path from "root" to static assets (files that are served as they are)
-  server: {
-    host: true, // Open to local network and display URL
-    open: !("SANDBOX_URL" in process.env || "CODESANDBOX_HOST" in process.env), // Open if it's not a CodeSandbox
-  },
-  build: {
-    outDir: "../dist", // Output in the dist/ folder
-    emptyOutDir: true, // Empty the folder first
-    sourcemap: true, // Add sourcemap
-  },
-  plugins: [
-    restart({ restart: ["../static/**"] }),
-    checker({ typescript: true }),
-  ],
+export default defineConfig(() => {
+  const shouldAnalyze = process.env.ANALYZE === "1";
+  return {
+    root: "src/",
+    publicDir: "../static/",
+    server: {
+      host: true,
+      open: !(
+        "SANDBOX_URL" in process.env || "CODESANDBOX_HOST" in process.env
+      ),
+    },
+    build: {
+      outDir: "../dist",
+      emptyOutDir: true,
+      sourcemap: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            three: ["three"],
+            stats: ["stats.js"],
+          },
+        },
+      },
+    },
+    plugins: [
+      restart({ restart: ["../static/**"] }),
+      checker({ typescript: true }),
+      shouldAnalyze &&
+        visualizer({
+          open: true,
+          filename: "stats.html",
+          gzipSize: true,
+          brotliSize: true,
+        }),
+    ].filter(Boolean),
+  };
 });

@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import { Timer } from "three/examples/jsm/misc/Timer.js";
 import Stats from "stats.js";
 import { params } from "../config.json";
@@ -8,7 +7,6 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 import {
   intro,
   credits,
-  setupGUI,
   loadAssets,
   createSky,
   particles,
@@ -17,6 +15,16 @@ import {
   settings,
   createSound,
 } from "./components/_index.js";
+import {
+  Scene,
+  LoadingManager,
+  TextureLoader,
+  WebGLRenderer,
+  PCFSoftShadowMap,
+  ACESFilmicToneMapping,
+  Vector2,
+  CameraHelper,
+} from "three";
 
 const canvas = document.querySelector("canvas.webgl");
 const sizes = {
@@ -35,9 +43,9 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-const scene = new THREE.Scene();
-const loadingManager = new THREE.LoadingManager();
-const texLoader = new THREE.TextureLoader(loadingManager);
+const scene = new Scene();
+const loadingManager = new LoadingManager();
+const texLoader = new TextureLoader(loadingManager);
 
 intro(loadingManager);
 
@@ -64,15 +72,15 @@ const {
 let antialias = localStorage.getItem("antialias") || false;
 antialias = antialias === "true";
 
-const renderer = new THREE.WebGLRenderer({
+const renderer = new WebGLRenderer({
   canvas: canvas as HTMLCanvasElement,
   antialias: antialias,
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.type = PCFSoftShadowMap;
+renderer.toneMapping = ACESFilmicToneMapping;
 renderer.toneMappingExposure = params.toneMappingExposure;
 
 //Postprocessing
@@ -83,7 +91,7 @@ composer.addPass(new RenderPass(scene, camera));
 const bloomParams = params.bloomParams;
 
 const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  new Vector2(window.innerWidth, window.innerHeight),
   bloomParams.strength,
   bloomParams.radius,
   bloomParams.threshold
@@ -126,23 +134,30 @@ const lightArr = [fireLight, directionalLight];
 const stats = new Stats();
 stats.showPanel(1);
 stats.showPanel(0);
+let guiLoaded = false;
 
-setupGUI({
-  renderer,
-  fireLightHelper,
-  directionalLightHelper,
-  directionalLightCameraHelper,
-  ambientLight,
-  camera,
-  cameraHelper: cameraHelper as THREE.CameraHelper,
-  graves,
-  bushes,
-  trees,
-  antialias,
-  onVolumeChange,
-  bloomPass,
-  scene,
-  lights: lightArr,
+window.addEventListener("keydown", async (e) => {
+  if (e.key.toLowerCase() === "h" && !guiLoaded) {
+    guiLoaded = true;
+    const { setupGUI } = await import("./components/setupGui");
+    setupGUI({
+      renderer,
+      fireLightHelper,
+      directionalLightHelper,
+      directionalLightCameraHelper,
+      ambientLight,
+      camera,
+      cameraHelper: cameraHelper as CameraHelper,
+      graves,
+      bushes,
+      trees,
+      antialias,
+      onVolumeChange,
+      bloomPass,
+      scene,
+      lights: lightArr,
+    });
+  }
 });
 
 settings({

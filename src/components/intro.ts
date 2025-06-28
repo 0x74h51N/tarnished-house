@@ -1,6 +1,6 @@
-import * as THREE from "three";
+import { LoadingManager } from "three";
 
-export function intro(loadingManager: THREE.LoadingManager) {
+export function intro(loadingManager: LoadingManager) {
   const closeIntro = document.getElementById("close-intro")!;
   const introModal = document.getElementById("intro-modal")!;
 

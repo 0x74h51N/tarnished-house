@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import type { AssetTypes } from "../types";
 import {
   params,
@@ -7,16 +6,32 @@ import {
   rootPositions,
   treeOptions,
 } from "../../config.json";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 import { spawnMeshes, addRoots, centerGeometryXZ } from "../utils/_index";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons";
+import {
+  Scene,
+  LoadingManager,
+  WebGLRenderer,
+  PositionalAudio,
+  TextureLoader,
+  SRGBColorSpace,
+  RepeatWrapping,
+  PlaneGeometry,
+  MeshStandardMaterial,
+  DoubleSide,
+  Mesh,
+  LinearMipmapLinearFilter,
+  LinearFilter,
+  Group,
+} from "three";
 
 interface LoadAssetsInterface {
-  scene: THREE.Scene;
-  loadingManager: THREE.LoadingManager;
-  renderer: THREE.WebGLRenderer;
-  positionalSound: THREE.PositionalAudio;
-  texLoader: THREE.TextureLoader;
+  scene: Scene;
+  loadingManager: LoadingManager;
+  renderer: WebGLRenderer;
+  positionalSound: PositionalAudio;
+  texLoader: TextureLoader;
 }
 
 export function loadAssets({
@@ -37,25 +52,25 @@ export function loadAssets({
   const floorAlphaTex = texLoader.load("./floor/alpha.jpg");
 
   const repeat = 14;
-  baseColorTex.colorSpace = THREE.SRGBColorSpace;
+  baseColorTex.colorSpace = SRGBColorSpace;
   baseColorTex.repeat.set(repeat, repeat);
-  baseColorTex.wrapS = THREE.RepeatWrapping;
-  baseColorTex.wrapT = THREE.RepeatWrapping;
+  baseColorTex.wrapS = RepeatWrapping;
+  baseColorTex.wrapT = RepeatWrapping;
 
   normalTex.repeat.set(repeat, repeat);
-  normalTex.wrapS = THREE.RepeatWrapping;
-  normalTex.wrapT = THREE.RepeatWrapping;
+  normalTex.wrapS = RepeatWrapping;
+  normalTex.wrapT = RepeatWrapping;
 
   armTex.repeat.set(repeat, repeat);
-  armTex.wrapS = THREE.RepeatWrapping;
-  armTex.wrapT = THREE.RepeatWrapping;
+  armTex.wrapS = RepeatWrapping;
+  armTex.wrapT = RepeatWrapping;
 
   displacementTex.repeat.set(repeat, repeat);
-  displacementTex.wrapS = THREE.RepeatWrapping;
-  displacementTex.wrapT = THREE.RepeatWrapping;
+  displacementTex.wrapS = RepeatWrapping;
+  displacementTex.wrapT = RepeatWrapping;
 
-  const floorGeometry = new THREE.PlaneGeometry(50, 50, 300, 300);
-  const floorMaterial = new THREE.MeshStandardMaterial({
+  const floorGeometry = new PlaneGeometry(50, 50, 300, 300);
+  const floorMaterial = new MeshStandardMaterial({
     alphaMap: floorAlphaTex,
     transparent: true,
     map: baseColorTex,
@@ -65,11 +80,11 @@ export function loadAssets({
     roughnessMap: armTex,
     displacementMap: displacementTex,
     displacementScale: 0.1,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     color: 0xcccccc,
   });
 
-  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  const floor = new Mesh(floorGeometry, floorMaterial);
   floor.receiveShadow = true;
   floor.rotation.x = -Math.PI * 0.5;
 
@@ -92,21 +107,21 @@ export function loadAssets({
     house.position.set(0.02, 0.2, -8);
     house.scale.setScalar(1.85);
     gltf.scene.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
+      if (child instanceof Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
         const mat = child.material;
         if (mat.map) {
-          mat.map.encoding = THREE.SRGBColorSpace;
+          mat.map.encoding = SRGBColorSpace;
           mat.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
-          mat.map.minFilter = THREE.LinearMipmapLinearFilter;
-          mat.map.magFilter = THREE.LinearFilter;
+          mat.map.minFilter = LinearMipmapLinearFilter;
+          mat.map.magFilter = LinearFilter;
           mat.map.generateMipmaps = false;
         }
         if (mat.normalMap) {
           mat.normalMap.anisotropy = renderer.capabilities.getMaxAnisotropy();
-          mat.normalMap.minFilter = THREE.LinearMipmapLinearFilter;
-          mat.normalMap.magFilter = THREE.LinearFilter;
+          mat.normalMap.minFilter = LinearMipmapLinearFilter;
+          mat.normalMap.magFilter = LinearFilter;
           mat.normalMap.generateMipmaps = false;
         }
         mat.needsUpdate = true;
@@ -118,7 +133,7 @@ export function loadAssets({
   //
   // ─── TREES ────────────────────────────────────────────────────────
   //
-  const treesGroup = new THREE.Group();
+  const treesGroup = new Group();
 
   const trees: AssetTypes = {
     baseMeshes: [],
@@ -129,7 +144,7 @@ export function loadAssets({
   gltfLoader.load("./trees/trees.gltf", (gltf) => {
     trees.gltf = gltf;
     trees.baseMeshes = gltf.scene.children[0].children[0].children[0]
-      .children as THREE.Mesh[];
+      .children as Mesh[];
     spawnMeshes({
       baseMeshes: trees.baseMeshes,
       group: trees.group,
@@ -142,7 +157,7 @@ export function loadAssets({
   //
   // ─── BUSHES ────────────────────────────────────────────────────────
   //
-  const bushGroup = new THREE.Group();
+  const bushGroup = new Group();
   const bushes: AssetTypes = {
     baseMeshes: [],
     gltf: null,
@@ -154,9 +169,9 @@ export function loadAssets({
     (gltf) => {
       bushes.gltf = gltf;
       bushes.baseMeshes = [
-        gltf.scene.children[0] as THREE.Mesh,
-        gltf.scene.children[1] as THREE.Mesh,
-        gltf.scene.children[2] as THREE.Mesh,
+        gltf.scene.children[0] as Mesh,
+        gltf.scene.children[1] as Mesh,
+        gltf.scene.children[2] as Mesh,
       ];
       spawnMeshes({
         baseMeshes: bushes.baseMeshes,
@@ -172,7 +187,7 @@ export function loadAssets({
   //
   // ─── GRAVES ───────────────────────────────────────────────────────
   //
-  const graveGroup = new THREE.Group();
+  const graveGroup = new Group();
   const graves: AssetTypes = {
     baseMeshes: [],
     gltf: null,
@@ -182,7 +197,7 @@ export function loadAssets({
   gltfLoader.load("./gravestones/scene.gltf", (gltf) => {
     graves.gltf = gltf;
     gltf.scene.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
+      if (child instanceof Mesh) {
         centerGeometryXZ(child.geometry);
         child.position.set(0, 0, 0);
         child.rotation.set(0, 0, 0);
@@ -207,14 +222,14 @@ export function loadAssets({
     const groupCount = 9;
 
     for (let i = 0; i < groupCount; i++) {
-      const group = new THREE.Group();
+      const group = new Group();
 
       const baseAngle = Math.random() * Math.PI * 4;
       const rotA = [0, baseAngle, 0];
       const rotB = [0, baseAngle * 2, 0];
 
-      const A = gltf.scene.children[0].clone() as THREE.Mesh;
-      const B = gltf.scene.children[1].clone() as THREE.Mesh;
+      const A = gltf.scene.children[0].clone() as Mesh;
+      const B = gltf.scene.children[1].clone() as Mesh;
 
       addRoots({
         A,
@@ -247,7 +262,7 @@ export function loadAssets({
     (g) => {
       const bonfire = g.scene.children[0];
       bonfire.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
+        if (child instanceof Mesh) {
           child.castShadow = true;
         }
       });

@@ -1,8 +1,20 @@
-import * as THREE from "three";
+import {
+  ACESFilmicToneMapping,
+  BasicShadowMap,
+  CineonToneMapping,
+  FogExp2,
+  LinearToneMapping,
+  NoToneMapping,
+  PCFShadowMap,
+  PCFSoftShadowMap,
+  ReinhardToneMapping,
+  VSMShadowMap,
+  WebGLRenderer,
+} from "three";
 import { params } from "../../../config.json";
 import { GeneralControl } from "types";
 
-export const fog = new THREE.FogExp2("#57767d", 0.02);
+export const fog = new FogExp2("#57767d", 0.02);
 
 export const shadowMapSizes = [256, 512, 1024, 2048, 4096];
 export const shadowDistOpt = [
@@ -11,11 +23,29 @@ export const shadowDistOpt = [
   { n: "Full", w: 40, f: 36 },
 ];
 export const shadowTypes = {
-  Basic: THREE.BasicShadowMap,
-  PCF: THREE.PCFShadowMap,
-  PCFSoft: THREE.PCFSoftShadowMap,
-  VSM: THREE.VSMShadowMap,
+  Basic: BasicShadowMap,
+  PCF: PCFShadowMap,
+  PCFSoft: PCFSoftShadowMap,
+  VSM: VSMShadowMap,
 };
+
+// Mapping objesi
+export const toneMappingMap = {
+  NoToneMapping,
+  LinearToneMapping,
+  ReinhardToneMapping,
+  CineonToneMapping,
+  ACESFilmicToneMapping,
+} as const;
+
+// Select için seçenekler
+const toneMappingOptions = [
+  { v: "NoToneMapping", t: "None" },
+  { v: "LinearToneMapping", t: "Linear" },
+  { v: "ReinhardToneMapping", t: "Reinhard" },
+  { v: "CineonToneMapping", t: "Cineon" },
+  { v: "ACESFilmicToneMapping", t: "ACES" },
+] as const;
 
 export function makeControls(): GeneralControl[] {
   const initialVolume =
@@ -46,13 +76,13 @@ export function makeControls(): GeneralControl[] {
 
 export function makeGraphics(
   antialias: boolean,
-  renderer: THREE.WebGLRenderer
+  renderer: WebGLRenderer
 ): GeneralControl[] {
   return [
     {
       type: "checkbox",
       id: "fpsCounter",
-      label: "FPS Counter",
+      label: "Show FPS",
       checked: params.fpsCounter,
     },
     {
@@ -123,33 +153,10 @@ export function makeGraphics(
       type: "select",
       id: "toneMapping",
       label: "Tone Mapping",
-      options: [
-        {
-          v: "NoToneMapping",
-          t: "None",
-          s: renderer.toneMapping === THREE.NoToneMapping,
-        },
-        {
-          v: "LinearToneMapping",
-          t: "Linear",
-          s: renderer.toneMapping === THREE.LinearToneMapping,
-        },
-        {
-          v: "ReinhardToneMapping",
-          t: "Reinhard",
-          s: renderer.toneMapping === THREE.ReinhardToneMapping,
-        },
-        {
-          v: "CineonToneMapping",
-          t: "Cineon",
-          s: renderer.toneMapping === THREE.CineonToneMapping,
-        },
-        {
-          v: "ACESFilmicToneMapping",
-          t: "ACES",
-          s: renderer.toneMapping === THREE.ACESFilmicToneMapping,
-        },
-      ],
+      options: toneMappingOptions.map((opt) => ({
+        ...opt,
+        s: renderer.toneMapping === toneMappingMap[opt.v],
+      })),
     },
   ];
 }

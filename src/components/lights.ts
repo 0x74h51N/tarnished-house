@@ -1,16 +1,24 @@
-import * as THREE from "three";
+import {
+  Scene,
+  AmbientLight,
+  PointLight,
+  PointLightHelper,
+  DirectionalLight,
+  DirectionalLightHelper,
+  CameraHelper,
+} from "three";
 import { params } from "../../config.json";
 
-export function lights(scene: THREE.Scene) {
+export function lights(scene: Scene) {
   // Ambient
-  const ambientLight = new THREE.AmbientLight(
+  const ambientLight = new AmbientLight(
     params.ambientLightColor,
     params.ambientLightIntensity
   );
   scene.add(ambientLight);
 
   // Fire point light
-  const fireLight = new THREE.PointLight(
+  const fireLight = new PointLight(
     0xffa500,
     params.fireLightIntensity,
     params.fireLightDistance,
@@ -23,10 +31,10 @@ export function lights(scene: THREE.Scene) {
   fireLight.shadow.normalBias = params.shadowNormalBias;
   scene.add(fireLight);
 
-  const fireLightHelper = new THREE.PointLightHelper(fireLight, 0.2);
+  const fireLightHelper = new PointLightHelper(fireLight, 0.2);
 
   // Directional
-  const directionalLight = new THREE.DirectionalLight(
+  const directionalLight = new DirectionalLight(
     params.directionalLightColor,
     params.directionalLightIntensity
   );
@@ -53,12 +61,12 @@ export function lights(scene: THREE.Scene) {
   directionalLight.target.position.set(0, 0, 0);
   scene.add(directionalLight.target);
 
-  const directionalLightHelper = new THREE.DirectionalLightHelper(
+  const directionalLightHelper = new DirectionalLightHelper(
     directionalLight,
     1
   );
 
-  const directionalLightCameraHelper = new THREE.CameraHelper(
+  const directionalLightCameraHelper = new CameraHelper(
     directionalLight.shadow.camera
   );
 

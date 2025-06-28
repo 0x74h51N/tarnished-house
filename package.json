@@ -11,11 +11,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview",
+    "analyze": "ANALYZE=1 vite build"
   },
   "devDependencies": {
     "@types/node": "^24.0.4",
     "@types/three": "^0.177.0",
+    "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3",
     "vite": "^6.2.2",
     "vite-plugin-checker": "^0.9.3",

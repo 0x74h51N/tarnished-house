@@ -1,15 +1,15 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import config from "../../config.json";
+import { Scene, PerspectiveCamera, CameraHelper, MathUtils } from "three";
+import { params } from "../../config.json";
+import { OrbitControls } from "three/examples/jsm/Addons";
 interface CameraControlOptions {
-  scene: THREE.Scene;
+  scene: Scene;
   canvas: HTMLCanvasElement;
   sizes: { width: number; height: number };
 }
 
 interface CameraControlReturn {
-  camera: THREE.PerspectiveCamera;
-  cameraHelper: THREE.CameraHelper | null;
+  camera: PerspectiveCamera;
+  cameraHelper: CameraHelper | null;
   controls: OrbitControls;
   clampCameraPosition: () => void;
 }
@@ -19,9 +19,7 @@ export function cameraControl({
   canvas,
   sizes,
 }: CameraControlOptions): CameraControlReturn {
-  const { params } = config;
-
-  const camera = new THREE.PerspectiveCamera(
+  const camera = new PerspectiveCamera(
     params.cameraFov,
     sizes.width / sizes.height,
     params.cameraNear,
@@ -32,7 +30,7 @@ export function cameraControl({
 
   let cameraHelper = null;
   if (params.cameraHelper) {
-    cameraHelper = new THREE.CameraHelper(camera);
+    cameraHelper = new CameraHelper(camera);
     scene.add(cameraHelper);
   }
 
@@ -63,9 +61,9 @@ export function cameraControl({
   function clampAxis(axis: "x" | "y" | "z") {
     const min = limits[("min" + axis.toUpperCase()) as keyof typeof limits];
     const max = limits[("max" + axis.toUpperCase()) as keyof typeof limits];
-    camera.position[axis] = THREE.MathUtils.lerp(
+    camera.position[axis] = MathUtils.lerp(
       camera.position[axis],
-      THREE.MathUtils.clamp(camera.position[axis], min, max),
+      MathUtils.clamp(camera.position[axis], min, max),
       0.2
     );
   }

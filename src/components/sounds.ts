@@ -1,16 +1,23 @@
-import * as THREE from "three";
+import {
+  PerspectiveCamera,
+  LoadingManager,
+  PositionalAudio,
+  AudioLoader,
+  AudioListener,
+  Audio,
+} from "three";
 import { params } from "../../config.json";
 
 interface CreateSoundInterface {
-  camera: THREE.PerspectiveCamera;
-  loadingManager: THREE.LoadingManager;
+  camera: PerspectiveCamera;
+  loadingManager: LoadingManager;
   toggleButtonId: string;
   iconId: string;
 }
 
 interface CreateSoundReturn {
-  positionalSound: THREE.PositionalAudio;
-  ambianceSound: THREE.Audio;
+  positionalSound: PositionalAudio;
+  ambianceSound: Audio;
   onVolumeChange: (v: number) => void;
 }
 
@@ -20,12 +27,12 @@ export function createSound({
   toggleButtonId,
   iconId,
 }: CreateSoundInterface): CreateSoundReturn {
-  const listener = new THREE.AudioListener();
+  const listener = new AudioListener();
   camera.add(listener);
 
-  const audioLoader = new THREE.AudioLoader(loadingManager);
+  const audioLoader = new AudioLoader(loadingManager);
 
-  const positionalSound = new THREE.PositionalAudio(listener);
+  const positionalSound = new PositionalAudio(listener);
   let fireLoaded = false;
   audioLoader.load("/sounds/fire.mp3", (buffer) => {
     positionalSound.setBuffer(buffer);
@@ -35,7 +42,7 @@ export function createSound({
     fireLoaded = true;
   });
 
-  const ambianceSound = new THREE.Audio(listener);
+  const ambianceSound = new Audio(listener);
   let ambLoaded = false;
   audioLoader.load("/sounds/ambiance.mp3", (buffer) => {
     ambianceSound.setBuffer(buffer);

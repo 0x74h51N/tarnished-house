@@ -1,16 +1,30 @@
-import * as THREE from "three";
-import { Sky } from "three/examples/jsm/Addons.js";
+import {
+  Scene,
+  TextureLoader,
+  DirectionalLight,
+  PerspectiveCamera,
+  IUniform,
+  SRGBColorSpace,
+  LinearSRGBColorSpace,
+  LinearFilter,
+  Mesh,
+  PlaneGeometry,
+  MeshPhysicalMaterial,
+  MathUtils,
+  Uniform,
+} from "three";
+import { Sky } from "three/examples/jsm/Addons";
 
 interface SkyInterface {
-  scene: THREE.Scene;
-  texLoader: THREE.TextureLoader;
-  directionalLight: THREE.DirectionalLight;
-  camera: THREE.PerspectiveCamera;
+  scene: Scene;
+  texLoader: TextureLoader;
+  directionalLight: DirectionalLight;
+  camera: PerspectiveCamera;
 }
 
 interface SkyReturn {
   update: () => void;
-  skyUniforms: THREE.IUniform<Sky>;
+  skyUniforms: IUniform<Sky>;
 }
 
 export function createSky({
@@ -31,19 +45,19 @@ export function createSky({
   skyUniforms.sunPosition.value.set(0, -0.08, -1);
 
   const moonTexture = texLoader.load("/moon.jpg");
-  moonTexture.colorSpace = THREE.SRGBColorSpace;
+  moonTexture.colorSpace = SRGBColorSpace;
 
   const emissiveMap = texLoader.load("/moon-emissive.jpg");
-  emissiveMap.colorSpace = THREE.LinearSRGBColorSpace;
+  emissiveMap.colorSpace = LinearSRGBColorSpace;
   const alphaMap = texLoader.load("/moon.jpg");
-  alphaMap.minFilter = THREE.LinearFilter;
-  alphaMap.magFilter = THREE.LinearFilter;
+  alphaMap.minFilter = LinearFilter;
+  alphaMap.magFilter = LinearFilter;
   alphaMap.generateMipmaps = false;
-  alphaMap.colorSpace = THREE.LinearSRGBColorSpace;
+  alphaMap.colorSpace = LinearSRGBColorSpace;
 
-  const moon = new THREE.Mesh(
-    new THREE.PlaneGeometry(2, 2),
-    new THREE.MeshPhysicalMaterial({
+  const moon = new Mesh(
+    new PlaneGeometry(2, 2),
+    new MeshPhysicalMaterial({
       map: moonTexture,
       transparent: true,
       alphaMap,
@@ -60,7 +74,7 @@ export function createSky({
   moon.lookAt(camera.position);
   scene.add(moon);
 
-  const desiredAngularSize = THREE.MathUtils.degToRad(0.75);
+  const desiredAngularSize = MathUtils.degToRad(0.75);
 
   function updateMoonScale() {
     const d = camera.position.distanceTo(moon.position);
@@ -70,6 +84,6 @@ export function createSky({
 
   return {
     update: updateMoonScale,
-    skyUniforms: skyUniforms as unknown as THREE.Uniform<Sky>,
+    skyUniforms: skyUniforms as unknown as Uniform<Sky>,
   };
 }

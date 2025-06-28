@@ -1,7 +1,24 @@
-import * as THREE from "three";
-
 // This createParticles function inspired from SimonDevYoutube
 // https://github.com/simondevyoutube/ThreeJS_Tutorial_ParticleSystems/blob/master/main.js
+
+import {
+  DataTexture,
+  RGBAFormat,
+  Object3D,
+  Color,
+  Texture,
+  PerspectiveCamera,
+  Points,
+  BufferGeometry,
+  NormalBufferAttributes,
+  ShaderMaterial,
+  Object3DEventMap,
+  LinearFilter,
+  ClampToEdgeWrapping,
+  AdditiveBlending,
+  BufferAttribute,
+} from "three";
+
 // VertexShader and FragmentShader directly copied from that repo.
 const _VS = `
 uniform float pointMultiplier;
@@ -35,55 +52,55 @@ void main() {
   gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
 }`;
 
-const defaultTexture = new THREE.DataTexture(
+const defaultTexture = new DataTexture(
   new Uint8Array([255, 255, 255, 255]),
   1,
   1,
-  THREE.RGBAFormat
+  RGBAFormat
 );
 defaultTexture.needsUpdate = true;
 
 /**
- * Creates a GPU-accelerated particle system using Three.js.
+ * Creates a GPU-accelerated particle system using js.
  * Particles emit around a start position (`startPozs`), move upwards with velocity,
  * and optionally grow or fade as they move. Custom shaders control particle size,
  * rotation, and color tint.
  *
  * @param {Object} options
- * @param {THREE.Object3D} options.parent           – Parent object (scene or group) to attach particles.
- * @param {THREE.Color|number|string} options.color – Base color for particles.
+ * @param {Object3D} options.parent           – Parent object (scene or group) to attach particles.
+ * @param {Color|number|string} options.color – Base color for particles.
  * @param {number} [options.opacity=1]              – Starting opacity for particles.
  * @param {number} [options.maxCount=200]           – Maximum particle count.
  * @param {number} [options.spawnRate=50]           – Particle spawn rate per second.
  * @param {number} [options.area=1]                 – Spawn area size around start position (X/Z).
  * @param {number} [options.size=0.05]              – Base particle size.
  * @param {Array<number>} [options.startPozs=[0,0,0]] – XYZ coordinates of initial particle spawn center.
- * @param {Array<THREE.Texture>|THREE.Texture|null} [options.textures=null]
+ * @param {Array<Texture>|Texture|null} [options.textures=null]
 
- * @param {THREE.Camera} options.camera             – Camera reference for particle scaling.
+ * @param {Camera} options.camera             – Camera reference for particle scaling.
  * @param {number} [options.sizeGrowth=0]           – Particle size increase rate with height.
  * @param {number} [options.fadeRate=0]             – Opacity fade rate with height.
  *
- * @returns {Object} Particle system with `.points` (THREE.Points) and `.step(delta)` to update per frame.
+ * @returns {Object} Particle system with `.points` (Points) and `.step(delta)` to update per frame.
  */
 
 interface CreateParticlesInterface {
-  parent: THREE.Object3D;
-  color?: THREE.Color | number | string;
+  parent: Object3D;
+  color?: Color | number | string;
   opacity?: number;
   maxCount?: number;
   spawnRate?: number;
   area?: number;
   size?: number;
   startPozs?: number[];
-  textures?: THREE.Texture[] | THREE.Texture | null;
-  camera: THREE.PerspectiveCamera;
+  textures?: Texture[] | Texture | null;
+  camera: PerspectiveCamera;
   sizeGrowth?: number;
   fadeRate?: number;
 }
 
 interface CreateParticlesReturn {
-  points: THREE.Points[];
+  points: Points[];
   step: (delta: number) => void;
 }
 
@@ -116,7 +133,7 @@ export function createParticles({
   const sizeArr = new Float32Array(maxCount);
   const anglesArray = new Float32Array(maxCount);
   const colsArr = new Float32Array(maxCount * 4);
-  const baseCol = new THREE.Color(color);
+  const baseCol = new Color(color);
 
   for (let i = 0; i < maxCount; i++) {
     variants[i] = i % numVariants;
@@ -131,10 +148,10 @@ export function createParticles({
     colUpt(i, colsArr, baseCol, opacity);
   }
 
-  const pointsArr: THREE.Points<
-    THREE.BufferGeometry<THREE.NormalBufferAttributes>,
-    THREE.ShaderMaterial,
-    THREE.Object3DEventMap
+  const pointsArr: Points<
+    BufferGeometry<NormalBufferAttributes>,
+    ShaderMaterial,
+    Object3DEventMap
   >[] = [];
   let spawnAccumulator = 0,
     nextIndex = 0;
@@ -143,12 +160,12 @@ export function createParticles({
     const dTex = textureArray[v] || defaultTexture;
     [dTex].forEach((t) => {
       t.generateMipmaps = false;
-      t.minFilter = THREE.LinearFilter;
-      t.magFilter = THREE.LinearFilter;
-      t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+      t.minFilter = LinearFilter;
+      t.magFilter = LinearFilter;
+      t.wrapS = t.wrapT = ClampToEdgeWrapping;
     });
 
-    const material = new THREE.ShaderMaterial({
+    const material = new ShaderMaterial({
       uniforms: {
         pointMultiplier: {
           value: window.innerHeight / Math.tan((camera.fov * Math.PI) / 360),
@@ -159,20 +176,20 @@ export function createParticles({
       fragmentShader: _FS,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: AdditiveBlending,
       alphaTest: 0.01,
       dithering: true,
       vertexColors: true,
     });
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    geometry.setAttribute("variant", new THREE.BufferAttribute(variants, 1));
-    geometry.setAttribute("size", new THREE.BufferAttribute(sizeArr, 1));
-    geometry.setAttribute("angle", new THREE.BufferAttribute(anglesArray, 1));
-    geometry.setAttribute("colour", new THREE.BufferAttribute(colsArr, 4));
+    const geometry = new BufferGeometry();
+    geometry.setAttribute("position", new BufferAttribute(pos, 3));
+    geometry.setAttribute("variant", new BufferAttribute(variants, 1));
+    geometry.setAttribute("size", new BufferAttribute(sizeArr, 1));
+    geometry.setAttribute("angle", new BufferAttribute(anglesArray, 1));
+    geometry.setAttribute("colour", new BufferAttribute(colsArr, 4));
 
-    const points = new THREE.Points(geometry, material);
+    const points = new Points(geometry, material);
     points.renderOrder = 9;
     parent.add(points);
     pointsArr.push(points);
@@ -240,7 +257,7 @@ function startV(v: Float32Array, i3 = 0, f = false) {
 function colUpt(
   i: number,
   colsArr: Float32Array,
-  baseCol: THREE.Color,
+  baseCol: Color,
   opacity: number
 ) {
   const i4 = i * 4;

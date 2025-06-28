@@ -1,5 +1,4 @@
 import GUI from "lil-gui";
-import * as THREE from "three";
 import { spawnMeshes } from "../utils/_index";
 import {
   params,
@@ -14,24 +13,42 @@ import {
 } from "./settings/settingsData";
 import { shadowDispose } from "../utils/_index";
 import { AssetTypes } from "types";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/Addons";
+import {
+  WebGLRenderer,
+  PointLightHelper,
+  DirectionalLightHelper,
+  CameraHelper,
+  AmbientLight,
+  PerspectiveCamera,
+  Light,
+  Scene,
+  PointLight,
+  DirectionalLight,
+  NoToneMapping,
+  LinearToneMapping,
+  ReinhardToneMapping,
+  CineonToneMapping,
+  ACESFilmicToneMapping,
+  OrthographicCamera,
+} from "three";
 
 interface SetupGUIInterface {
-  renderer: THREE.WebGLRenderer;
-  fireLightHelper: THREE.PointLightHelper;
-  directionalLightHelper: THREE.DirectionalLightHelper;
-  directionalLightCameraHelper: THREE.CameraHelper;
-  ambientLight: THREE.AmbientLight;
-  camera: THREE.PerspectiveCamera;
-  cameraHelper: THREE.CameraHelper;
+  renderer: WebGLRenderer;
+  fireLightHelper: PointLightHelper;
+  directionalLightHelper: DirectionalLightHelper;
+  directionalLightCameraHelper: CameraHelper;
+  ambientLight: AmbientLight;
+  camera: PerspectiveCamera;
+  cameraHelper: CameraHelper;
   graves: AssetTypes;
   bushes: AssetTypes;
   trees: AssetTypes;
   antialias: boolean;
   onVolumeChange: (v: number) => void;
   bloomPass: UnrealBloomPass;
-  lights: THREE.Light[];
-  scene: THREE.Scene;
+  lights: Light[];
+  scene: Scene;
 }
 export function setupGUI({
   renderer,
@@ -51,8 +68,8 @@ export function setupGUI({
   scene,
 }: SetupGUIInterface) {
   const [fireLight, directionalLight] = lights as [
-    THREE.PointLight,
-    THREE.DirectionalLight
+    PointLight,
+    DirectionalLight
   ];
   const gui = new GUI({ title: "Settings" }).close();
   gui.hide();
@@ -84,11 +101,11 @@ export function setupGUI({
       location.reload();
     });
   const toneMappings = {
-    None: THREE.NoToneMapping,
-    Linear: THREE.LinearToneMapping,
-    Reinhard: THREE.ReinhardToneMapping,
-    Cineon: THREE.CineonToneMapping,
-    ACESFilmic: THREE.ACESFilmicToneMapping,
+    None: NoToneMapping,
+    Linear: LinearToneMapping,
+    Reinhard: ReinhardToneMapping,
+    Cineon: CineonToneMapping,
+    ACESFilmic: ACESFilmicToneMapping,
   };
 
   //bloom
@@ -127,8 +144,7 @@ export function setupGUI({
       shadowDispose(lights);
       directionalLight.castShadow = v;
       if (directionalLight.shadow && "camera" in directionalLight.shadow) {
-        (directionalLight.shadow.camera as THREE.OrthographicCamera).visible =
-          v;
+        (directionalLight.shadow.camera as OrthographicCamera).visible = v;
         renderer.shadowMap.needsUpdate = true;
       }
     });
@@ -192,14 +208,14 @@ export function setupGUI({
     .add(params, "fireLightDistance", 0, 200, 0.1)
     .name("Distance")
     .onChange((v: number) => {
-      (fireLight as THREE.PointLight).distance = v;
+      (fireLight as PointLight).distance = v;
     });
 
   fireLightGui
     .add(params, "fireLightDecay", 0, 10, 0.01)
     .name("Decay")
     .onChange((v: number) => {
-      (fireLight as THREE.PointLight).decay = v;
+      (fireLight as PointLight).decay = v;
     });
 
   fireLightGui
@@ -238,7 +254,7 @@ export function setupGUI({
       const half = v / 2;
       if (
         directionalLight.shadow &&
-        directionalLight.shadow.camera instanceof THREE.OrthographicCamera
+        directionalLight.shadow.camera instanceof OrthographicCamera
       ) {
         const cam = directionalLight.shadow.camera;
         cam.left = -half;
