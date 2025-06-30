@@ -169,11 +169,6 @@ export function loadAssets({
           rawMeshes = gltf.scene.children[0].children[0].children[0]
             .children as Mesh[];
           break;
-
-        case "bushes":
-          rawMeshes = gltf.scene.children as Mesh[];
-          break;
-
         case "graves":
           gltf.scene.traverse((child: Object3D) => {
             if (child instanceof Mesh) {
@@ -183,8 +178,7 @@ export function loadAssets({
             }
           });
           break;
-
-        case "roots":
+        default:
           rawMeshes = gltf.scene.children as Mesh[];
           break;
       }

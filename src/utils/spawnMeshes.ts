@@ -66,7 +66,7 @@ export function spawnMeshes({
     if (i >= (arguments[0] as SpawnMeshesInterface).baseMeshes.length) {
       mesh.traverse((child: Object3D) => {
         if ((child as Mesh).isMesh) {
-          if (roots) child.rotateY(Math.random() * Math.PI * 2);
+          if (roots) child.rotateY(Math.random() * Math.PI);
           const meshChild = child as Mesh;
           meshChild.castShadow = castShadow;
           meshChild.receiveShadow = receiveShadow;
