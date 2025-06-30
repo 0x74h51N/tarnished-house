@@ -6,7 +6,7 @@ import {
   AudioListener,
   Audio,
 } from "three";
-import { params } from "../../config.json";
+import { params, assets } from "../../config.json";
 
 interface CreateSoundInterface {
   camera: PerspectiveCamera;
@@ -34,7 +34,7 @@ export function createSound({
 
   const positionalSound = new PositionalAudio(listener);
   let fireLoaded = false;
-  audioLoader.load("/sounds/fire.mp3", (buffer) => {
+  audioLoader.load(assets.sounds.fire, (buffer) => {
     positionalSound.setBuffer(buffer);
     positionalSound.setRefDistance(3);
     positionalSound.setLoop(true);
@@ -44,7 +44,7 @@ export function createSound({
 
   const ambianceSound = new Audio(listener);
   let ambLoaded = false;
-  audioLoader.load("/sounds/ambiance.mp3", (buffer) => {
+  audioLoader.load(assets.sounds.ambiance, (buffer) => {
     ambianceSound.setBuffer(buffer);
     ambianceSound.setLoop(true);
     ambianceSound.setVolume(params.volume);

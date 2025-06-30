@@ -14,6 +14,7 @@ import {
   Uniform,
 } from "three";
 import { Sky } from "three/examples/jsm/Addons";
+import { assets } from "../../config.json";
 
 interface SkyInterface {
   scene: Scene;
@@ -44,12 +45,12 @@ export function createSky({
   skyUniforms.mieDirectionalG.value = 0;
   skyUniforms.sunPosition.value.set(0, -0.08, -1);
 
-  const moonTexture = texLoader.load("/moon.jpg");
+  const moonTexture = texLoader.load(assets.moon.texture);
   moonTexture.colorSpace = SRGBColorSpace;
 
-  const emissiveMap = texLoader.load("/moon-emissive.jpg");
+  const emissiveMap = texLoader.load(assets.moon.emissive);
   emissiveMap.colorSpace = LinearSRGBColorSpace;
-  const alphaMap = texLoader.load("/moon.jpg");
+  const alphaMap = texLoader.load(assets.moon.texture);
   alphaMap.minFilter = LinearFilter;
   alphaMap.magFilter = LinearFilter;
   alphaMap.generateMipmaps = false;

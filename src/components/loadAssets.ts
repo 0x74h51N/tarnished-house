@@ -1,13 +1,6 @@
-import type { AssetTypes } from "../types";
-import {
-  params,
-  bushOptions,
-  graveOptions,
-  rootPositions,
-  treeOptions,
-} from "../../config.json";
-
-import { spawnMeshes, addRoots, centerGeometryXZ } from "../utils/_index";
+import type { AssetTypes, ManagerTypes, SpawnOptions } from "../types";
+import { assets } from "../../config.json";
+import { spawnMeshes, centerGeometryXZ } from "../utils/_index";
 import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons";
 import {
   Scene,
@@ -19,11 +12,11 @@ import {
   RepeatWrapping,
   PlaneGeometry,
   MeshStandardMaterial,
-  DoubleSide,
   Mesh,
   LinearMipmapLinearFilter,
   LinearFilter,
   Group,
+  Object3D,
 } from "three";
 
 interface LoadAssetsInterface {
@@ -40,48 +33,51 @@ export function loadAssets({
   renderer,
   positionalSound,
   texLoader,
-}: LoadAssetsInterface) {
+}: LoadAssetsInterface): ManagerTypes[] {
+  //
+  // ─── LOAD ASSETS ───────────────────────────────────────────────────────
+  //
+
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderConfig({ type: "js" });
+  dracoLoader.setDecoderPath(assets.decoder);
+
+  const gltfLoader = new GLTFLoader(loadingManager);
+  gltfLoader.setDRACOLoader(dracoLoader);
+
   //
   //   ─── Floor ─────────────────────────────────────────────────────────
   //
-  const baseColorTex = texLoader.load("./floor/textures/ground-diff.avif");
-  const normalTex = texLoader.load("./floor/textures/ground-norm.avif");
-  const armTex = texLoader.load("./floor/textures/ground-arm.avif");
-  const displacementTex = texLoader.load("./floor/textures/ground-disp.avif");
 
-  const floorAlphaTex = texLoader.load("./floor/alpha.jpg");
+  const floorAsset = assets.floor;
+  const { repeat, ...texPaths } = floorAsset.textures;
 
-  const repeat = 14;
-  baseColorTex.colorSpace = SRGBColorSpace;
-  baseColorTex.repeat.set(repeat, repeat);
-  baseColorTex.wrapS = RepeatWrapping;
-  baseColorTex.wrapT = RepeatWrapping;
-
-  normalTex.repeat.set(repeat, repeat);
-  normalTex.wrapS = RepeatWrapping;
-  normalTex.wrapT = RepeatWrapping;
-
-  armTex.repeat.set(repeat, repeat);
-  armTex.wrapS = RepeatWrapping;
-  armTex.wrapT = RepeatWrapping;
-
-  displacementTex.repeat.set(repeat, repeat);
-  displacementTex.wrapS = RepeatWrapping;
-  displacementTex.wrapT = RepeatWrapping;
-
-  const floorGeometry = new PlaneGeometry(50, 50, 300, 300);
+  const textures = Object.fromEntries(
+    Object.entries(texPaths).map(([key, path]) => {
+      const tex = texLoader.load(path);
+      if (key === "baseColor") tex.colorSpace = SRGBColorSpace;
+      if (key !== "alphaMap") {
+        tex.repeat.set(repeat, repeat);
+        tex.wrapS = RepeatWrapping;
+        tex.wrapT = RepeatWrapping;
+      }
+      return [key, tex];
+    })
+  );
+  const floorGeometry = new PlaneGeometry(
+    ...Object.values(floorAsset.geometry)
+  );
   const floorMaterial = new MeshStandardMaterial({
-    alphaMap: floorAlphaTex,
+    alphaMap: textures.alphaMap,
     transparent: true,
-    map: baseColorTex,
-    normalMap: normalTex,
-    aoMap: armTex,
-    metalnessMap: armTex,
-    roughnessMap: armTex,
-    displacementMap: displacementTex,
-    displacementScale: 0.1,
-    side: DoubleSide,
-    color: 0xcccccc,
+    map: textures.baseColor,
+    normalMap: textures.normalMap,
+    aoMap: textures.armTex,
+    metalnessMap: textures.armTex,
+    roughnessMap: textures.armTex,
+    displacementMap: textures.displacementMap,
+    displacementScale: floorAsset.displacementScale,
+    color: floorAsset.color,
   });
 
   const floor = new Mesh(floorGeometry, floorMaterial);
@@ -93,23 +89,20 @@ export function loadAssets({
   //
   // ─── HOUSE ─────────────────────────────────────────────────────────
   //
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderConfig({ type: "js" });
-  dracoLoader.setDecoderPath(
-    "https://www.gstatic.com/draco/versioned/decoders/1.5.7/"
-  );
 
-  const gltfLoader = new GLTFLoader(loadingManager);
-  gltfLoader.setDRACOLoader(dracoLoader);
+  const houseAsset = assets.gltf.house;
+  gltfLoader.load(houseAsset.model, (houseGLTF) => {
+    const house = houseGLTF.scene;
 
-  gltfLoader.load("./abandoned_house/abandonedHouse.gltf", (gltf) => {
-    const house = gltf.scene;
-    house.position.set(0.02, 0.2, -8);
-    house.scale.setScalar(1.85);
-    gltf.scene.traverse((child) => {
+    const { x, y, z } = houseAsset.positions;
+    house.position.set(x, y, z);
+
+    house.scale.setScalar(houseAsset.scale);
+
+    house.traverse((child: Object3D) => {
       if (child instanceof Mesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
+        child.castShadow = houseAsset.castShadow;
+        child.receiveShadow = houseAsset.receiveShadow;
         const mat = child.material;
         if (mat.map) {
           mat.map.encoding = SRGBColorSpace;
@@ -131,158 +124,84 @@ export function loadAssets({
   });
 
   //
-  // ─── TREES ────────────────────────────────────────────────────────
-  //
-  const treesGroup = new Group();
-
-  const trees: AssetTypes = {
-    baseMeshes: [],
-    gltf: null,
-    group: treesGroup,
-  };
-
-  gltfLoader.load("./trees/trees.gltf", (gltf) => {
-    trees.gltf = gltf;
-    trees.baseMeshes = gltf.scene.children[0].children[0].children[0]
-      .children as Mesh[];
-    spawnMeshes({
-      baseMeshes: trees.baseMeshes,
-      group: trees.group,
-      count: params.treeCount,
-      options: treeOptions,
-    });
-    scene.add(trees.group);
-  });
-
-  //
-  // ─── BUSHES ────────────────────────────────────────────────────────
-  //
-  const bushGroup = new Group();
-  const bushes: AssetTypes = {
-    baseMeshes: [],
-    gltf: null,
-    group: bushGroup,
-  };
-
-  gltfLoader.load(
-    "./burchellii/bushes.gltf",
-    (gltf) => {
-      bushes.gltf = gltf;
-      bushes.baseMeshes = [
-        gltf.scene.children[0] as Mesh,
-        gltf.scene.children[1] as Mesh,
-        gltf.scene.children[2] as Mesh,
-      ];
-      spawnMeshes({
-        baseMeshes: bushes.baseMeshes,
-        group: bushes.group,
-        count: params.bushCount,
-        options: bushOptions,
-      });
-      scene.add(bushes.group);
-    },
-    undefined,
-    console.error
-  );
-  //
-  // ─── GRAVES ───────────────────────────────────────────────────────
-  //
-  const graveGroup = new Group();
-  const graves: AssetTypes = {
-    baseMeshes: [],
-    gltf: null,
-    group: graveGroup,
-  };
-
-  gltfLoader.load("./gravestones/scene.gltf", (gltf) => {
-    graves.gltf = gltf;
-    gltf.scene.traverse((child) => {
-      if (child instanceof Mesh) {
-        centerGeometryXZ(child.geometry);
-        child.position.set(0, 0, 0);
-        child.rotation.set(0, 0, 0);
-        child.rotateY(Math.PI * 0.5);
-        graves.baseMeshes.push(child);
-      }
-    });
-    spawnMeshes({
-      baseMeshes: graves.baseMeshes,
-      group: graves.group,
-      count: params.graveCount,
-      options: graveOptions,
-    });
-    scene.add(graves.group);
-  });
-
-  //
-  //  ─── ROOTS ───────────────────────────────────────────────────────
-  //
-
-  gltfLoader.load("./pineroots/pine_roots.gltf", (gltf) => {
-    const groupCount = 9;
-
-    for (let i = 0; i < groupCount; i++) {
-      const group = new Group();
-
-      const baseAngle = Math.random() * Math.PI * 4;
-      const rotA = [0, baseAngle, 0];
-      const rotB = [0, baseAngle * 2, 0];
-
-      const A = gltf.scene.children[0].clone() as Mesh;
-      const B = gltf.scene.children[1].clone() as Mesh;
-
-      addRoots({
-        A,
-        B,
-        aPos: [...rootPositions[i % rootPositions.length]] as [
-          number,
-          number,
-          number
-        ],
-        aRot: [...rotA] as [number, number, number],
-        bPos: [...rootPositions[i % rootPositions.length]] as [
-          number,
-          number,
-          number
-        ],
-        bRot: [...rotB] as [number, number, number],
-        scale: 3,
-        group,
-      });
-      scene.add(group);
-    }
-  });
-
-  //
   // ─── BONFIRE ───────────────────────────────────────────────────────
   //
 
-  gltfLoader.load(
-    "./bonfire/bonfire.gltf",
-    (g) => {
-      const bonfire = g.scene.children[0];
-      bonfire.traverse((child) => {
-        if (child instanceof Mesh) {
-          child.castShadow = true;
-        }
+  const bonfireAsset = assets.gltf.bonfire;
+  gltfLoader.load(bonfireAsset.model, (bonfireGLTF) => {
+    const bonfire = bonfireGLTF.scene.children[0];
+    bonfire.traverse((child) => {
+      if (child instanceof Mesh) {
+        child.castShadow = bonfireAsset.castShadow;
+      }
+    });
+
+    bonfire.scale.setScalar(bonfireAsset.scale);
+    const { x, y, z } = bonfireAsset.positions;
+    bonfire.position.set(x, y, z);
+    bonfire.add(positionalSound);
+    scene.add(bonfire);
+  });
+
+  //
+  // ─── Random Meshes ─────────────────────────────────────────────
+  //
+
+  const spawnKeys = ["trees", "bushes", "graves", "roots"] as const;
+
+  const managers: ManagerTypes[] = [];
+
+  spawnKeys.forEach((key) => {
+    const cfg = assets.gltf.randoms[key] as {
+      model: string;
+      count: number;
+      spawnOptions: SpawnOptions;
+    };
+
+    const group = new Group();
+    const manager: AssetTypes = { baseMeshes: [] as Mesh[], group };
+
+    gltfLoader.load(cfg.model, (gltf) => {
+      let rawMeshes: Mesh[] = [];
+
+      switch (key) {
+        case "trees":
+          rawMeshes = gltf.scene.children[0].children[0].children[0]
+            .children as Mesh[];
+          break;
+
+        case "bushes":
+          rawMeshes = gltf.scene.children as Mesh[];
+          break;
+
+        case "graves":
+          gltf.scene.traverse((child: Object3D) => {
+            if (child instanceof Mesh) {
+              centerGeometryXZ(child.geometry);
+              child.rotateY(Math.PI * 0.5);
+              rawMeshes.push(child);
+            }
+          });
+          break;
+
+        case "roots":
+          rawMeshes = gltf.scene.children as Mesh[];
+          break;
+      }
+
+      manager.baseMeshes = rawMeshes;
+      spawnMeshes({
+        baseMeshes: rawMeshes,
+        group,
+        count: cfg.count,
+        options: cfg.spawnOptions,
+        roots: key === "roots",
       });
+      scene.add(group);
+    });
 
-      bonfire.scale.setScalar(2.2);
-      bonfire.position.set(0, 0.21, 1.5);
-      bonfire.add(positionalSound);
-      scene.add(bonfire);
-    },
-    (xhr) => {
-      console.log("bonfire " + (xhr.loaded / xhr.total) * 100 + "% loaded");
-    },
-    (error) => {
-      console.error("An error happened", error);
-    }
-  );
+    managers.push({ name: key, manager });
+  });
 
-  return {
-    trees,
-    bushes,
-    graves,
-  };
+  return managers;
 }

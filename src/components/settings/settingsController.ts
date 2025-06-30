@@ -1,27 +1,19 @@
-import { shadowDistOpt, shadowTypes, fog } from "./settingsData.js";
+import { shadowTypes, fog } from "./settingsData.js";
 import { shadowDispose, spawnMeshes } from "../../utils/_index";
-import { params } from "../../../config.json";
-import { AssetOptionsTypes, AssetTypes } from "types";
+import { params, shadowDistOpt, textureQuality } from "../../../config.json";
+import { CountConfigs } from "types";
 import {
   Light,
   WebGLRenderer,
   Scene,
   DirectionalLight,
-  NoToneMapping,
-  LinearToneMapping,
-  ReinhardToneMapping,
-  CineonToneMapping,
-  ACESFilmicToneMapping,
   ToneMapping,
 } from "three";
 import { toneMappingMap } from "./settingsData";
 interface SettingsControllerInterface {
   lights: Light[];
   renderer: WebGLRenderer;
-  countConfigs: Record<
-    string,
-    { manager: AssetTypes; opts: AssetOptionsTypes }
-  >;
+  countConfigs: CountConfigs;
   onVolumeChange: (v: number) => void;
   scene: Scene;
   stats: Stats;
@@ -95,12 +87,13 @@ export function settingsController({
       renderer.shadowMap.needsUpdate = true;
     },
     shadowDistance: (e: Event & { target: HTMLSelectElement }) => {
+      shadowDispose(lights);
       const opt = shadowDistOpt.find(
         (o) => o.n.toLowerCase() === e.target.value
       );
       if (!opt) return;
-      params.shadowCameraWidth = opt.w;
-      params.shadowCameraFar = opt.f;
+      params.directionalLight.shadowCameraWidth = opt.w;
+      params.directionalLight.shadowCameraFar = opt.f;
       const dirLight = lights.find((l) => l instanceof DirectionalLight);
       if (dirLight) {
         const halfW = opt.w / 2;
@@ -109,6 +102,7 @@ export function settingsController({
         dirLight.shadow.camera.far = opt.f;
         dirLight.shadow.camera.updateProjectionMatrix();
       }
+      renderer.shadowMap.needsUpdate = true;
     },
     shadowResolution: (e: Event & { target: HTMLSelectElement }) => {
       const res = +e.target.value;
@@ -122,28 +116,15 @@ export function settingsController({
       const value = (e.target as HTMLSelectElement)
         .value as keyof typeof shadowTypes;
       renderer.shadowMap.type = shadowTypes[value];
+      renderer.shadowMap.needsUpdate = true;
     },
     quality: (e: Event & { target: HTMLSelectElement }) => {
-      let bias, normalBias;
-      switch (e.target.value) {
-        case "high":
-          bias = -0.0005;
-          normalBias = 0.06;
-          break;
-        case "medium":
-          bias = -0.0008;
-          normalBias = 0.11;
-          break;
-        default:
-          bias = -0.02;
-          normalBias = 0.2;
-      }
+      const { b, nb } =
+        textureQuality[e.target.value as "high" | "medium" | "low"];
       lights.forEach((l) => {
-        l.shadow!.bias = bias;
-        l.shadow!.normalBias = normalBias;
+        l.shadow!.bias = b;
+        l.shadow!.normalBias = nb;
       });
-      params.shadowBias = bias;
-      params.shadowNormalBias = normalBias;
     },
     toneMapping: (e: Event & { target: HTMLSelectElement }) => {
       const value = e.target.value as keyof typeof toneMappingMap;
@@ -173,6 +154,7 @@ export function settingsController({
           group: manager.group,
           count: v,
           options: opts,
+          roots: id.includes("root"),
         });
       }
     });

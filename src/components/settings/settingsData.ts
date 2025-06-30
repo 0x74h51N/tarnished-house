@@ -11,25 +11,29 @@ import {
   VSMShadowMap,
   WebGLRenderer,
 } from "three";
-import { params } from "../../../config.json";
-import { GeneralControl } from "types";
+import {
+  params,
+  assets,
+  fogSettings,
+  shadowMapSizes,
+  shadowDistOpt,
+  toneMappingOptions,
+} from "../../../config.json";
+import { GeneralControl, ToneMappingKey } from "types";
 
-export const fog = new FogExp2("#57767d", 0.02);
+export const fog = new FogExp2(fogSettings.color, fogSettings.density);
 
-export const shadowMapSizes = [256, 512, 1024, 2048, 4096];
-export const shadowDistOpt = [
-  { n: "Half", w: 16, f: 20 },
-  { n: "3/4", w: 30, f: 27 },
-  { n: "Full", w: 40, f: 36 },
-];
 export const shadowTypes = {
   Basic: BasicShadowMap,
   PCF: PCFShadowMap,
   PCFSoft: PCFSoftShadowMap,
   VSM: VSMShadowMap,
 };
+const toneMappingOpts = toneMappingOptions as Array<{
+  v: ToneMappingKey;
+  t: string;
+}>;
 
-// Mapping objesi
 export const toneMappingMap = {
   NoToneMapping,
   LinearToneMapping,
@@ -37,15 +41,6 @@ export const toneMappingMap = {
   CineonToneMapping,
   ACESFilmicToneMapping,
 } as const;
-
-// Select için seçenekler
-const toneMappingOptions = [
-  { v: "NoToneMapping", t: "None" },
-  { v: "LinearToneMapping", t: "Linear" },
-  { v: "ReinhardToneMapping", t: "Reinhard" },
-  { v: "CineonToneMapping", t: "Cineon" },
-  { v: "ACESFilmicToneMapping", t: "ACES" },
-] as const;
 
 export function makeControls(): GeneralControl[] {
   const initialVolume =
@@ -116,7 +111,9 @@ export function makeGraphics(
       options: shadowDistOpt.map((o) => ({
         v: o.n.toLowerCase(),
         t: o.n,
-        s: params.shadowCameraWidth == o.w && params.shadowCameraFar == o.f,
+        s:
+          params.directionalLight.shadowCameraWidth == o.w &&
+          params.directionalLight.shadowCameraFar == o.f,
       })),
     },
     {
@@ -145,53 +142,37 @@ export function makeGraphics(
       label: "Texture Quality",
       options: [
         { v: "low", t: "Low", s: false },
-        { v: "medium", t: "Medium", s: false },
-        { v: "high", t: "High", s: true },
+        { v: "medium", t: "Medium", s: true },
+        { v: "high", t: "High", s: false },
       ],
     },
     {
       type: "select",
       id: "toneMapping",
       label: "Tone Mapping",
-      options: toneMappingOptions.map((opt) => ({
+      options: toneMappingOpts.map((opt) => ({
         ...opt,
         s: renderer.toneMapping === toneMappingMap[opt.v],
       })),
     },
   ];
 }
-
+const assetConfig = assets.gltf.randoms;
 export function makeScene(): GeneralControl[] {
-  return [
-    {
-      type: "range",
-      id: "graveCount",
-      label: "Grave Count",
-      min: 1,
-      max: 100,
-      step: 1,
-      value: params.graveCount,
-      span: "graveCountValue",
-    },
-    {
-      type: "range",
-      id: "bushCount",
-      label: "Bush Count",
-      min: 1,
-      max: 100,
-      step: 1,
-      value: params.bushCount,
-      span: "bushCountValue",
-    },
-    {
-      type: "range",
-      id: "treeCount",
-      label: "Tree Count",
-      min: 1,
-      max: 100,
-      step: 1,
-      value: params.treeCount,
-      span: "treeCountValue",
-    },
-  ];
+  return (Object.keys(assetConfig) as Array<keyof typeof assetConfig>).map(
+    (key) => {
+      const label = key.charAt(0).toUpperCase() + key.slice(1);
+      const id = `${key}Count` as const;
+      return {
+        type: "range",
+        id,
+        label: `${label} Count`,
+        min: 1,
+        max: 100,
+        step: 1,
+        value: assetConfig[key].count,
+        span: `${id}Value`,
+      } as GeneralControl;
+    }
+  );
 }

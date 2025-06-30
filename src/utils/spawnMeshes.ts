@@ -1,5 +1,5 @@
 import { Mesh, Group, Object3D } from "three";
-import type { AssetOptionsTypes } from "../types";
+import type { SpawnOptions } from "../types";
 
 /**
  * Mesh multiplication and random placement utility function.
@@ -14,9 +14,10 @@ interface SpawnMeshesInterface {
   baseMeshes: Mesh[];
   group: Group;
   count: number;
-  options: AssetOptionsTypes;
+  options: SpawnOptions;
   castShadow?: boolean;
   receiveShadow?: boolean;
+  roots?: boolean;
 }
 
 export function spawnMeshes({
@@ -25,6 +26,7 @@ export function spawnMeshes({
   options,
   castShadow = true,
   receiveShadow = true,
+  roots = false,
 }: SpawnMeshesInterface) {
   const {
     scaleMin = 1,
@@ -51,7 +53,7 @@ export function spawnMeshes({
   group.clear();
   group.clear();
   const placedPositions = [];
-  const yPosition = 0.12;
+  const yPosition = roots ? 0 : 0.12;
 
   for (let i = 0; i < count; i++) {
     const base = (arguments[0] as SpawnMeshesInterface).baseMeshes[
@@ -64,6 +66,7 @@ export function spawnMeshes({
     if (i >= (arguments[0] as SpawnMeshesInterface).baseMeshes.length) {
       mesh.traverse((child: Object3D) => {
         if ((child as Mesh).isMesh) {
+          if (roots) child.rotateY(Math.random() * Math.PI * 2);
           const meshChild = child as Mesh;
           meshChild.castShadow = castShadow;
           meshChild.receiveShadow = receiveShadow;

@@ -7,7 +7,7 @@ import {
   DirectionalLightHelper,
   CameraHelper,
 } from "three";
-import { params } from "../../config.json";
+import { params, textureQuality } from "../../config.json";
 
 export function lights(scene: Scene) {
   // Ambient
@@ -18,45 +18,48 @@ export function lights(scene: Scene) {
   scene.add(ambientLight);
 
   // Fire point light
+  const flSettings = params.fireLight;
   const fireLight = new PointLight(
     0xffa500,
-    params.fireLightIntensity,
-    params.fireLightDistance,
-    params.fireLightDecay
+    flSettings.intensity,
+    flSettings.distance,
+    flSettings.decay
   );
   fireLight.castShadow = true;
   fireLight.shadow.mapSize.set(params.shadowMapSize, params.shadowMapSize);
-  fireLight.position.set(0, params.fireLightY, 1.5);
-  fireLight.shadow.bias = params.shadowBias;
-  fireLight.shadow.normalBias = params.shadowNormalBias;
+  const { x: flX, y: flY, z: flZ } = flSettings.positions;
+  fireLight.position.set(flX, flY, flZ);
+  fireLight.shadow.bias = textureQuality.medium.b;
+  fireLight.shadow.normalBias = textureQuality.medium.nb;
   scene.add(fireLight);
 
   const fireLightHelper = new PointLightHelper(fireLight, 0.2);
 
   // Directional
+  const dlSettings = params.directionalLight;
   const directionalLight = new DirectionalLight(
-    params.directionalLightColor,
-    params.directionalLightIntensity
+    dlSettings.color,
+    dlSettings.intensity
   );
-  directionalLight.position.set(
-    params.directionalLightX,
-    params.directionalLightY,
-    params.directionalLightZ
-  );
+  const { x: dlX, y: dlY, z: dlZ } = dlSettings.positions;
+  directionalLight.position.set(dlX, dlY, dlZ);
   directionalLight.castShadow = true;
 
-  const halfW = params.shadowCameraWidth / 2;
-  const halfH = params.shadowCameraHeight / 2;
+  const halfW = dlSettings.shadowCameraWidth / 2;
+  const halfH = dlSettings.shadowCameraHeight / 2;
   directionalLight.shadow.camera.left = -halfW;
   directionalLight.shadow.camera.right = halfW;
   directionalLight.shadow.camera.top = halfH;
   directionalLight.shadow.camera.bottom = -halfH;
-  directionalLight.shadow.camera.near = params.shadowCameraNear;
-  directionalLight.shadow.camera.far = params.shadowCameraFar;
+  directionalLight.shadow.camera.near = dlSettings.shadowCameraNear;
+  directionalLight.shadow.camera.far = dlSettings.shadowCameraFar;
   directionalLight.shadow.camera.updateProjectionMatrix();
-
-  directionalLight.shadow.bias = params.shadowBias;
-  directionalLight.shadow.normalBias = params.shadowNormalBias;
+  directionalLight.shadow.mapSize.set(
+    params.shadowMapSize,
+    params.shadowMapSize
+  );
+  directionalLight.shadow.bias = textureQuality.medium.b;
+  directionalLight.shadow.normalBias = textureQuality.medium.nb;
 
   directionalLight.target.position.set(0, 0, 0);
   scene.add(directionalLight.target);

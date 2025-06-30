@@ -109,7 +109,7 @@ const { positionalSound, onVolumeChange } = createSound({
   iconId: "sound-toggle-icon",
 });
 
-const { trees, bushes, graves } = loadAssets({
+const gltfAssets = loadAssets({
   scene,
   loadingManager,
   renderer,
@@ -117,7 +117,7 @@ const { trees, bushes, graves } = loadAssets({
   texLoader,
 });
 
-const { update: updateMoon, skyUniforms } = createSky({
+const { update: updateMoon } = createSky({
   scene,
   texLoader,
   directionalLight,
@@ -148,9 +148,7 @@ window.addEventListener("keydown", async (e) => {
       ambientLight,
       camera,
       cameraHelper: cameraHelper as CameraHelper,
-      graves,
-      bushes,
-      trees,
+      gltfAssets,
       antialias,
       onVolumeChange,
       bloomPass,
@@ -163,9 +161,7 @@ window.addEventListener("keydown", async (e) => {
 settings({
   lights: lightArr,
   renderer,
-  graves,
-  bushes,
-  trees,
+  gltfAssets,
   antialias,
   onVolumeChange,
   scene,
@@ -178,8 +174,9 @@ settings({
 //
 //#region Animate
 //
+const flParams = params.fireLight;
 
-const firelightAnimation = params.fireLightAnimation;
+const firelightAnimation = flParams.animation;
 
 const timer = new Timer();
 
@@ -208,17 +205,17 @@ const tick = () => {
   directionalLightCameraHelper.update();
 
   fireLight.intensity =
-    params.fireLightIntensity +
+    flParams.intensity +
     Math.sin(elapsedTime * firelightAnimation.intensitySpeed) *
       firelightAnimation.intensityAmp;
 
   fireLight.position.y =
-    params.fireLightY +
+    flParams.positions.y +
     Math.sin(elapsedTime * firelightAnimation.positionSpeed) *
       firelightAnimation.positionAmp;
 
   fireLight.distance =
-    params.fireLightDistance +
+    flParams.distance +
     Math.sin(elapsedTime * firelightAnimation.distanceSpeed) *
       firelightAnimation.distanceAmp;
 

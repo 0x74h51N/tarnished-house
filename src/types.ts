@@ -1,13 +1,32 @@
-import type { Mesh, Group } from "three";
-import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import { toneMappingMap } from "components/settings/settingsData";
+import type {
+  Mesh,
+  Group,
+  Object3D,
+  Color,
+  PerspectiveCamera,
+  Texture,
+  Points,
+} from "three";
 
 export type AssetTypes = {
   baseMeshes: Mesh[];
-  gltf: GLTF | null;
   group: Group;
 };
+export type ManagerTypes = {
+  name: "trees" | "bushes" | "graves" | "roots";
+  manager: AssetTypes;
+};
 
-export type AssetOptionsTypes = {
+export type CountConfigs = Record<
+  `${ManagerTypes["name"]}Count`,
+  {
+    manager: AssetTypes;
+    opts: SpawnOptions;
+  }
+>;
+
+export type SpawnOptions = {
   scaleMin: number;
   scaleMax: number;
   radiusMin: number;
@@ -17,7 +36,7 @@ export type AssetOptionsTypes = {
 
 interface BaseControl {
   type: string;
-  id: string;
+  id: `${ManagerTypes["name"]}Count` | string;
   label: string;
 }
 
@@ -46,3 +65,25 @@ interface SelectControl extends BaseControl {
 }
 
 export type GeneralControl = RangeControl | CheckboxControl | SelectControl;
+
+export interface CreateParticlesInterface {
+  parent: Object3D;
+  color?: Color | number | string;
+  opacity?: number;
+  maxCount?: number;
+  spawnRate?: number;
+  area?: number;
+  size?: number;
+  startPozs?: number[];
+  textures?: Texture[] | Texture | null;
+  camera: PerspectiveCamera;
+  sizeGrowth?: number;
+  fadeRate?: number;
+}
+
+export interface CreateParticlesReturn {
+  points: Points[];
+  step: (delta: number) => void;
+}
+
+export type ToneMappingKey = keyof typeof toneMappingMap;

@@ -1,18 +1,14 @@
 import GUI from "lil-gui";
-import { spawnMeshes } from "../utils/_index";
+import { getCountConfigs, spawnMeshes } from "../utils/_index";
 import {
   params,
-  bushOptions,
-  graveOptions,
-  treeOptions,
-} from "../../config.json";
-import {
-  shadowTypes,
+  assets,
   shadowMapSizes,
-  makeScene,
-} from "./settings/settingsData";
+  textureQuality,
+} from "../../config.json";
+import { shadowTypes, makeScene } from "./settings/settingsData";
 import { shadowDispose } from "../utils/_index";
-import { AssetTypes } from "types";
+import { ManagerTypes } from "types";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import {
   WebGLRenderer,
@@ -41,9 +37,7 @@ interface SetupGUIInterface {
   ambientLight: AmbientLight;
   camera: PerspectiveCamera;
   cameraHelper: CameraHelper;
-  graves: AssetTypes;
-  bushes: AssetTypes;
-  trees: AssetTypes;
+  gltfAssets: ManagerTypes[];
   antialias: boolean;
   onVolumeChange: (v: number) => void;
   bloomPass: UnrealBloomPass;
@@ -58,9 +52,8 @@ export function setupGUI({
   ambientLight,
   camera,
   cameraHelper,
-  graves,
-  bushes,
-  trees,
+  gltfAssets,
+
   antialias,
   onVolumeChange,
   bloomPass,
@@ -186,9 +179,9 @@ export function setupGUI({
 
   const fireLightGui = graphics.addFolder("Fire Light Settings");
   fireLightGui.close();
-
+  const flParams = params.fireLight;
   fireLightGui
-    .add(params, "fireLightHelper")
+    .add(flParams, "helper")
     .name("Light Helper")
     .onChange((v: boolean) => {
       if (v) {
@@ -198,28 +191,28 @@ export function setupGUI({
       }
     });
   fireLightGui
-    .add(params, "fireLightIntensity", 0, 100, 0.1)
+    .add(flParams, "intensity", 0, 100, 0.1)
     .name("Intensity")
     .onChange((v: number) => {
       fireLight.intensity = v;
     });
 
   fireLightGui
-    .add(params, "fireLightDistance", 0, 200, 0.1)
+    .add(flParams, "distance", 0, 200, 0.1)
     .name("Distance")
     .onChange((v: number) => {
       (fireLight as PointLight).distance = v;
     });
 
   fireLightGui
-    .add(params, "fireLightDecay", 0, 10, 0.01)
+    .add(flParams, "decay", 0, 10, 0.01)
     .name("Decay")
     .onChange((v: number) => {
       (fireLight as PointLight).decay = v;
     });
 
   fireLightGui
-    .add(params, "shadowBias", -0.01, 0.01, 0.0001)
+    .add(textureQuality.high, "b", -0.01, 0.01, 0.0001)
     .name("Shadow Bias")
     .onChange((v: number) => {
       if (fireLight.shadow) {
@@ -229,7 +222,7 @@ export function setupGUI({
     });
 
   fireLightGui
-    .add(params, "shadowNormalBias", 0, 1, 0.001)
+    .add(textureQuality.high, "nb", 0, 1, 0.001)
     .name("Normal Bias")
     .onChange((v: number) => {
       if (fireLight.shadow) {
@@ -239,16 +232,17 @@ export function setupGUI({
 
   const directionalLightGui = graphics.addFolder("Directional Light Settings");
   directionalLightGui.close();
+  const dlParams = params.directionalLight;
 
   directionalLightGui
-    .addColor(params, "directionalLightColor")
+    .addColor(dlParams, "color")
     .name("Light Color")
     .onFinishChange(() => {
-      directionalLight.color.set(params.directionalLightColor);
+      directionalLight.color.set(dlParams.color);
     });
 
   directionalLightGui
-    .add(params, "shadowCameraWidth", 2, 45, 0.1)
+    .add(dlParams, "shadowCameraWidth", 2, 45, 0.1)
     .name("Shadow Camera Width")
     .onChange((v: number) => {
       const half = v / 2;
@@ -267,9 +261,8 @@ export function setupGUI({
       }
       directionalLightCameraHelper.update();
     });
-
   directionalLightGui
-    .add(params, "shadowCameraHeight", 2, 40, 0.1)
+    .add(dlParams, "shadowCameraHeight", 2, 40, 0.1)
     .name("Shadow Camera Height")
     .onChange((v: number) => {
       const half = v / 2;
@@ -280,12 +273,12 @@ export function setupGUI({
     });
 
   directionalLightGui
-    .add(params, "shadowCameraNear", 0.01, 5, 0.01)
+    .add(dlParams, "shadowCameraNear", 0.01, 5, 0.01)
     .name("Shadow Camera Near")
     .onFinishChange((v: number) => {
       if (v >= directionalLight.shadow.camera.far) {
-        params.shadowCameraNear = directionalLight.shadow.camera.far - 0.01;
-        directionalLight.shadow.camera.near = params.shadowCameraNear;
+        dlParams.shadowCameraNear = directionalLight.shadow.camera.far - 0.01;
+        directionalLight.shadow.camera.near = dlParams.shadowCameraNear;
       } else {
         directionalLight.shadow.camera.near = v;
       }
@@ -294,12 +287,12 @@ export function setupGUI({
     });
 
   directionalLightGui
-    .add(params, "shadowCameraFar", 0.1, 60, 0.01)
+    .add(dlParams, "shadowCameraFar", 0.1, 60, 0.01)
     .name("Shadow Camera Far")
     .onFinishChange((v: number) => {
       if (v <= directionalLight.shadow.camera.near) {
-        params.shadowCameraFar = directionalLight.shadow.camera.near + 0.01;
-        directionalLight.shadow.camera.far = params.shadowCameraFar;
+        dlParams.shadowCameraFar = directionalLight.shadow.camera.near + 0.01;
+        directionalLight.shadow.camera.far = dlParams.shadowCameraFar;
       } else {
         directionalLight.shadow.camera.far = v;
       }
@@ -308,32 +301,32 @@ export function setupGUI({
     });
 
   directionalLightGui
-    .add(params, "directionalLightIntensity", 0, 10, 0.1)
+    .add(dlParams, "intensity", 0, 10, 0.1)
     .name("Light Intensity")
     .onChange((v: number) => {
       directionalLight.intensity = v;
     });
   directionalLightGui
-    .add(params, "directionalLightX", -60, 60, 0.5)
+    .add(dlParams.positions, "x", -60, 60, 0.5)
     .name("Light X")
     .onChange((v: number) => {
       directionalLight.position.x = v;
     });
   directionalLightGui
-    .add(params, "directionalLightY", 0, 60, 0.5)
+    .add(dlParams.positions, "y", 0, 60, 0.5)
     .name("Light Y")
     .onChange((v: number) => {
       directionalLight.position.y = v;
     });
   directionalLightGui
-    .add(params, "directionalLightZ", -60, 60, 0.5)
+    .add(dlParams.positions, "z", -60, 60, 0.5)
     .name("Light Z")
     .onChange((v: number) => {
       directionalLight.position.z = v;
     });
 
   directionalLightGui
-    .add(params, "directionalLightHelper")
+    .add(dlParams, "helper")
     .name("Light Helper")
     .onChange((v: boolean) => {
       if (v) {
@@ -345,14 +338,14 @@ export function setupGUI({
       }
     });
   directionalLightGui
-    .add(params, "shadowBias", -0.01, 0.01, 0.0001)
+    .add(textureQuality.high, "b", -0.01, 0.01, 0.0001)
     .name("Shadow Bias")
     .onChange((v: number) => {
       directionalLight.shadow.bias = v;
     });
 
   directionalLightGui
-    .add(params, "shadowNormalBias", 0, 1, 0.001)
+    .add(textureQuality.high, "nb", 0, 1, 0.001)
     .name("Normal Bias")
     .onChange((v: number) => {
       directionalLight.shadow.normalBias = v;
@@ -360,47 +353,37 @@ export function setupGUI({
 
   const sceneOptions = gui.addFolder("Scene Options");
   sceneOptions.close();
-  const map: Record<
-    "graveCount" | "bushCount" | "treeCount",
-    { manager: AssetTypes; opts: any }
-  > = {
-    graveCount: {
-      manager: graves,
-      opts: graveOptions,
-    },
-    bushCount: {
-      manager: bushes,
-      opts: bushOptions,
-    },
-    treeCount: {
-      manager: trees,
-      opts: treeOptions,
-    },
-  };
+  const map = getCountConfigs(gltfAssets, assets.gltf.randoms);
+
   makeScene().forEach((control) => {
     if (control.type === "range") {
       const { id, label, min, max, step } = control;
-      const cfg = map[id as "graveCount" | "bushCount" | "treeCount"];
+      const cfg = map[id as `${ManagerTypes["name"]}Count`];
       if (!cfg) return;
 
       sceneOptions
-        .add(params, id as keyof typeof params, min, max, step)
+        .add(
+          assets.gltf.randoms[id.replace("Count", "") as ManagerTypes["name"]],
+          "count",
+          min,
+          max,
+          step
+        )
         .name(label)
         .onChange((val: number) => {
           const { manager, opts } = cfg;
-          const meshes = manager.baseMeshes || [];
-          const group = manager.group;
-          if (meshes.length > 0 && group) {
-            spawnMeshes({
-              baseMeshes: meshes,
-              group: group,
-              count: val,
-              options: opts,
-            });
-          }
+
+          spawnMeshes({
+            baseMeshes: manager.baseMeshes,
+            group: manager.group,
+            count: val,
+            options: opts,
+            roots: id === "roots",
+          });
         });
     }
   });
+
   //camera settings
   const cameraGui = gui.addFolder("Camera Settings");
   cameraGui.close();

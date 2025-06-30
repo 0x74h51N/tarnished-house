@@ -1,4 +1,4 @@
-import assets from "../../assets.json";
+import assets from "../../assetLicense.json";
 
 export function credits() {
   const creditsBtn = document.getElementById("credits-btn")!;

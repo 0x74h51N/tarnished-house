@@ -4,10 +4,7 @@
 import {
   DataTexture,
   RGBAFormat,
-  Object3D,
   Color,
-  Texture,
-  PerspectiveCamera,
   Points,
   BufferGeometry,
   NormalBufferAttributes,
@@ -18,6 +15,7 @@ import {
   AdditiveBlending,
   BufferAttribute,
 } from "three";
+import { CreateParticlesInterface, CreateParticlesReturn } from "types";
 
 // VertexShader and FragmentShader directly copied from that repo.
 const _VS = `
@@ -84,26 +82,6 @@ defaultTexture.needsUpdate = true;
  * @returns {Object} Particle system with `.points` (Points) and `.step(delta)` to update per frame.
  */
 
-interface CreateParticlesInterface {
-  parent: Object3D;
-  color?: Color | number | string;
-  opacity?: number;
-  maxCount?: number;
-  spawnRate?: number;
-  area?: number;
-  size?: number;
-  startPozs?: number[];
-  textures?: Texture[] | Texture | null;
-  camera: PerspectiveCamera;
-  sizeGrowth?: number;
-  fadeRate?: number;
-}
-
-interface CreateParticlesReturn {
-  points: Points[];
-  step: (delta: number) => void;
-}
-
 export function createParticles({
   parent,
   color,
@@ -113,16 +91,12 @@ export function createParticles({
   area = 1,
   size = 0.05,
   startPozs = [0, 0, 0],
-  textures = null,
+  textures = [],
   camera,
   sizeGrowth = 0,
   fadeRate = 0,
 }: CreateParticlesInterface): CreateParticlesReturn {
-  const textureArray = textures
-    ? Array.isArray(textures)
-      ? textures
-      : [textures]
-    : [];
+  const textureArray = Array.isArray(textures) ? textures : [textures];
 
   const numVariants = textureArray.length;
 
@@ -133,7 +107,7 @@ export function createParticles({
   const sizeArr = new Float32Array(maxCount);
   const anglesArray = new Float32Array(maxCount);
   const colsArr = new Float32Array(maxCount * 4);
-  const baseCol = new Color(color);
+  const baseCol = new Color(color || 0xffffff);
 
   for (let i = 0; i < maxCount; i++) {
     variants[i] = i % numVariants;
