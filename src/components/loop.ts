@@ -27,7 +27,7 @@ export class Loop {
     this.running = false;
   }
 
-  private loop = (time: number) => {
+  private loop = () => {
     this.timer.update();
     const delta = this.timer.getDelta();
     const elapsed = this.timer.getElapsed();
