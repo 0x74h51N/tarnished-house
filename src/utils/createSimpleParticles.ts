@@ -8,47 +8,16 @@ import {
   Points,
   BufferGeometry,
   NormalBufferAttributes,
-  ShaderMaterial,
   Object3DEventMap,
   LinearFilter,
   ClampToEdgeWrapping,
   AdditiveBlending,
   BufferAttribute,
+  RawShaderMaterial,
 } from "three";
 import { CreateParticlesInterface, CreateParticlesReturn } from "types";
-
-// VertexShader and FragmentShader directly copied from that repo.
-const _VS = `
-uniform float pointMultiplier;
-
-attribute float size;
-attribute float angle;
-attribute vec4 colour;
-
-varying vec4 vColour;
-varying vec2 vAngle;
-
-void main() {
-  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-
-  gl_Position = projectionMatrix * mvPosition;
-  gl_PointSize = size * pointMultiplier / gl_Position.w;
-
-  vAngle = vec2(cos(angle), sin(angle));
-  vColour = colour;
-}`;
-
-const _FS = `
-
-uniform sampler2D diffuseTexture;
-
-varying vec4 vColour;
-varying vec2 vAngle;
-
-void main() {
-  vec2 coords = (gl_PointCoord - 0.5) * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x) + 0.5;
-  gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
-}`;
+import VS from "../shaders/particles/vertex.vert";
+import FS from "../shaders/particles/fragment.frag";
 
 const defaultTexture = new DataTexture(
   new Uint8Array([255, 255, 255, 255]),
@@ -124,7 +93,7 @@ export function createParticles({
 
   const pointsArr: Points<
     BufferGeometry<NormalBufferAttributes>,
-    ShaderMaterial,
+    RawShaderMaterial,
     Object3DEventMap
   >[] = [];
   let spawnAccumulator = 0,
@@ -139,15 +108,15 @@ export function createParticles({
       t.wrapS = t.wrapT = ClampToEdgeWrapping;
     });
 
-    const material = new ShaderMaterial({
+    const material = new RawShaderMaterial({
       uniforms: {
         pointMultiplier: {
           value: window.innerHeight / Math.tan((camera.fov * Math.PI) / 360),
         },
         diffuseTexture: { value: dTex },
       },
-      vertexShader: _VS,
-      fragmentShader: _FS,
+      vertexShader: VS,
+      fragmentShader: FS,
       transparent: true,
       depthWrite: false,
       blending: AdditiveBlending,

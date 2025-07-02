@@ -12,7 +12,7 @@
     "checkJs": false,
     "outDir": "dist",
     "baseUrl": "./src",
-    "types": ["node"],
+    "types": ["node", "vite-plugin-glsl/ext"],
     "resolveJsonModule": true
   },
   "include": ["src"],

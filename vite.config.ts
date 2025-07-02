@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import restart from "vite-plugin-restart";
 import checker from "vite-plugin-checker";
 import { visualizer } from "rollup-plugin-visualizer";
+import glsl from "vite-plugin-glsl";
 
 export default defineConfig(() => {
   const shouldAnalyze = process.env.ANALYZE === "1";
@@ -28,6 +29,7 @@ export default defineConfig(() => {
       },
     },
     plugins: [
+      glsl(),
       restart({ restart: ["../static/**"] }),
       checker({ typescript: true }),
       shouldAnalyze &&
