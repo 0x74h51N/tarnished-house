@@ -8,3 +8,6 @@ export { lights } from "./lights";
 export { cameraControl } from "./cameraControl";
 export { settings } from "./settings/_settings";
 export { createSound } from "./sounds";
+export { createComposer } from "./postProcess";
+export { createRenderer } from "./renderer";
+export { Loop } from "./loop";

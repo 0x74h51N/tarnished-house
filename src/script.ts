@@ -1,9 +1,6 @@
 import { Timer } from "three/examples/jsm/misc/Timer.js";
 import Stats from "stats.js";
 import { params } from "../config.json";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import {
   intro,
   credits,
@@ -14,48 +11,47 @@ import {
   cameraControl,
   settings,
   createSound,
+  createComposer,
+  createRenderer,
+  Loop,
 } from "./components/_index.js";
-import {
-  Scene,
-  LoadingManager,
-  TextureLoader,
-  WebGLRenderer,
-  PCFSoftShadowMap,
-  ACESFilmicToneMapping,
-  Vector2,
-  CameraHelper,
-} from "three";
+import { Scene, LoadingManager, TextureLoader, CameraHelper } from "three";
 
-const canvas = document.querySelector("canvas.webgl");
+//
+// Canvas
+//
+
+const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
 
-window.addEventListener("resize", () => {
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
-
-  camera.aspect = sizes.width / sizes.height;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
-
 const scene = new Scene();
+
 const loadingManager = new LoadingManager();
 const texLoader = new TextureLoader(loadingManager);
+
+//
+// Dom Manupulations
+//
 
 intro(loadingManager);
 
 credits();
 
+//
+// Camera & Orbit Control
+//
 const { camera, cameraHelper, controls, clampCameraPosition } = cameraControl({
   scene,
-  canvas: canvas as HTMLCanvasElement,
+  canvas,
   sizes,
 });
+
+//
+// Lights
+//
 
 const {
   ambientLight,
@@ -67,39 +63,37 @@ const {
 } = lights(scene);
 
 //
-//#region renderer
+// renderer
 //
-let antialias = localStorage.getItem("antialias") || false;
-antialias = antialias === "true";
 
-const renderer = new WebGLRenderer({
-  canvas: canvas as HTMLCanvasElement,
-  antialias: antialias,
-});
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = PCFSoftShadowMap;
-renderer.toneMapping = ACESFilmicToneMapping;
-renderer.toneMappingExposure = params.toneMappingExposure;
+const antialias = localStorage.getItem("antialias") === "true";
+
+const renderer = createRenderer({ sizes, canvas, antialias });
 
 //Postprocessing
 
-const composer = new EffectComposer(renderer);
-
-composer.addPass(new RenderPass(scene, camera));
-const bloomParams = params.bloomParams;
-
-const bloomPass = new UnrealBloomPass(
-  new Vector2(window.innerWidth, window.innerHeight),
-  bloomParams.strength,
-  bloomParams.radius,
-  bloomParams.threshold
-);
-composer.addPass(bloomPass);
+const { composer, bloomPass } = createComposer({ renderer, scene, camera });
 
 //
-//#endregion
+//Size Update
+//
+
+window.addEventListener("resize", () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  composer.setSize(sizes.width, sizes.height);
+  bloomPass.setSize(sizes.width, sizes.height);
+});
+
+//
+// Sounds
 //
 
 const { positionalSound, onVolumeChange } = createSound({
@@ -108,6 +102,10 @@ const { positionalSound, onVolumeChange } = createSound({
   toggleButtonId: "sound-toggle-btn",
   iconId: "sound-toggle-icon",
 });
+
+//
+// Assets
+//
 
 const gltfAssets = loadAssets({
   scene,
@@ -127,8 +125,9 @@ const { update: updateMoon } = createSky({
 const { flame, smoke, sparks } = particles({ scene, texLoader, camera });
 
 //
-//#region Settings
+//Settings
 //
+
 const lightArr = [fireLight, directionalLight];
 
 const stats = new Stats();
@@ -168,75 +167,47 @@ settings({
   stats,
 });
 
-// #endregion
+//
+// Animate
 //
 
-//
-//#region Animate
-//
 const flParams = params.fireLight;
 
-const firelightAnimation = flParams.animation;
+const fireAnim = flParams.animation;
 
-const timer = new Timer();
+const loop = new Loop();
 
-const tick = () => {
-  //fps
-  stats.begin();
-  // Timer
-  timer.update();
-  const elapsedTime = timer.getElapsed();
-
-  // Update controls
-  controls.update();
-  clampCameraPosition();
-
-  const delta = timer.getDelta();
-
-  updateMoon();
-
-  // Shadow enabled
-  sparks.step(delta);
-  flame.step(delta);
-  smoke.step(delta);
-
-  // helpers
-  directionalLightHelper.update();
-  directionalLightCameraHelper.update();
-
+loop.addUpdate(() => controls.update());
+loop.addUpdate(() => clampCameraPosition());
+loop.addUpdate((delta) => sparks.step(delta));
+loop.addUpdate((delta) => flame.step(delta));
+loop.addUpdate((delta) => smoke.step(delta));
+loop.addUpdate((elapsed) => {
   fireLight.intensity =
     flParams.intensity +
-    Math.sin(elapsedTime * firelightAnimation.intensitySpeed) *
-      firelightAnimation.intensityAmp;
-
+    Math.sin(elapsed * fireAnim.intensitySpeed) * fireAnim.intensityAmp;
   fireLight.position.y =
     flParams.positions.y +
-    Math.sin(elapsedTime * firelightAnimation.positionSpeed) *
-      firelightAnimation.positionAmp;
+    Math.sin(elapsed * fireAnim.positionSpeed) * fireAnim.positionAmp;
 
   fireLight.distance =
     flParams.distance +
-    Math.sin(elapsedTime * firelightAnimation.distanceSpeed) *
-      firelightAnimation.distanceAmp;
+    Math.sin(elapsed * fireAnim.distanceSpeed) * fireAnim.distanceAmp;
+});
 
-  // Render
+loop.addRender(() => {
+  stats.begin();
 
-  if (params.bloomParams.enabled && !composer.passes.includes(bloomPass)) {
+  const haveBloom = composer.passes.includes(bloomPass);
+  if (params.bloomParams.enabled && !haveBloom) {
     composer.addPass(bloomPass);
+  } else if (!params.bloomParams.enabled && haveBloom) {
+    composer.removePass(bloomPass);
   }
-  if (!params.bloomParams.enabled && composer.passes.includes(bloomPass)) {
-    composer.passes.splice(composer.passes.indexOf(bloomPass), 1);
-  }
+
   composer.render();
 
   stats.end();
-  window.requestAnimationFrame(tick);
-};
+});
 
-tick();
-
-//
-//
-//
-//#endregion
-//
+loop.start();

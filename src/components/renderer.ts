@@ -1,0 +1,26 @@
+import { ACESFilmicToneMapping, PCFSoftShadowMap, WebGLRenderer } from "three";
+import { params } from "../../config.json";
+
+interface RendererInterface {
+  sizes: { width: number; height: number };
+  canvas: HTMLCanvasElement;
+  antialias: boolean;
+}
+
+export function createRenderer({
+  sizes,
+  canvas,
+  antialias,
+}: RendererInterface): WebGLRenderer {
+  const renderer = new WebGLRenderer({
+    canvas: canvas,
+    antialias: antialias,
+  });
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = PCFSoftShadowMap;
+  renderer.toneMapping = ACESFilmicToneMapping;
+  renderer.toneMappingExposure = params.toneMappingExposure;
+  return renderer;
+}
