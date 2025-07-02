@@ -181,10 +181,11 @@ loop.addUpdate(() => clampCameraPosition());
 loop.addUpdate((delta) => sparks.step(delta));
 loop.addUpdate((delta) => flame.step(delta));
 loop.addUpdate((delta) => smoke.step(delta));
-loop.addUpdate((elapsed) => {
+loop.addUpdate((_, elapsed) => {
   fireLight.intensity =
     flParams.intensity +
     Math.sin(elapsed * fireAnim.intensitySpeed) * fireAnim.intensityAmp;
+
   fireLight.position.y =
     flParams.positions.y +
     Math.sin(elapsed * fireAnim.positionSpeed) * fireAnim.positionAmp;
