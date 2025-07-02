@@ -1,4 +1,3 @@
-import { Timer } from "three/examples/jsm/misc/Timer.js";
 import Stats from "stats.js";
 import { params } from "../config.json";
 import {
@@ -13,9 +12,9 @@ import {
   createSound,
   createComposer,
   createRenderer,
-  Loop,
 } from "./components/_index.js";
 import { Scene, LoadingManager, TextureLoader, CameraHelper } from "three";
+import { Loop } from "./utils/_index.js";
 
 //
 // Canvas
