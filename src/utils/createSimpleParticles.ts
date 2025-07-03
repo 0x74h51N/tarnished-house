@@ -1,6 +1,3 @@
-// This createParticles function inspired from SimonDevYoutube
-// https://github.com/simondevyoutube/ThreeJS_Tutorial_ParticleSystems/blob/master/main.js
-
 import {
   DataTexture,
   RGBAFormat,
@@ -9,8 +6,6 @@ import {
   BufferGeometry,
   NormalBufferAttributes,
   Object3DEventMap,
-  LinearFilter,
-  ClampToEdgeWrapping,
   AdditiveBlending,
   BufferAttribute,
   RawShaderMaterial,
@@ -28,27 +23,27 @@ const defaultTexture = new DataTexture(
 defaultTexture.needsUpdate = true;
 
 /**
- * Creates a GPU-accelerated particle system using js.
- * Particles emit around a start position (`startPozs`), move upwards with velocity,
- * and optionally grow or fade as they move. Custom shaders control particle size,
- * rotation, and color tint.
+ * Creates a GPU-accelerated particle system using JS & GLSL.
+ * Particles emit around a start position (`startPozs`), move upwards with randomized velocity,
+ * and can optionally grow in size or fade in opacity over time. Shaders handle rotation, and blending.
  *
  * @param {Object} options
- * @param {Object3D} options.parent           – Parent object (scene or group) to attach particles.
- * @param {Color|number|string} options.color – Base color for particles.
- * @param {number} [options.opacity=1]              – Starting opacity for particles.
- * @param {number} [options.maxCount=200]           – Maximum particle count.
- * @param {number} [options.spawnRate=50]           – Particle spawn rate per second.
- * @param {number} [options.area=1]                 – Spawn area size around start position (X/Z).
- * @param {number} [options.size=0.05]              – Base particle size.
- * @param {Array<number>} [options.startPozs=[0,0,0]] – XYZ coordinates of initial particle spawn center.
- * @param {Array<Texture>|Texture|null} [options.textures=null]
-
- * @param {Camera} options.camera             – Camera reference for particle scaling.
- * @param {number} [options.sizeGrowth=0]           – Particle size increase rate with height.
- * @param {number} [options.fadeRate=0]             – Opacity fade rate with height.
+ * @param {Object3D} options.parent                   – Parent object (scene or group) to attach the particle system.
+ * @param {Color|number|string} options.color         – Base color for all particles.
+ * @param {number} [options.opacity=1]                – Initial opacity (alpha) of particles (0–1).
+ * @param {number} [options.maxCount=200]             – Total number of particles in the system.
+ * @param {number} [options.spawnRate=50]             – Number of particles spawned per second.
+ * @param {number} [options.area=1]                   – Horizontal spread (X/Z) of particle spawn positions.
+ * @param {number} [options.size=0.05]                – Base visual size of each particle.
+ * @param {Array<number>} [options.startPozs=[0,0,0]] – Center [x, y, z] of particle emission.
+ * @param {Array<Texture>|Texture|null} [options.textures=null] – Optional one or more textures used for particles. If multiple are given, each is used in a variant.
+ * @param {Camera} options.camera                     – Camera reference, used for perspective-based scaling.
+ * @param {number} [options.sizeGrowth=0]             – Rate at which particle size increases with height (per particle).
+ * @param {number} [options.fadeRate=0]               – Rate at which particle opacity decreases with height (per particle).
  *
- * @returns {Object} Particle system with `.points` (Points) and `.step(delta)` to update per frame.
+ * @returns {Object} Particle system object:
+ *   - `points`: Array of Three.js `Points` instances.
+ *   - `step(delta: number)`: Function to be called every frame to spawn and update particles.
  */
 
 export function createParticles({
@@ -69,24 +64,22 @@ export function createParticles({
 
   const numVariants = textureArray.length;
 
-  const pos = new Float32Array(maxCount * 3);
-  const v = new Float32Array(maxCount * 3);
-  const variants = new Uint8Array(maxCount);
+  const position = new Float32Array(maxCount * 3);
+  const vel = new Float32Array(maxCount * 3);
+  const startTimeArr = new Float32Array(maxCount);
+  const growthArr = new Float32Array(maxCount).fill(sizeGrowth);
 
-  const sizeArr = new Float32Array(maxCount);
-  const anglesArray = new Float32Array(maxCount);
+  const anglesArr = new Float32Array(maxCount);
   const colsArr = new Float32Array(maxCount * 4);
   const baseCol = new Color(color || 0xffffff);
 
   for (let i = 0; i < maxCount; i++) {
-    variants[i] = i % numVariants;
     const i3 = i * 3;
+    startPos(startPozs, position, i3, area);
+    startV(vel, i3, true);
 
-    startPos(startPozs, pos, i3, area);
-    startV(v, i3, true);
-
-    sizeArr[i] = size;
-    anglesArray[i] = Math.random() * Math.PI * 2;
+    startTimeArr[i] = Math.random() * 0.1;
+    anglesArr[i] = Math.random() * Math.PI * 2;
 
     colUpt(i, colsArr, baseCol, opacity);
   }
@@ -101,12 +94,6 @@ export function createParticles({
 
   for (let v = 0; v < numVariants; v++) {
     const dTex = textureArray[v] || defaultTexture;
-    [dTex].forEach((t) => {
-      t.generateMipmaps = false;
-      t.minFilter = LinearFilter;
-      t.magFilter = LinearFilter;
-      t.wrapS = t.wrapT = ClampToEdgeWrapping;
-    });
 
     const material = new RawShaderMaterial({
       uniforms: {
@@ -114,23 +101,32 @@ export function createParticles({
           value: window.innerHeight / Math.tan((camera.fov * Math.PI) / 360),
         },
         diffuseTexture: { value: dTex },
+        u_time: { value: 0 },
       },
       vertexShader: VS,
       fragmentShader: FS,
       transparent: true,
       depthWrite: false,
       blending: AdditiveBlending,
-      alphaTest: 0.01,
       dithering: true,
       vertexColors: true,
     });
 
     const geometry = new BufferGeometry();
-    geometry.setAttribute("position", new BufferAttribute(pos, 3));
-    geometry.setAttribute("variant", new BufferAttribute(variants, 1));
-    geometry.setAttribute("size", new BufferAttribute(sizeArr, 1));
-    geometry.setAttribute("angle", new BufferAttribute(anglesArray, 1));
+    geometry.setAttribute("position", new BufferAttribute(position, 3));
+    geometry.setAttribute("startTime", new BufferAttribute(startTimeArr, 1));
+    geometry.setAttribute("velocity", new BufferAttribute(vel, 3));
+    geometry.setAttribute(
+      "size",
+      new BufferAttribute(new Float32Array(maxCount).fill(size), 1)
+    );
+    geometry.setAttribute("sizeGrowth", new BufferAttribute(growthArr, 1));
+    geometry.setAttribute("angle", new BufferAttribute(anglesArr, 1));
     geometry.setAttribute("colour", new BufferAttribute(colsArr, 4));
+    geometry.setAttribute(
+      "fadeRate",
+      new BufferAttribute(new Float32Array(maxCount).fill(fadeRate), 1)
+    );
 
     const points = new Points(geometry, material);
     points.renderOrder = 9;
@@ -147,36 +143,20 @@ export function createParticles({
       const i = nextIndex % maxCount;
       const i3 = i * 3;
 
-      startPos(startPozs, pos, i3, area);
-      startV(v, i3);
+      startPos(startPozs, position, i3, area);
+      startV(vel, i3);
+      startTimeArr[i] = pointsArr[0].material.uniforms.u_time.value;
 
-      variants[i] = i % numVariants;
       nextIndex++;
-    }
-
-    for (let i = 0; i < maxCount; i++) {
-      const i3 = i * 3;
-      pos[i3] += v[i3] * delta;
-      pos[i3 + 1] += v[i3 + 1] * delta;
-      pos[i3 + 2] += v[i3 + 2] * delta;
-
-      const y = pos[i3 + 1];
-
-      if (sizeGrowth !== 0) sizeArr[i] = size + y * sizeGrowth;
-
-      if (fadeRate !== 0) {
-        const newOp = opacity - y * fadeRate;
-        colUpt(i, colsArr, baseCol, Math.max(0, newOp));
-      }
     }
 
     for (const p of pointsArr) {
       p.geometry.attributes.position.needsUpdate = true;
-      p.geometry.attributes.size.needsUpdate = sizeGrowth !== 0;
-      p.geometry.attributes.colour.needsUpdate = fadeRate !== 0;
+      p.geometry.attributes.velocity.needsUpdate = true;
+      p.geometry.attributes.startTime.needsUpdate = true;
+      p.material.uniforms.u_time.value += delta;
     }
   }
-
   return { points: pointsArr, step };
 }
 
@@ -197,15 +177,10 @@ function startV(v: Float32Array, i3 = 0, f = false) {
   v[i3 + 2] = f ? 0 : (Math.random() - 0.5) * 0.2;
 }
 
-function colUpt(
-  i: number,
-  colsArr: Float32Array,
-  baseCol: Color,
-  opacity: number
-) {
+function colUpt(i: number, colsArr: Float32Array, col: Color, opacity: number) {
   const i4 = i * 4;
-  colsArr[i4] = baseCol.r;
-  colsArr[i4 + 1] = baseCol.g;
-  colsArr[i4 + 2] = baseCol.b;
+  colsArr[i4] = col.r;
+  colsArr[i4 + 1] = col.g;
+  colsArr[i4 + 2] = col.b;
   colsArr[i4 + 3] = opacity;
 }

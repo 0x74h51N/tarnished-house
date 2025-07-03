@@ -6,25 +6,35 @@ uniform float pointMultiplier;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform float u_time;
-    
+
+attribute vec3 position;
+attribute vec3 velocity;
+attribute float startTime;
 attribute float size;
 attribute float angle;
 attribute vec4 colour;
-attribute vec3 position;
+attribute float sizeGrowth;   
+attribute float fadeRate;
 
 varying vec4 vColour;
 varying vec2 vAngle;
-
-
+varying float vFade;
 
 void main() {
- 
-  float offset = sin(u_time * 4.0 + position.x * 50.0) * 0.05;
-  vec4 newPosition = vec4(position + vec3(0.0, offset, 0.0), 1.0);
+  float age = max(u_time - startTime, 0.0);
 
-  gl_Position = projectionMatrix * modelViewMatrix * newPosition;
-  gl_PointSize = size * pointMultiplier / gl_Position.w;
+  vec3  pos = position + velocity * age;
+  vec4  mv  = modelViewMatrix * vec4(pos, 1.0);
+  
+  float posDeltaY = pos.y - position.y;
 
-  vAngle = vec2(cos(angle), sin(angle));
+  float grownSize = size + posDeltaY * sizeGrowth;
+
+  gl_Position = projectionMatrix * mv;
+  
+  gl_PointSize = grownSize * pointMultiplier / gl_Position.w;
+
+  vAngle  = vec2(cos(angle), sin(angle));
   vColour = colour;
+  vFade = fadeRate * posDeltaY;
 }
