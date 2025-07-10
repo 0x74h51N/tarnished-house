@@ -6,7 +6,7 @@ import {
   AudioListener,
   Audio,
 } from "three";
-import { params, assets } from "../../config.json";
+import config from "../../config.json";
 
 interface CreateSoundInterface {
   camera: PerspectiveCamera;
@@ -34,20 +34,23 @@ export function createSound({
 
   const positionalSound = new PositionalAudio(listener);
   let fireLoaded = false;
-  audioLoader.load(assets.sounds.fire, (buffer) => {
+  const audioConfig = config.scene.audio;
+  audioLoader.load(config.assets.sounds.fire, (buffer) => {
     positionalSound.setBuffer(buffer);
-    positionalSound.setRefDistance(3);
+    positionalSound.setRefDistance(audioConfig.positionalAudio.refDistance);
     positionalSound.setLoop(true);
-    positionalSound.setVolume(params.volume * 0.8);
+    positionalSound.setVolume(
+      audioConfig.volume * audioConfig.positionalAudio.fireVolumeMultiplier
+    );
     fireLoaded = true;
   });
 
   const ambianceSound = new Audio(listener);
   let ambLoaded = false;
-  audioLoader.load(assets.sounds.ambiance, (buffer) => {
+  audioLoader.load(config.assets.sounds.ambiance, (buffer) => {
     ambianceSound.setBuffer(buffer);
     ambianceSound.setLoop(true);
-    ambianceSound.setVolume(params.volume);
+    ambianceSound.setVolume(audioConfig.volume);
     ambLoaded = true;
   });
 
@@ -67,8 +70,10 @@ export function createSound({
       } else {
         if (fireLoaded && !positionalSound.isPlaying) positionalSound.play();
         if (ambLoaded && !ambianceSound.isPlaying) ambianceSound.play();
-        positionalSound.setVolume(params.volume * 0.8);
-        ambianceSound.setVolume(params.volume);
+        positionalSound.setVolume(
+          audioConfig.volume * audioConfig.positionalAudio.fireVolumeMultiplier
+        );
+        ambianceSound.setVolume(audioConfig.volume);
         if (icon instanceof HTMLImageElement) {
           icon.src = "/sound.svg";
           icon.alt = "Sound on";
@@ -79,7 +84,9 @@ export function createSound({
 
   const onVolumeChange = (v: number) => {
     positionalSound.setVolume(v);
-    ambianceSound.setVolume(v * 0.8);
+    ambianceSound.setVolume(
+      v * audioConfig.positionalAudio.fireVolumeMultiplier
+    );
     if (fireLoaded && !positionalSound.isPlaying) {
       positionalSound.play();
       if (icon instanceof HTMLImageElement) {

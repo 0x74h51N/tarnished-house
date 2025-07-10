@@ -1,5 +1,5 @@
 import { ACESFilmicToneMapping, PCFSoftShadowMap, WebGLRenderer } from "three";
-import { params } from "../../config.json";
+import config from "../../config.json";
 
 interface RendererInterface {
   sizes: { width: number; height: number };
@@ -17,10 +17,12 @@ export function createRenderer({
     antialias: antialias,
   });
   renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, config.scene.renderer.maxPixelRatio)
+  );
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.toneMappingExposure = params.toneMappingExposure;
+  renderer.toneMappingExposure = config.scene.renderer.toneMappingExposure;
   return renderer;
 }

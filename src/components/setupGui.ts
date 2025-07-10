@@ -1,12 +1,45 @@
 import GUI from "lil-gui";
 import { getCountConfigs, spawnMeshes } from "../utils/_index";
-import {
-  params,
-  assets,
-  shadowMapSizes,
-  textureQuality,
-} from "../../config.json";
+import config from "../../config.json";
 import { shadowTypes, makeScene } from "./settings/settingsData";
+
+// Config Refs
+const params = {
+  ...config.scene.camera,
+  ...config.scene.renderer,
+  ...config.scene.audio,
+  ...config.scene.debug,
+  bloomParams: config.scene.postProcessing.bloom,
+  shadowEnabled: config.scene.renderer.shadows.enabled,
+  shadowType: config.scene.renderer.shadows.type,
+  shadowMapSize: config.scene.renderer.shadows.mapSize,
+  ambientLightColor: config.scene.lighting.ambient.color,
+  ambientLightIntensity: config.scene.lighting.ambient.intensity,
+  directionalLight: {
+    ...config.scene.lighting.directional,
+    positions: config.scene.lighting.directional.position,
+    shadowCameraWidth: config.scene.lighting.directional.shadow.camera.width,
+    shadowCameraHeight: config.scene.lighting.directional.shadow.camera.height,
+    shadowCameraNear: config.scene.lighting.directional.shadow.camera.near,
+    shadowCameraFar: config.scene.lighting.directional.shadow.camera.far,
+    helper: config.scene.debug.lightHelpers.directional,
+  },
+  fireLight: {
+    ...config.scene.lighting.fireLight,
+    positions: config.scene.lighting.fireLight.position,
+    helper: config.scene.debug.lightHelpers.fire,
+  },
+  cameraFov: config.scene.camera.fov,
+  cameraNear: config.scene.camera.near,
+  cameraFar: config.scene.camera.far,
+  cameraX: config.scene.camera.position.x,
+  cameraY: config.scene.camera.position.y,
+  cameraZ: config.scene.camera.position.z,
+};
+
+const assets = config.assets;
+const shadowMapSizes = config.quality.shadowMapSizes;
+const textureQuality = config.quality.textureQuality;
 import { shadowDispose } from "../utils/_index";
 import { ManagerTypes } from "types";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
@@ -212,7 +245,7 @@ export function setupGUI({
     });
 
   fireLightGui
-    .add(textureQuality.high, "b", -0.01, 0.01, 0.0001)
+    .add(textureQuality.high, "bias", -0.01, 0.01, 0.0001)
     .name("Shadow Bias")
     .onChange((v: number) => {
       if (fireLight.shadow) {
@@ -222,7 +255,7 @@ export function setupGUI({
     });
 
   fireLightGui
-    .add(textureQuality.high, "nb", 0, 1, 0.001)
+    .add(textureQuality.high, "normalBias", 0, 1, 0.001)
     .name("Normal Bias")
     .onChange((v: number) => {
       if (fireLight.shadow) {
@@ -338,14 +371,14 @@ export function setupGUI({
       }
     });
   directionalLightGui
-    .add(textureQuality.high, "b", -0.01, 0.01, 0.0001)
+    .add(textureQuality.high, "bias", -0.01, 0.01, 0.0001)
     .name("Shadow Bias")
     .onChange((v: number) => {
       directionalLight.shadow.bias = v;
     });
 
   directionalLightGui
-    .add(textureQuality.high, "nb", 0, 1, 0.001)
+    .add(textureQuality.high, "normalBias", 0, 1, 0.001)
     .name("Normal Bias")
     .onChange((v: number) => {
       directionalLight.shadow.normalBias = v;
@@ -353,7 +386,7 @@ export function setupGUI({
 
   const sceneOptions = gui.addFolder("Scene Options");
   sceneOptions.close();
-  const map = getCountConfigs(gltfAssets, assets.gltf.randoms);
+  const map = getCountConfigs(gltfAssets, assets.models.spawnable);
 
   makeScene().forEach((control) => {
     if (control.type === "range") {
@@ -363,7 +396,9 @@ export function setupGUI({
 
       sceneOptions
         .add(
-          assets.gltf.randoms[id.replace("Count", "") as ManagerTypes["name"]],
+          assets.models.spawnable[
+            id.replace("Count", "") as ManagerTypes["name"]
+          ],
           "count",
           min,
           max,

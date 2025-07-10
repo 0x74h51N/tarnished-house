@@ -1,6 +1,6 @@
 import { Scene, TextureLoader, PerspectiveCamera, SRGBColorSpace } from "three";
 import { createParticles } from "../utils/_index";
-import { assets } from "../../config.json";
+import config from "../../config.json";
 import { CreateParticlesInterface, CreateParticlesReturn } from "types";
 
 interface ParticlesInterface {
@@ -10,13 +10,13 @@ interface ParticlesInterface {
 }
 
 export function particles({ scene, texLoader, camera }: ParticlesInterface) {
-  const configs = assets.particles;
+  const configs = config.assets.particles;
 
-  return configs.reduce((acc, { name, textures = [], options }) => {
+  return configs.reduce((acc, { name, textures = [], properties }) => {
     const params: CreateParticlesInterface = {
       parent: scene,
       camera,
-      ...options,
+      ...properties,
       textures: textures.length
         ? textures.map((path) => {
             const tex = texLoader.load(path);

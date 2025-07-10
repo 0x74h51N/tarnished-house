@@ -1,75 +1,216 @@
 {
-  "params": {
-    "fpsCounter": false,
-    "bloomParams": {
-      "enabled": true,
-      "strength": 0.5,
-      "radius": 1.4,
-      "threshold": 0.5
-    },
-    "fog": true,
-    "volume": 0.6,
-    "toneMapping": "ACESFilmic",
-    "toneMappingExposure": 0.5,
-    "shadowEnabled": true,
-    "shadowType": "PCFSoftShadowMap",
-    "shadowMapSize": 512,
-    "directionalLight": {
-      "color": "#b0c4de",
-      "intensity": 1.55,
-      "positions": { "x": 4, "y": 5.5, "z": 12 },
-      "helper": false,
-      "shadowCameraWidth": 30,
-      "shadowCameraHeight": 22,
-      "shadowCameraNear": 1,
-      "shadowCameraFar": 27
-    },
-    "fireLight": {
-      "helper": false,
-      "positions": { "x": 0, "y": 0.85, "z": 1.5 },
-      "intensity": 28,
-      "distance": 21,
-      "decay": 1,
-      "animation": {
-        "intensitySpeed": 10,
-        "intensityAmp": 5,
-        "positionSpeed": 8,
-        "positionAmp": 0.05,
-        "distanceSpeed": 8,
-        "distanceAmp": 2
+  "scene": {
+    "camera": {
+      "fov": 45,
+      "near": 0.1,
+      "far": 100,
+      "position": {
+        "x": 7,
+        "y": 5,
+        "z": 11
+      },
+      "controls": {
+        "dampingFactor": 0.03,
+        "panSpeed": 0.6,
+        "rotateSpeed": 0.8,
+        "minDistance": 2,
+        "maxDistance": 50,
+        "minPolarAngle": 0.5236,
+        "maxPolarAngle": 1.5708,
+        "positionLimits": {
+          "x": { "min": -16, "max": 16 },
+          "y": { "min": 1, "max": 12 },
+          "z": { "min": -16, "max": 16 }
+        },
+        "lerpFactor": 0.2
       }
     },
-    "ambientLightColor": "#446688",
-    "ambientLightIntensity": 2.4,
-    "cameraFov": 45,
-    "cameraNear": 0.1,
-    "cameraFar": 100,
-    "cameraX": 7,
-    "cameraY": 5,
-    "cameraZ": 11,
-    "cameraHelper": false
+    "renderer": {
+      "toneMapping": "ACESFilmic",
+      "toneMappingExposure": 0.5,
+      "maxPixelRatio": 2,
+      "shadows": {
+        "enabled": true,
+        "type": "PCFSoftShadowMap",
+        "mapSize": 512
+      }
+    },
+    "lighting": {
+      "ambient": {
+        "color": "#446688",
+        "intensity": 2.4
+      },
+      "directional": {
+        "color": "#b0c4de",
+        "intensity": 1.55,
+        "position": {
+          "x": 4,
+          "y": 5.5,
+          "z": 12
+        },
+        "shadow": {
+          "camera": {
+            "width": 30,
+            "height": 22,
+            "near": 1,
+            "far": 27
+          }
+        },
+        "helper": {
+          "size": 1
+        },
+        "target": {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      },
+      "fireLight": {
+        "color": "#ffa500",
+        "position": {
+          "x": 0,
+          "y": 0.85,
+          "z": 1.5
+        },
+        "intensity": 28,
+        "distance": 21,
+        "decay": 1,
+        "animation": {
+          "intensity": {
+            "speed": 10,
+            "amplitude": 5
+          },
+          "position": {
+            "speed": 8,
+            "amplitude": 0.05
+          },
+          "distance": {
+            "speed": 8,
+            "amplitude": 2
+          }
+        },
+        "helper": {
+          "size": 0.2
+        }
+      }
+    },
+    "postProcessing": {
+      "bloom": {
+        "enabled": true,
+        "strength": 0.5,
+        "radius": 1.4,
+        "threshold": 0.5
+      },
+      "fog": {
+        "enabled": true,
+        "color": "#57767d",
+        "density": 0.02
+      }
+    },
+    "audio": {
+      "volume": 0.6,
+      "positionalAudio": {
+        "refDistance": 3,
+        "fireVolumeMultiplier": 0.8
+      }
+    },
+    "debug": {
+      "fpsCounter": false,
+      "cameraHelper": false,
+      "lightHelpers": {
+        "directional": false,
+        "fire": false
+      }
+    },
+    "ui": {
+      "transitions": {
+        "modalClose": 400,
+        "loadingScreen": 600
+      }
+    },
+    "environment": {
+      "sky": {
+        "scale": 100,
+        "turbidity": 50,
+        "rayleigh": 0,
+        "mieCoefficient": 0.2,
+        "mieDirectionalG": 0,
+        "sunPosition": {
+          "x": 0,
+          "y": -0.08,
+          "z": -1
+        }
+      },
+      "moon": {
+        "geometry": {
+          "width": 2,
+          "height": 2
+        },
+        "emissiveIntensity": 10,
+        "distanceMultiplier": 3,
+        "angularSize": 0.75
+      }
+    }
   },
-  "shadowMapSizes": [256, 512, 1024, 2048, 4096],
-  "shadowDistOpt": [
-    { "n": "Half", "w": 16, "f": 20 },
-    { "n": "3/4", "w": 30, "f": 27 },
-    { "n": "Full", "w": 42, "f": 42 }
-  ],
-  "toneMappingOptions": [
-    { "v": "NoToneMapping", "t": "None" },
-    { "v": "LinearToneMapping", "t": "Linear" },
-    { "v": "ReinhardToneMapping", "t": "Reinhard" },
-    { "v": "CineonToneMapping", "t": "Cineon" },
-    { "v": "ACESFilmicToneMapping", "t": "ACES" }
-  ],
-  "textureQuality": {
-    "high": { "b": -0.0001, "nb": 0.05 },
-    "medium": { "b": -0.0008, "nb": 0.08 },
-    "low": { "b": -0.01, "nb": 0.1 }
+  "quality": {
+    "shadowMapSizes": [256, 512, 1024, 2048, 4096],
+    "shadowDistance": [
+      {
+        "name": "Half",
+        "width": 16,
+        "far": 20
+      },
+      {
+        "name": "3/4",
+        "width": 30,
+        "far": 27
+      },
+      {
+        "name": "Full",
+        "width": 42,
+        "far": 42
+      }
+    ],
+    "textureQuality": {
+      "high": {
+        "bias": -0.0001,
+        "normalBias": 0.05
+      },
+      "medium": {
+        "bias": -0.0008,
+        "normalBias": 0.08
+      },
+      "low": {
+        "bias": -0.01,
+        "normalBias": 0.1
+      }
+    }
   },
-  "fogSettings": {
-    "color": "#57767d",
-    "density": 0.02
+  "options": {
+    "toneMappingTypes": [
+      {
+        "value": "NoToneMapping",
+        "text": "None"
+      },
+      {
+        "value": "LinearToneMapping",
+        "text": "Linear"
+      },
+      {
+        "value": "ReinhardToneMapping",
+        "text": "Reinhard"
+      },
+      {
+        "value": "CineonToneMapping",
+        "text": "Cineon"
+      },
+      {
+        "value": "ACESFilmicToneMapping",
+        "text": "ACES"
+      }
+    ]
   },
   "assets": {
     "decoder": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
@@ -91,62 +232,86 @@
         "heightSegments": 300
       }
     },
-    "gltf": {
+    "models": {
       "house": {
-        "model": "./abandoned_house/abandonedHouse.gltf",
-        "positions": { "x": 0.02, "y": 0.2, "z": -8 },
+        "path": "./abandoned_house/abandonedHouse.gltf",
+        "position": {
+          "x": 0.02,
+          "y": 0.2,
+          "z": -8
+        },
         "scale": 1.85,
         "castShadow": true,
         "receiveShadow": true
       },
       "bonfire": {
-        "model": "./bonfire/bonfire.gltf",
+        "path": "./bonfire/bonfire.gltf",
         "scale": 2.2,
-        "positions": { "x": 0, "y": 0.2, "z": 1.5 },
+        "position": {
+          "x": 0,
+          "y": 0.2,
+          "z": 1.5
+        },
         "castShadow": true
       },
-      "randoms": {
+      "spawnable": {
         "trees": {
-          "model": "./trees/trees.gltf",
+          "path": "./trees/trees.gltf",
           "count": 20,
-          "spawnOptions": {
-            "scaleMin": 0.0048,
-            "scaleMax": 0.0049,
-            "radiusMin": 7.8,
-            "radiusMax": 21,
+          "spawn": {
+            "scale": {
+              "min": 0.0048,
+              "max": 0.0049
+            },
+            "radius": {
+              "min": 7.8,
+              "max": 21
+            },
             "minDistance": 2.5
           }
         },
         "bushes": {
-          "model": "./burchellii/bushes.gltf",
+          "path": "./burchellii/bushes.gltf",
           "count": 35,
-          "spawnOptions": {
-            "scaleMin": 0.2,
-            "scaleMax": 0.4,
-            "radiusMin": 7,
-            "radiusMax": 20,
+          "spawn": {
+            "scale": {
+              "min": 0.2,
+              "max": 0.4
+            },
+            "radius": {
+              "min": 7,
+              "max": 20
+            },
             "minDistance": 1
           }
         },
         "graves": {
-          "model": "./gravestones/scene.gltf",
+          "path": "./gravestones/scene.gltf",
           "count": 32,
-          "spawnOptions": {
-            "scaleMin": 0.0018,
-            "scaleMax": 0.0019,
-            "radiusMin": 8,
-            "radiusMax": 21,
+          "spawn": {
+            "scale": {
+              "min": 0.0018,
+              "max": 0.0019
+            },
+            "radius": {
+              "min": 8,
+              "max": 21
+            },
             "minDistance": 3
           }
         },
         "roots": {
-          "model": "./pineroots/pine_roots.gltf",
+          "path": "./pineroots/pine_roots.gltf",
           "count": 12,
-          "spawnOptions": {
-            "scaleMin": 2.7,
-            "scaleMax": 3,
-            "radiusMin": 4,
-            "radiusMax": 21,
+          "spawn": {
+            "scale": {
+              "min": 2.7,
+              "max": 3
+            },
+            "radius": {
+              "min": 4,
+              "max": 21
+            },
             "minDistance": 5
           }
         }
@@ -160,7 +325,7 @@
           "./fire/flame2.jpg",
           "./fire/flame3.jpg"
         ],
-        "options": {
+        "properties": {
           "area": 0.2,
           "size": 0.45,
           "maxCount": 14,
@@ -177,7 +342,7 @@
           "./smoke/smoke3.png",
           "./smoke/smoke4.png"
         ],
-        "options": {
+        "properties": {
           "area": 0.2,
           "size": 0.6,
           "maxCount": 40,
@@ -191,14 +356,13 @@
       },
       {
         "name": "sparks",
-        "options": {
+        "properties": {
           "color": "#FFF449",
           "area": 0.25,
           "size": 0.005,
           "maxCount": 250,
           "spawnRate": 30,
-          "startPozs": [0, 0.15, 1.5],
-          "randomCol": true
+          "startPozs": [0, 0.15, 1.5]
         }
       }
     ],

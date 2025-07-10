@@ -4,7 +4,7 @@ import {
   RenderPass,
   UnrealBloomPass,
 } from "three/examples/jsm/Addons";
-import { params } from "../../config.json";
+import config from "../../config.json";
 
 interface ComposerInterface {
   renderer: WebGLRenderer;
@@ -24,7 +24,7 @@ export function createComposer({
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
 
-  const { strength, radius, threshold } = params.bloomParams;
+  const { strength, radius, threshold } = config.scene.postProcessing.bloom;
   const bloomPass = new UnrealBloomPass(
     new Vector2(window.innerWidth, window.innerHeight),
     strength,

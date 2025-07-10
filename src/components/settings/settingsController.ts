@@ -1,6 +1,6 @@
 import { shadowTypes, fog } from "./settingsData.js";
 import { shadowDispose, spawnMeshes } from "../../utils/_index";
-import { params, shadowDistOpt, textureQuality } from "../../../config.json";
+import config from "../../../config.json";
 import { CountConfigs } from "types";
 import {
   Light,
@@ -10,6 +10,19 @@ import {
   ToneMapping,
 } from "three";
 import { toneMappingMap } from "./settingsData";
+
+// Config Refs
+const params = {
+  bloomParams: config.scene.postProcessing.bloom,
+  fog: config.scene.postProcessing.fog.enabled,
+  shadowMapSize: config.scene.renderer.shadows.mapSize,
+  directionalLight: {
+    shadowCameraWidth: config.scene.lighting.directional.shadow.camera.width,
+    shadowCameraFar: config.scene.lighting.directional.shadow.camera.far,
+  },
+};
+const shadowDistOpt = config.quality.shadowDistance;
+const textureQuality = config.quality.textureQuality;
 interface SettingsControllerInterface {
   lights: Light[];
   renderer: WebGLRenderer;
@@ -56,11 +69,10 @@ export function settingsController({
       const span = document.getElementById("brightnessValue");
       if (span) span.textContent = val.toString();
       renderer.toneMappingExposure = val;
-      params.toneMappingExposure = val;
+      renderer.toneMappingExposure = val;
     },
     fpsCounter: (e: Event & { target: HTMLInputElement }) => {
       const v = e.target.checked;
-      params.fpsCounter = v;
       if (v) {
         document.body.appendChild(stats.dom);
       } else if (stats.dom.parentElement) {
@@ -89,17 +101,17 @@ export function settingsController({
     shadowDistance: (e: Event & { target: HTMLSelectElement }) => {
       shadowDispose(lights);
       const opt = shadowDistOpt.find(
-        (o) => o.n.toLowerCase() === e.target.value
+        (o) => o.name.toLowerCase() === e.target.value
       );
       if (!opt) return;
-      params.directionalLight.shadowCameraWidth = opt.w;
-      params.directionalLight.shadowCameraFar = opt.f;
+      params.directionalLight.shadowCameraWidth = opt.width;
+      params.directionalLight.shadowCameraFar = opt.far;
       const dirLight = lights.find((l) => l instanceof DirectionalLight);
       if (dirLight) {
-        const halfW = opt.w / 2;
+        const halfW = opt.width / 2;
         dirLight.shadow.camera.left = -halfW;
         dirLight.shadow.camera.right = halfW;
-        dirLight.shadow.camera.far = opt.f;
+        dirLight.shadow.camera.far = opt.far;
         dirLight.shadow.camera.updateProjectionMatrix();
       }
       renderer.shadowMap.needsUpdate = true;
@@ -119,11 +131,11 @@ export function settingsController({
       renderer.shadowMap.needsUpdate = true;
     },
     quality: (e: Event & { target: HTMLSelectElement }) => {
-      const { b, nb } =
+      const { bias, normalBias } =
         textureQuality[e.target.value as "high" | "medium" | "low"];
       lights.forEach((l) => {
-        l.shadow!.bias = b;
-        l.shadow!.normalBias = nb;
+        l.shadow!.bias = bias;
+        l.shadow!.normalBias = normalBias;
       });
     },
     toneMapping: (e: Event & { target: HTMLSelectElement }) => {

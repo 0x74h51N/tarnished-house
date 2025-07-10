@@ -1,5 +1,5 @@
-import type { AssetTypes, ManagerTypes, SpawnOptions } from "../types";
-import { assets } from "../../config.json";
+import type { AssetTypes, ManagerTypes } from "../types";
+import config from "../../config.json";
 import { spawnMeshes, centerGeometryXZ } from "../utils/_index";
 import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons";
 import {
@@ -40,7 +40,7 @@ export function loadAssets({
 
   const dracoLoader = new DRACOLoader();
   dracoLoader.setDecoderConfig({ type: "js" });
-  dracoLoader.setDecoderPath(assets.decoder);
+  dracoLoader.setDecoderPath(config.assets.decoder);
 
   const gltfLoader = new GLTFLoader(loadingManager);
   gltfLoader.setDRACOLoader(dracoLoader);
@@ -49,7 +49,7 @@ export function loadAssets({
   //   ─── Floor ─────────────────────────────────────────────────────────
   //
 
-  const floorAsset = assets.floor;
+  const floorAsset = config.assets.floor;
   const { repeat, ...texPaths } = floorAsset.textures;
 
   const textures = Object.fromEntries(
@@ -90,11 +90,11 @@ export function loadAssets({
   // ─── HOUSE ─────────────────────────────────────────────────────────
   //
 
-  const houseAsset = assets.gltf.house;
-  gltfLoader.load(houseAsset.model, (houseGLTF) => {
+  const houseAsset = config.assets.models.house;
+  gltfLoader.load(houseAsset.path, (houseGLTF) => {
     const house = houseGLTF.scene;
 
-    const { x, y, z } = houseAsset.positions;
+    const { x, y, z } = houseAsset.position;
     house.position.set(x, y, z);
 
     house.scale.setScalar(houseAsset.scale);
@@ -127,8 +127,8 @@ export function loadAssets({
   // ─── BONFIRE ───────────────────────────────────────────────────────
   //
 
-  const bonfireAsset = assets.gltf.bonfire;
-  gltfLoader.load(bonfireAsset.model, (bonfireGLTF) => {
+  const bonfireAsset = config.assets.models.bonfire;
+  gltfLoader.load(bonfireAsset.path, (bonfireGLTF) => {
     const bonfire = bonfireGLTF.scene.children[0];
     bonfire.traverse((child) => {
       if (child instanceof Mesh) {
@@ -137,7 +137,7 @@ export function loadAssets({
     });
 
     bonfire.scale.setScalar(bonfireAsset.scale);
-    const { x, y, z } = bonfireAsset.positions;
+    const { x, y, z } = bonfireAsset.position;
     bonfire.position.set(x, y, z);
     bonfire.add(positionalSound);
     scene.add(bonfire);
@@ -152,16 +152,12 @@ export function loadAssets({
   const managers: ManagerTypes[] = [];
 
   spawnKeys.forEach((key) => {
-    const cfg = assets.gltf.randoms[key] as {
-      model: string;
-      count: number;
-      spawnOptions: SpawnOptions;
-    };
+    const cfg = config.assets.models.spawnable[key];
 
     const group = new Group();
     const manager: AssetTypes = { baseMeshes: [] as Mesh[], group };
 
-    gltfLoader.load(cfg.model, (gltf) => {
+    gltfLoader.load(cfg.path, (gltf) => {
       let rawMeshes: Mesh[] = [];
 
       switch (key) {
@@ -188,7 +184,13 @@ export function loadAssets({
         baseMeshes: rawMeshes,
         group,
         count: cfg.count,
-        options: cfg.spawnOptions,
+        options: {
+          scaleMin: cfg.spawn.scale.min,
+          scaleMax: cfg.spawn.scale.max,
+          radiusMin: cfg.spawn.radius.min,
+          radiusMax: cfg.spawn.radius.max,
+          minDistance: cfg.spawn.minDistance,
+        },
         roots: key === "roots",
       });
       scene.add(group);

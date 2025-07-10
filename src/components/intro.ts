@@ -1,13 +1,15 @@
 import { LoadingManager } from "three";
+import config from "../../config.json";
 
 export function intro(loadingManager: LoadingManager) {
   const closeIntro = document.getElementById("close-intro")!;
   const introModal = document.getElementById("intro-modal")!;
+  const uiConfig = config.scene.ui.transitions;
 
   if (closeIntro && introModal) {
     closeIntro.addEventListener("click", () => {
       introModal.classList.remove("active");
-      setTimeout(() => introModal.classList.add("hidden"), 400);
+      setTimeout(() => introModal.classList.add("hidden"), uiConfig.modalClose);
     });
   }
 
@@ -17,7 +19,7 @@ export function intro(loadingManager: LoadingManager) {
       loadingScreen.classList.add("hidden");
       setTimeout(() => {
         loadingScreen.style.display = "none";
-      }, 600);
+      }, uiConfig.loadingScreen);
     }
 
     if (introModal) {

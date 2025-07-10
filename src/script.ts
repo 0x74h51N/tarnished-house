@@ -1,5 +1,5 @@
 import Stats from "stats.js";
-import { params } from "../config.json";
+import config from "../config.json";
 import {
   intro,
   credits,
@@ -59,6 +59,7 @@ const {
   directionalLight,
   directionalLightHelper,
   directionalLightCameraHelper,
+  fireAnimator,
 } = lights(scene);
 
 //
@@ -170,10 +171,7 @@ settings({
 // Animate
 //
 
-const flParams = params.fireLight;
-
-const fireAnim = flParams.animation;
-
+let bloom = config.scene.postProcessing.bloom;
 const loop = new Loop();
 
 loop.addUpdate(() => controls.update());
@@ -182,29 +180,16 @@ loop.addUpdate((delta) => sparks.step(delta));
 loop.addUpdate((delta) => flame.step(delta));
 loop.addUpdate((delta) => smoke.step(delta));
 loop.addUpdate((_, elapsed) => {
-  fireLight.intensity =
-    flParams.intensity +
-    Math.sin(elapsed * fireAnim.intensitySpeed) * fireAnim.intensityAmp;
-
-  fireLight.position.y =
-    flParams.positions.y +
-    Math.sin(elapsed * fireAnim.positionSpeed) * fireAnim.positionAmp;
-
-  fireLight.distance =
-    flParams.distance +
-    Math.sin(elapsed * fireAnim.distanceSpeed) * fireAnim.distanceAmp;
+  fireAnimator.updateFireLight(elapsed);
 });
 
 loop.addRender(() => {
   stats.begin();
-
-  const haveBloom = composer.passes.includes(bloomPass);
-  if (params.bloomParams.enabled && !haveBloom) {
+  if (bloom.enabled && !composer.passes.includes(bloomPass)) {
     composer.addPass(bloomPass);
-  } else if (!params.bloomParams.enabled && haveBloom) {
+  } else if (!bloom.enabled) {
     composer.removePass(bloomPass);
   }
-
   composer.render();
 
   stats.end();

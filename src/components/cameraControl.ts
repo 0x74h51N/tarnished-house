@@ -1,5 +1,5 @@
 import { Scene, PerspectiveCamera, CameraHelper, MathUtils } from "three";
-import { params } from "../../config.json";
+import config from "../../config.json";
 import { OrbitControls } from "three/examples/jsm/Addons";
 interface CameraControlOptions {
   scene: Scene;
@@ -20,42 +20,48 @@ export function cameraControl({
   sizes,
 }: CameraControlOptions): CameraControlReturn {
   const camera = new PerspectiveCamera(
-    params.cameraFov,
+    config.scene.camera.fov,
     sizes.width / sizes.height,
-    params.cameraNear,
-    params.cameraFar
+    config.scene.camera.near,
+    config.scene.camera.far
   );
-  camera.position.set(params.cameraX, params.cameraY, params.cameraZ);
+  camera.position.set(
+    config.scene.camera.position.x,
+    config.scene.camera.position.y,
+    config.scene.camera.position.z
+  );
   scene.add(camera);
 
   let cameraHelper = null;
-  if (params.cameraHelper) {
+  if (config.scene.debug.cameraHelper) {
     cameraHelper = new CameraHelper(camera);
     scene.add(cameraHelper);
   }
 
   // Orbit Controls
   const controls = new OrbitControls(camera, canvas);
+  const controlsConfig = config.scene.camera.controls;
+
   controls.enableDamping = true;
-  controls.dampingFactor = 0.03;
+  controls.dampingFactor = controlsConfig.dampingFactor;
   controls.screenSpacePanning = true;
   controls.enablePan = true;
-  controls.panSpeed = 0.6;
-  controls.rotateSpeed = 0.8;
+  controls.panSpeed = controlsConfig.panSpeed;
+  controls.rotateSpeed = controlsConfig.rotateSpeed;
 
-  controls.minDistance = 2;
-  controls.maxDistance = 50;
-  controls.minPolarAngle = Math.PI / 6;
-  controls.maxPolarAngle = Math.PI / 2;
+  controls.minDistance = controlsConfig.minDistance;
+  controls.maxDistance = controlsConfig.maxDistance;
+  controls.minPolarAngle = controlsConfig.minPolarAngle;
+  controls.maxPolarAngle = controlsConfig.maxPolarAngle;
 
   // Clamping limits
   const limits = {
-    minY: 1,
-    maxY: 12,
-    minX: -16,
-    maxX: 16,
-    minZ: -16,
-    maxZ: 16,
+    minY: controlsConfig.positionLimits.y.min,
+    maxY: controlsConfig.positionLimits.y.max,
+    minX: controlsConfig.positionLimits.x.min,
+    maxX: controlsConfig.positionLimits.x.max,
+    minZ: controlsConfig.positionLimits.z.min,
+    maxZ: controlsConfig.positionLimits.z.max,
   };
 
   function clampAxis(axis: "x" | "y" | "z") {
@@ -64,7 +70,7 @@ export function cameraControl({
     camera.position[axis] = MathUtils.lerp(
       camera.position[axis],
       MathUtils.clamp(camera.position[axis], min, max),
-      0.2
+      controlsConfig.lerpFactor
     );
   }
 

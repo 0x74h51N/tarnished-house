@@ -1,7 +1,7 @@
 import { makeControls, makeGraphics, makeScene, fog } from "./settingsData";
 import { renderSettings } from "./uiRender";
 import { settingsController } from "./settingsController";
-import { assets } from "../../../config.json";
+import config from "../../../config.json";
 import { ManagerTypes } from "types";
 import type { Light, Scene, WebGLRenderer } from "three";
 import { getCountConfigs } from "../../utils/_index";
@@ -27,7 +27,10 @@ export function settings({
 }: SettingsInterface) {
   scene.fog = fog;
 
-  const countConfigs = getCountConfigs(gltfAssets, assets.gltf.randoms);
+  const countConfigs = getCountConfigs(
+    gltfAssets,
+    config.assets.models.spawnable
+  );
 
   const settingsDiv = document.getElementById("settings");
 

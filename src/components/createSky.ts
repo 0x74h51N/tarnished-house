@@ -14,7 +14,7 @@ import {
   Uniform,
 } from "three";
 import { Sky } from "three/examples/jsm/Addons";
-import { assets } from "../../config.json";
+import config from "../../config.json";
 
 interface SkyInterface {
   scene: Scene;
@@ -34,48 +34,56 @@ export function createSky({
   directionalLight,
   camera,
 }: SkyInterface): SkyReturn {
+  const skyConfig = config.scene.environment.sky;
+  const moonConfig = config.scene.environment.moon;
+
   const sky = new Sky();
-  sky.scale.setScalar(100);
+  sky.scale.setScalar(skyConfig.scale);
   scene.add(sky);
 
   const skyUniforms = sky.material.uniforms;
-  skyUniforms.turbidity.value = 50;
-  skyUniforms.rayleigh.value = 0;
-  skyUniforms.mieCoefficient.value = 0.2;
-  skyUniforms.mieDirectionalG.value = 0;
-  skyUniforms.sunPosition.value.set(0, -0.08, -1);
+  skyUniforms.turbidity.value = skyConfig.turbidity;
+  skyUniforms.rayleigh.value = skyConfig.rayleigh;
+  skyUniforms.mieCoefficient.value = skyConfig.mieCoefficient;
+  skyUniforms.mieDirectionalG.value = skyConfig.mieDirectionalG;
+  skyUniforms.sunPosition.value.set(
+    skyConfig.sunPosition.x,
+    skyConfig.sunPosition.y,
+    skyConfig.sunPosition.z
+  );
 
-  const moonTexture = texLoader.load(assets.moon.texture);
+  const moonTexture = texLoader.load(config.assets.moon.texture);
   moonTexture.colorSpace = SRGBColorSpace;
 
-  const emissiveMap = texLoader.load(assets.moon.emissive);
+  const emissiveMap = texLoader.load(config.assets.moon.emissive);
   emissiveMap.colorSpace = LinearSRGBColorSpace;
-  const alphaMap = texLoader.load(assets.moon.texture);
+  const alphaMap = texLoader.load(config.assets.moon.texture);
   alphaMap.minFilter = LinearFilter;
   alphaMap.magFilter = LinearFilter;
   alphaMap.generateMipmaps = false;
   alphaMap.colorSpace = LinearSRGBColorSpace;
 
   const moon = new Mesh(
-    new PlaneGeometry(2, 2),
+    new PlaneGeometry(moonConfig.geometry.width, moonConfig.geometry.height),
     new MeshPhysicalMaterial({
       map: moonTexture,
       transparent: true,
       alphaMap,
       emissive: 0xffffff,
       emissiveMap,
-      emissiveIntensity: 10,
+      emissiveIntensity: moonConfig.emissiveIntensity,
       toneMapped: false,
     })
   );
 
-  const moonDistance = directionalLight.position.length() * 3;
+  const moonDistance =
+    directionalLight.position.length() * moonConfig.distanceMultiplier;
   const moonDir = directionalLight.position.clone().normalize();
   moon.position.copy(moonDir.multiplyScalar(moonDistance));
   moon.lookAt(camera.position);
   scene.add(moon);
 
-  const desiredAngularSize = MathUtils.degToRad(0.75);
+  const desiredAngularSize = MathUtils.degToRad(moonConfig.angularSize);
 
   function updateMoonScale() {
     const d = camera.position.distanceTo(moon.position);

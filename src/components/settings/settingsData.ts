@@ -11,15 +11,27 @@ import {
   VSMShadowMap,
   WebGLRenderer,
 } from "three";
-import {
-  params,
-  assets,
-  fogSettings,
-  shadowMapSizes,
-  shadowDistOpt,
-  toneMappingOptions,
-} from "../../../config.json";
+import config from "../../../config.json";
 import { GeneralControl, ToneMappingKey } from "types";
+
+// Config Refs
+const params = {
+  volume: config.scene.audio.volume,
+  toneMappingExposure: config.scene.renderer.toneMappingExposure,
+  fpsCounter: config.scene.debug.fpsCounter,
+  bloomParams: config.scene.postProcessing.bloom,
+  fog: config.scene.postProcessing.fog.enabled,
+  shadowMapSize: config.scene.renderer.shadows.mapSize,
+  directionalLight: {
+    shadowCameraWidth: config.scene.lighting.directional.shadow.camera.width,
+    shadowCameraFar: config.scene.lighting.directional.shadow.camera.far,
+  },
+};
+const assets = config.assets;
+const fogSettings = config.scene.postProcessing.fog;
+const shadowMapSizes = config.quality.shadowMapSizes;
+const shadowDistOpt = config.quality.shadowDistance;
+const toneMappingOptions = config.options.toneMappingTypes;
 
 export const fog = new FogExp2(fogSettings.color, fogSettings.density);
 
@@ -29,10 +41,10 @@ export const shadowTypes = {
   PCFSoft: PCFSoftShadowMap,
   VSM: VSMShadowMap,
 };
-const toneMappingOpts = toneMappingOptions as Array<{
-  v: ToneMappingKey;
-  t: string;
-}>;
+const toneMappingOpts = toneMappingOptions.map((opt) => ({
+  v: opt.value as ToneMappingKey,
+  t: opt.text,
+}));
 
 export const toneMappingMap = {
   NoToneMapping,
@@ -109,11 +121,11 @@ export function makeGraphics(
       id: "shadowDistance",
       label: "Shadow Distance",
       options: shadowDistOpt.map((o) => ({
-        v: o.n.toLowerCase(),
-        t: o.n,
+        v: o.name.toLowerCase(),
+        t: o.name,
         s:
-          params.directionalLight.shadowCameraWidth == o.w &&
-          params.directionalLight.shadowCameraFar == o.f,
+          params.directionalLight.shadowCameraWidth == o.width &&
+          params.directionalLight.shadowCameraFar == o.far,
       })),
     },
     {
@@ -157,12 +169,13 @@ export function makeGraphics(
     },
   ];
 }
-const assetConfig = assets.gltf.randoms;
+const assetConfig = assets.models.spawnable;
 export function makeScene(): GeneralControl[] {
   return (Object.keys(assetConfig) as Array<keyof typeof assetConfig>).map(
     (key) => {
-      const label = key.charAt(0).toUpperCase() + key.slice(1);
-      const id = `${key}Count` as const;
+      const keyStr = String(key);
+      const label = keyStr.charAt(0).toUpperCase() + keyStr.slice(1);
+      const id = `${keyStr}Count` as const;
       return {
         type: "range",
         id,
