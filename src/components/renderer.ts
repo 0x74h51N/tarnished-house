@@ -20,7 +20,7 @@ export function createRenderer({
   renderer.setPixelRatio(
     Math.min(window.devicePixelRatio, config.scene.renderer.maxPixelRatio)
   );
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = config.scene.renderer.shadows.enabled;
   renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = config.scene.renderer.toneMappingExposure;

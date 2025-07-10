@@ -76,7 +76,7 @@ export interface CreateParticlesInterface {
   size?: number;
   startPozs?: number[];
   textures?: Texture[] | Texture | null;
-  camera: PerspectiveCamera;
+  scaleFactor: number;
   sizeGrowth?: number;
   fadeRate?: number;
 }
@@ -84,6 +84,7 @@ export interface CreateParticlesInterface {
 export interface CreateParticlesReturn {
   points: Points[];
   step: (delta: number) => void;
+  updateScreenHeight: () => void;
 }
 
 export type ToneMappingKey = keyof typeof toneMappingMap;

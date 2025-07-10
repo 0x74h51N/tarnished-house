@@ -15,7 +15,6 @@ export function particles({ scene, texLoader, camera }: ParticlesInterface) {
   return configs.reduce((acc, { name, textures = [], properties }) => {
     const params: CreateParticlesInterface = {
       parent: scene,
-      camera,
       ...properties,
       textures: textures.length
         ? textures.map((path) => {

@@ -9,6 +9,7 @@ import {
   AdditiveBlending,
   BufferAttribute,
   RawShaderMaterial,
+  Vector2,
 } from "three";
 import { CreateParticlesInterface, CreateParticlesReturn } from "types";
 import VS from "../shaders/particles/vertex.vert";
@@ -56,7 +57,7 @@ export function createParticles({
   size = 0.05,
   startPozs = [0, 0, 0],
   textures = [],
-  camera,
+  scaleFactor,
   sizeGrowth = 0,
   fadeRate = 0,
 }: CreateParticlesInterface): CreateParticlesReturn {
@@ -97,11 +98,12 @@ export function createParticles({
 
     const material = new RawShaderMaterial({
       uniforms: {
-        pointMultiplier: {
-          value: window.innerHeight / Math.tan((camera.fov * Math.PI) / 360),
+        resolution: {
+          value: new Vector2(window.innerWidth, window.innerHeight),
         },
         diffuseTexture: { value: dTex },
         u_time: { value: 0 },
+        u_scale: { value: scaleFactor },
       },
       vertexShader: VS,
       fragmentShader: FS,
@@ -157,7 +159,17 @@ export function createParticles({
       p.material.uniforms.u_time.value += delta;
     }
   }
-  return { points: pointsArr, step };
+
+  function updateScreenHeight() {
+    for (const p of pointsArr) {
+      p.material.uniforms.resolution.value.set(
+        window.innerWidth,
+        window.innerHeight
+      );
+    }
+  }
+
+  return { points: pointsArr, step, updateScreenHeight };
 }
 
 function startPos(

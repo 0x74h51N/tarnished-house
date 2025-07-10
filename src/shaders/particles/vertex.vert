@@ -1,11 +1,12 @@
 #ifdef GL_ES
-precision highp float;
+precision mediump float;
 #endif
 
-uniform float pointMultiplier;
+uniform vec2 resolution;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform float u_time;
+uniform float u_scale;
 
 attribute vec3 position;
 attribute vec3 velocity;
@@ -32,7 +33,8 @@ void main() {
 
   gl_Position = projectionMatrix * mv;
   
-  gl_PointSize = grownSize * pointMultiplier / gl_Position.w;
+  float scale = resolution.y * u_scale; 
+  gl_PointSize = grownSize * scale / gl_Position.w;
 
   vAngle  = vec2(cos(angle), sin(angle));
   vColour = colour;

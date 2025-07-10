@@ -149,8 +149,22 @@
           "height": 2
         },
         "emissiveIntensity": 10,
+        "emissiveColor": "#ffffff",
         "distanceMultiplier": 3,
         "angularSize": 0.75
+      }
+    }
+  },
+  "performance": {
+    "mobile": {
+      "maxPixelRatio": 1.5,
+      "floorGeometryDivider": 4,
+      "particlesDivider": 2,
+      "spawnables": {
+        "trees": 8,
+        "bushes": 8,
+        "graves": 10,
+        "roots": 5
       }
     }
   },
@@ -228,8 +242,8 @@
       "geometry": {
         "width": 55,
         "height": 55,
-        "widthSegments": 300,
-        "heightSegments": 300
+        "widthSegments": 220,
+        "heightSegments": 220
       }
     },
     "models": {
@@ -331,7 +345,8 @@
           "maxCount": 14,
           "spawnRate": 18,
           "startPozs": [0, 0.45, 1.5],
-          "opacity": 0.1
+          "opacity": 0.1,
+          "scaleFactor": 2.5
         }
       },
       {
@@ -351,7 +366,8 @@
           "opacity": 0.35,
           "color": "#444444",
           "sizeGrowth": 0.7,
-          "fadeRate": 0.12
+          "fadeRate": 0.12,
+          "scaleFactor": 2.5
         }
       },
       {
@@ -360,9 +376,10 @@
           "color": "#FFF449",
           "area": 0.25,
           "size": 0.005,
-          "maxCount": 250,
+          "maxCount": 200,
           "spawnRate": 30,
-          "startPozs": [0, 0.15, 1.5]
+          "startPozs": [0, 0.15, 1.5],
+          "scaleFactor": 2.0
         }
       }
     ],

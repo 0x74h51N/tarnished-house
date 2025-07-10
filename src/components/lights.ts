@@ -32,8 +32,8 @@ export function lights(scene: Scene) {
   );
   const { x: flX, y: flY, z: flZ } = flSettings.position;
   fireLight.position.set(flX, flY, flZ);
-  fireLight.shadow.bias = config.quality.textureQuality.medium.bias;
-  fireLight.shadow.normalBias = config.quality.textureQuality.medium.normalBias;
+  fireLight.shadow.bias = config.quality.textureQuality.high.bias;
+  fireLight.shadow.normalBias = config.quality.textureQuality.high.normalBias;
   scene.add(fireLight);
 
   const fireLightHelper = new PointLightHelper(
@@ -64,9 +64,9 @@ export function lights(scene: Scene) {
     config.scene.renderer.shadows.mapSize,
     config.scene.renderer.shadows.mapSize
   );
-  directionalLight.shadow.bias = config.quality.textureQuality.medium.bias;
+  directionalLight.shadow.bias = config.quality.textureQuality.high.bias;
   directionalLight.shadow.normalBias =
-    config.quality.textureQuality.medium.normalBias;
+    config.quality.textureQuality.high.normalBias;
 
   const targetPos = dlSettings.target.position;
   directionalLight.target.position.set(targetPos.x, targetPos.y, targetPos.z);

@@ -14,7 +14,13 @@ import {
   createRenderer,
 } from "./components/_index.js";
 import { Scene, LoadingManager, TextureLoader, CameraHelper } from "three";
-import { Loop } from "./utils/_index.js";
+import { Loop, detectLowEnd } from "./utils/_index.js";
+
+//
+// Mobile Detection & Performance Optimization
+//
+
+const isLowEnd = detectLowEnd();
 
 //
 // Canvas
@@ -36,7 +42,6 @@ const texLoader = new TextureLoader(loadingManager);
 //
 
 intro(loadingManager);
-
 credits();
 
 //
@@ -90,6 +95,10 @@ window.addEventListener("resize", () => {
 
   composer.setSize(sizes.width, sizes.height);
   bloomPass.setSize(sizes.width, sizes.height);
+
+  flame.updateScreenHeight();
+  smoke.updateScreenHeight();
+  sparks.updateScreenHeight();
 });
 
 //
@@ -107,7 +116,7 @@ const { positionalSound, onVolumeChange } = createSound({
 // Assets
 //
 
-const gltfAssets = loadAssets({
+const { managers, floor } = loadAssets({
   scene,
   loadingManager,
   renderer,
@@ -147,7 +156,7 @@ window.addEventListener("keydown", async (e) => {
       ambientLight,
       camera,
       cameraHelper: cameraHelper as CameraHelper,
-      gltfAssets,
+      gltfAssets: managers,
       antialias,
       onVolumeChange,
       bloomPass,
@@ -160,7 +169,7 @@ window.addEventListener("keydown", async (e) => {
 settings({
   lights: lightArr,
   renderer,
-  gltfAssets,
+  gltfAssets: managers,
   antialias,
   onVolumeChange,
   scene,
@@ -173,7 +182,7 @@ settings({
 
 let bloom = config.scene.postProcessing.bloom;
 const loop = new Loop();
-
+if (!isLowEnd) loop.addUpdate(() => updateMoon());
 loop.addUpdate(() => controls.update());
 loop.addUpdate(() => clampCameraPosition());
 loop.addUpdate((delta) => sparks.step(delta));

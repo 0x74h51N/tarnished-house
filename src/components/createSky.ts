@@ -69,7 +69,7 @@ export function createSky({
       map: moonTexture,
       transparent: true,
       alphaMap,
-      emissive: 0xffffff,
+      emissive: moonConfig.emissiveColor,
       emissiveMap,
       emissiveIntensity: moonConfig.emissiveIntensity,
       toneMapped: false,

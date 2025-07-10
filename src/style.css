@@ -117,6 +117,15 @@ body {
   pointer-events: none;
   padding: 4rem 1.4rem;
 }
+
+@media (max-width: 520px) {
+  #intro-text {
+    font-size: 1rem;
+    padding: 1rem 1.2rem;
+    letter-spacing: 1px;
+  }
+}
+
 #intro-text.hidden {
   opacity: 0;
   pointer-events: none;
@@ -130,6 +139,13 @@ body {
   align-items: center;
   min-width: 100px;
   z-index: 100;
+}
+
+@media (max-width: 520px) {
+  .btn-container {
+    right: 15px;
+    bottom: 15px;
+  }
 }
 
 #sound-toggle-icon {
@@ -158,6 +174,14 @@ body {
   transition: background 0.2s, color 0.2s;
 }
 
+@media (max-width: 520px) {
+  .btn {
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    height: 45px;
+  }
+}
+
 .btn::before,
 .btn::after {
   content: "";
@@ -170,6 +194,14 @@ body {
     sepia(0.1) hue-rotate(-40deg) saturate(2);
   z-index: 40;
   pointer-events: none;
+}
+
+@media (max-width: 520px) {
+  .btn::before,
+  .btn::after {
+    width: 35px;
+    height: 35px;
+  }
 }
 .btn::before {
   top: -2px;
@@ -232,6 +264,57 @@ body {
   right: -28px;
 }
 
+/* Tablet responsiveness - ONLY modal width */
+@media (max-width: 800px) {
+  .modal-content {
+    min-width: unset;
+    width: calc(100vw - 60px);
+    max-width: 600px;
+  }
+  #intro-text {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+  }
+  .modal-content-wrapper::before,
+  .modal-content-wrapper::after {
+    width: 180px;
+    height: 180px;
+  }
+
+  .modal-content-wrapper::before {
+    top: -20px;
+    left: -20px;
+  }
+
+  .modal-content-wrapper::after {
+    bottom: -20px;
+    right: -20px;
+  }
+
+  .project-info {
+    padding: 3rem 4rem;
+  }
+}
+
+/* Mobile responsiveness - all changes */
+@media (max-width: 520px) {
+  .modal-content-wrapper::before,
+  .modal-content-wrapper::after {
+    width: 120px;
+    height: 120px;
+  }
+
+  .modal-content-wrapper::before {
+    top: -15px;
+    left: -15px;
+  }
+
+  .modal-content-wrapper::after {
+    bottom: -15px;
+    right: -15px;
+  }
+}
+
 .modal-content {
   border-radius: 18px;
   padding: 2.5rem 2.2rem 2rem 2.2rem;
@@ -248,6 +331,25 @@ body {
   z-index: 2;
 }
 
+/* Keep existing mobile styles */
+@media (max-width: 520px) {
+  .modal-content {
+    min-width: unset;
+    width: calc(100vw - 40px);
+    max-width: 500px;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    max-height: 90svh;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: calc(100vw - 30px);
+    padding: 1.5rem 1.2rem;
+    border-radius: 14px;
+  }
+}
+
 .modal-inner h2,
 .project-title {
   font-family: "UnifrakturCook", cursive;
@@ -258,6 +360,13 @@ body {
   text-shadow: 0 2px 12px #000, 0 0 8px #ffd70044;
   display: block;
   margin-bottom: 0.5em;
+}
+
+@media (max-width: 520px) {
+  .modal-inner h2,
+  .project-title {
+    font-size: 1.8rem;
+  }
 }
 
 .project-info {
@@ -272,6 +381,20 @@ body {
   font-family: "IM Fell English SC", serif;
   font-weight: 200;
   letter-spacing: 0.5px;
+}
+
+@media (max-width: 520px) {
+  .project-info {
+    padding: 2rem 2rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-info {
+    padding: 1.5rem 1rem;
+    font-size: 1rem;
+  }
 }
 
 .project-info strong,
@@ -309,6 +432,14 @@ body {
   margin-bottom: -0.5rem;
 }
 
+@media (max-width: 520px) {
+  .credits-footer {
+    margin-top: 3rem;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
 .logos {
   display: flex;
   gap: 0.5rem;
@@ -331,6 +462,15 @@ body {
   height: 35px !important;
 }
 
+@media (max-width: 520px) {
+  .logos img {
+    height: 25px;
+  }
+
+  .logos img[alt="Webpage"] {
+    height: 30px !important;
+  }
+}
 .logos img:hover {
   transform: scale(1.08) rotate(-3deg);
 }
@@ -373,7 +513,7 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 800px) {
   .asset-list {
     grid-template-columns: 1fr;
   }
@@ -411,6 +551,18 @@ body {
   z-index: 3;
   transition: color 0.2s;
 }
+
+@media (max-width: 520px) {
+  .close-modal {
+    top: 15px;
+    right: 15px;
+    font-size: 1.8rem;
+
+    /* Make it more touch-friendly */
+    padding: 5px;
+    margin: -5px;
+  }
+}
 .close-modal:hover {
   color: #fff;
 }
@@ -437,6 +589,7 @@ body {
   justify-content: space-between;
   gap: 10px;
   cursor: pointer;
+  margin-bottom: 1.2rem;
 }
 #settings label:has(input[type="checkbox"]) {
   justify-content: flex-start;
@@ -463,6 +616,14 @@ body {
   padding: 4px 8px;
   font-size: 1rem;
   width: 104px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffd700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 16px;
+  padding-right: 28px;
 }
 
 #settings select option {
@@ -486,4 +647,171 @@ body {
 #settings-modal.active {
   display: flex;
   opacity: 1;
+}
+
+/* Settings - Mobile optimizations */
+@media (max-width: 520px) {
+  #settings label {
+    font-size: 0.95rem;
+    padding: 0.3rem 0;
+  }
+
+  #settings input[type="range"] {
+    height: 30px; /* Bigger touch target */
+  }
+
+  #settings input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+
+  #settings select {
+    font-size: 0.9rem; /* Fixed: was 0.55rem which is unreadable */
+    padding: 6px 24px 6px 10px; /* Adjusted for custom arrow */
+    width: 120px;
+    background-position: right 4px center;
+    background-size: 14px;
+  }
+
+  /* Better spacing for controls on mobile */
+  #settings .control-label {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  #settings .range-control {
+    flex-wrap: wrap;
+  }
+
+  #settings .range-control input[type="range"] {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  #settings .range-value {
+    margin-left: auto;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  #settings {
+    padding: 1rem !important;
+  }
+
+  #settings select {
+    width: 85px;
+    font-size: 0.8rem;
+    padding: 4px 22px 4px 6px;
+    min-height: 32px !important;
+    height: 32px;
+    background-position: right 3px center;
+    background-size: 12px;
+  }
+
+  #settings label {
+    font-size: 0.9rem;
+  }
+
+  .btn-container {
+    flex-wrap: wrap;
+    gap: 1px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    height: 42px;
+  }
+}
+
+/* Loading screen mobile adjustments */
+@media (max-width: 520px) {
+  .loading-text {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
+
+  .spinner {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* Ensure touch targets are at least 44x44 pixels */
+@media (max-width: 520px) {
+  button,
+  .btn,
+  input[type="checkbox"],
+  select {
+    min-height: 44px;
+  }
+
+  .close-modal {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Prevent iOS zoom on input focus */
+@media (max-width: 520px) {
+  input[type="range"],
+  input[type="checkbox"],
+  select,
+  button {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+}
+
+/* Improve modal scrolling on mobile */
+@media (max-width: 520px) {
+  .modal {
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  .modal-content {
+    /* Prevent rubber-band scrolling outside modal */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Very small devices (< 360px width) */
+@media (max-width: 360px) {
+  .modal-content {
+    width: calc(100vw - 20px);
+    padding: 1.2rem 1rem;
+  }
+
+  .modal-inner h2,
+  .project-title {
+    font-size: 1.5rem;
+  }
+
+  .asset-card {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  /* Even smaller select for very small phones */
+  #settings select {
+    width: 75px;
+    font-size: 0.75rem;
+    padding: 3px 20px 3px 5px; /* Adjusted for custom arrow */
+    min-height: 28px !important;
+    height: 28px;
+    background-position: right 2px center;
+    background-size: 12px;
+  }
 }

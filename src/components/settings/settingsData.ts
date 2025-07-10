@@ -85,6 +85,15 @@ export function makeGraphics(
   antialias: boolean,
   renderer: WebGLRenderer
 ): GeneralControl[] {
+  const currentShadowMapSize = config.scene.renderer.shadows.mapSize;
+  const currentShadowCameraWidth =
+    config.scene.lighting.directional.shadow.camera.width;
+  const currentShadowCameraFar =
+    config.scene.lighting.directional.shadow.camera.far;
+  const bloomEnabled = config.scene.postProcessing.bloom.enabled;
+  const fogEnabled = config.scene.postProcessing.fog.enabled;
+  const shadowEnabled = config.scene.renderer.shadows.enabled;
+
   return [
     {
       type: "checkbox",
@@ -102,19 +111,19 @@ export function makeGraphics(
       type: "checkbox",
       id: "bloomEnabled",
       label: "Bloom",
-      checked: params.bloomParams.enabled,
+      checked: bloomEnabled,
     },
     {
       type: "checkbox",
       id: "fogToggle",
       label: "Fog Effect",
-      checked: params.fog,
+      checked: fogEnabled,
     },
     {
       type: "checkbox",
       id: "shadowEnabled",
       label: "Enable Shadows",
-      checked: renderer.shadowMap.enabled,
+      checked: shadowEnabled,
     },
     {
       type: "select",
@@ -124,8 +133,8 @@ export function makeGraphics(
         v: o.name.toLowerCase(),
         t: o.name,
         s:
-          params.directionalLight.shadowCameraWidth == o.width &&
-          params.directionalLight.shadowCameraFar == o.far,
+          currentShadowCameraWidth == o.width &&
+          currentShadowCameraFar == o.far,
       })),
     },
     {
@@ -135,7 +144,7 @@ export function makeGraphics(
       options: shadowMapSizes.map((siz) => ({
         v: String(siz),
         t: String(siz),
-        s: params.shadowMapSize == siz,
+        s: currentShadowMapSize == siz,
       })),
     },
     {
@@ -154,8 +163,8 @@ export function makeGraphics(
       label: "Texture Quality",
       options: [
         { v: "low", t: "Low", s: false },
-        { v: "medium", t: "Medium", s: true },
-        { v: "high", t: "High", s: false },
+        { v: "medium", t: "Medium", s: false },
+        { v: "high", t: "High", s: true },
       ],
     },
     {
