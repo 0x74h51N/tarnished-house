@@ -5,6 +5,17 @@ import { shadowTypes, makeScene } from "./settings/settingsData";
 
 // Config Refs
 const params = {
+  helpers: {
+    showAxes: false,
+    axesSize: 50,
+    axesPositionX: 0,
+    axesPositionY: 1,
+    axesPositionZ: 1,
+    showGrid: false,
+    gridSize: 100,
+    gridDivisions: 10,
+    gridPositionY: 0,
+  },
   ...config.scene.camera,
   ...config.scene.renderer,
   ...config.scene.audio,
@@ -60,6 +71,8 @@ import {
   CineonToneMapping,
   ACESFilmicToneMapping,
   OrthographicCamera,
+  AxesHelper,
+  GridHelper,
 } from "three";
 
 interface SetupGUIInterface {
@@ -108,6 +121,87 @@ export function setupGUI({
       }
     }
   });
+
+  const helpers = params.helpers;
+
+  let axes: AxesHelper | null = null;
+  let grid: GridHelper | null = null;
+
+  // Helpers' helpers XD
+  function updateAxes() {
+    if (axes) {
+      scene.remove(axes);
+      axes.geometry.dispose();
+    }
+    axes = new AxesHelper(helpers.axesSize);
+    axes.position.set(
+      helpers.axesPositionX,
+      helpers.axesPositionY,
+      helpers.axesPositionZ
+    );
+    if (helpers.showAxes) scene.add(axes);
+  }
+
+  function updateGrid() {
+    if (grid) {
+      scene.remove(grid);
+      grid.geometry.dispose();
+      grid.material.dispose();
+    }
+    grid = new GridHelper(
+      helpers.gridSize,
+      helpers.gridDivisions,
+      0x888888,
+      0x444444
+    );
+    grid.position.y = helpers.gridPositionY;
+    if (helpers.showGrid) scene.add(grid);
+  }
+
+  const axesFolder = gui.addFolder("Axes Helper");
+
+  axesFolder
+    .add(helpers, "showAxes")
+    .name("Show Axes")
+    .onChange(() => updateAxes());
+  axesFolder
+    .add(helpers, "axesSize", 1, 200)
+    .name("Axes Size")
+    .onChange(() => updateAxes());
+  axesFolder
+    .add(helpers, "axesPositionX", -100, 100, 0.1)
+    .name("Axis X")
+    .onChange(() => updateAxes());
+  axesFolder
+    .add(helpers, "axesPositionY", -100, 100, 0.1)
+    .name("Axis Y")
+    .onChange(() => updateAxes());
+  axesFolder
+    .add(helpers, "axesPositionZ", -100, 100, 0.1)
+    .name("Axis Z")
+    .onChange(() => updateAxes());
+  axesFolder.close();
+
+  const gridFolder = gui.addFolder("Grid Helper");
+
+  gridFolder
+    .add(helpers, "showGrid")
+    .name("Show Grid")
+    .onChange(() => updateGrid());
+  gridFolder
+    .add(helpers, "gridSize", 10, 500, 1)
+    .name("Grid Size")
+    .onChange(() => updateGrid());
+  gridFolder
+    .add(helpers, "gridDivisions", 1, 100, 1)
+    .name("Divisions")
+    .onChange(() => updateGrid());
+  gridFolder
+    .add(helpers, "gridPositionY", -5, 5, 0.01)
+    .name("Grid Y Position")
+    .onChange(() => updateGrid());
+  gridFolder.close();
+
   gui
     .add(params, "volume", 0, 1.5, 0.1)
     .name("Volume")

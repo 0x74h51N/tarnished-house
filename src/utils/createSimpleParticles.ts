@@ -10,9 +10,11 @@ import {
   BufferAttribute,
   RawShaderMaterial,
   Vector2,
+  Vector3,
 } from "three";
 import { CreateParticlesInterface, CreateParticlesReturn } from "types";
 import VS from "../shaders/particles/vertex.vert";
+import SparkVS from "../shaders/particles/sparks/vertex.vert";
 import FS from "../shaders/particles/fragment.frag";
 
 const defaultTexture = new DataTexture(
@@ -24,27 +26,31 @@ const defaultTexture = new DataTexture(
 defaultTexture.needsUpdate = true;
 
 /**
- * Creates a GPU-accelerated particle system using JS & GLSL.
- * Particles emit around a start position (`startPozs`), move upwards with randomized velocity,
- * and can optionally grow in size or fade in opacity over time. Shaders handle rotation, and blending.
+ * Creates a GPU-accelerated particle system.
  *
- * @param {Object} options
- * @param {Object3D} options.parent                   – Parent object (scene or group) to attach the particle system.
- * @param {Color|number|string} options.color         – Base color for all particles.
- * @param {number} [options.opacity=1]                – Initial opacity (alpha) of particles (0–1).
- * @param {number} [options.maxCount=200]             – Total number of particles in the system.
- * @param {number} [options.spawnRate=50]             – Number of particles spawned per second.
- * @param {number} [options.area=1]                   – Horizontal spread (X/Z) of particle spawn positions.
- * @param {number} [options.size=0.05]                – Base visual size of each particle.
- * @param {Array<number>} [options.startPozs=[0,0,0]] – Center [x, y, z] of particle emission.
- * @param {Array<Texture>|Texture|null} [options.textures=null] – Optional one or more textures used for particles. If multiple are given, each is used in a variant.
- * @param {Camera} options.camera                     – Camera reference, used for perspective-based scaling.
- * @param {number} [options.sizeGrowth=0]             – Rate at which particle size increases with height (per particle).
- * @param {number} [options.fadeRate=0]               – Rate at which particle opacity decreases with height (per particle).
+ * Particles emit around `startPozs`, launch with random velocities,
+ * and optionally grow and fade over time. Sparks variant biases
+ * upward motion.
  *
- * @returns {Object} Particle system object:
- *   - `points`: Array of Three.js `Points` instances.
- *   - `step(delta: number)`: Function to be called every frame to spawn and update particles.
+ * @param options.parent     - Scene or group to attach particles.
+ * @param options.color      - Base particle color.
+ * @param options.opacity    - Initial alpha (0–1).
+ * @param options.maxCount   - Total particles in system.
+ * @param options.spawnRate  - Particles spawned per second.
+ * @param options.area       - Horizontal spawn radius (X/Z).
+ * @param options.size       - Base visual size of each particle.
+ * @param options.startPozs  - [x,y,z] emission center.
+ * @param options.textures   - Single or multiple textures for variants.
+ * @param options.scaleFactor- Used for point-size pixel scaling.
+ * @param options.sizeGrowth - Rate at which size increases with height.
+ * @param options.fadeRate   - Rate at which opacity decreases with height.
+ * @param options.sparks     - If true, use spark behavior.
+ * @param options.damping    - Controls slowdown rate for sparks vertex shader (higher = faster slow).
+ *
+ * @returns { points, step, updtScreen }
+ *   points      - Array of Three.js Points instances.
+ *   step(delta) - Call each frame to spawn & advance particles.
+ *   updtScreen  - Call on resize to update resolution uniform.
  */
 
 export function createParticles({
@@ -60,6 +66,8 @@ export function createParticles({
   scaleFactor,
   sizeGrowth = 0,
   fadeRate = 0,
+  sparks = false,
+  damping = 0.5,
 }: CreateParticlesInterface): CreateParticlesReturn {
   const textureArray = Array.isArray(textures) ? textures : [textures];
 
@@ -68,16 +76,18 @@ export function createParticles({
   const position = new Float32Array(maxCount * 3);
   const vel = new Float32Array(maxCount * 3);
   const startTimeArr = new Float32Array(maxCount);
+  const sizeArr = new Float32Array(maxCount).fill(size);
   const growthArr = new Float32Array(maxCount).fill(sizeGrowth);
-
+  const fadeArr = new Float32Array(maxCount).fill(fadeRate);
   const anglesArr = new Float32Array(maxCount);
   const colsArr = new Float32Array(maxCount * 4);
+
   const baseCol = new Color(color || 0xffffff);
 
   for (let i = 0; i < maxCount; i++) {
     const i3 = i * 3;
     startPos(startPozs, position, i3, area);
-    startV(vel, i3, true);
+    sparks ? sparkVel(vel, i3) : startVel(vel, i3);
 
     startTimeArr[i] = Math.random() * 0.1;
     anglesArr[i] = Math.random() * Math.PI * 2;
@@ -90,9 +100,18 @@ export function createParticles({
     RawShaderMaterial,
     Object3DEventMap
   >[] = [];
-  let spawnAccumulator = 0,
-    nextIndex = 0;
 
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new BufferAttribute(position, 3));
+  geometry.setAttribute("startTime", new BufferAttribute(startTimeArr, 1));
+  geometry.setAttribute("velocity", new BufferAttribute(vel, 3));
+  geometry.setAttribute("size", new BufferAttribute(sizeArr, 1));
+  geometry.setAttribute("sizeGrowth", new BufferAttribute(growthArr, 1));
+  geometry.setAttribute("angle", new BufferAttribute(anglesArr, 1));
+  geometry.setAttribute("colour", new BufferAttribute(colsArr, 4));
+  geometry.setAttribute("fadeRate", new BufferAttribute(fadeArr, 1));
+
+  //First Spawn of points
   for (let v = 0; v < numVariants; v++) {
     const dTex = textureArray[v] || defaultTexture;
 
@@ -104,8 +123,10 @@ export function createParticles({
         diffuseTexture: { value: dTex },
         u_time: { value: 0 },
         u_scale: { value: scaleFactor },
+        u_damping: { value: damping },
+        u_axisRatio: { value: new Vector3(0.5, 1.0, 0.5) },
       },
-      vertexShader: VS,
+      vertexShader: sparks ? SparkVS : VS,
       fragmentShader: FS,
       transparent: true,
       depthWrite: false,
@@ -114,28 +135,15 @@ export function createParticles({
       vertexColors: true,
     });
 
-    const geometry = new BufferGeometry();
-    geometry.setAttribute("position", new BufferAttribute(position, 3));
-    geometry.setAttribute("startTime", new BufferAttribute(startTimeArr, 1));
-    geometry.setAttribute("velocity", new BufferAttribute(vel, 3));
-    geometry.setAttribute(
-      "size",
-      new BufferAttribute(new Float32Array(maxCount).fill(size), 1)
-    );
-    geometry.setAttribute("sizeGrowth", new BufferAttribute(growthArr, 1));
-    geometry.setAttribute("angle", new BufferAttribute(anglesArr, 1));
-    geometry.setAttribute("colour", new BufferAttribute(colsArr, 4));
-    geometry.setAttribute(
-      "fadeRate",
-      new BufferAttribute(new Float32Array(maxCount).fill(fadeRate), 1)
-    );
-
     const points = new Points(geometry, material);
     points.renderOrder = 9;
     parent.add(points);
     pointsArr.push(points);
   }
+  let spawnAccumulator = 0,
+    nextIndex = 0;
 
+  //Respawn of Points
   function step(delta: number) {
     spawnAccumulator += delta * spawnRate;
     const toSpawn = Math.floor(spawnAccumulator);
@@ -144,23 +152,22 @@ export function createParticles({
     for (let s = 0; s < toSpawn; s++) {
       const i = nextIndex % maxCount;
       const i3 = i * 3;
-
       startPos(startPozs, position, i3, area);
-      startV(vel, i3);
+      (sparks ? sparkVel : startVel)(vel, i3);
       startTimeArr[i] = pointsArr[0].material.uniforms.u_time.value;
-
       nextIndex++;
     }
 
+    pointsArr[0].geometry.attributes.position.needsUpdate = true;
+    pointsArr[0].geometry.attributes.velocity.needsUpdate = true;
+    pointsArr[0].geometry.attributes.startTime.needsUpdate = true;
+
     for (const p of pointsArr) {
-      p.geometry.attributes.position.needsUpdate = true;
-      p.geometry.attributes.velocity.needsUpdate = true;
-      p.geometry.attributes.startTime.needsUpdate = true;
       p.material.uniforms.u_time.value += delta;
     }
   }
 
-  function updateScreenHeight() {
+  function updtScreen() {
     for (const p of pointsArr) {
       p.material.uniforms.resolution.value.set(
         window.innerWidth,
@@ -169,7 +176,7 @@ export function createParticles({
     }
   }
 
-  return { points: pointsArr, step, updateScreenHeight };
+  return { points: pointsArr, step, updtScreen };
 }
 
 function startPos(
@@ -183,10 +190,26 @@ function startPos(
   pos[i3 + 2] = startPozs[2] + (Math.random() * 2 - 1) * area;
 }
 
-function startV(v: Float32Array, i3 = 0, f = false) {
-  v[i3] = f ? 0 : (Math.random() - 0.5) * 0.2;
+function startVel(v: Float32Array, i3 = 0) {
+  v[i3] = (Math.random() - 0.5) * 0.2;
   v[i3 + 1] = Math.random() * 0.5 + 0.2;
-  v[i3 + 2] = f ? 0 : (Math.random() - 0.5) * 0.2;
+  v[i3 + 2] = (Math.random() - 0.5) * 0.2;
+}
+
+function sparkVel(v: Float32Array, i3 = 0) {
+  const speed = Math.random() * 1.0 + 2.5;
+  const minElev = Math.PI / 12;
+  const maxElev = Math.PI / 2;
+
+  const elev = minElev + Math.random() * (maxElev - minElev);
+
+  const azim = Math.random() * Math.PI * 2;
+
+  const cosE = Math.cos(elev),
+    sinE = Math.sin(elev);
+  v[i3 + 0] = speed * cosE * Math.cos(azim);
+  v[i3 + 1] = speed * sinE;
+  v[i3 + 2] = speed * cosE * Math.sin(azim);
 }
 
 function colUpt(i: number, colsArr: Float32Array, col: Color, opacity: number) {

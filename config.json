@@ -157,14 +157,14 @@
   },
   "performance": {
     "mobile": {
-      "maxPixelRatio": 1.5,
+      "maxPixelRatio": 2,
       "floorGeometryDivider": 4,
       "particlesDivider": 2,
       "spawnables": {
-        "trees": 8,
+        "trees": 13,
         "bushes": 8,
-        "graves": 10,
-        "roots": 5
+        "graves": 16,
+        "roots": 6
       }
     }
   },
@@ -271,7 +271,7 @@
       "spawnable": {
         "trees": {
           "path": "./trees/trees.gltf",
-          "count": 20,
+          "count": 23,
           "spawn": {
             "scale": {
               "min": 0.0048,
@@ -316,7 +316,7 @@
         },
         "roots": {
           "path": "./pineroots/pine_roots.gltf",
-          "count": 12,
+          "count": 16,
           "spawn": {
             "scale": {
               "min": 2.7,
@@ -341,7 +341,7 @@
         ],
         "properties": {
           "area": 0.2,
-          "size": 0.45,
+          "size": 0.4,
           "maxCount": 14,
           "spawnRate": 18,
           "startPozs": [0, 0.45, 1.5],
@@ -360,26 +360,28 @@
         "properties": {
           "area": 0.2,
           "size": 0.6,
-          "maxCount": 40,
+          "maxCount": 38,
           "spawnRate": 3,
           "startPozs": [0, 1.1, 1.5],
-          "opacity": 0.35,
+          "opacity": 0.3,
           "color": "#444444",
-          "sizeGrowth": 0.7,
-          "fadeRate": 0.12,
+          "sizeGrowth": 0.75,
+          "fadeRate": 0.15,
           "scaleFactor": 2.5
         }
       },
       {
         "name": "sparks",
         "properties": {
-          "color": "#FFF449",
+          "color": "#FFF779",
           "area": 0.25,
           "size": 0.005,
-          "maxCount": 200,
-          "spawnRate": 30,
-          "startPozs": [0, 0.15, 1.5],
-          "scaleFactor": 2.0
+          "maxCount": 60,
+          "spawnRate": 20,
+          "startPozs": [0, 0.5, 1.5],
+          "scaleFactor": 2.0,
+          "sparks": true,
+          "damping": 0.6
         }
       }
     ],

@@ -79,12 +79,14 @@ export interface CreateParticlesInterface {
   scaleFactor: number;
   sizeGrowth?: number;
   fadeRate?: number;
+  sparks?: boolean;
+  damping?: number;
 }
 
 export interface CreateParticlesReturn {
   points: Points[];
   step: (delta: number) => void;
-  updateScreenHeight: () => void;
+  updtScreen: () => void;
 }
 
 export type ToneMappingKey = keyof typeof toneMappingMap;

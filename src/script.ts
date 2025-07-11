@@ -96,9 +96,9 @@ window.addEventListener("resize", () => {
   composer.setSize(sizes.width, sizes.height);
   bloomPass.setSize(sizes.width, sizes.height);
 
-  flame.updateScreenHeight();
-  smoke.updateScreenHeight();
-  sparks.updateScreenHeight();
+  flame.updtScreen();
+  smoke.updtScreen();
+  sparks.updtScreen();
 });
 
 //
@@ -179,7 +179,6 @@ settings({
 //
 // Animate
 //
-
 let bloom = config.scene.postProcessing.bloom;
 const loop = new Loop();
 if (!isLowEnd) loop.addUpdate(() => updateMoon());
