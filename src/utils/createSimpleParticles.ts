@@ -135,7 +135,7 @@ export function createParticles({
         u_time: { value: 0 },
         u_scale: { value: scaleFactor },
         u_damping: { value: damping },
-        u_axisRatio: { value: new Vector3(0.5, 1.0, 0.5) },
+        u_axisRatio: { value: new Vector3(0.6, 1.0, 0.6) },
         u_stretch: { value: stretchFact },
       },
       vertexShader: sparks ? SparkVS : VS,

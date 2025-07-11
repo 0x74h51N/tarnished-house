@@ -375,16 +375,16 @@
         "properties": {
           "color": "#FFF779",
           "area": 0.25,
-          "size": 0.05,
+          "size": 0.07,
           "maxCount": 50,
-          "spawnRate": 20,
+          "spawnRate": 10,
           "startPozs": [0, 0.5, 1.5],
           "scaleFactor": 2.0,
           "sparks": true,
-          "damping": 0.6,
-          "elevDivs": { "min": 12, "max": 2 },
-          "speed": 3.0,
-          "stretchFact": 5.0
+          "damping": 0.5,
+          "elevDivs": { "min": 10, "max": 2 },
+          "speed": 4.0,
+          "stretchFact": 8.5
         }
       }
     ],

@@ -16,18 +16,19 @@ attribute vec3 velocity;
 attribute float startTime;
 attribute float size;
 attribute vec4 colour;
-attribute float sizeGrowth;   
 attribute float fadeRate;
 
 varying vec4 vColour;
 varying float vAngle;
 varying float vFade;
+varying float vSpeed;
+varying float vInitSpeed;
 
 void main() {
   float age = max(u_time - startTime, 0.0);
   float t   = age / (1.0 + u_damping * age);
-
   vec3 offset = velocity * t * u_axisRatio;
+  
   vec3 pos    = position + offset;
 
   vec4  mv  = modelViewMatrix * vec4(pos, 1.0);
@@ -35,15 +36,21 @@ void main() {
 
   float posDeltaY = pos.y - position.y;
 
-  float grownSize = size + posDeltaY * sizeGrowth;
+  float grownSize = size;
 
-  
   float scale = resolution.y * u_scale; 
-  gl_PointSize = grownSize * scale / gl_Position.w;
 
   vec3 velView = (modelViewMatrix * vec4(velocity * u_axisRatio, 0.0)).xyz;
+
+  vInitSpeed = length(velocity);
+
+  vec3 dampedVel = velocity * (1.0 / (1.0 + u_damping * age));
+  vSpeed = length(dampedVel * u_axisRatio);
 
   vAngle = atan(velView.y, velView.x);
   vColour = colour;
   vFade = fadeRate * posDeltaY;
+
+  float speedRatio = clamp(vSpeed / vInitSpeed, 0.0, 1.0);
+  gl_PointSize = (grownSize * scale / gl_Position.w) * speedRatio;
 }
