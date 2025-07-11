@@ -12,10 +12,15 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import { CreateParticlesInterface, CreateParticlesReturn } from "types";
+import {
+  CreateParticlesInterface,
+  CreateParticlesReturn,
+  ElevationDividers,
+} from "types";
 import VS from "../shaders/particles/vertex.vert";
-import SparkVS from "../shaders/particles/sparks/vertex.vert";
 import FS from "../shaders/particles/fragment.frag";
+import SparkVS from "../shaders/particles/sparks/vertex.vert";
+import SparksFS from "../shaders/particles/sparks/fragment.frag";
 
 const defaultTexture = new DataTexture(
   new Uint8Array([255, 255, 255, 255]),
@@ -46,6 +51,9 @@ defaultTexture.needsUpdate = true;
  * @param options.fadeRate   - Rate at which opacity decreases with height.
  * @param options.sparks     - If true, use spark behavior.
  * @param options.damping    - Controls slowdown rate for sparks vertex shader (higher = faster slow).
+ * @param elevDivs           - Sparkels velocity calculation, π-divisors, the elevation‐angle range above the XZ plane, picked randomly between min/max.
+ * @param speed              - Sparkels velocity start speed.
+ * @param stretchFact        - Stretch factor to elongate each spark along its velocity direction.
  *
  * @returns { points, step, updtScreen }
  *   points      - Array of Three.js Points instances.
@@ -68,6 +76,9 @@ export function createParticles({
   fadeRate = 0,
   sparks = false,
   damping = 0.5,
+  elevDivs = { min: 1, max: 1 },
+  speed = 1,
+  stretchFact = 1,
 }: CreateParticlesInterface): CreateParticlesReturn {
   const textureArray = Array.isArray(textures) ? textures : [textures];
 
@@ -87,7 +98,7 @@ export function createParticles({
   for (let i = 0; i < maxCount; i++) {
     const i3 = i * 3;
     startPos(startPozs, position, i3, area);
-    sparks ? sparkVel(vel, i3) : startVel(vel, i3);
+    sparks ? sparkVel(vel, i3, elevDivs, speed) : startVel(vel, i3);
 
     startTimeArr[i] = Math.random() * 0.1;
     anglesArr[i] = Math.random() * Math.PI * 2;
@@ -125,9 +136,10 @@ export function createParticles({
         u_scale: { value: scaleFactor },
         u_damping: { value: damping },
         u_axisRatio: { value: new Vector3(0.5, 1.0, 0.5) },
+        u_stretch: { value: stretchFact },
       },
       vertexShader: sparks ? SparkVS : VS,
-      fragmentShader: FS,
+      fragmentShader: sparks ? SparksFS : FS,
       transparent: true,
       depthWrite: false,
       blending: AdditiveBlending,
@@ -153,7 +165,7 @@ export function createParticles({
       const i = nextIndex % maxCount;
       const i3 = i * 3;
       startPos(startPozs, position, i3, area);
-      (sparks ? sparkVel : startVel)(vel, i3);
+      sparks ? sparkVel(vel, i3, elevDivs, speed) : startVel(vel, i3);
       startTimeArr[i] = pointsArr[0].material.uniforms.u_time.value;
       nextIndex++;
     }
@@ -196,10 +208,15 @@ function startVel(v: Float32Array, i3 = 0) {
   v[i3 + 2] = (Math.random() - 0.5) * 0.2;
 }
 
-function sparkVel(v: Float32Array, i3 = 0) {
-  const speed = Math.random() * 1.0 + 2.5;
-  const minElev = Math.PI / 12;
-  const maxElev = Math.PI / 2;
+function sparkVel(
+  v: Float32Array,
+  i3 = 0,
+  elevDivs: ElevationDividers,
+  speed: number
+) {
+  const speedo = Math.random() * 1.0 + speed;
+  const minElev = Math.PI / elevDivs.min;
+  const maxElev = Math.PI / elevDivs.max;
 
   const elev = minElev + Math.random() * (maxElev - minElev);
 
@@ -207,9 +224,9 @@ function sparkVel(v: Float32Array, i3 = 0) {
 
   const cosE = Math.cos(elev),
     sinE = Math.sin(elev);
-  v[i3 + 0] = speed * cosE * Math.cos(azim);
-  v[i3 + 1] = speed * sinE;
-  v[i3 + 2] = speed * cosE * Math.sin(azim);
+  v[i3 + 0] = speedo * cosE * Math.cos(azim);
+  v[i3 + 1] = speedo * sinE;
+  v[i3 + 2] = speedo * cosE * Math.sin(azim);
 }
 
 function colUpt(i: number, colsArr: Float32Array, col: Color, opacity: number) {

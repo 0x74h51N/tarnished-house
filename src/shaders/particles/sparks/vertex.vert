@@ -15,13 +15,12 @@ attribute vec3 position;
 attribute vec3 velocity;
 attribute float startTime;
 attribute float size;
-attribute float angle;
 attribute vec4 colour;
 attribute float sizeGrowth;   
 attribute float fadeRate;
 
 varying vec4 vColour;
-varying vec2 vAngle;
+varying float vAngle;
 varying float vFade;
 
 void main() {
@@ -42,7 +41,9 @@ void main() {
   float scale = resolution.y * u_scale; 
   gl_PointSize = grownSize * scale / gl_Position.w;
 
-  vAngle  = vec2(cos(angle), sin(angle));
+  vec3 velView = (modelViewMatrix * vec4(velocity * u_axisRatio, 0.0)).xyz;
+
+  vAngle = atan(velView.y, velView.x);
   vColour = colour;
   vFade = fadeRate * posDeltaY;
 }

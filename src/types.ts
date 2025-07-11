@@ -66,21 +66,28 @@ interface SelectControl extends BaseControl {
 
 export type GeneralControl = RangeControl | CheckboxControl | SelectControl;
 
+export type ElevationDividers = {
+  min: number;
+  max: number;
+};
 export interface CreateParticlesInterface {
   parent: Object3D;
   color?: Color | number | string;
   opacity?: number;
-  maxCount?: number;
-  spawnRate?: number;
-  area?: number;
-  size?: number;
-  startPozs?: number[];
+  maxCount: number;
+  spawnRate: number;
+  area: number;
+  size: number;
+  startPozs: number[];
   textures?: Texture[] | Texture | null;
   scaleFactor: number;
   sizeGrowth?: number;
   fadeRate?: number;
   sparks?: boolean;
   damping?: number;
+  elevDivs?: ElevationDividers;
+  speed?: number;
+  stretchFact?: number;
 }
 
 export interface CreateParticlesReturn {
