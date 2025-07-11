@@ -1,37 +1,35 @@
 #ifdef GL_ES
-precision mediump float;
+precision mediump float;    
 #endif
 
-varying float vAngle;
-varying vec4 vColour;
-varying float vFade;
-varying float vSpeed;
-varying float vInitSpeed;
-
+varying vec2  vRot; 
+varying vec4  vColour;
+varying float vSpeedRatio;
 uniform float u_stretch;
 
-void main() {
+void main(){
   vec2 local = gl_PointCoord - 0.5;
-  float c = cos(-vAngle), s = sin(-vAngle);
-  mat2 rot = mat2(c, -s, s, c);
-  vec2 rotated = rot * local;
 
-  float speedRatio = clamp(vSpeed / vInitSpeed, 0.0, 1.0);
+  mat2 R = mat2( vRot.x, -vRot.y,
+                       vRot.y,  vRot.x );
+  vec2 rotLoc = R * local;
 
-  float stretch = mix(0.4, u_stretch, speedRatio);
-  rotated.y *= stretch;
+  float stretch = mix(0.4, u_stretch, vSpeedRatio);
+  rotLoc.y *= stretch;
 
-  vec2 coords = rotated + 0.5;
-  float d = length(coords - 0.5);
-  float strength = 1.0 - smoothstep(0.0, 0.5, d);
+  float d = length(rotLoc);
 
-  strength *= mix(1.0, u_stretch / 2.0,  speedRatio);
- 
-  vec4 col = vColour;
-  float fade = clamp(1.0 - vFade, 0.0, 1.0);
-  col.rgb *= strength * fade;
-  col.a   = strength * fade;
+  float t = clamp(d*2.0, 0.0, 1.0);
+  
+  float strength = 1.0 - (t * t * (3.0 - 2.0 * t));
 
-  if(col.a < 0.005) discard;
-  gl_FragColor = col;
+  float bboost  = u_stretch * 0.5 - 1.0;
+  
+  strength *= 1.0 + bboost * vSpeedRatio;
+
+  vec4  col = vColour * strength;
+  col.a = strength;
+
+  col.a = max(col.a, 0.005);
+  gl_FragColor  = col;
 }

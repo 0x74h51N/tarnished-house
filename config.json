@@ -384,7 +384,7 @@
           "damping": 0.5,
           "elevDivs": { "min": 10, "max": 2 },
           "speed": 4.0,
-          "stretchFact": 8.5
+          "stretchFact": 10.5
         }
       }
     ],
