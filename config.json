@@ -340,10 +340,10 @@
           "./fire/flame3.jpg"
         ],
         "properties": {
-          "area": 0.2,
-          "size": 0.4,
-          "maxCount": 14,
-          "spawnRate": 18,
+          "area": 0.25,
+          "size": 0.45,
+          "maxCount": 12,
+          "spawnRate": 16,
           "startPozs": [0, 0.45, 1.5],
           "opacity": 0.1,
           "scaleFactor": 2.5
@@ -373,17 +373,17 @@
       {
         "name": "sparks",
         "properties": {
-          "color": "#FFF779",
-          "area": 0.25,
-          "size": 0.07,
-          "maxCount": 50,
-          "spawnRate": 10,
-          "startPozs": [0, 0.5, 1.5],
+          "color": "#FF0000",
+          "area": 0.3,
+          "size": 0.09,
+          "maxCount": 100,
+          "spawnRate": 22,
+          "startPozs": [0, 0.3, 1.5],
           "scaleFactor": 2.0,
           "sparks": true,
-          "damping": 0.5,
-          "elevDivs": { "min": 10, "max": 2 },
-          "speed": 4.0,
+          "damping": 0.8,
+          "elevDivs": { "min": 12, "max": 2 },
+          "speed": 3.8,
           "stretchFact": 10.5
         }
       }
