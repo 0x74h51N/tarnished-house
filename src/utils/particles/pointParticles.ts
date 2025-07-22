@@ -57,8 +57,7 @@ defaultTexture.needsUpdate = true;
  * @param speed              - Sparkels velocity start speed.
  * @param stretchFact        - Stretch factor to elongate each spark along its velocity direction.
  *
- * @returns { points, step, updtScreen }
- *   points      - Array of Three.js Points instances.
+ * @returns { step, updtScreen }
  *   step(delta) - Call each frame to spawn & advance particles.
  *   updtScreen  - Call on resize to update resolution uniform.
  */

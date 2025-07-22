@@ -20,6 +20,23 @@ import { CreateParticlesReturn, FlameParticlesInterface, Steps } from "types";
 
 const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
 
+/**
+ * Creates a volumetric flame mesh with animated fire shader.
+ *
+ * @param parent - The parent Object3D to attach the flame mesh to.
+ * @param textures - Flame texture.
+ * @param startPozs - Initial position of the flame in world space.
+ * @param size - Base size of the flame (affects geometry and scale).
+ * @param speed - Time progression multiplier (affects animation speed).
+ * @param color - Base color of the flame (optional use in fragment shader).
+ * @param seed - Random seed for animation offset.
+ * @param noise - Noise config used inside shader (scale, gain, lacunarity...).
+ * @param march - Raymarching config (step count, ray step factor).
+ *
+ * @returns { step, updtScreen }
+ *   step(delta) - Call each frame to spawn & advance particles.
+ *   updtScreen  - Call on resize to update resolution uniform.
+ */
 export const createFlame = ({
   parent,
   textures,
@@ -69,7 +86,6 @@ export const createFlame = ({
 
     resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
     color: {
-      //bu henüz fragment'de kullanılmıyor
       value: new Color(color),
     },
   };

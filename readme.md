@@ -1,10 +1,10 @@
 # Tarnished House
 
-Tarnished House is a project by Tahsin Önemli, inspired by the Three.js Journey Haunted House lesson.
+While the original idea was inspired by the Three.js Journey Haunted House lesson,
+I developed the random mesh generation, scene composition, object/texture optimization, particles, UI design, and modular structure.
 
-While the idea was inspired by the course, every detail—from the geometry to the lighting—was built from scratch.
-
-Below, you’ll find the assets and resources used during development.
+I mostly used ready assets, and the scene is enhanced with GLSL shaders.
+It will keep evolving as I learn more. Maybe it’ll become a small playable Souls-like browser game someday... who knows?
 
 ## Credits
 
@@ -67,12 +67,6 @@ Below, you’ll find the assets and resources used during development.
   - **Authors:** Dimitrios Savva & Rob Tuytel
   - **Source:** [Poly Haven - Wood Peeling Paint Weathered](https://polyhaven.com/a/wood_peeling_paint_weathered)
   - **License:** CC0
-
-- **Flame Sprites**
-
-  - **Authors:** Keith333
-  - **Source:** [OpenGameArt - Flame Particle Set](https://opengameart.org/content/flame-particle-set-4-in-total)
-  - **License:** CC-BY 3.0
 
 - **Smoke Sprites**
 
