@@ -33,7 +33,7 @@ export function loadAssets({
   renderer,
   positionalSound,
   texLoader,
-}: LoadAssetsInterface): { managers: ManagerTypes[]; floor: Mesh } {
+}: LoadAssetsInterface): { managers: ManagerTypes[] } {
   //
   // ─── LOAD ASSETS ───────────────────────────────────────────────────────
   //
@@ -199,5 +199,5 @@ export function loadAssets({
     managers.push({ name: key, manager });
   });
 
-  return { managers, floor };
+  return { managers };
 }

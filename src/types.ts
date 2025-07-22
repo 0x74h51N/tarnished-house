@@ -4,9 +4,11 @@ import type {
   Group,
   Object3D,
   Color,
-  PerspectiveCamera,
   Texture,
-  Points,
+  Matrix4Tuple,
+  Vector3,
+  Vector3Like,
+  Vector4Like,
 } from "three";
 
 export type AssetTypes = {
@@ -70,15 +72,16 @@ export type ElevationDividers = {
   min: number;
   max: number;
 };
+
 export interface CreateParticlesInterface {
   parent: Object3D;
   color?: Color | number | string;
   opacity?: number;
-  maxCount: number;
-  spawnRate: number;
+  maxCount?: number;
+  spawnRate?: number;
   area: number;
   size: number;
-  startPozs: number[];
+  startPozs: Vector3Like;
   textures?: Texture[] | Texture | null;
   scaleFactor: number;
   sizeGrowth?: number;
@@ -90,9 +93,34 @@ export interface CreateParticlesInterface {
   stretchFact?: number;
 }
 
+interface NoiseParams {
+  noiseScale: Vector4Like;
+  magnitude: number;
+  lacunarity: number;
+  gain: number;
+  octaves: number;
+}
+
+interface MarchParams {
+  iterations: number;
+  rayStepFactor: number;
+}
+
+export interface FlameParticlesInterface {
+  parent: Object3D;
+  textures: Texture;
+  startPozs: Vector3Like;
+  size: number;
+  speed: number;
+  color?: string;
+  seed?: number;
+  noise: NoiseParams;
+  march: MarchParams;
+}
+
+export type Steps = { delta: number; wm?: Matrix4Tuple };
 export interface CreateParticlesReturn {
-  points: Points[];
-  step: (delta: number) => void;
+  step: ({ delta }: Steps) => void;
   updtScreen: () => void;
 }
 

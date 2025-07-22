@@ -235,10 +235,10 @@ export function setupGUI({
     .add(bloomParams, "strength", 0, 5)
     .onChange((v: number) => (bloomPass.strength = v));
   graphics
-    .add(bloomParams, "radius", 0, 2)
+    .add(bloomParams, "radius", 0, 4)
     .onChange((v: number) => (bloomPass.radius = v));
   graphics
-    .add(bloomParams, "threshold", 0, 1)
+    .add(bloomParams, "threshold", 0, 10)
     .onChange((v: number) => (bloomPass.threshold = v));
 
   graphics
@@ -369,7 +369,7 @@ export function setupGUI({
     });
 
   directionalLightGui
-    .add(dlParams, "shadowCameraWidth", 2, 45, 0.1)
+    .add(dlParams, "shadowCameraWidth", 2, 95, 0.1)
     .name("Shadow Camera Width")
     .onChange((v: number) => {
       const half = v / 2;
@@ -389,7 +389,7 @@ export function setupGUI({
       directionalLightCameraHelper.update();
     });
   directionalLightGui
-    .add(dlParams, "shadowCameraHeight", 2, 40, 0.1)
+    .add(dlParams, "shadowCameraHeight", 2, 100, 0.1)
     .name("Shadow Camera Height")
     .onChange((v: number) => {
       const half = v / 2;
@@ -414,7 +414,7 @@ export function setupGUI({
     });
 
   directionalLightGui
-    .add(dlParams, "shadowCameraFar", 0.1, 60, 0.01)
+    .add(dlParams, "shadowCameraFar", 10, 200, 1)
     .name("Shadow Camera Far")
     .onFinishChange((v: number) => {
       if (v <= directionalLight.shadow.camera.near) {

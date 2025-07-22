@@ -1,4 +1,9 @@
-import { ACESFilmicToneMapping, PCFSoftShadowMap, WebGLRenderer } from "three";
+import {
+  ACESFilmicToneMapping,
+  PCFSoftShadowMap,
+  SRGBColorSpace,
+  WebGLRenderer,
+} from "three";
 import config from "../../config.json";
 
 interface RendererInterface {
@@ -15,6 +20,8 @@ export function createRenderer({
   const renderer = new WebGLRenderer({
     canvas: canvas,
     antialias: antialias,
+    context: canvas.getContext("webgl2") as WebGL2RenderingContext,
+    alpha: true,
   });
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(
@@ -24,5 +31,7 @@ export function createRenderer({
   renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = config.scene.renderer.toneMappingExposure;
+  renderer.outputColorSpace = SRGBColorSpace;
+
   return renderer;
 }

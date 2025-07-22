@@ -1,5 +1,4 @@
 export { intro } from "./intro";
-export { createSky } from "./createSky";
 export { credits } from "./credits";
 export { setupGUI } from "./setupGui";
 export { loadAssets } from "./loadAssets";
@@ -8,5 +7,5 @@ export { lights } from "./lights";
 export { cameraControl } from "./cameraControl";
 export { settings } from "./settings/_settings";
 export { createSound } from "./sounds";
-export { createComposer } from "./postProcess";
+export { createComposer, BLOOM_SCENE } from "./postProcess";
 export { createRenderer } from "./renderer";

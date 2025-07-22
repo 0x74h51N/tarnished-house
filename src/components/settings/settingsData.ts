@@ -2,7 +2,6 @@ import {
   ACESFilmicToneMapping,
   BasicShadowMap,
   CineonToneMapping,
-  FogExp2,
   LinearToneMapping,
   NoToneMapping,
   PCFShadowMap,
@@ -28,12 +27,9 @@ const params = {
   },
 };
 const assets = config.assets;
-const fogSettings = config.scene.postProcessing.fog;
 const shadowMapSizes = config.quality.shadowMapSizes;
 const shadowDistOpt = config.quality.shadowDistance;
 const toneMappingOptions = config.options.toneMappingTypes;
-
-export const fog = new FogExp2(fogSettings.color, fogSettings.density);
 
 export const shadowTypes = {
   Basic: BasicShadowMap,
@@ -190,7 +186,7 @@ export function makeScene(): GeneralControl[] {
         id,
         label: `${label} Count`,
         min: 1,
-        max: 100,
+        max: 150,
         step: 1,
         value: assetConfig[key].count,
         span: `${id}Value`,

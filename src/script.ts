@@ -4,7 +4,6 @@ import {
   intro,
   credits,
   loadAssets,
-  createSky,
   particles,
   lights,
   cameraControl,
@@ -13,14 +12,20 @@ import {
   createComposer,
   createRenderer,
 } from "./components/_index.js";
-import { Scene, LoadingManager, TextureLoader, CameraHelper } from "three";
+import {
+  Scene,
+  LoadingManager,
+  TextureLoader,
+  CameraHelper,
+  Color,
+} from "three";
 import { Loop, detectLowEnd } from "./utils/_index.js";
 
 //
 // Mobile Detection & Performance Optimization
 //
 
-const isLowEnd = detectLowEnd();
+detectLowEnd();
 
 //
 // Canvas
@@ -77,7 +82,11 @@ const renderer = createRenderer({ sizes, canvas, antialias });
 
 //Postprocessing
 
-const { composer, bloomPass } = createComposer({ renderer, scene, camera });
+const { composer, bloomPass } = createComposer({
+  renderer,
+  scene,
+  camera,
+});
 
 //
 //Size Update
@@ -116,19 +125,12 @@ const { positionalSound, onVolumeChange } = createSound({
 // Assets
 //
 
-const { managers, floor } = loadAssets({
+const { managers } = loadAssets({
   scene,
   loadingManager,
   renderer,
   positionalSound,
   texLoader,
-});
-
-const { update: updateMoon } = createSky({
-  scene,
-  texLoader,
-  directionalLight,
-  camera,
 });
 
 const { flame, smoke, sparks } = particles({ scene, texLoader, camera });
@@ -180,17 +182,21 @@ settings({
 // Animate
 //
 let bloom = config.scene.postProcessing.bloom;
+scene.background = new Color(config.scene.postProcessing.fog.color);
 const loop = new Loop();
-if (!isLowEnd) loop.addUpdate(() => updateMoon());
-loop.addUpdate(() => controls.update());
-loop.addUpdate(() => clampCameraPosition());
-loop.addUpdate((delta) => sparks.step(delta));
-loop.addUpdate((delta) => flame.step(delta));
-loop.addUpdate((delta) => smoke.step(delta));
-loop.addUpdate((_, elapsed) => {
+loop.addUpdate((delta, elapsed) => {
+  controls.update();
+  clampCameraPosition();
+
+  camera.updateMatrix();
+  const wm = camera.matrixWorld.elements;
+
+  sparks.step({ delta });
+  flame.step({ delta });
+  smoke.step({ delta });
+
   fireAnimator.updateFireLight(elapsed);
 });
-
 loop.addRender(() => {
   stats.begin();
   if (bloom.enabled && !composer.passes.includes(bloomPass)) {

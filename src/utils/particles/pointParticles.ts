@@ -11,16 +11,18 @@ import {
   RawShaderMaterial,
   Vector2,
   Vector3,
+  GLSL3,
 } from "three";
 import {
   CreateParticlesInterface,
   CreateParticlesReturn,
   ElevationDividers,
+  Steps,
 } from "types";
-import VS from "../shaders/particles/vertex.vert";
-import FS from "../shaders/particles/fragment.frag";
-import SparkVS from "../shaders/particles/sparks/vertex.vert";
-import SparksFS from "../shaders/particles/sparks/fragment.frag";
+import VS from "./shaders/pointParticle/vertex.vert";
+import FS from "./shaders/pointParticle/fragment.frag";
+import SparkVS from "./shaders/sparks/vertex.vert";
+import SparksFS from "./shaders/sparks/fragment.frag";
 
 const defaultTexture = new DataTexture(
   new Uint8Array([255, 255, 255, 255]),
@@ -69,7 +71,7 @@ export function createParticles({
   spawnRate = 50,
   area = 1,
   size = 0.05,
-  startPozs = [0, 0, 0],
+  startPozs,
   textures = [],
   scaleFactor,
   sizeGrowth = 0,
@@ -98,6 +100,7 @@ export function createParticles({
   for (let i = 0; i < maxCount; i++) {
     const i3 = i * 3;
     startPos(startPozs, position, i3, area);
+
     sparks ? sparkVel(vel, i3, elevDivs, speed) : startVel(vel, i3);
 
     startTimeArr[i] = Math.random() * 0.1;
@@ -127,6 +130,7 @@ export function createParticles({
     const dTex = textureArray[v] || defaultTexture;
 
     const material = new RawShaderMaterial({
+      glslVersion: GLSL3,
       uniforms: {
         resolution: {
           value: new Vector2(window.innerWidth, window.innerHeight),
@@ -148,7 +152,7 @@ export function createParticles({
     });
 
     const points = new Points(geometry, material);
-    points.renderOrder = 9;
+    points.renderOrder = 4;
     parent.add(points);
     pointsArr.push(points);
   }
@@ -156,7 +160,7 @@ export function createParticles({
     nextIndex = 0;
 
   //Respawn of Points
-  function step(delta: number) {
+  function step({ delta }: Steps) {
     spawnAccumulator += delta * spawnRate;
     const toSpawn = Math.floor(spawnAccumulator);
     spawnAccumulator -= toSpawn;
@@ -188,18 +192,18 @@ export function createParticles({
     }
   }
 
-  return { points: pointsArr, step, updtScreen };
+  return { step, updtScreen };
 }
 
 function startPos(
-  startPozs: number[] = [0, 0, 0],
+  startPozs: { x: number; y: number; z: number },
   pos: Float32Array,
   i3: number = 0,
   area: number
 ) {
-  pos[i3] = startPozs[0] + (Math.random() * 2 - 1) * area;
-  pos[i3 + 1] = startPozs[1];
-  pos[i3 + 2] = startPozs[2] + (Math.random() * 2 - 1) * area;
+  pos[i3] = startPozs.x + (Math.random() * 2 - 1) * area;
+  pos[i3 + 1] = startPozs.y;
+  pos[i3 + 2] = startPozs.z + (Math.random() * 2 - 1) * area;
 }
 
 function startVel(v: Float32Array, i3 = 0) {

@@ -1,6 +1,3 @@
-#ifdef GL_ES
-precision mediump float;
-#endif
 
 uniform vec2 resolution;
 uniform mat4 modelViewMatrix;
@@ -11,15 +8,15 @@ uniform float u_scale;
 uniform float u_damping;  
 uniform vec3 u_axisRatio;
 
-attribute vec3 position;
-attribute vec3 velocity;
-attribute float startTime;
-attribute float size;
-attribute vec4 colour;
+in vec3 position;
+in vec3 velocity;
+in float startTime;
+in float size;
+in vec4 colour;
 
-varying vec4 vColour;
-varying vec2 vRot;
-varying float vSpeedRatio;
+out vec4 vColour;
+out vec2 vRot;
+out float vSpeedRatio;
 
 void main() {
   float age = max(u_time - startTime, 0.0);

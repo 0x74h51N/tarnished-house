@@ -1,5 +1,6 @@
 export { centerGeometryXZ } from "./centerGeometry";
-export { createParticles } from "./createSimpleParticles";
+export { createParticles } from "./particles/pointParticles";
+export { createFlame } from "./particles/flameParticles";
 export { Loop } from "./Loop";
 export { getCountConfigs } from "./countConfig";
 export { shadowDispose } from "./shadowDispose";

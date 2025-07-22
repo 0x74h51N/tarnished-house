@@ -1,4 +1,4 @@
-import { shadowTypes, fog } from "./settingsData.js";
+import { shadowTypes } from "./settingsData.js";
 import { shadowDispose, spawnMeshes } from "../../utils/_index";
 import config from "../../../config.json";
 import { CountConfigs } from "types";
@@ -10,6 +10,7 @@ import {
   ToneMapping,
 } from "three";
 import { toneMappingMap } from "./settingsData";
+import { fog } from "../postProcess";
 
 // Config Refs
 const params = {

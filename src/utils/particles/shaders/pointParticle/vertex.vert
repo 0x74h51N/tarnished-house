@@ -1,6 +1,4 @@
-#ifdef GL_ES
 precision mediump float;
-#endif
 
 uniform vec2 resolution;
 uniform mat4 modelViewMatrix;
@@ -8,18 +6,18 @@ uniform mat4 projectionMatrix;
 uniform float u_time;
 uniform float u_scale;
 
-attribute vec3 position;
-attribute vec3 velocity;
-attribute float startTime;
-attribute float size;
-attribute float angle;
-attribute vec4 colour;
-attribute float sizeGrowth;   
-attribute float fadeRate;
+in vec3 position;
+in vec3 velocity;
+in float startTime;
+in float size;
+in float angle;
+in vec4 colour;
+in float sizeGrowth;   
+in float fadeRate;
 
-varying vec4 vColour;
-varying vec2 vAngle;
-varying float vFade;
+out vec4 vColour;
+out vec2 vAngle;
+out float vFade;
 
 void main() {
   float age = max(u_time - startTime, 0.0);

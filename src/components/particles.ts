@@ -1,31 +1,35 @@
-import { Scene, TextureLoader, PerspectiveCamera, SRGBColorSpace } from "three";
-import { createParticles } from "../utils/_index";
+import { Scene, TextureLoader, PerspectiveCamera, Texture } from "three";
+import { createParticles, createFlame } from "../utils/_index";
 import config from "../../config.json";
-import { CreateParticlesInterface, CreateParticlesReturn } from "types";
+import {
+  CreateParticlesInterface,
+  CreateParticlesReturn,
+  FlameParticlesInterface,
+} from "types";
 
 interface ParticlesInterface {
   scene: Scene;
   texLoader: TextureLoader;
   camera: PerspectiveCamera;
 }
-
-export function particles({ scene, texLoader, camera }: ParticlesInterface) {
+function tLoader(loader: TextureLoader, path: string): Texture {
+  const tex = loader.load(path);
+  return tex;
+}
+export function particles({ scene, texLoader }: ParticlesInterface) {
   const configs = config.assets.particles;
 
-  return configs.reduce((acc, { name, textures = [], properties }) => {
-    const params: CreateParticlesInterface = {
+  return configs.reduce((acc, { name, textures, properties }) => {
+    const params = {
       parent: scene,
       ...properties,
-      textures: textures.length
-        ? textures.map((path) => {
-            const tex = texLoader.load(path);
-            tex.colorSpace = SRGBColorSpace;
-            return tex;
-          })
-        : null,
+      textures: Array.isArray(textures)
+        ? textures.map((p) => tLoader(texLoader, p))
+        : tLoader(texLoader, textures as string),
     };
-
-    acc[name] = createParticles(params);
+    if (name === "flame") {
+      acc["flame"] = createFlame(params as FlameParticlesInterface);
+    } else acc[name] = createParticles(params as CreateParticlesInterface);
     return acc;
   }, {} as Record<string, CreateParticlesReturn>);
 }

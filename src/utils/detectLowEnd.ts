@@ -1,3 +1,4 @@
+import { ManagerTypes } from "types";
 import config from "../../config.json";
 
 export function detectLowEnd() {
@@ -42,19 +43,25 @@ export function detectLowEnd() {
 
     config.scene.renderer.maxPixelRatio = mobileConfig.maxPixelRatio;
 
-    config.assets.particles[0].properties.maxCount /=
+    config.assets.particles[1].properties.maxCount! /=
       mobileConfig.particlesDivider;
-    config.assets.particles[1].properties.maxCount /=
-      mobileConfig.particlesDivider;
-    config.assets.particles[2].properties.maxCount /=
+    config.assets.particles[2].properties.maxCount! /=
       mobileConfig.particlesDivider;
 
-    config.assets.models.spawnable.trees.count = mobileConfig.spawnables.trees;
-    config.assets.models.spawnable.bushes.count =
-      mobileConfig.spawnables.bushes;
-    config.assets.models.spawnable.graves.count =
-      mobileConfig.spawnables.graves;
-    config.assets.models.spawnable.roots.count = mobileConfig.spawnables.roots;
+    const orSpawn = config.assets.models.spawnable;
+    Object.entries(orSpawn).forEach(([key, value]) => {
+      const override =
+        mobileConfig.spawnables[key as ManagerTypes["name"]] || {};
+
+      orSpawn[key as ManagerTypes["name"]] = {
+        ...value,
+        ...override,
+        spawn: {
+          ...value.spawn,
+          ...override.spawn,
+        },
+      };
+    });
 
     const segmentsDivider = mobileConfig.floorGeometryDivider;
     config.assets.floor.geometry.widthSegments /= segmentsDivider;
@@ -62,5 +69,5 @@ export function detectLowEnd() {
 
     config.scene.renderer.shadows.enabled = false;
   }
-  return { isLowEnd };
+  return;
 }

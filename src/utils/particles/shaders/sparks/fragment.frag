@@ -1,11 +1,12 @@
-#ifdef GL_ES
-precision mediump float;    
-#endif
 
-varying vec2  vRot; 
-varying vec4  vColour;
-varying float vSpeedRatio;
+precision mediump float;
+
+in vec2  vRot; 
+in vec4  vColour;
+in float vSpeedRatio;
 uniform float u_stretch;
+
+out vec4 fragColor;
 
 void main(){
   vec2 local = gl_PointCoord - 0.5;
@@ -19,7 +20,7 @@ void main(){
 
   float d = length(rotLoc);
 
-  float t = clamp(d*2.0, 0.0, 1.0);
+  float t = clamp(d * 2.0, 0.0, 1.0);
   
   float strength = 1.0 - (t * t * (3.0 - 2.0 * t));
 
@@ -31,5 +32,5 @@ void main(){
   col.a = strength;
 
   col.a = max(col.a, 0.005);
-  gl_FragColor  = col;
+  fragColor  = col;
 }

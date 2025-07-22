@@ -1,4 +1,4 @@
-import { makeControls, makeGraphics, makeScene, fog } from "./settingsData";
+import { makeControls, makeGraphics, makeScene } from "./settingsData";
 import { renderSettings } from "./uiRender";
 import { settingsController } from "./settingsController";
 import config from "../../../config.json";
@@ -25,8 +25,6 @@ export function settings({
   scene,
   stats,
 }: SettingsInterface) {
-  scene.fog = fog;
-
   const countConfigs = getCountConfigs(
     gltfAssets,
     config.assets.models.spawnable
