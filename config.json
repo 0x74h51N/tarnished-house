@@ -370,8 +370,8 @@
         "name": "flame",
         "textures": "./fire.png",
         "properties": {
-          "size": 1.25,
-          "speed": 4.2,
+          "size": 1.35,
+          "speed": 4.5,
           "startPozs": { "x": 0, "y": 0.45, "z": 1.5 },
           "color": "#ffa500",
           "noise": {
@@ -393,16 +393,15 @@
         "textures": [
           "./smoke/smoke1.png",
           "./smoke/smoke2.png",
-          "./smoke/smoke3.png",
-          "./smoke/smoke4.png"
+          "./smoke/smoke3.png"
         ],
         "properties": {
           "area": 0.25,
           "size": 0.6,
-          "maxCount": 46,
+          "maxCount": 48,
           "spawnRate": 2.8,
           "startPozs": { "x": 0, "y": 1.15, "z": 1.5 },
-          "opacity": 0.3,
+          "opacity": 0.32,
           "color": "#444444",
           "sizeGrowth": 0.75,
           "fadeRate": 0.12,
@@ -412,17 +411,17 @@
       {
         "name": "sparks",
         "properties": {
-          "color": "#FF0000",
-          "area": 0.45,
-          "size": 0.075,
-          "maxCount": 100,
-          "spawnRate": 22,
-          "startPozs": { "x": 0, "y": 0.5, "z": 1.5 },
-          "scaleFactor": 1.5,
           "sparks": true,
+          "color": "#FF0000",
+          "area": 0.3,
+          "size": 0.08,
+          "maxCount": 60,
+          "spawnRate": 10,
+          "startPozs": { "x": 0, "y": 0.55, "z": 1.5 },
+          "scaleFactor": 1.5,
           "damping": 0.82,
-          "elevDivs": { "min": 12, "max": 2 },
-          "speed": 4.9,
+          "elevDivs": { "min": 8, "max": 2 },
+          "speed": 4.4,
           "stretchFact": 10.5
         }
       }
