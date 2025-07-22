@@ -89,16 +89,6 @@
     },
     "license": "CC0"
   },
-
-  {
-    "type": "Flame Sprites",
-    "author": "Keith333",
-    "source": {
-      "name": "OpenGameArt - Flame Particle Set",
-      "url": "https://opengameart.org/content/flame-particle-set-4-in-total"
-    },
-    "license": "CC-BY 3.0"
-  },
   {
     "type": "Smoke Sprites",
     "author": "Fupi",
@@ -125,14 +115,5 @@
       "url": "https://freesound.org/people/NoOneIsReal/sounds/387128/"
     },
     "license": "CC0"
-  },
-  {
-    "type": "Moon Photo",
-    "author": "0x74h51n - by me :)",
-    "source": {
-      "name": "Github",
-      "url": "https://github.com/0x74h51N/tarnished-house/tree/master/static/moon.jpg"
-    },
-    "license": "CC-BY 4.0"
   }
 ]
