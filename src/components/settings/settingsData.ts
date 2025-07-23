@@ -11,7 +11,7 @@ import {
   WebGLRenderer,
 } from "three";
 import config from "../../../config.json";
-import { GeneralControl, ToneMappingKey } from "types";
+import { GeneralControl, ToneMappingKey } from "./types";
 
 // Config Refs
 const params = {

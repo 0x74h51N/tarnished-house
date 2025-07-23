@@ -1,4 +1,4 @@
-import { ManagerTypes } from "types";
+import { ManagerTypes } from "components/assetLoader";
 import config from "../../config.json";
 
 export function detectLowEnd() {

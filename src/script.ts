@@ -4,7 +4,8 @@ import {
   intro,
   credits,
   loadAssets,
-  particles,
+  randomMeshes,
+  particleSystem,
   lights,
   cameraControl,
   settings,
@@ -91,7 +92,6 @@ const { composer, bloomPass } = createComposer({
 //
 //Size Update
 //
-
 window.addEventListener("resize", () => {
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
@@ -113,7 +113,6 @@ window.addEventListener("resize", () => {
 //
 // Sounds
 //
-
 const { positionalSound, onVolumeChange } = createSound({
   camera,
   loadingManager,
@@ -122,10 +121,9 @@ const { positionalSound, onVolumeChange } = createSound({
 });
 
 //
-// Assets
+// Assetichus
 //
-
-const { managers } = loadAssets({
+loadAssets({
   scene,
   loadingManager,
   renderer,
@@ -133,12 +131,17 @@ const { managers } = loadAssets({
   texLoader,
 });
 
-const { flame, smoke, sparks } = particles({ scene, texLoader, camera });
+//Randommes
+const { managers } = randomMeshes({ scene, loadingManager });
 
 //
-//Settings
+//Partichiles
 //
+const { flame, smoke, sparks } = particleSystem({ scene, texLoader, camera });
 
+//
+//Settingis
+//
 const lightArr = [fireLight, directionalLight];
 
 const stats = new Stats();
@@ -149,7 +152,7 @@ let guiLoaded = false;
 window.addEventListener("keydown", async (e) => {
   if (e.key.toLowerCase() === "h" && !guiLoaded) {
     guiLoaded = true;
-    const { setupGUI } = await import("./components/setupGui");
+    const { setupGUI } = await import("./components/gui/_gui");
     setupGUI({
       renderer,
       fireLightHelper,
@@ -164,6 +167,7 @@ window.addEventListener("keydown", async (e) => {
       bloomPass,
       scene,
       lights: lightArr,
+      particleSystems: { flame, smoke, sparks },
     });
   }
 });
@@ -179,7 +183,7 @@ settings({
 });
 
 //
-// Animate
+// Animatichis
 //
 let bloom = config.scene.postProcessing.bloom;
 scene.background = new Color(config.scene.postProcessing.fog.color);
@@ -191,9 +195,9 @@ loop.addUpdate((delta, elapsed) => {
   camera.updateMatrix();
   const wm = camera.matrixWorld.elements;
 
-  sparks.step({ delta });
-  flame.step({ delta });
-  smoke.step({ delta });
+  sparks.step(delta);
+  flame.step(delta);
+  smoke.step(delta);
 
   fireAnimator.updateFireLight(elapsed);
 });

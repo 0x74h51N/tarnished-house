@@ -1,11 +1,11 @@
 import { Scene, TextureLoader, PerspectiveCamera, Texture } from "three";
-import { createParticles, createFlame } from "../utils/_index";
-import config from "../../config.json";
+import { createParticles, createFlame } from "./utils";
+import config from "../../../config.json";
 import {
-  CreateParticlesInterface,
-  CreateParticlesReturn,
   FlameParticlesInterface,
-} from "types";
+  PointParticlesInterface,
+  ParticleSystemRefs,
+} from "./types";
 
 interface ParticlesInterface {
   scene: Scene;
@@ -16,7 +16,10 @@ function tLoader(loader: TextureLoader, path: string): Texture {
   const tex = loader.load(path);
   return tex;
 }
-export function particles({ scene, texLoader }: ParticlesInterface) {
+export function particleSystem({
+  scene,
+  texLoader,
+}: ParticlesInterface): ParticleSystemRefs {
   const configs = config.assets.particles;
 
   return configs.reduce((acc, { name, textures, properties }) => {
@@ -28,8 +31,10 @@ export function particles({ scene, texLoader }: ParticlesInterface) {
         : tLoader(texLoader, textures as string),
     };
     if (name === "flame") {
-      acc["flame"] = createFlame(params as FlameParticlesInterface);
-    } else acc[name] = createParticles(params as CreateParticlesInterface);
+      acc[name] = createFlame(params as FlameParticlesInterface);
+    } else {
+      acc[name] = createParticles(params as PointParticlesInterface);
+    }
     return acc;
-  }, {} as Record<string, CreateParticlesReturn>);
+  }, {} as ParticleSystemRefs);
 }

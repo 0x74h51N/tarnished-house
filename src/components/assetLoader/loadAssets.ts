@@ -1,7 +1,6 @@
-import type { AssetTypes, ManagerTypes } from "../types";
-import config from "../../config.json";
-import { spawnMeshes, centerGeometryXZ } from "../utils/_index";
-import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons";
+import config from "../../../config.json";
+import { crtGLTFLoader } from "./utils";
+import type { GLTF } from "three/examples/jsm/Addons";
 import {
   Scene,
   LoadingManager,
@@ -15,7 +14,6 @@ import {
   Mesh,
   LinearMipmapLinearFilter,
   LinearFilter,
-  Group,
   Object3D,
 } from "three";
 
@@ -33,17 +31,8 @@ export function loadAssets({
   renderer,
   positionalSound,
   texLoader,
-}: LoadAssetsInterface): { managers: ManagerTypes[] } {
-  //
-  // ─── LOAD ASSETS ───────────────────────────────────────────────────────
-  //
-
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderConfig({ type: "js" });
-  dracoLoader.setDecoderPath(config.assets.decoder);
-
-  const gltfLoader = new GLTFLoader(loadingManager);
-  gltfLoader.setDRACOLoader(dracoLoader);
+}: LoadAssetsInterface) {
+  const gltfLoader = crtGLTFLoader({ loadingManager });
 
   //
   //   ─── Floor ─────────────────────────────────────────────────────────
@@ -91,7 +80,7 @@ export function loadAssets({
   //
 
   const houseAsset = config.assets.models.house;
-  gltfLoader.load(houseAsset.path, (houseGLTF) => {
+  gltfLoader.load(houseAsset.path, (houseGLTF: GLTF) => {
     const house = houseGLTF.scene;
 
     const { x, y, z } = houseAsset.position;
@@ -128,9 +117,9 @@ export function loadAssets({
   //
 
   const bonfireAsset = config.assets.models.bonfire;
-  gltfLoader.load(bonfireAsset.path, (bonfireGLTF) => {
+  gltfLoader.load(bonfireAsset.path, (bonfireGLTF: GLTF) => {
     const bonfire = bonfireGLTF.scene.children[0];
-    bonfire.traverse((child) => {
+    bonfire.traverse((child: Object3D) => {
       if (child instanceof Mesh) {
         child.castShadow = bonfireAsset.castShadow;
       }
@@ -142,62 +131,4 @@ export function loadAssets({
     bonfire.add(positionalSound);
     scene.add(bonfire);
   });
-
-  //
-  // ─── Random Meshes ─────────────────────────────────────────────
-  //
-
-  const spawnKeys = ["trees", "bushes", "graves", "roots"] as const;
-
-  const managers: ManagerTypes[] = [];
-
-  spawnKeys.forEach((key) => {
-    const cfg = config.assets.models.spawnable[key];
-
-    const group = new Group();
-    const manager: AssetTypes = { baseMeshes: [] as Mesh[], group };
-
-    gltfLoader.load(cfg.path, (gltf) => {
-      let rawMeshes: Mesh[] = [];
-
-      switch (key) {
-        case "trees":
-          rawMeshes = gltf.scene.children[0].children[0].children[0]
-            .children as Mesh[];
-          break;
-        case "graves":
-          gltf.scene.traverse((child: Object3D) => {
-            if (child instanceof Mesh) {
-              centerGeometryXZ(child.geometry);
-              child.rotateY(Math.PI * 0.5);
-              rawMeshes.push(child);
-            }
-          });
-          break;
-        default:
-          rawMeshes = gltf.scene.children as Mesh[];
-          break;
-      }
-
-      manager.baseMeshes = rawMeshes;
-      spawnMeshes({
-        baseMeshes: rawMeshes,
-        group,
-        count: cfg.count,
-        options: {
-          scaleMin: cfg.spawn.scale.min,
-          scaleMax: cfg.spawn.scale.max,
-          radiusMin: cfg.spawn.radius.min,
-          radiusMax: cfg.spawn.radius.max,
-          minDistance: cfg.spawn.minDistance,
-        },
-        roots: key === "roots",
-      });
-      scene.add(group);
-    });
-
-    managers.push({ name: key, manager });
-  });
-
-  return { managers };
 }

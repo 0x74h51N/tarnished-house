@@ -1,11 +1,10 @@
-export { intro } from "./intro";
-export { credits } from "./credits";
-export { setupGUI } from "./setupGui";
-export { loadAssets } from "./loadAssets";
-export { particles } from "./particles";
+export { intro, credits } from "./domManup";
+export { setupGUI } from "./gui/_gui";
+export { loadAssets, randomMeshes } from "./assetLoader";
+export { particleSystem } from "./particles";
 export { lights } from "./lights";
 export { cameraControl } from "./cameraControl";
-export { settings } from "./settings/_settings";
+export { settings } from "./settings";
 export { createSound } from "./sounds";
 export { createComposer, BLOOM_SCENE } from "./postProcess";
 export { createRenderer } from "./renderer";

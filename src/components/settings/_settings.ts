@@ -2,9 +2,9 @@ import { makeControls, makeGraphics, makeScene } from "./settingsData";
 import { renderSettings } from "./uiRender";
 import { settingsController } from "./settingsController";
 import config from "../../../config.json";
-import { ManagerTypes } from "types";
 import type { Light, Scene, WebGLRenderer } from "three";
 import { getCountConfigs } from "../../utils/_index";
+import { ManagerTypes } from "../assetLoader";
 
 interface SettingsInterface {
   lights: Light[];

@@ -36,7 +36,6 @@ body {
   --color-shadow-card: #0007;
   --color-white: #fff;
   --color-black: #222;
-  --color-link-hover: #fffbe0;
 }
 
 /* Overlay Screenes */
@@ -112,7 +111,7 @@ body {
 #intro-text {
   color: var(--color-text) !important;
   font-family: "UnifrakturCook", cursive;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   text-align: center;
   letter-spacing: 1.5px;
   font-weight: lighter;
@@ -282,7 +281,7 @@ body {
 }
 .project-info a:hover,
 .asset-list a:hover {
-  color: var(--color-white);
+  color: var(--color-text);
 }
 
 /* Asset List & Cards */
@@ -322,8 +321,8 @@ body {
 .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background: #111;
-  color: #fff;
+  background: var(--color-shadow);
+  color: var(--color-white);
   text-align: center;
   border-radius: 6px;
   padding: 6px 0;
@@ -596,6 +595,11 @@ body {
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
     height: 42px;
+  }
+  .btn-container::before,
+  .btn-container::after {
+    width: 40px;
+    height: 40px;
   }
 
   #settings select {

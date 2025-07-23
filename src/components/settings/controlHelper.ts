@@ -1,4 +1,4 @@
-import { GeneralControl } from "types";
+import { GeneralControl } from "./types";
 
 export const controlHelper = (c: GeneralControl) =>
   c.type === "range"

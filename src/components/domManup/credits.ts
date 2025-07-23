@@ -1,5 +1,5 @@
-import assets from "../../assetLicense.json";
-import config from "../../config.json";
+import assets from "../../../assetLicense.json";
+import config from "../../../config.json";
 
 export function credits() {
   const creditsBtn = document.getElementById("credits-btn")!;

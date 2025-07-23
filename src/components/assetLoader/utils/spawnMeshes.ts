@@ -1,15 +1,6 @@
 import { Mesh, Group, Object3D } from "three";
 import type { SpawnOptions } from "../types";
 
-/**
- * Mesh multiplication and random placement utility function.
- * @param {Object3D[]} baseMeshes
- * @param {Group} group
- * @param {number} count
- * @param {object} options
- * @param {boolean} isGraveyard
- */
-
 interface SpawnMeshesInterface {
   baseMeshes: Mesh[];
   group: Group;

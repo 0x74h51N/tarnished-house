@@ -1,5 +1,5 @@
 import { LoadingManager } from "three";
-import config from "../../config.json";
+import config from "../../../config.json";
 
 export function intro(loadingManager: LoadingManager) {
   const closeIntro = document.getElementById("close-intro")!;

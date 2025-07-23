@@ -101,7 +101,7 @@
         "enabled": true,
         "strength": 0.3,
         "radius": 1.2,
-        "threshold": 0.65
+        "threshold": 1.15
       },
       "fog": {
         "enabled": true,
@@ -373,7 +373,7 @@
           "size": 1.35,
           "speed": 4.5,
           "startPozs": { "x": 0, "y": 0.45, "z": 1.5 },
-          "color": "#ffa500",
+          "color": "#f01b24",
           "noise": {
             "noiseScale": { "x": 0.71, "y": 1.45, "z": 1.0, "w": 0.3 },
             "magnitude": 1.5,
@@ -385,7 +385,8 @@
           "march": {
             "iterations": 30,
             "rayStepFactor": 0.0288
-          }
+          },
+          "colorMixStr": 0.5
         }
       },
       {
@@ -397,13 +398,13 @@
         ],
         "properties": {
           "area": 0.25,
-          "size": 0.6,
-          "maxCount": 48,
-          "spawnRate": 2.8,
+          "size": 0.55,
+          "maxCount": 42,
+          "spawnRate": 1.8,
           "startPozs": { "x": 0, "y": 1.15, "z": 1.5 },
-          "opacity": 0.32,
+          "opacity": 0.45,
           "color": "#444444",
-          "sizeGrowth": 0.75,
+          "sizeGrowth": 0.8,
           "fadeRate": 0.12,
           "scaleFactor": 2.5
         }

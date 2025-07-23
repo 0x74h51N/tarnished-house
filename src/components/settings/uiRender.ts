@@ -1,4 +1,4 @@
-import { GeneralControl } from "types";
+import { GeneralControl } from "./types";
 import { controlHelper } from "./controlHelper.js";
 
 interface RenderSettingsInterface {
@@ -19,5 +19,6 @@ export function renderSettings({
     "<h3>Graphics</h3>" +
     graphics.map((c) => controlHelper(c)).join("") +
     "<h3>Scene</h3>" +
-    scene.map((c) => controlHelper(c)).join("");
+    scene.map((c) => controlHelper(c)).join("") +
+    "<br /><em>Secrets lie beneath<br />Should thy fingers recall the first glyph of help twice.</em>";
 }

@@ -1,7 +1,7 @@
 import { shadowTypes } from "./settingsData.js";
 import { shadowDispose, spawnMeshes } from "../../utils/_index";
 import config from "../../../config.json";
-import { CountConfigs } from "types";
+import { CountConfigs } from "../assetLoader/types.js";
 import {
   Light,
   WebGLRenderer,

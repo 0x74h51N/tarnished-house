@@ -1,9 +1,6 @@
-import { CountConfigs, ManagerTypes } from "../components/assetLoader/types";
-import config from "../../config.json";
+import { CountConfigs, ManagerTypes } from "../types";
+import config from "../../../../config.json";
 
-/**
- * Transform ManagerTypes array into CountConfigs for UI controls
- */
 export function getCountConfigs(
   gltfAssets: ManagerTypes[],
   assetMap: typeof config.assets.models.spawnable
