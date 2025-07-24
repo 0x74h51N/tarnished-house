@@ -180,7 +180,8 @@ void main(){
 
     col.a = col.r;
 
-    col.rgb = mix(col.rgb, color, colorMixStrength);
-
+    float mask = step(0.001, col.r);
+    col.rgb = mix(col.rgb, color, colorMixStrength * mask);
+    
     fragColor = col;
 }
