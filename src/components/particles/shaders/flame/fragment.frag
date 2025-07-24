@@ -14,8 +14,7 @@
   Changes by <Tahsin Önemli>, 2025-07-22:
   - Ported to GLSL ES 3.00
   - Added edge masking & turbulence tweaks
-  - Added HSV color mix
-  - Uniform refactor (u_radius, u_height, etc.)
+  - Uniform refactor (u_radius, u_height, etc.) and color mix
 */
 
 
@@ -37,6 +36,9 @@ uniform float u_height;
 uniform float u_bottom;
 uniform vec3 cameraPosition; 
     
+uniform int u_iterations;
+uniform int u_octaves;
+
 in vec3 vWorldPos;
 out vec4 fragColor;
 
@@ -44,25 +46,7 @@ out vec4 fragColor;
 uniform vec3  color;
 uniform float colorMixStrength;
 
-#define OCTIVES    3
-#define ITERATIONS 30
 
-// HSV color space conversion functions
-vec3 rgb2hsv(vec3 c) {
-    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
-    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
-    
-    float d = q.x - min(q.w, q.y);
-    float e = 1.0e-10;
-    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
-}
-
-vec3 hsv2rgb(vec3 c) {
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
 
 // ------------------------------------------------------------
 // GLSL simplex noise function by ashima
@@ -141,7 +125,7 @@ float turbulence(vec3 p){
     float sum = 0.0;
     float freq = 1.0;
     float amp  = 1.0;
-    for (int i = 0; i < OCTIVES; ++i) {
+    for (int i = 0; i < u_octaves; ++i) {
         sum += abs(snoise(p * freq)) * amp;
         freq *= lacunarity;
         amp  *= gain;
@@ -184,33 +168,19 @@ void main(){
 
     vec4 col = vec4(0.0);
 
-    for (int i = 0; i < ITERATIONS; ++i){
+    for (int i = 0; i < u_iterations; ++i){
         rayPos += rayDir * rayLen;
 
         vec3 lp = localize(rayPos);
-        lp.y   -= 0.85;
+        lp.y   -= 0.8;
         lp.xz  *= 2.0;
 
         col += samplerFire(lp, noiseScale);
     }
 
     col.a = col.r;
-    
-    // HSV color mixing - preserve texture brightness, apply color hue/saturation
-    if (colorMixStrength > 0.0 && col.r > 0.0) {
-        vec3 textureHSV = rgb2hsv(col.rgb);
-        vec3 targetHSV = rgb2hsv(color);
-        
-        // Keep texture brightness (Value), use target Hue/Saturation
-        vec3 mixedHSV = vec3(
-            targetHSV.x,      // Use target Hue
-            targetHSV.y,      // Use target Saturation
-            textureHSV.z      // Keep texture Brightness/Value
-        );
-        
-        vec3 colorShifted = hsv2rgb(mixedHSV);
-        col.rgb = mix(col.rgb, colorShifted, colorMixStrength);
-    }
-    
+
+    col.rgb = mix(col.rgb, color, colorMixStrength);
+
     fragColor = col;
 }

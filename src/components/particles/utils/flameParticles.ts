@@ -63,11 +63,11 @@ export const createFlame = ({
   fireTex.wrapS = fireTex.wrapT = ClampToEdgeWrapping;
   fireTex.magFilter = fireTex.minFilter = LinearFilter;
 
-  const geometry = new BoxGeometry(size, size * 1.5, size);
+  const geometry = new BoxGeometry(size, size * 1.45, size);
 
   const invModelMatrix = new Matrix4();
 
-  const u_radius = size * 0.6;
+  const u_radius = size * 0.5;
   const u_height = size;
   const u_bottom = -size * 0.8;
 
@@ -84,10 +84,7 @@ export const createFlame = ({
     lacunarity: { value: noise.lacunarity },
     gain: { value: noise.gain },
     u_octaves: { value: noise.octaves },
-
-    // march
     u_iterations: { value: march.iterations },
-    u_rayStep: { value: march.rayStepFactor },
 
     // shape
     u_radius: { value: u_radius },

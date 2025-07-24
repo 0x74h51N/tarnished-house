@@ -128,31 +128,6 @@ export function createParticleSettings(
       particleSystems.flame!.update("noise", newNoise);
     });
 
-  const flameMarchFolder = flameFolder.addFolder("Ray Marching");
-  flameMarchFolder.close();
-
-  flameMarchFolder
-    .add(flameParams.march, "iterations", 10, 50, 1)
-    .name("Iterations")
-    .onChange((value: number) => {
-      const newMarch = {
-        ...flameParams.march,
-        iterations: value,
-      };
-      particleSystems.flame!.update("march", newMarch);
-    });
-
-  flameMarchFolder
-    .add(flameParams.march, "rayStepFactor", 0.01, 0.1, 0.001)
-    .name("Ray Step Factor")
-    .onChange((value: number) => {
-      const newMarch = {
-        ...flameParams.march,
-        rayStepFactor: value,
-      };
-      particleSystems.flame!.update("march", newMarch);
-    });
-
   // Smoke
   const smokeFolder = particlesFolder.addFolder("Smoke");
   smokeFolder.close();

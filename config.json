@@ -119,9 +119,9 @@
     "postProcessing": {
       "bloom": {
         "enabled": true,
-        "strength": 0.5,
+        "strength": 0.6,
         "radius": 1.2,
-        "threshold": 1.15
+        "threshold": 0.98
       },
       "fog": {
         "enabled": true,
@@ -150,30 +150,6 @@
       "transitions": {
         "modalClose": 400,
         "loadingScreen": 600
-      }
-    },
-    "environment": {
-      "sky": {
-        "scale": 100,
-        "turbidity": 50,
-        "rayleigh": 0,
-        "mieCoefficient": 0.2,
-        "mieDirectionalG": 0,
-        "sunPosition": {
-          "x": 0,
-          "y": -0.08,
-          "z": -1
-        }
-      },
-      "moon": {
-        "geometry": {
-          "width": 3,
-          "height": 3
-        },
-        "emissiveIntensity": 10,
-        "emissiveColor": "#ffffff",
-        "distanceMultiplier": 1,
-        "angularSize": 0.75
       }
     }
   },
@@ -356,20 +332,20 @@
         "name": "flame",
         "textures": "./fire.png",
         "properties": {
-          "size": 1.35,
-          "speed": 4.5,
+          "size": 1.2,
+          "speed": 4.35,
           "startPozs": { "x": 0, "y": 0.45, "z": 1.5 },
           "color": "#ff0000",
           "noise": {
-            "noiseScale": { "x": 0.71, "y": 1.45, "z": 1.0, "w": 0.3 },
-            "magnitude": 1.5,
-            "lacunarity": 2.2,
-            "gain": 0.55,
-            "octaves": 4
+            "noiseScale": { "x": 0.71, "y": 1.3, "z": 1.0, "w": 0.3 },
+            "magnitude": 1.2,
+            "lacunarity": 2.17,
+            "gain": 0.53,
+            "octaves": 3
           },
 
           "march": {
-            "iterations": 30,
+            "iterations": 25,
             "rayStepFactor": 0.0288
           },
           "colorMixStr": 0.65
@@ -388,7 +364,7 @@
           "maxCount": 42,
           "spawnRate": 1.8,
           "startPozs": { "x": 0, "y": 1.15, "z": 1.5 },
-          "opacity": 0.45,
+          "opacity": 0.5,
           "color": "#444444",
           "sizeGrowth": 0.8,
           "fadeRate": 0.12,
@@ -401,14 +377,14 @@
           "sparks": true,
           "color": "#FF0000",
           "area": 0.3,
-          "size": 0.08,
+          "size": 0.1,
           "maxCount": 60,
-          "spawnRate": 10,
-          "startPozs": { "x": 0, "y": 0.55, "z": 1.5 },
+          "spawnRate": 4,
+          "startPozs": { "x": 0, "y": 0.65, "z": 1.5 },
           "scaleFactor": 1.5,
           "damping": 0.82,
           "elevDivs": { "min": 8, "max": 2 },
-          "speed": 4.4,
+          "speed": 3.8,
           "stretchFact": 10.5
         }
       }

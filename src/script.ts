@@ -193,7 +193,6 @@ loop.addUpdate((delta, elapsed) => {
   clampCameraPosition();
 
   camera.updateMatrix();
-  const wm = camera.matrixWorld.elements;
 
   sparks.step(delta);
   flame.step(delta);
