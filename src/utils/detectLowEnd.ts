@@ -1,4 +1,4 @@
-import { ManagerTypes } from "components/assetLoader";
+import { ManagerRefs } from "components/assetLoader";
 import config from "../../config.json";
 
 export function detectLowEnd() {
@@ -51,9 +51,9 @@ export function detectLowEnd() {
     const orSpawn = config.assets.models.spawnable;
     Object.entries(orSpawn).forEach(([key, value]) => {
       const override =
-        mobileConfig.spawnables[key as ManagerTypes["name"]] || {};
+        mobileConfig.spawnables[key as ManagerRefs["name"]] || {};
 
-      orSpawn[key as ManagerTypes["name"]] = {
+      orSpawn[key as ManagerRefs["name"]] = {
         ...value,
         ...override,
         spawn: {

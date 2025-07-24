@@ -12,7 +12,7 @@ import {
 } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { ParticleSystemRefs } from "../particles/types";
-import { ManagerTypes } from "components/assetLoader";
+import { ManagerRefs } from "components/assetLoader";
 
 export interface SetupGUIInterface {
   renderer: WebGLRenderer;
@@ -22,7 +22,7 @@ export interface SetupGUIInterface {
   ambientLight: AmbientLight;
   camera: PerspectiveCamera;
   cameraHelper: CameraHelper;
-  gltfAssets: ManagerTypes[];
+  randomMeshes: ManagerRefs[];
   antialias: boolean;
   onVolumeChange: (v: number) => void;
   bloomPass: UnrealBloomPass;

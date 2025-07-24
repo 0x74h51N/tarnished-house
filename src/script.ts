@@ -161,7 +161,7 @@ window.addEventListener("keydown", async (e) => {
       ambientLight,
       camera,
       cameraHelper: cameraHelper as CameraHelper,
-      gltfAssets: managers,
+      randomMeshes: managers,
       antialias,
       onVolumeChange,
       bloomPass,
@@ -175,7 +175,7 @@ window.addEventListener("keydown", async (e) => {
 settings({
   lights: lightArr,
   renderer,
-  gltfAssets: managers,
+  randomMeshes: managers,
   antialias,
   onVolumeChange,
   scene,

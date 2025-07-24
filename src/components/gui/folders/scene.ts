@@ -1,44 +1,32 @@
 import { getCountConfigs, spawnMeshes } from "../../../utils/_index";
-import { makeScene } from "../../settings/settingsData";
 import config from "../../../../config.json";
 import GUI from "lil-gui";
-import { ManagerTypes } from "components/assetLoader";
+import { ManagerRefs } from "components/assetLoader";
 
-export function createSceneSettings(gui: GUI, gltfAssets: ManagerTypes[]) {
+export function createSceneSettings(
+  gui: GUI,
+  randomMeshes: ManagerRefs[]
+): void {
   const sceneOptions = gui.addFolder("Scene Options");
   sceneOptions.close();
 
-  const assets = config.assets;
-  const map = getCountConfigs(gltfAssets, assets.models.spawnable);
+  const spawnable = config.assets.models.spawnable;
+  const countCfg = getCountConfigs(randomMeshes, spawnable);
 
-  makeScene().forEach((control) => {
-    if (control.type === "range") {
-      const { id, label, min, max, step } = control;
-      const cfg = map[id as `${ManagerTypes["name"]}Count`];
-      if (!cfg) return;
+  (Object.keys(countCfg) as Array<keyof typeof spawnable>).forEach((key) => {
+    const { manager, opts } = countCfg[key];
 
-      sceneOptions
-        .add(
-          assets.models.spawnable[
-            id.replace("Count", "") as ManagerTypes["name"]
-          ],
-          "count",
-          min,
-          max,
-          step
-        )
-        .name(label)
-        .onChange((val: number) => {
-          const { manager, opts } = cfg;
-
-          spawnMeshes({
-            baseMeshes: manager.baseMeshes,
-            group: manager.group,
-            count: val,
-            options: opts,
-            roots: id === "roots",
-          });
+    sceneOptions
+      .add(spawnable[key], "count", 1, 150, 1)
+      .name(`${key} Count`)
+      .onChange((value: number) => {
+        spawnMeshes({
+          baseMeshes: manager.baseMeshes,
+          group: manager.group,
+          count: value,
+          options: opts,
+          roots: key.includes("root"),
         });
-    }
+      });
   });
 }

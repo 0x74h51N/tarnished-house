@@ -2,7 +2,7 @@ import { Group, Mesh } from "three";
 import config from "../../../config.json";
 
 type SpawnableConfig = typeof config.assets.models.spawnable;
-export type SpawnableName = keyof SpawnableConfig & string;
+export type SpawnableName = keyof SpawnableConfig;
 
 export interface SpawnOptions {
   scaleMin: number;
@@ -12,20 +12,18 @@ export interface SpawnOptions {
   minDistance: number;
 }
 
-export type AssetTypes = {
+export type ManagerType = {
   baseMeshes: Mesh[];
   group: Group;
 };
 
-export type ManagerTypes = {
+export type ManagerRefs = {
   name: SpawnableName;
-  manager: AssetTypes;
+  manager: ManagerType;
 };
 
-export type CountConfigs = Record<
-  `${SpawnableName}Count`,
-  {
-    manager: AssetTypes;
-    opts: SpawnOptions;
-  }
->;
+export type CountOpts = {
+  manager: ManagerType;
+  opts: SpawnOptions;
+};
+export type CountConfigs = Record<SpawnableName, CountOpts>;

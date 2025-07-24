@@ -36,7 +36,7 @@ export function setupGUI({
   ambientLight,
   camera,
   cameraHelper,
-  gltfAssets,
+  randomMeshes,
   antialias,
   onVolumeChange,
   bloomPass,
@@ -87,7 +87,7 @@ export function setupGUI({
     directionalLightCameraHelper
   );
 
-  createSceneSettings(gui, gltfAssets);
+  createSceneSettings(gui, randomMeshes);
 
   createCameraSettings(gui, scene, camera, cameraHelper);
 

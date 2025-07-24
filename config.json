@@ -32,7 +32,29 @@
       "shadows": {
         "enabled": true,
         "type": "PCFSoftShadowMap",
-        "mapSize": 512
+        "defMapSize": 512,
+        "mapSizes": [256, 512, 1024, 2048, 4096],
+        "bias": {
+          "high": -0.0004,
+          "normal": 0.12
+        },
+        "distance": {
+          "half": {
+            "name": "Half",
+            "width": 50,
+            "far": 50
+          },
+          "three": {
+            "name": "3/4",
+            "width": 65,
+            "far": 70
+          },
+          "full": {
+            "name": "Full",
+            "width": 100,
+            "far": 100
+          }
+        }
       }
     },
     "lighting": {
@@ -50,10 +72,8 @@
         },
         "shadow": {
           "camera": {
-            "width": 50,
             "height": 35,
-            "near": 1.0,
-            "far": 70
+            "near": 1.0
           }
         },
         "helper": {
@@ -68,7 +88,7 @@
         }
       },
       "fireLight": {
-        "color": "#ffa500",
+        "color": "#ffae42",
         "position": {
           "x": 0,
           "y": 0.85,
@@ -79,16 +99,16 @@
         "decay": 1,
         "animation": {
           "intensity": {
-            "speed": 10,
-            "amplitude": 5
+            "speed": 12,
+            "amplitude": 4
           },
           "position": {
-            "speed": 8,
+            "speed": 11,
             "amplitude": 0.05
           },
           "distance": {
-            "speed": 8,
-            "amplitude": 2
+            "speed": 10,
+            "amplitude": 1
           }
         },
         "helper": {
@@ -99,7 +119,7 @@
     "postProcessing": {
       "bloom": {
         "enabled": true,
-        "strength": 0.3,
+        "strength": 0.5,
         "radius": 1.2,
         "threshold": 1.15
       },
@@ -202,40 +222,6 @@
       }
     }
   },
-  "quality": {
-    "shadowMapSizes": [256, 512, 1024, 2048, 4096],
-    "shadowDistance": [
-      {
-        "name": "Half",
-        "width": 50,
-        "far": 50
-      },
-      {
-        "name": "3/4",
-        "width": 65,
-        "far": 70
-      },
-      {
-        "name": "Full",
-        "width": 100,
-        "far": 100
-      }
-    ],
-    "textureQuality": {
-      "high": {
-        "bias": -0.0001,
-        "normalBias": 0.05
-      },
-      "medium": {
-        "bias": -0.0008,
-        "normalBias": 0.08
-      },
-      "low": {
-        "bias": -0.01,
-        "normalBias": 0.1
-      }
-    }
-  },
   "options": {
     "toneMappingTypes": [
       {
@@ -286,9 +272,9 @@
         "position": {
           "x": 0.02,
           "y": 0.2,
-          "z": -8
+          "z": -10
         },
-        "scale": 1.85,
+        "scale": 2,
         "castShadow": true,
         "receiveShadow": true
       },
@@ -312,8 +298,8 @@
               "max": 0.0049
             },
             "radius": {
-              "min": 10.5,
-              "max": 70
+              "min": 11.5,
+              "max": 66
             },
             "minDistance": 2.5
           }
@@ -327,7 +313,7 @@
               "max": 0.4
             },
             "radius": {
-              "min": 7,
+              "min": 9,
               "max": 35
             },
             "minDistance": 1
@@ -342,7 +328,7 @@
               "max": 0.0019
             },
             "radius": {
-              "min": 8,
+              "min": 10.5,
               "max": 55
             },
             "minDistance": 4.5
@@ -357,7 +343,7 @@
               "max": 3
             },
             "radius": {
-              "min": 4,
+              "min": 7,
               "max": 40
             },
             "minDistance": 4
@@ -373,7 +359,7 @@
           "size": 1.35,
           "speed": 4.5,
           "startPozs": { "x": 0, "y": 0.45, "z": 1.5 },
-          "color": "#f01b24",
+          "color": "#ff0000",
           "noise": {
             "noiseScale": { "x": 0.71, "y": 1.45, "z": 1.0, "w": 0.3 },
             "magnitude": 1.5,
@@ -386,7 +372,7 @@
             "iterations": 30,
             "rayStepFactor": 0.0288
           },
-          "colorMixStr": 0.5
+          "colorMixStr": 0.65
         }
       },
       {

@@ -1,5 +1,6 @@
 import { Mesh, Group, Object3D } from "three";
 import type { SpawnOptions } from "../types";
+import { createPositioner } from "./positioner";
 
 interface SpawnMeshesInterface {
   baseMeshes: Mesh[];
@@ -19,13 +20,7 @@ export function spawnMeshes({
   receiveShadow = true,
   roots = false,
 }: SpawnMeshesInterface) {
-  const {
-    scaleMin = 1,
-    scaleMax = 1,
-    radiusMin = 1,
-    radiusMax = 1,
-    minDistance = 0,
-  } = options;
+  const { scaleMin = 1, scaleMax = 1 } = options;
   group.children.forEach((child) => {
     if ((child as Mesh).isMesh) {
       const mesh = child as Mesh;
@@ -43,8 +38,9 @@ export function spawnMeshes({
   });
   group.clear();
   group.clear();
-  const placedPositions = [];
   const yPosition = roots ? 0 : 0.12;
+
+  const positioner = createPositioner({ ...options, count, yPosition });
 
   for (let i = 0; i < count; i++) {
     const base = (arguments[0] as SpawnMeshesInterface).baseMeshes[
@@ -84,28 +80,7 @@ export function spawnMeshes({
     mesh.scale.setScalar(scale);
     mesh.position.set(0, 0, 0);
 
-    const angle = (i / count) * Math.PI * 2;
-    let positionFound = false;
-    let x: number;
-    let z: number;
-    let tryCount = 0;
-    while (!positionFound && tryCount < 100) {
-      const radius = radiusMin + Math.random() * (radiusMax - radiusMin);
-      x = Math.cos(angle) * radius;
-      z = Math.sin(angle) * radius;
-      if (minDistance > 0) {
-        positionFound = placedPositions.every(([px, pz]) => {
-          const dx = x - (px ?? 0);
-          const dz = z - (pz ?? 0);
-          return dx * dx + dz * dz >= minDistance * minDistance;
-        });
-      } else {
-        positionFound = true;
-      }
-      tryCount++;
-    }
-    mesh.position.set(x!, yPosition, z!);
-    placedPositions.push([x!, z!]);
+    positioner(i, mesh);
     group.add(mesh);
   }
 }

@@ -24,7 +24,7 @@ export function createLightSettings(
   const lightingFolder = gui.addFolder("Lighting Settings");
   lightingFolder.close();
 
-  const textureQuality = config.quality.textureQuality;
+  const shadowConfg = config.scene.renderer.shadows;
 
   // Ambient Light Settings
   const ambientLightGui = lightingFolder.addFolder("Ambient Light Settings");
@@ -61,36 +61,19 @@ export function createLightSettings(
 
   fireLightGui.add(fireLight, "decay", 0, 10, 0.01).name("Decay");
 
-  fireLightGui
-    .add(textureQuality.high, "bias", -0.01, 0.01, 0.0001)
-    .name("Shadow Bias")
-    .onChange((v: number) => {
-      if (fireLight.shadow) {
-        fireLight.shadow.bias = v;
-        fireLight.shadow.normalBias = v;
-      }
-    });
-
-  fireLightGui
-    .add(textureQuality.high, "normalBias", 0, 1, 0.001)
-    .name("Normal Bias")
-    .onChange((v: number) => {
-      if (fireLight.shadow) {
-        fireLight.shadow.normalBias = v;
-      }
-    });
-
   // Directional Light Settings
   const directionalLightGui = lightingFolder.addFolder(
     "Directional Light Settings"
   );
   directionalLightGui.close();
+  const shadowCamWidht = shadowConfg.distance.three.width;
+  const shadowCamFar = shadowConfg.distance.three.far;
 
   const directionalLightParams = {
-    shadowCameraWidth: config.scene.lighting.directional.shadow.camera.width,
+    shadowCameraWidth: shadowCamWidht,
     shadowCameraHeight: config.scene.lighting.directional.shadow.camera.height,
     shadowCameraNear: config.scene.lighting.directional.shadow.camera.near,
-    shadowCameraFar: config.scene.lighting.directional.shadow.camera.far,
+    shadowCameraFar: shadowCamFar,
     helper: config.scene.debug.lightHelpers.directional,
   };
 
@@ -184,19 +167,5 @@ export function createLightSettings(
         scene.remove(directionalLightHelper);
         scene.remove(directionalLightCameraHelper);
       }
-    });
-
-  directionalLightGui
-    .add(textureQuality.high, "bias", -0.01, 0.01, 0.0001)
-    .name("Shadow Bias")
-    .onChange((v: number) => {
-      directionalLight.shadow.bias = v;
-    });
-
-  directionalLightGui
-    .add(textureQuality.high, "normalBias", 0, 1, 0.001)
-    .name("Normal Bias")
-    .onChange((v: number) => {
-      directionalLight.shadow.normalBias = v;
     });
 }

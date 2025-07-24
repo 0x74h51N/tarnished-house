@@ -3,7 +3,7 @@ import type { GLTF } from "three/examples/jsm/Addons";
 import { centerGeometryXZ } from "../../utils/_index";
 import { spawnMeshes, crtGLTFLoader } from "./utils";
 import config from "../../../config.json";
-import { AssetTypes, ManagerTypes, SpawnableName } from "./types";
+import { ManagerRefs, ManagerType, SpawnableName } from "./types";
 
 export function randomMeshes({
   scene,
@@ -11,13 +11,13 @@ export function randomMeshes({
 }: {
   scene: Scene;
   loadingManager: LoadingManager;
-}): { managers: ManagerTypes[] } {
+}): { managers: ManagerRefs[] } {
   const gltfLoader = crtGLTFLoader({ loadingManager });
-  const managers: ManagerTypes[] = [];
+  const managers: ManagerRefs[] = [];
 
   Object.entries(config.assets.models.spawnable).forEach(([key, cfg]) => {
     const group = new Group();
-    const manager: AssetTypes = { baseMeshes: [] as Mesh[], group };
+    const manager: ManagerType = { baseMeshes: [] as Mesh[], group };
 
     gltfLoader.load(cfg.path, (gltf: GLTF) => {
       let rawMeshes: Mesh[] = [];

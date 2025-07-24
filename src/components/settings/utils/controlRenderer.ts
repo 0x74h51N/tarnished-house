@@ -1,6 +1,6 @@
-import { GeneralControl } from "./types";
+import { GeneralControl } from "../types";
 
-export const controlHelper = (c: GeneralControl) =>
+export const controlRenderer = (c: GeneralControl) =>
   c.type === "range"
     ? `<label class="control-label range-control">${c.label}:<input type="range" id="${c.id}" 
         min="${c.min}" max="${c.max}" step="${c.step}" 

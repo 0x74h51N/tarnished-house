@@ -1,8 +1,8 @@
-import { CountConfigs, ManagerTypes } from "../types";
+import { CountConfigs, ManagerRefs } from "../types";
 import config from "../../../../config.json";
 
 export function getCountConfigs(
-  gltfAssets: ManagerTypes[],
+  gltfAssets: ManagerRefs[],
   assetMap: typeof config.assets.models.spawnable
 ): CountConfigs {
   return Object.fromEntries(

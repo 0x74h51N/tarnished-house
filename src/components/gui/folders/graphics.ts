@@ -4,17 +4,12 @@ import {
   DirectionalLight,
   PointLight,
   OrthographicCamera,
-  NoToneMapping,
-  LinearToneMapping,
-  ReinhardToneMapping,
-  CineonToneMapping,
-  ACESFilmicToneMapping,
 } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { shadowDispose } from "../../../utils/_index";
-import { shadowTypes } from "../../settings/settingsData";
 import config from "../../../../config.json";
 import GUI from "lil-gui";
+import { shadowTypes, toneMappingMap } from "../../settings";
 
 export function createGraphicsSettings(
   gui: GUI,
@@ -27,14 +22,15 @@ export function createGraphicsSettings(
     PointLight,
     DirectionalLight
   ];
-  const shadowMapSizes = config.quality.shadowMapSizes;
+  const shadowConfg = config.scene.renderer.shadows;
+  const shadowMapSizes = shadowConfg.mapSizes;
 
   const graphicsParams = {
     toneMapping: config.scene.renderer.toneMapping,
     toneMappingExposure: config.scene.renderer.toneMappingExposure,
-    shadowEnabled: config.scene.renderer.shadows.enabled,
-    shadowType: config.scene.renderer.shadows.type,
-    shadowMapSize: config.scene.renderer.shadows.mapSize,
+    shadowEnabled: shadowConfg.enabled,
+    shadowType: shadowConfg.type,
+    shadowMapSize: shadowMapSizes,
     bloomParams: config.scene.postProcessing.bloom,
   };
 
@@ -52,20 +48,11 @@ export function createGraphicsSettings(
       location.reload();
     });
 
-  // Tone Mapping
-  const toneMappings = {
-    None: NoToneMapping,
-    Linear: LinearToneMapping,
-    Reinhard: ReinhardToneMapping,
-    Cineon: CineonToneMapping,
-    ACESFilmic: ACESFilmicToneMapping,
-  };
-
   graphics
-    .add(graphicsParams, "toneMapping", Object.keys(toneMappings))
+    .add(graphicsParams, "toneMapping", Object.keys(toneMappingMap))
     .name("Tone Mapping")
     .onChange((v: string) => {
-      renderer.toneMapping = toneMappings[v as keyof typeof toneMappings];
+      renderer.toneMapping = toneMappingMap[v as keyof typeof toneMappingMap];
       renderer.toneMappingExposure = graphicsParams.toneMappingExposure || 1;
     });
 
@@ -94,6 +81,29 @@ export function createGraphicsSettings(
   // Shadows
   const shadows = graphics.addFolder("Shadows");
   shadows.close();
+
+  const shadowBias = shadowConfg.bias;
+
+  shadows
+    .add(shadowBias, "high", -0.005, 0.005, 0.0001)
+    .name("Shadow Bias")
+    .onChange((v: number) => {
+      if (fireLight.shadow) {
+        fireLight.shadow.bias = v;
+        directionalLight.shadow.bias = v;
+      }
+    });
+
+  shadows
+    .add(shadowBias, "normal", 0.0, 0.5, 0.0005)
+    .name("Normal Bias")
+    .onChange((v: number) => {
+      if (fireLight.shadow) {
+        fireLight.shadow.normalBias = v;
+        directionalLight.shadow.normalBias = v;
+      }
+    });
+
   shadows
     .add(graphicsParams, "shadowEnabled")
     .name("Shadow Enabled")

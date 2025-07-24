@@ -2,34 +2,29 @@ import {
   ACESFilmicToneMapping,
   BasicShadowMap,
   CineonToneMapping,
+  DirectionalLight,
   LinearToneMapping,
   NoToneMapping,
   PCFShadowMap,
   PCFSoftShadowMap,
   ReinhardToneMapping,
+  ToneMapping,
   VSMShadowMap,
-  WebGLRenderer,
 } from "three";
 import config from "../../../config.json";
-import { GeneralControl, ToneMappingKey } from "./types";
-
-// Config Refs
-const params = {
-  volume: config.scene.audio.volume,
-  toneMappingExposure: config.scene.renderer.toneMappingExposure,
-  fpsCounter: config.scene.debug.fpsCounter,
-  bloomParams: config.scene.postProcessing.bloom,
-  fog: config.scene.postProcessing.fog.enabled,
-  shadowMapSize: config.scene.renderer.shadows.mapSize,
-  directionalLight: {
-    shadowCameraWidth: config.scene.lighting.directional.shadow.camera.width,
-    shadowCameraFar: config.scene.lighting.directional.shadow.camera.far,
-  },
-};
-const assets = config.assets;
-const shadowMapSizes = config.quality.shadowMapSizes;
-const shadowDistOpt = config.quality.shadowDistance;
-const toneMappingOptions = config.options.toneMappingTypes;
+import {
+  GeneralControl,
+  GeneralSettingsParams,
+  GraphicsSettingsParams,
+  SceneSettingsParams,
+} from "./types";
+import { SpawnableName } from "../assetLoader";
+import { fog } from "../postProcess";
+import {
+  getCountConfigs,
+  shadowDispose,
+  spawnMeshes,
+} from "./../../utils/_index";
 
 export const shadowTypes = {
   Basic: BasicShadowMap,
@@ -37,10 +32,6 @@ export const shadowTypes = {
   PCFSoft: PCFSoftShadowMap,
   VSM: VSMShadowMap,
 };
-const toneMappingOpts = toneMappingOptions.map((opt) => ({
-  v: opt.value as ToneMappingKey,
-  t: opt.text,
-}));
 
 export const toneMappingMap = {
   NoToneMapping,
@@ -50,147 +41,221 @@ export const toneMappingMap = {
   ACESFilmicToneMapping,
 } as const;
 
-export function makeControls(): GeneralControl[] {
-  const initialVolume =
-    typeof params.volume === "number" ? params.volume * 100 : 1;
+export function makeGeneralSettings({
+  renderer,
+  onVolumeChange,
+}: GeneralSettingsParams): GeneralControl[] {
+  const volumeVal =
+    typeof config.scene.audio.volume === "number"
+      ? config.scene.audio.volume * 100
+      : 0;
+  const toneVal = renderer.toneMappingExposure;
+
   return [
     {
       type: "range",
       id: "volume",
       label: "Volume",
-      min: 0,
-      max: 100,
-      step: 1,
-      value: initialVolume,
+      min: "0",
+      max: "100",
+      step: "1",
+      value: volumeVal.toString(),
       span: "volumeValue",
+      onChange: (e) => {
+        const val = +e.target.value;
+        document.getElementById("volumeValue")!.textContent = String(val);
+        onVolumeChange(val / 100);
+      },
     },
     {
       type: "range",
       id: "brightness",
       label: "Brightness",
-      min: 0,
-      max: 2,
-      step: 0.1,
-      value: params.toneMappingExposure,
+      min: "0",
+      max: "2",
+      step: "0.1",
+      value: toneVal.toString(),
       span: "brightnessValue",
+      onChange: (e) => {
+        const val = +e.target.value;
+        document.getElementById("brightnessValue")!.textContent = String(val);
+        renderer.toneMappingExposure = val;
+      },
     },
   ];
 }
 
-export function makeGraphics(
-  antialias: boolean,
-  renderer: WebGLRenderer
-): GeneralControl[] {
-  const currentShadowMapSize = config.scene.renderer.shadows.mapSize;
-  const currentShadowCameraWidth =
-    config.scene.lighting.directional.shadow.camera.width;
-  const currentShadowCameraFar =
-    config.scene.lighting.directional.shadow.camera.far;
-  const bloomEnabled = config.scene.postProcessing.bloom.enabled;
-  const fogEnabled = config.scene.postProcessing.fog.enabled;
-  const shadowEnabled = config.scene.renderer.shadows.enabled;
-
+export function makeGraphicsSettings({
+  scene,
+  lights,
+  renderer,
+  antialias,
+  stats,
+}: GraphicsSettingsParams): GeneralControl[] {
+  const shadowConfg = config.scene.renderer.shadows;
   return [
     {
       type: "checkbox",
       id: "fpsCounter",
       label: "Show FPS",
-      checked: params.fpsCounter,
+      checked: Boolean(config.scene.debug.fpsCounter),
+      onChange: (e) => {
+        if (e.target.checked) document.body.appendChild(stats.dom);
+        else stats.dom.remove();
+      },
     },
     {
       type: "checkbox",
       id: "antialiasing",
       label: "Antialiasing",
       checked: antialias,
+      onChange: (e) => {
+        localStorage.setItem("antialias", String(e.target.checked));
+        window.location.reload();
+      },
     },
     {
       type: "checkbox",
       id: "bloomEnabled",
       label: "Bloom",
-      checked: bloomEnabled,
+      checked: Boolean(config.scene.postProcessing.bloom.enabled),
+      onChange: (e) => {
+        config.scene.postProcessing.bloom.enabled = e.target.checked;
+      },
     },
     {
       type: "checkbox",
       id: "fogToggle",
       label: "Fog Effect",
-      checked: fogEnabled,
+      checked: Boolean(config.scene.postProcessing.fog.enabled),
+      onChange: (e) => {
+        const v = e.target.checked;
+        scene.fog = v ? fog : null;
+      },
     },
     {
       type: "checkbox",
       id: "shadowEnabled",
       label: "Enable Shadows",
-      checked: shadowEnabled,
+      checked: Boolean(shadowConfg.enabled),
+      onChange: (e) => {
+        const v = e.target.checked;
+        shadowDispose(lights);
+        lights.forEach((l) => (l.castShadow = v));
+        renderer.shadowMap.enabled = v;
+        renderer.shadowMap.needsUpdate = true;
+      },
     },
     {
       type: "select",
       id: "shadowDistance",
       label: "Shadow Distance",
-      options: shadowDistOpt.map((o) => ({
-        v: o.name.toLowerCase(),
-        t: o.name,
-        s:
-          currentShadowCameraWidth == o.width &&
-          currentShadowCameraFar == o.far,
+      options: (
+        Object.keys(shadowConfg.distance) as Array<
+          keyof typeof shadowConfg.distance
+        >
+      ).map((key) => ({
+        v: key,
+        t: shadowConfg.distance[key].name,
+        s: shadowConfg.distance[key] === shadowConfg.distance.three,
       })),
+      onChange: (e) => {
+        const sel = e.target.value as keyof typeof shadowConfg.distance;
+        const o = shadowConfg.distance[sel];
+        if (!o) return;
+        shadowDispose(lights);
+        const dir = lights.find(
+          (l) => l instanceof DirectionalLight
+        ) as DirectionalLight;
+        const half = o.width / 2;
+        dir.shadow.camera.left = -half;
+        dir.shadow.camera.right = half;
+        dir.shadow.camera.far = o.far;
+        dir.shadow.camera.updateProjectionMatrix();
+        renderer.shadowMap.needsUpdate = true;
+      },
     },
     {
       type: "select",
       id: "shadowResolution",
       label: "Shadow Resolution",
-      options: shadowMapSizes.map((siz) => ({
-        v: String(siz),
-        t: String(siz),
-        s: currentShadowMapSize == siz,
+      options: shadowConfg.mapSizes.map((s) => ({
+        v: s,
+        t: String(s),
+        s: shadowConfg.defMapSize === s,
       })),
+      onChange: (e) => {
+        const res = +e.target.value;
+        shadowDispose(lights);
+        lights.forEach((l) => l.shadow!.mapSize.set(res, res));
+        renderer.shadowMap.needsUpdate = true;
+      },
     },
     {
       type: "select",
       id: "shadowType",
       label: "Shadow Type",
-      options: Object.entries(shadowTypes).map(([v, typeConst]) => ({
-        v,
-        t: v === "PCFSoft" ? "PCF Soft" : v,
-        s: renderer.shadowMap.type === typeConst,
+      options: Object.entries(shadowTypes).map(([k]) => ({
+        v: k,
+        t: k,
+        s:
+          renderer.shadowMap.type ===
+          shadowTypes[k as keyof typeof shadowTypes],
       })),
-    },
-    {
-      type: "select",
-      id: "quality",
-      label: "Texture Quality",
-      options: [
-        { v: "low", t: "Low", s: false },
-        { v: "medium", t: "Medium", s: false },
-        { v: "high", t: "High", s: true },
-      ],
+      onChange: (e) => {
+        const key = e.target.value as keyof typeof shadowTypes;
+        shadowDispose(lights);
+        renderer.shadowMap.type = shadowTypes[key];
+        renderer.shadowMap.needsUpdate = true;
+      },
     },
     {
       type: "select",
       id: "toneMapping",
       label: "Tone Mapping",
-      options: toneMappingOpts.map((opt) => ({
-        ...opt,
-        s: renderer.toneMapping === toneMappingMap[opt.v],
+      options: config.options.toneMappingTypes.map((o) => ({
+        v: o.value,
+        t: o.text,
+        s:
+          renderer.toneMapping ==
+          toneMappingMap[o.value as keyof typeof toneMappingMap],
       })),
+      onChange: (e) => {
+        const value = e.target!.value as keyof typeof toneMappingMap;
+        renderer.toneMapping = toneMappingMap[value] as ToneMapping;
+      },
     },
   ];
 }
-const assetConfig = assets.models.spawnable;
-export function makeScene(): GeneralControl[] {
-  return (Object.keys(assetConfig) as Array<keyof typeof assetConfig>).map(
-    (key) => {
-      const keyStr = String(key);
-      const label = keyStr.charAt(0).toUpperCase() + keyStr.slice(1);
-      const id = `${keyStr}Count` as const;
-      return {
-        type: "range",
-        id,
-        label: `${label} Count`,
-        min: 1,
-        max: 150,
-        step: 1,
-        value: assetConfig[key].count,
-        span: `${id}Value`,
-      } as GeneralControl;
-    }
-  );
+
+export function makeSceneSettings({
+  randomMeshes,
+}: SceneSettingsParams): GeneralControl[] {
+  const spawnable = config.assets.models.spawnable;
+  const countCfg = getCountConfigs(randomMeshes, spawnable);
+
+  return (Object.keys(countCfg) as SpawnableName[]).map((key) => {
+    const { manager, opts } = countCfg[key];
+    return {
+      type: "range",
+      id: `${key}countId`,
+      label: `${key} Count`,
+      min: "1",
+      max: "150",
+      step: "1",
+      value: spawnable[key].count.toString(),
+      span: `${key}CountValue`,
+      onChange: (e) => {
+        const v = +e.target.value;
+        document.getElementById(`${key}CountValue`)!.textContent = String(v);
+        spawnMeshes({
+          baseMeshes: manager.baseMeshes,
+          group: manager.group,
+          count: v,
+          options: opts,
+          roots: key.includes("root"),
+        });
+      },
+    };
+  });
 }

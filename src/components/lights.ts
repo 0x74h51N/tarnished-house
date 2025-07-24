@@ -10,6 +10,9 @@ import {
 import config from "../../config.json";
 
 export function lights(scene: Scene) {
+  const shadowConfg = config.scene.renderer.shadows;
+  const shadowMapSize = shadowConfg.defMapSize;
+
   // Ambient
   const ambientLight = new AmbientLight(
     config.scene.lighting.ambient.color,
@@ -26,14 +29,11 @@ export function lights(scene: Scene) {
     flSettings.decay
   );
   fireLight.castShadow = true;
-  fireLight.shadow.mapSize.set(
-    config.scene.renderer.shadows.mapSize,
-    config.scene.renderer.shadows.mapSize
-  );
+  fireLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
   const { x: flX, y: flY, z: flZ } = flSettings.position;
   fireLight.position.set(flX, flY, flZ);
-  fireLight.shadow.bias = config.quality.textureQuality.high.bias;
-  fireLight.shadow.normalBias = config.quality.textureQuality.high.normalBias;
+  fireLight.shadow.bias = shadowConfg.bias.high;
+  fireLight.shadow.normalBias = shadowConfg.bias.normal;
   scene.add(fireLight);
 
   const fireLightHelper = new PointLightHelper(
@@ -51,22 +51,22 @@ export function lights(scene: Scene) {
   directionalLight.position.set(dlX, dlY, dlZ);
   directionalLight.castShadow = true;
 
-  const halfW = dlSettings.shadow.camera.width / 2;
+  const shadowCamWidht = shadowConfg.distance.three.width;
+  const shadowCamFar = shadowConfg.distance.three.far;
+
+  const halfW = shadowCamWidht / 2;
   const halfH = dlSettings.shadow.camera.height / 2;
+
   directionalLight.shadow.camera.left = -halfW;
   directionalLight.shadow.camera.right = halfW;
   directionalLight.shadow.camera.top = halfH;
   directionalLight.shadow.camera.bottom = -halfH;
   directionalLight.shadow.camera.near = dlSettings.shadow.camera.near;
-  directionalLight.shadow.camera.far = dlSettings.shadow.camera.far;
+  directionalLight.shadow.camera.far = shadowCamFar;
   directionalLight.shadow.camera.updateProjectionMatrix();
-  directionalLight.shadow.mapSize.set(
-    config.scene.renderer.shadows.mapSize,
-    config.scene.renderer.shadows.mapSize
-  );
-  directionalLight.shadow.bias = config.quality.textureQuality.high.bias;
-  directionalLight.shadow.normalBias =
-    config.quality.textureQuality.high.normalBias;
+  directionalLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
+  directionalLight.shadow.bias = shadowConfg.bias.high;
+  directionalLight.shadow.normalBias = shadowConfg.bias.normal;
 
   const targetPos = dlSettings.target.position;
   directionalLight.target.position.set(targetPos.x, targetPos.y, targetPos.z);

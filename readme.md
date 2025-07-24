@@ -1,7 +1,7 @@
 # Tarnished House
 
 While the original idea was inspired by the Three.js Journey Haunted House lesson,
-I developed the random mesh generation, scene composition, object/texture optimization, particles, UI design, and modular structure.
+I developed the random mesh generation (trees, graves etc.), scene composition, object/texture optimization, particles (flame, smoke, sparks), UI design, and modular structure.
 
 I mostly used ready assets, and the scene is enhanced with GLSL shaders.
 It will keep evolving as I learn more. Maybe it’ll become a small playable Souls-like browser game someday... who knows?
