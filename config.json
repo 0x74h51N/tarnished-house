@@ -10,19 +10,19 @@
         "z": 11
       },
       "controls": {
-        "dampingFactor": 0.04,
+        "dampingFactor": 0.06,
         "panSpeed": 0.5,
-        "rotateSpeed": 0.7,
+        "rotateSpeed": 0.6,
         "minDistance": 3,
         "maxDistance": 60,
         "minPolarAngle": 0.5236,
         "maxPolarAngle": 1.5708,
         "positionLimits": {
           "x": { "min": -50, "max": 50 },
-          "y": { "min": 1, "max": 30 },
+          "y": { "min": 1.2, "max": 30 },
           "z": { "min": -50, "max": 50 }
         },
-        "lerpFactor": 0.2
+        "lerpFactor": 0.35
       }
     },
     "renderer": {
@@ -33,6 +33,7 @@
         "enabled": true,
         "type": "PCFSoftShadowMap",
         "defMapSize": 512,
+        "defDistance": "three",
         "mapSizes": [256, 512, 1024, 2048, 4096],
         "bias": {
           "high": -0.0004,
@@ -63,6 +64,7 @@
         "intensity": 2.4
       },
       "directional": {
+        "enabled": true,
         "color": "#b0c4de",
         "intensity": 3.5,
         "position": {
@@ -91,12 +93,12 @@
         "color": "#ffae42",
         "position": {
           "x": 0,
-          "y": 0.85,
+          "y": 0.95,
           "z": 1.5
         },
-        "intensity": 28,
-        "distance": 25,
-        "decay": 1,
+        "intensity": 35,
+        "distance": 13,
+        "decay": 0.9,
         "animation": {
           "intensity": {
             "speed": 12,
@@ -154,45 +156,44 @@
     }
   },
   "performance": {
-    "mobile": {
-      "maxPixelRatio": 2,
-      "floorGeometryDivider": 3,
-      "particlesDivider": 2,
-      "spawnables": {
-        "trees": {
-          "count": 40,
-          "spawn": {
-            "radius": {
-              "min": 9,
-              "max": 40
-            }
+    "moonLightEnabled": false,
+    "maxPixelRatio": 2,
+    "floorGeometryDivider": 3,
+    "particlesDivider": 2,
+    "spawnables": {
+      "trees": {
+        "count": 40,
+        "spawn": {
+          "radius": {
+            "min": 9,
+            "max": 40
           }
-        },
-        "bushes": {
-          "count": 10,
-          "spawn": {
-            "radius": {
-              "min": 7,
-              "max": 35
-            }
+        }
+      },
+      "bushes": {
+        "count": 10,
+        "spawn": {
+          "radius": {
+            "min": 7,
+            "max": 35
           }
-        },
-        "graves": {
-          "count": 30,
-          "spawn": {
-            "radius": {
-              "min": 8,
-              "max": 30
-            }
+        }
+      },
+      "graves": {
+        "count": 30,
+        "spawn": {
+          "radius": {
+            "min": 8,
+            "max": 30
           }
-        },
-        "roots": {
-          "count": 8,
-          "spawn": {
-            "radius": {
-              "min": 8,
-              "max": 25
-            }
+        }
+      },
+      "roots": {
+        "count": 8,
+        "spawn": {
+          "radius": {
+            "min": 8,
+            "max": 25
           }
         }
       }
@@ -332,8 +333,8 @@
         "name": "flame",
         "textures": "./fire.png",
         "properties": {
-          "size": 1.2,
-          "speed": 4.35,
+          "size": 1.3,
+          "speed": 4.5,
           "startPozs": { "x": 0, "y": 0.45, "z": 1.5 },
           "color": "#ff0000",
           "noise": {

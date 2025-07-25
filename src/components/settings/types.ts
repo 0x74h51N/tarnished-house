@@ -1,6 +1,7 @@
 import { ManagerRefs } from "components/assetLoader";
 import { toneMappingMap } from "./settingsData";
-import { Light, Scene, WebGLRenderer } from "three";
+import { Scene, WebGLRenderer } from "three";
+import { LightBundle } from "components/lights/types";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,
@@ -44,7 +45,7 @@ export type GeneralControl = RangeControl | CheckboxControl | SelectControl;
 export type ToneMappingKey = keyof typeof toneMappingMap;
 
 export interface SettingsInterface {
-  lights: Light[];
+  lights: LightBundle;
   renderer: WebGLRenderer;
   randomMeshes: ManagerRefs[];
   antialias: boolean;

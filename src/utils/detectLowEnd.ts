@@ -39,7 +39,7 @@ export function detectLowEnd() {
 
   if (isLowEnd) {
     console.log("Low End Detected");
-    const mobileConfig = config.performance.mobile;
+    const mobileConfig = config.performance;
 
     config.scene.renderer.maxPixelRatio = mobileConfig.maxPixelRatio;
 
@@ -66,8 +66,8 @@ export function detectLowEnd() {
     const segmentsDivider = mobileConfig.floorGeometryDivider;
     config.assets.floor.geometry.widthSegments /= segmentsDivider;
     config.assets.floor.geometry.heightSegments /= segmentsDivider;
-
-    config.scene.renderer.shadows.enabled = false;
+    config.scene.lighting.directional.enabled = mobileConfig.moonLightEnabled;
+    //config.scene.renderer.shadows.enabled = false;
   }
   return;
 }

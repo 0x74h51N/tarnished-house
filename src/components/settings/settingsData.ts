@@ -93,6 +93,8 @@ export function makeGraphicsSettings({
   stats,
 }: GraphicsSettingsParams): GeneralControl[] {
   const shadowConfg = config.scene.renderer.shadows;
+  const lightArr = [lights.fireLight.light, lights.directLight.light];
+  const defDist = shadowConfg.defDistance as keyof typeof shadowConfg.distance;
   return [
     {
       type: "checkbox",
@@ -140,10 +142,25 @@ export function makeGraphicsSettings({
       checked: Boolean(shadowConfg.enabled),
       onChange: (e) => {
         const v = e.target.checked;
-        shadowDispose(lights);
-        lights.forEach((l) => (l.castShadow = v));
+        shadowDispose(lightArr);
+        lightArr.forEach((l) => (l.castShadow = v));
         renderer.shadowMap.enabled = v;
         renderer.shadowMap.needsUpdate = true;
+      },
+    },
+    {
+      type: "checkbox",
+      id: "directLightToggle",
+      label: "Moon Light",
+      checked: config.scene.lighting.directional.enabled,
+      onChange: (e) => {
+        const v = e.target.checked;
+        config.scene.lighting.directional.enabled = v;
+        shadowDispose(lightArr);
+        lights.directLight.light.castShadow = v;
+        v
+          ? scene.add(lights.directLight.light)
+          : scene.remove(lights.directLight.light);
       },
     },
     {
@@ -157,14 +174,14 @@ export function makeGraphicsSettings({
       ).map((key) => ({
         v: key,
         t: shadowConfg.distance[key].name,
-        s: shadowConfg.distance[key] === shadowConfg.distance.three,
+        s: shadowConfg.distance[key] === shadowConfg.distance[defDist],
       })),
       onChange: (e) => {
         const sel = e.target.value as keyof typeof shadowConfg.distance;
         const o = shadowConfg.distance[sel];
         if (!o) return;
-        shadowDispose(lights);
-        const dir = lights.find(
+        shadowDispose(lightArr);
+        const dir = lightArr.find(
           (l) => l instanceof DirectionalLight
         ) as DirectionalLight;
         const half = o.width / 2;
@@ -186,8 +203,8 @@ export function makeGraphicsSettings({
       })),
       onChange: (e) => {
         const res = +e.target.value;
-        shadowDispose(lights);
-        lights.forEach((l) => l.shadow!.mapSize.set(res, res));
+        shadowDispose(lightArr);
+        lightArr.forEach((l) => l.shadow!.mapSize.set(res, res));
         renderer.shadowMap.needsUpdate = true;
       },
     },
@@ -204,7 +221,7 @@ export function makeGraphicsSettings({
       })),
       onChange: (e) => {
         const key = e.target.value as keyof typeof shadowTypes;
-        shadowDispose(lights);
+        shadowDispose(lightArr);
         renderer.shadowMap.type = shadowTypes[key];
         renderer.shadowMap.needsUpdate = true;
       },

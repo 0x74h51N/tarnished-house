@@ -2,7 +2,7 @@ export { intro, credits } from "./domManup";
 export { setupGUI } from "./gui/_gui";
 export { loadAssets, randomMeshes } from "./assetLoader";
 export { particleSystem } from "./particles";
-export { lights } from "./lights";
+export { createLights } from "./lights/_lights";
 export { cameraControl } from "./cameraControl";
 export { settings } from "./settings";
 export { createSound } from "./sounds";

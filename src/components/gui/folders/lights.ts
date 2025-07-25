@@ -1,26 +1,15 @@
-import {
-  AmbientLight,
-  PointLight,
-  DirectionalLight,
-  PointLightHelper,
-  DirectionalLightHelper,
-  CameraHelper,
-  Scene,
-  OrthographicCamera,
-} from "three";
+import { Scene, OrthographicCamera } from "three";
 import config from "../../../../config.json";
 import GUI from "lil-gui";
+import { LightBundle } from "components/lights/types";
 
 export function createLightSettings(
   gui: GUI,
   scene: Scene,
-  ambientLight: AmbientLight,
-  fireLight: PointLight,
-  directionalLight: DirectionalLight,
-  fireLightHelper: PointLightHelper,
-  directionalLightHelper: DirectionalLightHelper,
-  directionalLightCameraHelper: CameraHelper
+  lights: LightBundle
 ) {
+  const { ambientLight, directLight, fireLight } = lights;
+
   const lightingFolder = gui.addFolder("Lighting Settings");
   lightingFolder.close();
 
@@ -40,26 +29,23 @@ export function createLightSettings(
   const fireLightGui = lightingFolder.addFolder("Fire Light Settings");
   fireLightGui.close();
 
-  const fireLightParams = {
-    helper: config.scene.debug.lightHelpers.fire,
-  };
-
+  const fireLightParam = config.scene.lighting.fireLight;
   fireLightGui
-    .add(fireLightParams, "helper")
+    .add(config.scene.debug.lightHelpers, "fire")
     .name("Light Helper")
     .onChange((v: boolean) => {
       if (v) {
-        scene.add(fireLightHelper);
+        scene.add(fireLight.helper);
       } else {
-        scene.remove(fireLightHelper);
+        scene.remove(fireLight.helper);
       }
     });
 
-  fireLightGui.add(fireLight, "intensity", 0, 100, 0.1).name("Intensity");
+  fireLightGui.add(fireLightParam, "intensity", 0, 100, 0.1).name("Intensity");
 
-  fireLightGui.add(fireLight, "distance", 0, 200, 0.1).name("Distance");
+  fireLightGui.add(fireLightParam, "distance", 0, 200, 0.1).name("Distance");
 
-  fireLightGui.add(fireLight, "decay", 0, 10, 0.01).name("Decay");
+  fireLightGui.add(fireLight.light, "decay", 0, 10, 0.01).name("Decay");
 
   // Directional Light Settings
   const directionalLightGui = lightingFolder.addFolder(
@@ -77,7 +63,7 @@ export function createLightSettings(
     helper: config.scene.debug.lightHelpers.directional,
   };
 
-  directionalLightGui.addColor(directionalLight, "color").name("Light Color");
+  directionalLightGui.addColor(directLight.light, "color").name("Light Color");
 
   directionalLightGui
     .add(directionalLightParams, "shadowCameraWidth", 2, 95, 0.1)
@@ -85,17 +71,17 @@ export function createLightSettings(
     .onChange((v: number) => {
       const half = v / 2;
       if (
-        directionalLight.shadow &&
-        directionalLight.shadow.camera instanceof OrthographicCamera
+        directLight.light.shadow &&
+        directLight.light.shadow.camera instanceof OrthographicCamera
       ) {
-        const cam = directionalLight.shadow.camera;
+        const cam = directLight.light.shadow.camera;
         cam.left = -half;
         cam.right = half;
         cam.top = half;
         cam.bottom = -half;
         cam.updateProjectionMatrix();
       }
-      directionalLightCameraHelper.update();
+      directLight.cameraHelper.update();
     });
 
   directionalLightGui
@@ -103,18 +89,18 @@ export function createLightSettings(
     .name("Shadow Camera Height")
     .onChange((v: number) => {
       const half = v / 2;
-      const cam = directionalLight.shadow.camera as OrthographicCamera;
+      const cam = directLight.light.shadow.camera;
       cam.top = half;
       cam.bottom = -half;
       cam.updateProjectionMatrix();
-      directionalLightCameraHelper.update();
+      directLight.cameraHelper.update();
     });
 
   directionalLightGui
     .add(directionalLightParams, "shadowCameraNear", 0.01, 5, 0.01)
     .name("Shadow Camera Near")
     .onFinishChange((v: number) => {
-      const cam = directionalLight.shadow.camera;
+      const cam = directLight.light.shadow.camera;
       if (v >= cam.far) {
         directionalLightParams.shadowCameraNear = cam.far - 0.01;
         cam.near = directionalLightParams.shadowCameraNear;
@@ -122,14 +108,14 @@ export function createLightSettings(
         cam.near = v;
       }
       cam.updateProjectionMatrix();
-      directionalLightCameraHelper.update();
+      directLight.cameraHelper.update();
     });
 
   directionalLightGui
     .add(directionalLightParams, "shadowCameraFar", 10, 200, 1)
     .name("Shadow Camera Far")
     .onFinishChange((v: number) => {
-      const cam = directionalLight.shadow.camera;
+      const cam = directLight.light.shadow.camera;
       if (v <= cam.near) {
         directionalLightParams.shadowCameraFar = cam.near + 0.01;
         cam.far = directionalLightParams.shadowCameraFar;
@@ -137,23 +123,23 @@ export function createLightSettings(
         cam.far = v;
       }
       cam.updateProjectionMatrix();
-      directionalLightCameraHelper.update();
+      directLight.cameraHelper.update();
     });
 
   directionalLightGui
-    .add(directionalLight, "intensity", 0, 10, 0.1)
+    .add(directLight.light, "intensity", 0, 10, 0.1)
     .name("Light Intensity");
 
   directionalLightGui
-    .add(directionalLight.position, "x", -60, 60, 0.5)
+    .add(directLight.light.position, "x", -60, 60, 0.5)
     .name("Light X");
 
   directionalLightGui
-    .add(directionalLight.position, "y", 0, 60, 0.5)
+    .add(directLight.light.position, "y", 0, 60, 0.5)
     .name("Light Y");
 
   directionalLightGui
-    .add(directionalLight.position, "z", -60, 60, 0.5)
+    .add(directLight.light.position, "z", -60, 60, 0.5)
     .name("Light Z");
 
   directionalLightGui
@@ -161,11 +147,11 @@ export function createLightSettings(
     .name("Light Helper")
     .onChange((v: boolean) => {
       if (v) {
-        scene.add(directionalLightHelper);
-        scene.add(directionalLightCameraHelper);
+        scene.add(directLight.cameraHelper);
+        scene.add(directLight.helper);
       } else {
-        scene.remove(directionalLightHelper);
-        scene.remove(directionalLightCameraHelper);
+        scene.remove(directLight.cameraHelper);
+        scene.remove(directLight.helper);
       }
     });
 }

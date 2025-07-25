@@ -6,12 +6,12 @@ import {
   loadAssets,
   randomMeshes,
   particleSystem,
-  lights,
   cameraControl,
   settings,
   createSound,
   createComposer,
   createRenderer,
+  createLights,
 } from "./components/_index.js";
 import {
   Scene,
@@ -63,15 +63,7 @@ const { camera, cameraHelper, controls, clampCameraPosition } = cameraControl({
 // Lights
 //
 
-const {
-  ambientLight,
-  fireLight,
-  fireLightHelper,
-  directionalLight,
-  directionalLightHelper,
-  directionalLightCameraHelper,
-  fireAnimator,
-} = lights(scene);
+const lights = createLights(scene);
 
 //
 // renderer
@@ -142,7 +134,6 @@ const { flame, smoke, sparks } = particleSystem({ scene, texLoader, camera });
 //
 //Settingis
 //
-const lightArr = [fireLight, directionalLight];
 
 const stats = new Stats();
 stats.showPanel(1);
@@ -155,10 +146,6 @@ window.addEventListener("keydown", async (e) => {
     const { setupGUI } = await import("./components/gui/_gui");
     setupGUI({
       renderer,
-      fireLightHelper,
-      directionalLightHelper,
-      directionalLightCameraHelper,
-      ambientLight,
       camera,
       cameraHelper: cameraHelper as CameraHelper,
       randomMeshes: managers,
@@ -166,14 +153,14 @@ window.addEventListener("keydown", async (e) => {
       onVolumeChange,
       bloomPass,
       scene,
-      lights: lightArr,
+      lights,
       particleSystems: { flame, smoke, sparks },
     });
   }
 });
 
 settings({
-  lights: lightArr,
+  lights,
   renderer,
   randomMeshes: managers,
   antialias,
@@ -198,7 +185,7 @@ loop.addUpdate((delta, elapsed) => {
   flame.step(delta);
   smoke.step(delta);
 
-  fireAnimator.updateFireLight(elapsed);
+  lights.fireLight.animator.update(elapsed);
 });
 loop.addRender(() => {
   stats.begin();

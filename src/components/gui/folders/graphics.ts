@@ -1,27 +1,18 @@
-import {
-  WebGLRenderer,
-  Light,
-  DirectionalLight,
-  PointLight,
-  OrthographicCamera,
-} from "three";
+import { WebGLRenderer, OrthographicCamera } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { shadowDispose } from "../../../utils/_index";
 import config from "../../../../config.json";
 import GUI from "lil-gui";
 import { shadowTypes, toneMappingMap } from "../../settings";
+import { LightBundle } from "components/lights/types";
 
 export function createGraphicsSettings(
   gui: GUI,
   renderer: WebGLRenderer,
-  lights: Light[],
+  lights: LightBundle,
   bloomPass: UnrealBloomPass,
   antialias: boolean
 ) {
-  const [fireLight, directionalLight] = lights as [
-    PointLight,
-    DirectionalLight
-  ];
   const shadowConfg = config.scene.renderer.shadows;
   const shadowMapSizes = shadowConfg.mapSizes;
 
@@ -79,6 +70,8 @@ export function createGraphicsSettings(
     .onChange((v: number) => (bloomPass.threshold = v));
 
   // Shadows
+  const { directLight, fireLight } = lights;
+  const lightArr = [lights.fireLight.light, lights.directLight.light];
   const shadows = graphics.addFolder("Shadows");
   shadows.close();
 
@@ -88,9 +81,9 @@ export function createGraphicsSettings(
     .add(shadowBias, "high", -0.005, 0.005, 0.0001)
     .name("Shadow Bias")
     .onChange((v: number) => {
-      if (fireLight.shadow) {
-        fireLight.shadow.bias = v;
-        directionalLight.shadow.bias = v;
+      if (fireLight.light.shadow) {
+        fireLight.light.shadow.bias = v;
+        directLight.light.shadow.bias = v;
       }
     });
 
@@ -98,9 +91,9 @@ export function createGraphicsSettings(
     .add(shadowBias, "normal", 0.0, 0.5, 0.0005)
     .name("Normal Bias")
     .onChange((v: number) => {
-      if (fireLight.shadow) {
-        fireLight.shadow.normalBias = v;
-        directionalLight.shadow.normalBias = v;
+      if (fireLight.light.shadow) {
+        fireLight.light.shadow.normalBias = v;
+        directLight.light.shadow.normalBias = v;
       }
     });
 
@@ -109,10 +102,13 @@ export function createGraphicsSettings(
     .name("Shadow Enabled")
     .onChange((v: boolean) => {
       renderer.shadowMap.enabled = v;
-      shadowDispose(lights);
-      directionalLight.castShadow = v;
-      if (directionalLight.shadow && "camera" in directionalLight.shadow) {
-        (directionalLight.shadow.camera as OrthographicCamera).visible = v;
+      shadowDispose(lightArr);
+
+      directLight.light.castShadow = v;
+      fireLight.light.castShadow = v;
+
+      if (directLight.light.shadow && "camera" in directLight.light.shadow) {
+        (directLight.light.shadow.camera as OrthographicCamera).visible = v;
         renderer.shadowMap.needsUpdate = true;
       }
     });
@@ -121,7 +117,7 @@ export function createGraphicsSettings(
     .add(graphicsParams, "shadowType", Object.keys(shadowTypes))
     .name("Shadow Type")
     .onChange((v: string) => {
-      shadowDispose(lights);
+      shadowDispose(lightArr);
       renderer.shadowMap.type = shadowTypes[v as keyof typeof shadowTypes];
       renderer.shadowMap.needsUpdate = true;
     });
@@ -130,12 +126,13 @@ export function createGraphicsSettings(
     .add(graphicsParams, "shadowMapSize", shadowMapSizes)
     .name("Shadow Resolution")
     .onChange((v: number) => {
-      shadowDispose(lights);
-      if (fireLight.shadow) {
-        fireLight.shadow.mapSize.set(Number(v), Number(v));
+      shadowDispose(lightArr);
+
+      if (fireLight.light.shadow) {
+        fireLight.light.shadow.mapSize.set(Number(v), Number(v));
       }
-      if (directionalLight.shadow) {
-        directionalLight.shadow.mapSize.set(Number(v), Number(v));
+      if (directLight.light.shadow) {
+        directLight.light.shadow.mapSize.set(Number(v), Number(v));
       }
       renderer.shadowMap.needsUpdate = true;
     });

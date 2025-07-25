@@ -14,12 +14,14 @@ export function randomMeshes({
 }): { managers: ManagerRefs[] } {
   const gltfLoader = crtGLTFLoader({ loadingManager });
   const managers: ManagerRefs[] = [];
+  const spawnable = config.assets.models.spawnable;
 
-  Object.entries(config.assets.models.spawnable).forEach(([key, cfg]) => {
+  for (const key in spawnable) {
+    const cfg = spawnable[key as SpawnableName];
     const group = new Group();
-    const manager: ManagerType = { baseMeshes: [] as Mesh[], group };
+    const manager: ManagerType = { baseMeshes: [], group };
 
-    gltfLoader.load(cfg.path, (gltf: GLTF) => {
+    gltfLoader.load(cfg.path, (gltf) => {
       let rawMeshes: Mesh[] = [];
 
       switch (key) {
@@ -63,7 +65,7 @@ export function randomMeshes({
     });
 
     managers.push({ name: key as SpawnableName, manager });
-  });
+  }
 
   return { managers };
 }

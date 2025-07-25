@@ -8,6 +8,8 @@ type PositionerOptions = SpawnOptions & {
 
 type Positioner = (i: number, mesh: Mesh) => void;
 
+// Returns a reusable positioning function that spaces meshes in a radial pattern,
+// avoiding overlap using a minimum distance threshold if provided.
 export function createPositioner(opts: PositionerOptions): Positioner {
   const placedPositions: [number, number][] = [];
 

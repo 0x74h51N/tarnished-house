@@ -1,11 +1,7 @@
 import {
   WebGLRenderer,
-  PointLightHelper,
-  DirectionalLightHelper,
   CameraHelper,
-  AmbientLight,
   PerspectiveCamera,
-  Light,
   Scene,
   AxesHelper,
   GridHelper,
@@ -13,20 +9,17 @@ import {
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { ParticleSystemRefs } from "../particles/types";
 import { ManagerRefs } from "components/assetLoader";
+import { LightBundle } from "components/lights/types";
 
 export interface SetupGUIInterface {
   renderer: WebGLRenderer;
-  fireLightHelper: PointLightHelper;
-  directionalLightHelper: DirectionalLightHelper;
-  directionalLightCameraHelper: CameraHelper;
-  ambientLight: AmbientLight;
   camera: PerspectiveCamera;
   cameraHelper: CameraHelper;
   randomMeshes: ManagerRefs[];
   antialias: boolean;
   onVolumeChange: (v: number) => void;
   bloomPass: UnrealBloomPass;
-  lights: Light[];
+  lights: LightBundle;
   scene: Scene;
   particleSystems: ParticleSystemRefs;
 }

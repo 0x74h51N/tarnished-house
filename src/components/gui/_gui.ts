@@ -30,10 +30,6 @@ const createParams = () => ({
 
 export function setupGUI({
   renderer,
-  fireLightHelper,
-  directionalLightHelper,
-  directionalLightCameraHelper,
-  ambientLight,
   camera,
   cameraHelper,
   randomMeshes,
@@ -44,10 +40,6 @@ export function setupGUI({
   scene,
   particleSystems,
 }: SetupGUIInterface) {
-  const [fireLight, directionalLight] = lights as [
-    PointLight,
-    DirectionalLight
-  ];
   const params = createParams();
 
   // Initialize GUI
@@ -76,16 +68,7 @@ export function setupGUI({
 
   createGraphicsSettings(gui, renderer, lights, bloomPass, antialias);
 
-  createLightSettings(
-    gui,
-    scene,
-    ambientLight,
-    fireLight,
-    directionalLight,
-    fireLightHelper,
-    directionalLightHelper,
-    directionalLightCameraHelper
-  );
+  createLightSettings(gui, scene, lights);
 
   createSceneSettings(gui, randomMeshes);
 
