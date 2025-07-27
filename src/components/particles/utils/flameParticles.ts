@@ -8,7 +8,6 @@ import {
   Matrix4,
   Mesh,
   RawShaderMaterial,
-  Texture,
   Vector2,
   Vector3,
   Vector3Like,
@@ -28,17 +27,18 @@ import {
 const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
 
 /**
- * Creates a volumetric flame mesh with animated fire shader.
+ * Creates a volumetric flame mesh using animated raymarching shaders.
  *
- * @param parent      - The parent Object3D to attach the flame mesh to.
- * @param textures    - Flame texture.
- * @param startPozs   - Initial position of the flame in world space.
- * @param size        - Base size of the flame (affects geometry and scale).
- * @param speed       - Time progression multiplier (affects animation speed).
- * @param color       - Base color of the flame (optional use in fragment shader).
- * @param seed        - Random seed for animation offset.
- * @param noise       - Noise config used inside shader (scale, gain, lacunarity...).
- * @param march       - Raymarching config (step count, ray step factor).
+ * @param parent           - The Object3D to attach the flame mesh to.
+ * @param textures         - Optional texture for the flame appearance.
+ * @param props.startPozs  - Flame position in world space.
+ * @param props.size       - Base size of the flame geometry.
+ * @param props.speed      - Controls how fast the flame animates.
+ * @param props.color      - Base color applied in the shader.
+ * @param props.seed       - Random seed for animation offset.
+ * @param props.noise      - Noise config for procedural flame shape.
+ * @param props.march      - Raymarching config (iterations & step factor).
+ * @param props.colorMixStr- How much the final color mixes with base color.
  *
  * @returns { step, updtScreen }
  *   step(delta)      - Call each frame to spawn & advance particles.
@@ -48,20 +48,24 @@ const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
 export const createFlame = ({
   parent,
   textures,
-  startPozs,
-  size,
-  speed: initialSpeed,
-  color,
-  seed = Math.random() * 19.19,
-  noise,
-  march,
-  colorMixStr,
+  props: {
+    startPozs,
+    size,
+    speed: initialSpeed = 1,
+    color,
+    seed = Math.random() * 19.19,
+    noise,
+    march,
+    colorMixStr,
+  },
 }: FlameParticlesInterface): CreateParticlesReturn => {
   let speed = initialSpeed;
-  const fireTex = textures as Texture;
-  fireTex.flipY = false;
-  fireTex.wrapS = fireTex.wrapT = ClampToEdgeWrapping;
-  fireTex.magFilter = fireTex.minFilter = LinearFilter;
+
+  const fireTex = textures;
+
+  fireTex!.flipY = false;
+  fireTex!.wrapS = fireTex!.wrapT = ClampToEdgeWrapping;
+  fireTex!.magFilter = fireTex!.minFilter = LinearFilter;
 
   const geometry = new BoxGeometry(size, size * 1.45, size);
 

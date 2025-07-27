@@ -1,35 +1,28 @@
-import type {
-  Object3D,
-  Color,
-  Texture,
-  Matrix4Tuple,
-  Vector3Like,
-  Vector4Like,
-} from "three";
-import config from "../../../config.json";
+import type { Color, Object3D, Texture, Vector3Like, Vector4Like } from "three";
+import config from "config.json";
 
+export interface BaseProps {
+  startPozs: Vector3Like;
+  size: number;
+  speed?: number;
+  color: Color | number | string;
+  seed?: number;
+}
 export interface ElevationDividers {
   min: number;
   max: number;
 }
-
-export interface PointParticlesInterface {
-  parent: Object3D;
-  color?: Color | number | string;
+export interface PointProps extends BaseProps {
   opacity?: number;
-  maxCount?: number;
-  spawnRate?: number;
+  maxCount: number;
+  spawnRate: number;
   area: number;
-  size: number;
-  startPozs: Vector3Like;
-  textures?: Texture[] | Texture | null;
   scaleFactor: number;
   sizeGrowth?: number;
   fadeRate?: number;
   sparks?: boolean;
   damping?: number;
   elevDivs?: ElevationDividers;
-  speed?: number;
   stretchFact?: number;
 }
 
@@ -41,30 +34,37 @@ export interface NoiseParams {
   octaves: number;
 }
 
-interface MarchParams {
+export interface MarchParams {
   iterations: number;
   rayStepFactor: number;
 }
 
-export interface FlameParticlesInterface {
-  parent: Object3D;
-  textures: Texture;
-  startPozs: Vector3Like;
-  size: number;
-  speed: number;
-  color?: string;
-  seed?: number;
+export interface FlameProps extends BaseProps {
   noise: NoiseParams;
   march: MarchParams;
   colorMixStr: number;
 }
 
-type UpdateKey = keyof PointParticlesInterface | keyof FlameParticlesInterface;
+export type ParticlesInterface = PointProps | FlameProps;
 
-type UpdateValue<K extends UpdateKey> = K extends keyof PointParticlesInterface
-  ? PointParticlesInterface[K]
-  : K extends keyof FlameParticlesInterface
-  ? FlameParticlesInterface[K]
+export interface PointParticlesInterface {
+  parent: Object3D;
+  textures?: Texture | Texture[];
+  props: PointProps;
+}
+
+export interface FlameParticlesInterface {
+  parent: Object3D;
+  textures?: Texture;
+  props: FlameProps;
+}
+
+export type UpdateKey = keyof PointProps | keyof FlameProps;
+
+export type UpdateValue<K extends UpdateKey> = K extends keyof PointProps
+  ? PointProps[K]
+  : K extends keyof FlameProps
+  ? FlameProps[K]
   : never;
 
 export type UpdateFn = <K extends UpdateKey>(
@@ -79,8 +79,13 @@ export interface CreateParticlesReturn {
   updtScreen: () => void;
   update: UpdateFn;
 }
-
-type ParticleConfig = (typeof config.assets.particles)[number];
-export type ParticleName = ParticleConfig["name"];
-
+export type ParticleConfg = {
+  textures?: string[] | string | null;
+  properties: ParticlesInterface;
+};
+export type ParticleConfigs = Record<
+  keyof typeof config.assets.particles,
+  ParticleConfg
+>;
+export type ParticleName = keyof ParticleConfigs;
 export type ParticleSystemRefs = Record<ParticleName, CreateParticlesReturn>;

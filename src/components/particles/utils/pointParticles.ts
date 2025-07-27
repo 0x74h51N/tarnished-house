@@ -30,89 +30,90 @@ const defaultTexture = new DataTexture(
   RGBAFormat
 );
 /**
- * Creates a particle system using Points geometry with custom shaders.
+ * Creates a GPU particle system using custom shaders and buffer attributes.
  *
- * @param parent      - The parent Object3D to attach particles to.
- * @param color       - Base color for all particles.
- * @param opacity     - Base opacity for all particles.
- * @param maxCount    - Maximum number of particles in the system.
- * @param spawnRate   - Rate at which new particles are spawned (per second).
- * @param area        - Spawn area radius around the start position.
- * @param size        - Base size of each particle.
- * @param startPozs   - Initial spawn position for particles.
- * @param textures    - Texture(s) to use for particles. Can be array for variants.
- * @param scaleFactor - Scale multiplier for particle sizes.
- * @param sizeGrowth  - Rate at which particles grow over time.
- * @param fadeRate    - Rate at which particles fade out.
- * @param sparks      - Whether to use spark mode (different physics/rendering).
- * @param damping     - Velocity damping factor (higher = more resistance).
- * @param elevDivs    - Elevation angle divisions for spark direction (min/max).
- * @param speed       - Base speed multiplier for particle movement.
- * @param stretchFact - Stretch factor for spark particles.
+ * @param parent   - The Object3D to attach the particle system to.
+ * @param textures - Optional texture(s) for the particles (single or multiple variants).
+ * @param props.spawnRate   - How many particles spawn per second.
+ * @param props.area        - Radius around the start position where particles spawn.
+ * @param props.speed       - Base velocity multiplier for particles.
+ * @param props.elevDivs    - Elevation range for spark direction (used only if sparks is true).
+ * @param props.size        - Initial size of each particle.
+ * @param props.sizeGrowth  - Growth rate for particle size over time.
+ * @param props.fadeRate    - How quickly particles fade out (opacity drop).
+ * @param props.opacity     - Starting opacity of all particles.
+ * @param props.color       - Starting color of all particles (Color, hex, or string).
+ * @param props.maxCount    - Maximum number of particles active at once.
+ * @param props.startPozs   - Center position where particles are spawned around.
+ * @param props.sparks      - Enables spark mode (directional & fast-moving particles).
+ * @param props.damping     - Velocity damping (resistance during motion).
+ * @param props.scaleFactor - Uniform scale multiplier for all particles.
+ * @param props.stretchFact - How much particles stretch based on velocity (spark only).
  *
  * @returns { step, updtScreen, update }
  *   step(delta)    - Call each frame to spawn & advance particles.
  *   updtScreen     - Call on resize to update resolution uniform.
  *   update(params) - Update particle system parameters in real-time.
  */
-export function createParticles({
+
+export function createPointParticles({
   parent,
-  color,
-  opacity = 1,
-  maxCount = 200,
-  spawnRate = 50,
-  area = 1,
-  size = 0.05,
-  startPozs,
-  textures = [],
-  scaleFactor,
-  sizeGrowth = 0,
-  fadeRate = 0,
-  sparks = false,
-  damping = 0.5,
-  elevDivs = { min: 1, max: 1 },
-  speed = 1,
-  stretchFact = 1,
-}: PointParticlesInterface): CreateParticlesReturn {
-  const state = {
+  textures,
+  props: {
     spawnRate,
     area,
-    speed,
-    elevDivs: { ...elevDivs },
+    speed = 1,
+    elevDivs,
     size,
-    sizeGrowth,
-    fadeRate,
-    opacity,
-    color: new Color(color || 0xffffff),
-  };
+    sizeGrowth = 0,
+    fadeRate = 0,
+    opacity = 1,
+    color,
+    maxCount,
+    startPozs,
+    sparks = false,
+    damping = 1,
+    scaleFactor = 1,
+    stretchFact = 1,
+  },
+}: PointParticlesInterface): CreateParticlesReturn {
+  const clr = new Color(color);
 
-  const textureArray = Array.isArray(textures) ? textures : [textures];
+  const textureArray = Array.isArray(textures)
+    ? textures.map((t) => t ?? defaultTexture)
+    : [textures ?? defaultTexture];
   const numVariants = textureArray.length;
 
   // ------------------ BUFFERS ------------------
   const position = new Float32Array(maxCount * 3);
   const vel = new Float32Array(maxCount * 3);
-  const startTimeArr = new Float32Array(maxCount);
-  const sizeArr = new Float32Array(maxCount).fill(state.size);
-  const growthArr = new Float32Array(maxCount).fill(state.sizeGrowth);
-  const fadeArr = new Float32Array(maxCount).fill(state.fadeRate);
+  const startTime = new Float32Array(maxCount);
+  const sizeArr = new Float32Array(maxCount).fill(size);
+  const growthArr = new Float32Array(maxCount).fill(sizeGrowth);
+  const fadeArr = new Float32Array(maxCount).fill(fadeRate);
   const anglesArr = new Float32Array(maxCount);
-  const colsArr = new Float32Array(maxCount * 4); // r g b a
+  const colsArr = new Float32Array(maxCount * 4);
 
   for (let i = 0; i < maxCount; i++) {
     const i3 = i * 3;
-    startPos(startPozs, position, i3, state.area);
-    sparks ? sparkVel(vel, i3, state.elevDivs, state.speed) : startVel(vel, i3);
-    startTimeArr[i] = Math.random() * 0.1;
+    startPos(startPozs, position, i3, area);
+
+    if (sparks && elevDivs) {
+      sparkVel(vel, i3, elevDivs, speed);
+    } else {
+      startVel(vel, i3);
+    }
+
+    startTime[i] = Math.random() * 0.1;
     anglesArr[i] = Math.random() * Math.PI * 2;
-    colUpt(i, colsArr, state.color, state.opacity);
+    colUpt(i, colsArr, clr, opacity);
   }
 
   // ------------------ GEOMETRY ------------------
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new BufferAttribute(position, 3));
   geometry.setAttribute("velocity", new BufferAttribute(vel, 3));
-  geometry.setAttribute("startTime", new BufferAttribute(startTimeArr, 1));
+  geometry.setAttribute("startTime", new BufferAttribute(startTime, 1));
   geometry.setAttribute("size", new BufferAttribute(sizeArr, 1));
   geometry.setAttribute("sizeGrowth", new BufferAttribute(growthArr, 1));
   geometry.setAttribute("fadeRate", new BufferAttribute(fadeArr, 1));
@@ -170,7 +171,7 @@ export function createParticles({
   let nextIndex = 0;
 
   const step: Step = (delta) => {
-    spawnAccumulator += delta * state.spawnRate;
+    spawnAccumulator += delta * spawnRate;
     const toSpawn = Math.floor(spawnAccumulator);
     spawnAccumulator -= toSpawn;
 
@@ -179,14 +180,14 @@ export function createParticles({
       for (let s = 0; s < toSpawn; s++) {
         const i = nextIndex % maxCount;
         const i3 = i * 3;
-        startPos(startPozs, position, i3, state.area);
-        (sparks ? sparkVel : startVel)(vel, i3, state.elevDivs, state.speed);
-        startTimeArr[i] = cUniforms.u_time.value;
+        startPos(startPozs, position, i3, area);
+        if (sparks && elevDivs) sparkVel(vel, i3, elevDivs, speed);
+        else startVel(vel, i3);
+        startTime[i] = cUniforms.u_time.value;
         nextIndex++;
       }
-      markAttrFlags(mainGeo, POS_VEL_TIME_KEYS);
+      markAttrFlags(geometry, POS_VEL_TIME_KEYS);
     }
-
     cUniforms.u_time.value += delta;
   };
 
@@ -200,51 +201,51 @@ export function createParticles({
   const update: UpdateFn = (key, value) => {
     switch (key) {
       case "spawnRate":
-        state.spawnRate = value as number;
+        spawnRate = value as number;
         break;
       case "area":
-        state.area = value as number;
+        area = value as number;
         break;
       case "speed":
-        state.speed = value as number;
+        speed = value as number;
         break;
       case "elevDivs": {
         const v = value as ElevationDividers;
-        state.elevDivs = { ...v };
+        elevDivs = { ...v };
         break;
       }
       // --- ATTRIBUTES (CPU + flag) ---
       case "size": {
         const v = value as number;
-        state.size = v;
+        size = v;
         sizeArr.fill(v);
         markAttrFlags(mainGeo, ["size"]);
         break;
       }
       case "sizeGrowth": {
         const v = value as number;
-        state.sizeGrowth = v;
+        sizeGrowth = v;
         growthArr.fill(v);
         markAttrFlags(mainGeo, ["sizeGrowth"]);
         break;
       }
       case "fadeRate": {
         const v = value as number;
-        state.fadeRate = v;
+        fadeRate = v;
         fadeArr.fill(v);
         markAttrFlags(mainGeo, ["fadeRate"]);
         break;
       }
       case "opacity": {
         const v = value as number;
-        state.opacity = v;
+        opacity = v;
         for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = v;
         markAttrFlags(mainGeo, ["colour"]);
         break;
       }
       case "color": {
         const c = new Color(value as any);
-        state.color.copy(c);
+        clr.copy(c);
         for (let i = 0; i < maxCount; i++) {
           const i4 = i * 4;
           colsArr[i4] = c.r;
