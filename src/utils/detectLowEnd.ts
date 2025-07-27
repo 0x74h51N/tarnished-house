@@ -1,5 +1,5 @@
-import { ManagerRefs } from "components/assetLoader";
-import config from "../../config.json";
+import { ManagerRefs, SpawnableName } from "components/assetLoader";
+import config from "config.json";
 
 export function detectLowEnd() {
   const canvas = document.createElement("canvas");
@@ -43,25 +43,21 @@ export function detectLowEnd() {
 
     config.scene.renderer.maxPixelRatio = mobileConfig.maxPixelRatio;
 
-    config.assets.particles[1].properties.maxCount! /=
+    config.assets.particles.smoke.properties.maxCount! /=
       mobileConfig.particlesDivider;
-    config.assets.particles[2].properties.maxCount! /=
+    config.assets.particles.sparks.properties.maxCount! /=
       mobileConfig.particlesDivider;
 
     const orSpawn = config.assets.models.spawnable;
-    Object.entries(orSpawn).forEach(([key, value]) => {
-      const override =
-        mobileConfig.spawnables[key as ManagerRefs["name"]] || {};
+    for (const k in orSpawn) {
+      const key = k as SpawnableName;
+      const override = mobileConfig.spawnables[key].spawn || {};
 
-      orSpawn[key as ManagerRefs["name"]] = {
-        ...value,
+      orSpawn[key].spawn = {
+        ...orSpawn[key].spawn,
         ...override,
-        spawn: {
-          ...value.spawn,
-          ...override.spawn,
-        },
       };
-    });
+    }
 
     const segmentsDivider = mobileConfig.floorGeometryDivider;
     config.assets.floor.geometry.widthSegments /= segmentsDivider;

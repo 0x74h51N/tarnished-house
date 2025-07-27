@@ -1,5 +1,5 @@
 import { Scene, AmbientLight } from "three";
-import config from "../../../config.json";
+import config from "config.json";
 import { createFireLight } from "./fireLight";
 import { createDirectLight } from "./directionalLight";
 import { LightBundle } from "./types";

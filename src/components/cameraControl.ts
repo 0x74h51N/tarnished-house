@@ -1,5 +1,5 @@
 import { Scene, PerspectiveCamera, CameraHelper, MathUtils } from "three";
-import config from "../../config.json";
+import config from "config.json";
 import { OrbitControls } from "three/examples/jsm/Addons";
 interface CameraControlOptions {
   scene: Scene;

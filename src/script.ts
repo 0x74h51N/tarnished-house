@@ -1,5 +1,5 @@
 import Stats from "stats.js";
-import config from "../config.json";
+import config from "config.json";
 import {
   intro,
   credits,
@@ -124,7 +124,7 @@ loadAssets({
 });
 
 //Randommes
-const { managers } = randomMeshes({ scene, loadingManager });
+const managers = randomMeshes({ scene, loadingManager });
 
 //
 //Partichiles

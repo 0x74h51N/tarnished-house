@@ -5,7 +5,7 @@ import {
   RenderPass,
   UnrealBloomPass,
 } from "three/examples/jsm/Addons";
-import config from "../../config.json";
+import config from "config.json";
 
 interface ComposerInterface {
   renderer: WebGLRenderer;

@@ -4,7 +4,7 @@ import {
   SRGBColorSpace,
   WebGLRenderer,
 } from "three";
-import config from "../../config.json";
+import config from "config.json";
 
 interface RendererInterface {
   sizes: { width: number; height: number };

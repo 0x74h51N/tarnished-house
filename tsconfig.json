@@ -11,9 +11,14 @@
     "allowJs": true,
     "checkJs": false,
     "outDir": "dist",
-    "baseUrl": "./src",
-    "types": ["node", "vite-plugin-glsl/ext"],
-    "resolveJsonModule": true
+    "baseUrl": ".",
+    "types": ["node", "vite/client", "vite-plugin-glsl/ext"],
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "components/*": ["src/components/*"],
+      "config": ["./config.json"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

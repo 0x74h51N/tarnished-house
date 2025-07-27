@@ -517,7 +517,7 @@ body {
     align-items: center;
     justify-content: center;
   }
-  /* Settings Mobile */
+
   #settings label {
     font-size: 0.95rem;
     padding: 0.3rem 0;
@@ -643,5 +643,12 @@ body {
     height: 28px;
     background-position: right 2px center;
     background-size: 12px;
+  }
+  #settings input[type="range"] {
+    max-width: 130px;
+  }
+  #settings .range-value {
+    margin-left: 5px;
+    min-width: 5px;
   }
 }

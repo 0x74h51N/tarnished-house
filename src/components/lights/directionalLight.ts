@@ -4,7 +4,7 @@ import {
   DirectionalLightHelper,
   Scene,
 } from "three";
-import config from "../../../config.json";
+import config from "config.json";
 import { DirectLight } from "./types";
 
 export function createDirectLight(scene: Scene): DirectLight {

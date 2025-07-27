@@ -6,7 +6,7 @@ import {
   AudioListener,
   Audio,
 } from "three";
-import config from "../../config.json";
+import config from "config.json";
 
 interface CreateSoundInterface {
   camera: PerspectiveCamera;

@@ -1,5 +1,5 @@
 import { PointLight, PointLightHelper, Scene } from "three";
-import config from "../../../config.json";
+import config from "config.json";
 import { FireLight } from "./types";
 import { animateValue } from "./utils";
 
