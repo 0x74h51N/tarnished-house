@@ -1,5 +1,5 @@
 import { PerspectiveCamera, CameraHelper, Scene } from "three";
-import config from "../../../../config.json";
+import config from "config.json";
 import GUI from "lil-gui";
 
 export function createCameraSettings(

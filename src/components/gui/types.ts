@@ -15,7 +15,7 @@ export interface SetupGUIInterface {
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
   cameraHelper: CameraHelper;
-  randomMeshes: ManagerRefs[];
+  randomMeshes: ManagerRefs;
   antialias: boolean;
   onVolumeChange: (v: number) => void;
   bloomPass: UnrealBloomPass;

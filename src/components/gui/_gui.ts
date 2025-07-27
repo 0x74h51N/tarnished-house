@@ -1,5 +1,5 @@
 import GUI from "lil-gui";
-import config from "../../../config.json";
+import config from "config.json";
 import {
   SetupGUIInterface,
   createHelpers,
@@ -10,7 +10,6 @@ import {
   createParticleSettings,
   HelperParams,
 } from ".";
-import { PointLight, DirectionalLight } from "three";
 
 const createParams = () => ({
   helpers: {

@@ -1,5 +1,5 @@
 import { Scene, OrthographicCamera } from "three";
-import config from "../../../../config.json";
+import config from "config.json";
 import GUI from "lil-gui";
 import { LightBundle } from "components/lights/types";
 

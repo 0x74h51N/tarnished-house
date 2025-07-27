@@ -1,11 +1,11 @@
 import GUI from "lil-gui";
-import config from "../../../../config.json";
+import config from "config.json";
 import {
-  PointParticlesInterface,
-  FlameParticlesInterface,
   NoiseParams,
   ElevationDividers,
   ParticleSystemRefs,
+  FlameProps,
+  PointProps,
 } from "../../particles/types";
 
 export function createParticleSettings(
@@ -15,9 +15,9 @@ export function createParticleSettings(
   const particlesFolder = gui.addFolder("Particles Settings");
   particlesFolder.close();
 
-  const flameConfig = config.assets.particles.find((p) => p.name === "flame");
-  const smokeConfig = config.assets.particles.find((p) => p.name === "smoke");
-  const sparksConfig = config.assets.particles.find((p) => p.name === "sparks");
+  const flameConfig = config.assets.particles.flame;
+  const smokeConfig = config.assets.particles.smoke;
+  const sparksConfig = config.assets.particles.sparks;
 
   if (!flameConfig || !smokeConfig || !sparksConfig) {
     console.error("Particle configurations not found in config");
@@ -27,7 +27,7 @@ export function createParticleSettings(
   const flameFolder = particlesFolder.addFolder("Flame");
   flameFolder.close();
 
-  const flameParams = flameConfig.properties as FlameParticlesInterface;
+  const flameParams = flameConfig.properties as FlameProps;
 
   flameFolder
     .add(flameParams, "size", 0.1, 3, 0.01)
@@ -132,7 +132,7 @@ export function createParticleSettings(
   const smokeFolder = particlesFolder.addFolder("Smoke");
   smokeFolder.close();
 
-  const smokeParams = smokeConfig.properties as PointParticlesInterface;
+  const smokeParams = smokeConfig.properties as PointProps;
 
   smokeFolder
     .add(smokeParams, "area", 0.1, 2, 0.01)
@@ -194,7 +194,7 @@ export function createParticleSettings(
   const sparksFolder = particlesFolder.addFolder("Sparks");
   sparksFolder.close();
 
-  const sparksParams = sparksConfig.properties as PointParticlesInterface;
+  const sparksParams = sparksConfig.properties as PointProps;
 
   sparksFolder
     .addColor(sparksParams, "color")

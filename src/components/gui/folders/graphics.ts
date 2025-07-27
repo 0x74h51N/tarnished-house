@@ -1,7 +1,7 @@
 import { WebGLRenderer, OrthographicCamera } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { shadowDispose } from "../../../utils/_index";
-import config from "../../../../config.json";
+import config from "config.json";
 import GUI from "lil-gui";
 import { shadowTypes, toneMappingMap } from "../../settings";
 import { LightBundle } from "components/lights/types";

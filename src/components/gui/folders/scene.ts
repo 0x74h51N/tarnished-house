@@ -1,32 +1,22 @@
-import { getCountConfigs, spawnMeshes } from "../../../utils/_index";
-import config from "../../../../config.json";
+import config from "config.json";
 import GUI from "lil-gui";
-import { ManagerRefs } from "components/assetLoader";
+import { ManagerRefs, SpawnableName } from "components/assetLoader";
+import { spawnMeshes } from "components/assetLoader/utils";
 
-export function createSceneSettings(
-  gui: GUI,
-  randomMeshes: ManagerRefs[]
-): void {
+export function createSceneSettings(gui: GUI, randomMeshes: ManagerRefs): void {
   const sceneOptions = gui.addFolder("Scene Options");
   sceneOptions.close();
 
   const spawnable = config.assets.models.spawnable;
-  const countCfg = getCountConfigs(randomMeshes, spawnable);
 
-  (Object.keys(countCfg) as Array<keyof typeof spawnable>).forEach((key) => {
-    const { manager, opts } = countCfg[key];
-
+  for (const k in spawnable) {
+    const key = k as SpawnableName;
+    const managerRef = randomMeshes[key];
     sceneOptions
-      .add(spawnable[key], "count", 1, 150, 1)
+      .add(spawnable[key].spawn, "count", 1, 150, 1)
       .name(`${key} Count`)
-      .onChange((value: number) => {
-        spawnMeshes({
-          baseMeshes: manager.baseMeshes,
-          group: manager.group,
-          count: value,
-          options: opts,
-          roots: key.includes("root"),
-        });
+      .onChange(() => {
+        spawnMeshes(managerRef);
       });
-  });
+  }
 }
