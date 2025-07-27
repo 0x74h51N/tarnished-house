@@ -1,6 +1,6 @@
 import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons";
 import { LoadingManager } from "three";
-import config from "../../../../config.json";
+import config from "config.json";
 
 interface CreateGLTFLoaderOptions {
   loadingManager: LoadingManager;

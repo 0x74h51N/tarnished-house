@@ -1,4 +1,4 @@
-import config from "../../../config.json";
+import config from "config.json";
 import { crtGLTFLoader } from "./utils";
 import type { GLTF } from "three/examples/jsm/Addons";
 import {

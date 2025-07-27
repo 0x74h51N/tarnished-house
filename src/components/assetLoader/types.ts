@@ -1,15 +1,24 @@
 import { Group, Mesh } from "three";
-import config from "../../../config.json";
+import config from "config.json";
 
-type SpawnableConfig = typeof config.assets.models.spawnable;
-export type SpawnableName = keyof SpawnableConfig;
+type minMax = { min: number; max: number };
+
+export type rotationType = minMax | number | undefined;
 
 export interface SpawnOptions {
-  scaleMin: number;
-  scaleMax: number;
-  radiusMin: number;
-  radiusMax: number;
+  count: number;
+  scale: minMax;
+  radius: minMax;
   minDistance: number;
+  castShadow: boolean;
+  receiveShadow: boolean;
+  yPosition?: number;
+  getGeoCenterXZ?: boolean;
+  rotation?: {
+    x?: rotationType;
+    y?: rotationType;
+    z?: rotationType;
+  };
 }
 
 export type ManagerType = {
@@ -17,13 +26,18 @@ export type ManagerType = {
   group: Group;
 };
 
-export type ManagerRefs = {
-  name: SpawnableName;
-  manager: ManagerType;
-};
-
 export type CountOpts = {
   manager: ManagerType;
   opts: SpawnOptions;
 };
-export type CountConfigs = Record<SpawnableName, CountOpts>;
+
+type SpawnableConfig = typeof config.assets.models.spawnable;
+export type SpawnableName = keyof SpawnableConfig;
+
+export type SpawnableType = {
+  path: string;
+  meshPath: number[];
+  spawn: SpawnOptions;
+};
+
+export type ManagerRefs = Record<SpawnableName, CountOpts>;

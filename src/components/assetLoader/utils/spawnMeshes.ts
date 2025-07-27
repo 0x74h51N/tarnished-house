@@ -1,27 +1,10 @@
-import { Mesh, Group } from "three";
-import type { SpawnOptions } from "../types";
+import { Mesh } from "three";
+import type { CountOpts } from "../types";
 import { createPositioner } from "./positioner";
+import { centerGeometryXZ, getRotation } from "./helpers";
 
-interface SpawnMeshesInterface {
-  baseMeshes: Mesh[];
-  group: Group;
-  count: number;
-  options: SpawnOptions;
-  castShadow?: boolean;
-  receiveShadow?: boolean;
-  roots?: boolean;
-}
-
-export function spawnMeshes({
-  group,
-  baseMeshes,
-  count,
-  options,
-  castShadow = true,
-  receiveShadow = true,
-  roots = false,
-}: SpawnMeshesInterface & { baseMeshes: Mesh[] }) {
-  const { scaleMin = 1, scaleMax = 1 } = options;
+export function spawnMeshes({ manager, opts }: CountOpts) {
+  const { group, baseMeshes } = manager;
 
   // Dispose previous meshes in the group before spawn
   group.children.forEach((child) => {
@@ -34,24 +17,31 @@ export function spawnMeshes({
   });
   group.clear();
 
-  const yPosition = roots ? 0 : 0.12;
-  const positioner = createPositioner({ ...options, count, yPosition });
-
   // Randomly select and clone meshes from baseMeshes to the spawn count
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < opts.count; i++) {
     const base = baseMeshes[Math.floor(Math.random() * baseMeshes.length)];
     const mesh = base.clone(true);
+    const positioner = createPositioner(opts);
 
     mesh.traverse((child) => {
       if (child instanceof Mesh) {
         const m = child;
-        m.castShadow = castShadow;
-        m.receiveShadow = receiveShadow;
+        m.castShadow = opts.castShadow;
+        m.receiveShadow = opts.receiveShadow;
+
+        // Fix center pivot because some 3D idiots can't model properly
+        opts.getGeoCenterXZ && centerGeometryXZ(m.geometry);
       }
     });
 
     // Assign unique position and randomized scale to the mesh, according to spawn options
     positioner(i, mesh);
+
+    //Rotation
+    const [x, y, z] = (["x", "y", "z"] as const).map(
+      (a) => getRotation(opts.rotation?.[a]) * Math.PI
+    );
+    mesh.rotation.set(x, y, z);
 
     group.add(mesh);
   }

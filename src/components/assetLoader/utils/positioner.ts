@@ -1,31 +1,18 @@
 import type { Mesh } from "three";
 import type { SpawnOptions } from "../types";
 
-type PositionerOptions = SpawnOptions & {
-  count: number;
-  yPosition?: number;
-};
-
 type Positioner = (i: number, mesh: Mesh) => void;
 
 // Returns a reusable positioning function that spaces meshes in a radial pattern,
 // avoiding overlap using a minimum distance threshold if provided.
-export function createPositioner(opts: PositionerOptions): Positioner {
+export function createPositioner(opts: SpawnOptions): Positioner {
   const placedPositions: [number, number][] = [];
 
   return (i: number, mesh: Mesh) => {
-    const {
-      radiusMin,
-      radiusMax,
-      scaleMin,
-      scaleMax,
-      minDistance = 0,
-      yPosition = 0,
-      count,
-    } = opts;
-    const scale = scaleMin + Math.random() * (scaleMax - scaleMin);
+    const { count, radius, scale, minDistance = 0, yPosition = 0 } = opts;
+    const nScale = scale.min + Math.random() * (scale.max - scale.min);
 
-    mesh.scale.setScalar(scale);
+    mesh.scale.setScalar(nScale);
 
     mesh.position.set(0, 0, 0);
 
@@ -35,10 +22,10 @@ export function createPositioner(opts: PositionerOptions): Positioner {
     let z = 0;
     let tryCount = 0;
 
-    while (!positionFound && tryCount < 100) {
-      const radius = radiusMin + Math.random() * (radiusMax - radiusMin);
-      x = Math.cos(angle) * radius;
-      z = Math.sin(angle) * radius;
+    while (!positionFound && tryCount < 140) {
+      const nRadius = radius.min + Math.random() * (radius.max - radius.min);
+      x = Math.cos(angle) * nRadius;
+      z = Math.sin(angle) * nRadius;
 
       if (minDistance > 0) {
         positionFound = placedPositions.every(([px, pz]) => {

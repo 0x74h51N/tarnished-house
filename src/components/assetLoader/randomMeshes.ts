@@ -1,9 +1,12 @@
-import { Group, LoadingManager, Mesh, Object3D, Scene } from "three";
-import type { GLTF } from "three/examples/jsm/Addons";
-import { centerGeometryXZ } from "../../utils/_index";
-import { spawnMeshes, crtGLTFLoader } from "./utils";
-import config from "../../../config.json";
-import { ManagerRefs, ManagerType, SpawnableName } from "./types";
+import { Group, LoadingManager, Mesh, Scene } from "three";
+import { spawnMeshes, crtGLTFLoader, parentFinder } from "./utils";
+import config from "config.json";
+import {
+  ManagerRefs,
+  ManagerType,
+  SpawnableName,
+  SpawnableType,
+} from "./types";
 
 export function randomMeshes({
   scene,
@@ -11,61 +14,35 @@ export function randomMeshes({
 }: {
   scene: Scene;
   loadingManager: LoadingManager;
-}): { managers: ManagerRefs[] } {
+}): ManagerRefs {
   const gltfLoader = crtGLTFLoader({ loadingManager });
-  const managers: ManagerRefs[] = [];
-  const spawnable = config.assets.models.spawnable;
+  const acc = {} as ManagerRefs;
+
+  const spawnable = config.assets.models.spawnable as Record<
+    SpawnableName,
+    SpawnableType
+  >;
 
   for (const key in spawnable) {
     const cfg = spawnable[key as SpawnableName];
+
     const group = new Group();
     const manager: ManagerType = { baseMeshes: [], group };
 
     gltfLoader.load(cfg.path, (gltf) => {
-      let rawMeshes: Mesh[] = [];
-
-      switch (key) {
-        case "trees":
-          rawMeshes = gltf.scene.children[0].children[0].children[0]
-            .children as Mesh[];
-          break;
-
-        case "graves":
-          gltf.scene.traverse((child: Object3D) => {
-            if (child instanceof Mesh) {
-              centerGeometryXZ(child.geometry);
-              child.rotateY(Math.PI * 0.5);
-              rawMeshes.push(child);
-            }
-          });
-          break;
-
-        default:
-          rawMeshes = gltf.scene.children as Mesh[];
-          break;
-      }
-
-      manager.baseMeshes = rawMeshes;
+      manager.baseMeshes = parentFinder(gltf.scene, cfg.meshPath)
+        .children as Mesh[];
 
       spawnMeshes({
-        baseMeshes: rawMeshes,
-        group,
-        count: cfg.count,
-        options: {
-          scaleMin: cfg.spawn.scale.min,
-          scaleMax: cfg.spawn.scale.max,
-          radiusMin: cfg.spawn.radius.min,
-          radiusMax: cfg.spawn.radius.max,
-          minDistance: cfg.spawn.minDistance,
-        },
-        roots: key === "roots",
+        manager,
+        opts: cfg.spawn,
       });
 
       scene.add(group);
     });
 
-    managers.push({ name: key as SpawnableName, manager });
+    acc[key as SpawnableName] = { manager, opts: cfg.spawn };
   }
 
-  return { managers };
+  return acc;
 }
