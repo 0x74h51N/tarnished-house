@@ -11,7 +11,7 @@ import {
   ToneMapping,
   VSMShadowMap,
 } from "three";
-import config from "../../../config.json";
+import config from "config.json";
 import {
   GeneralControl,
   GeneralSettingsParams,
@@ -20,11 +20,8 @@ import {
 } from "./types";
 import { SpawnableName } from "../assetLoader";
 import { fog } from "../postProcess";
-import {
-  getCountConfigs,
-  shadowDispose,
-  spawnMeshes,
-} from "./../../utils/_index";
+import { shadowDispose } from "./../../utils/_index";
+import { spawnMeshes } from "components/assetLoader/utils";
 
 export const shadowTypes = {
   Basic: BasicShadowMap,
@@ -249,30 +246,27 @@ export function makeSceneSettings({
   randomMeshes,
 }: SceneSettingsParams): GeneralControl[] {
   const spawnable = config.assets.models.spawnable;
-  const countCfg = getCountConfigs(randomMeshes, spawnable);
+  const arr = [] as GeneralControl[];
 
-  return (Object.keys(countCfg) as SpawnableName[]).map((key) => {
-    const { manager, opts } = countCfg[key];
-    return {
+  for (const k in spawnable) {
+    const key = k as SpawnableName;
+    const managerRef = randomMeshes[key];
+    arr.push({
       type: "range",
       id: `${key}countId`,
       label: `${key} Count`,
       min: "1",
       max: "150",
       step: "1",
-      value: spawnable[key].count.toString(),
+      value: spawnable[key].spawn.count.toString(),
       span: `${key}CountValue`,
       onChange: (e) => {
         const v = +e.target.value;
-        document.getElementById(`${key}CountValue`)!.textContent = String(v);
-        spawnMeshes({
-          baseMeshes: manager.baseMeshes,
-          group: manager.group,
-          count: v,
-          options: opts,
-          roots: key.includes("root"),
-        });
+        document.getElementById(`${key}CountValue`)!.textContent = v.toString();
+        spawnable[key].spawn.count = v;
+        spawnMeshes(managerRef);
       },
-    };
-  });
+    });
+  }
+  return arr;
 }

@@ -47,7 +47,7 @@ export type ToneMappingKey = keyof typeof toneMappingMap;
 export interface SettingsInterface {
   lights: LightBundle;
   renderer: WebGLRenderer;
-  randomMeshes: ManagerRefs[];
+  randomMeshes: ManagerRefs;
   antialias: boolean;
   onVolumeChange: (v: number) => void;
   scene: Scene;
