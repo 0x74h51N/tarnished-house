@@ -2,11 +2,11 @@ import GUI from "lil-gui";
 import config from "config.json";
 import {
   NoiseParams,
-  ElevationDividers,
   ParticleSystemRefs,
   FlameProps,
   PointProps,
 } from "@/Systems";
+import { minMax } from "@/types";
 
 export function createParticleSettings(
   gui: GUI,
@@ -248,7 +248,7 @@ export function createParticleSettings(
     .add(sparksParams.sparkProps!.elevDivs!, "min", 1, 15, 0.1)
     .name("Min Elevation")
     .onChange((value: number) => {
-      const newElevDivs: ElevationDividers = {
+      const newElevDivs: minMax = {
         ...sparksParams.sparkProps!.elevDivs!,
         min: value,
       };
@@ -259,7 +259,7 @@ export function createParticleSettings(
     .add(sparksParams.sparkProps!.elevDivs!, "max", 1, 15, 0.1)
     .name("Max Elevation")
     .onChange((value: number) => {
-      const newElevDivs: ElevationDividers = {
+      const newElevDivs: minMax = {
         ...sparksParams.sparkProps!.elevDivs!,
         max: value,
       };

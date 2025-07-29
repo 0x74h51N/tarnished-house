@@ -1,6 +1,7 @@
 import type { Color, Object3D, Texture, Vector3Like, Vector4Like } from "three";
 import config from "config.json";
 import { NestedKeys, GetValue } from "@/utils";
+import { minMax } from "@/types";
 
 export interface BaseProps {
   startPozs: Vector3Like;
@@ -9,15 +10,11 @@ export interface BaseProps {
   color: Color | number | string;
   seed?: number;
 }
-export interface ElevationDividers {
-  min: number;
-  max: number;
-}
 
 export interface SparkProps {
   damping: number;
   stretchFact: number;
-  elevDivs: ElevationDividers;
+  elevDivs: minMax;
 }
 export interface PointProps extends BaseProps {
   opacity?: number;
