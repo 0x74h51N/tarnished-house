@@ -1,7 +1,7 @@
 import { Scene, OrthographicCamera } from "three";
 import config from "config.json";
 import GUI from "lil-gui";
-import { LightBundle } from "components/lights/types";
+import { LightBundle } from "@/Systems/Lights/types";
 
 export function createLightSettings(
   gui: GUI,

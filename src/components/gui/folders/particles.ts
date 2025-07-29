@@ -6,7 +6,7 @@ import {
   ParticleSystemRefs,
   FlameProps,
   PointProps,
-} from "../../particles/types";
+} from "@/Systems";
 
 export function createParticleSettings(
   gui: GUI,
@@ -91,11 +91,7 @@ export function createParticleSettings(
     .add(flameParams.noise, "magnitude", 0.1, 5, 0.01)
     .name("Magnitude")
     .onChange((value: number) => {
-      const newNoise: NoiseParams = {
-        ...flameParams.noise,
-        magnitude: value,
-      };
-      particleSystems.flame!.update("noise", newNoise);
+      particleSystems.flame!.update("noise.magnitude", value);
     });
 
   flameNoiseFolder
@@ -232,41 +228,41 @@ export function createParticleSettings(
     });
 
   sparksFolder
-    .add(sparksParams, "damping", 0.1, 1, 0.01)
+    .add(sparksParams.sparkProps!, "damping", 0.1, 1, 0.01)
     .name("Damping")
     .onChange((value: number) => {
-      particleSystems.sparks!.update("damping", value);
+      particleSystems.sparks!.update("sparkProps.damping", value);
     });
 
   sparksFolder
-    .add(sparksParams, "stretchFact", 1, 20, 0.1)
+    .add(sparksParams.sparkProps!, "stretchFact", 1, 20, 0.1)
     .name("Stretch Factor")
     .onChange((value: number) => {
-      particleSystems.sparks!.update("stretchFact", value);
+      particleSystems.sparks!.update("sparkProps.stretchFact", value);
     });
 
   const elevationFolder = sparksFolder.addFolder("Elevation");
   elevationFolder.close();
 
   elevationFolder
-    .add(sparksParams.elevDivs!, "min", 1, 15, 0.1)
+    .add(sparksParams.sparkProps!.elevDivs!, "min", 1, 15, 0.1)
     .name("Min Elevation")
     .onChange((value: number) => {
       const newElevDivs: ElevationDividers = {
-        ...sparksParams.elevDivs!,
+        ...sparksParams.sparkProps!.elevDivs!,
         min: value,
       };
-      particleSystems.sparks!.update("elevDivs", newElevDivs);
+      particleSystems.sparks!.update("sparkProps.elevDivs", newElevDivs);
     });
 
   elevationFolder
-    .add(sparksParams.elevDivs!, "max", 1, 15, 0.1)
+    .add(sparksParams.sparkProps!.elevDivs!, "max", 1, 15, 0.1)
     .name("Max Elevation")
     .onChange((value: number) => {
       const newElevDivs: ElevationDividers = {
-        ...sparksParams.elevDivs!,
+        ...sparksParams.sparkProps!.elevDivs!,
         max: value,
       };
-      particleSystems.sparks!.update("elevDivs", newElevDivs);
+      particleSystems.sparks!.update("sparkProps.elevDivs", newElevDivs);
     });
 }

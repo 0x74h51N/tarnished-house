@@ -1,7 +1,7 @@
 import config from "config.json";
 import GUI from "lil-gui";
-import { ManagerRefs, SpawnableName } from "components/assetLoader";
-import { spawnMeshes } from "components/assetLoader/utils";
+import { ManagerRefs, SpawnableName } from "@/loaders";
+import { spawnMeshes } from "@/loaders/utils";
 
 export function createSceneSettings(gui: GUI, randomMeshes: ManagerRefs): void {
   const sceneOptions = gui.addFolder("Scene Options");

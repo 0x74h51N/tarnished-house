@@ -1,10 +1,10 @@
 import { WebGLRenderer, OrthographicCamera } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
-import { shadowDispose } from "../../../utils/_index";
+import { shadowDispose } from "../../../utils";
 import config from "config.json";
 import GUI from "lil-gui";
 import { shadowTypes, toneMappingMap } from "../../settings";
-import { LightBundle } from "components/lights/types";
+import { LightBundle } from "@/Systems/Lights/types";
 
 export function createGraphicsSettings(
   gui: GUI,

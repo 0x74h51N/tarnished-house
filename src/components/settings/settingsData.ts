@@ -18,10 +18,10 @@ import {
   GraphicsSettingsParams,
   SceneSettingsParams,
 } from "./types";
-import { SpawnableName } from "../assetLoader";
-import { fog } from "../postProcess";
-import { shadowDispose } from "./../../utils/_index";
-import { spawnMeshes } from "components/assetLoader/utils";
+import { SpawnableName } from "../../loaders";
+import { shadowDispose } from "../../utils";
+import { spawnMeshes } from "@/loaders/utils";
+import { fog } from "@/Systems/PostProcess/fog";
 
 export const shadowTypes = {
   Basic: BasicShadowMap,

@@ -7,9 +7,9 @@ import {
   GridHelper,
 } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
-import { ParticleSystemRefs } from "../particles/types";
-import { ManagerRefs } from "components/assetLoader";
-import { LightBundle } from "components/lights/types";
+import { ManagerRefs } from "@/loaders";
+import { LightBundle } from "@/Systems/Lights/types";
+import { ParticleSystemRefs } from "@/Systems";
 
 export interface SetupGUIInterface {
   renderer: WebGLRenderer;

@@ -1,7 +1,7 @@
-import { ManagerRefs } from "components/assetLoader";
+import { ManagerRefs } from "@/loaders";
 import { toneMappingMap } from "./settingsData";
 import { Scene, WebGLRenderer } from "three";
-import { LightBundle } from "components/lights/types";
+import { LightBundle } from "@/Systems/Lights/types";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,
