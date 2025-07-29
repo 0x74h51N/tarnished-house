@@ -1,18 +1,6 @@
 import Stats from "stats.js";
 import config from "config.json";
-import {
-  intro,
-  credits,
-  loadAssets,
-  randomMeshes,
-  particleSystem,
-  cameraControl,
-  settings,
-  createSound,
-  createComposer,
-  createRenderer,
-  createLights,
-} from "./components/_index.js";
+import { intro, credits, settings, createSound } from "./components/";
 import {
   Scene,
   LoadingManager,
@@ -20,7 +8,17 @@ import {
   CameraHelper,
   Color,
 } from "three";
-import { Loop, detectLowEnd } from "./utils/_index.js";
+import { detectLowEnd } from "./utils";
+
+import { loadAssets, randomMeshes } from "./loaders";
+import {
+  createCameraSystem,
+  createComposer,
+  createLights,
+  createRenderer,
+  Loop,
+  particleSystem,
+} from "./Systems";
 
 //
 // Mobile Detection & Performance Optimization
@@ -53,11 +51,12 @@ credits();
 //
 // Camera & Orbit Control
 //
-const { camera, cameraHelper, controls, clampCameraPosition } = cameraControl({
-  scene,
-  canvas,
-  sizes,
-});
+const { camera, cameraHelper, controls, clampCameraPosition } =
+  createCameraSystem({
+    scene,
+    canvas,
+    sizes,
+  });
 
 //
 // Lights

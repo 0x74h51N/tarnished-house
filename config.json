@@ -401,18 +401,19 @@
       },
       "sparks": {
         "properties": {
-          "sparks": true,
           "color": "#FF0000",
           "area": 0.3,
           "size": 0.1,
           "maxCount": 60,
           "spawnRate": 4,
+          "speed": 3.8,
           "startPozs": { "x": 0, "y": 0.65, "z": 1.5 },
           "scaleFactor": 1.5,
-          "damping": 0.82,
-          "elevDivs": { "min": 8, "max": 2 },
-          "speed": 3.8,
-          "stretchFact": 10.5
+          "sparkProps": {
+            "damping": 0.82,
+            "elevDivs": { "min": 8, "max": 2 },
+            "stretchFact": 10.5
+          }
         }
       }
     },
