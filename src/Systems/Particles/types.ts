@@ -1,5 +1,6 @@
 import type { Color, Object3D, Texture, Vector3Like, Vector4Like } from "three";
 import config from "config.json";
+import { NestedKeys, GetValue } from "@/utils";
 
 export interface BaseProps {
   startPozs: Vector3Like;
@@ -12,6 +13,12 @@ export interface ElevationDividers {
   min: number;
   max: number;
 }
+
+export interface SparkProps {
+  damping: number;
+  stretchFact: number;
+  elevDivs: ElevationDividers;
+}
 export interface PointProps extends BaseProps {
   opacity?: number;
   maxCount: number;
@@ -20,10 +27,7 @@ export interface PointProps extends BaseProps {
   scaleFactor: number;
   sizeGrowth?: number;
   fadeRate?: number;
-  sparks?: boolean;
-  damping?: number;
-  elevDivs?: ElevationDividers;
-  stretchFact?: number;
+  sparkProps: SparkProps;
 }
 
 export interface NoiseParams {
@@ -59,12 +63,15 @@ export interface FlameParticlesInterface {
   props: FlameProps;
 }
 
-export type UpdateKey = keyof PointProps | keyof FlameProps;
+export type UpdateKey = Extract<
+  NestedKeys<FlameProps> | NestedKeys<PointProps>,
+  string
+>;
 
-export type UpdateValue<K extends UpdateKey> = K extends keyof PointProps
-  ? PointProps[K]
-  : K extends keyof FlameProps
-  ? FlameProps[K]
+export type UpdateValue<K extends UpdateKey> = K extends NestedKeys<FlameProps>
+  ? GetValue<FlameProps, K>
+  : K extends NestedKeys<PointProps>
+  ? GetValue<PointProps, K>
   : never;
 
 export type UpdateFn = <K extends UpdateKey>(

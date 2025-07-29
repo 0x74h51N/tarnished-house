@@ -14,15 +14,16 @@ import {
   Vector4,
   Vector4Like,
 } from "three";
-import vertex from "../shaders/flame/vertex.vert";
-import frag from "../shaders/flame/fragment.frag";
+import vertex from "./shaders/vertex.vert";
+import frag from "./shaders/fragment.frag";
 import {
   CreateParticlesReturn,
   FlameParticlesInterface,
-  NoiseParams,
   Step,
-  UpdateFn,
+  UpdateKey,
+  UpdateValue,
 } from "../types";
+import { createGuiUpdater } from "@/utils";
 
 const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
 
@@ -131,53 +132,57 @@ export const createFlame = ({
     uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
   }
 
-  //Gui updts
-  const update: UpdateFn = (key, value) => {
-    switch (key) {
-      // ---------- scalar / simple ----------
-      case "size": {
-        const s = value as number;
-        uniforms.scale.value.setScalar(s);
-        uniforms.u_radius.value = s * 0.6;
-        uniforms.u_height.value = s;
-        uniforms.u_bottom.value = -s * 0.8;
-        break;
-      }
-      case "speed":
-        speed = value as number;
-        break;
+  //
+  // ------------------ GUI Updater ------------------
+  //
+  const guiHandlers: {
+    [K in UpdateKey]?: (value: UpdateValue<K>) => void;
+  } = {
+    size: (v) => {
+      uniforms.scale.value.setScalar(v);
+      uniforms.u_radius.value = v * 0.6;
+      uniforms.u_height.value = v;
+      uniforms.u_bottom.value = -v * 0.8;
+    },
 
-      case "color":
-        uniforms.color.value.set(new Color(value as string));
-        break;
-      case "colorMixStr":
-        uniforms.colorMixStrength.value = value as number;
-        break;
-      case "startPozs": {
-        const p = value as Vector3Like;
-        flame.position.set(p.x, p.y, p.z);
-        break;
-      }
+    speed: (v) => {
+      speed = v!;
+    },
 
-      // ---------- nested objects ----------
-      case "noise": {
-        const n = value as NoiseParams;
-        if (n.noiseScale) {
-          const ns = n.noiseScale;
-          uniforms.noiseScale.value.set(ns.x, ns.y, ns.z, ns.w);
-        }
-        if (n.magnitude !== undefined) uniforms.magnitude.value = n.magnitude;
-        if (n.lacunarity !== undefined)
-          uniforms.lacunarity.value = n.lacunarity;
-        if (n.gain !== undefined) uniforms.gain.value = n.gain;
-        if (n.octaves !== undefined) uniforms.u_octaves.value = n.octaves;
-        break;
-      }
+    color: (v) => {
+      uniforms.color.value.set(new Color(v));
+    },
 
-      default:
-        break;
-    }
+    colorMixStr: (v) => {
+      uniforms.colorMixStrength.value = v;
+    },
+
+    startPozs: (v) => {
+      flame.position.set(v.x, v.y, v.z);
+    },
+
+    "noise.magnitude": (v) => {
+      uniforms.magnitude.value = v;
+    },
+
+    "noise.noiseScale": (v) => {
+      uniforms.noiseScale.value.set(v.x, v.y, v.z, v.w);
+    },
+
+    "noise.lacunarity": (v) => {
+      uniforms.lacunarity.value = v;
+    },
+
+    "noise.gain": (v) => {
+      uniforms.gain.value = v;
+    },
+
+    "noise.octaves": (v) => {
+      uniforms.u_octaves.value = v;
+    },
   };
+
+  const update = createGuiUpdater(guiHandlers);
 
   return { step, updtScreen, update };
 };

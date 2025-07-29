@@ -13,15 +13,17 @@ import {
 } from "three";
 import {
   CreateParticlesReturn,
-  ElevationDividers,
   PointParticlesInterface,
   Step,
-  UpdateFn,
+  UpdateKey,
+  UpdateValue,
 } from "../types";
-import VS from "../shaders/pointParticle/vertex.vert";
-import FS from "../shaders/pointParticle/fragment.frag";
-import SparkVS from "../shaders/sparks/vertex.vert";
-import SparksFS from "../shaders/sparks/fragment.frag";
+import VS from "./shaders/vertex.vert";
+import FS from "./shaders/fragment.frag";
+import SparkVS from "./shaders/sparks/vertex.vert";
+import SparksFS from "./shaders/sparks/fragment.frag";
+import { startPos, sparkVel, startVel, colUpt, markAttrFlags } from "./utils";
+import { createGuiUpdater } from "@/utils";
 
 const defaultTexture = new DataTexture(
   new Uint8Array([255, 255, 255, 255]),
@@ -45,7 +47,7 @@ const defaultTexture = new DataTexture(
  * @param props.color       - Starting color of all particles (Color, hex, or string).
  * @param props.maxCount    - Maximum number of particles active at once.
  * @param props.startPozs   - Center position where particles are spawned around.
- * @param props.sparks      - Enables spark mode (directional & fast-moving particles).
+ * @param props.sparkProps
  * @param props.damping     - Velocity damping (resistance during motion).
  * @param props.scaleFactor - Uniform scale multiplier for all particles.
  * @param props.stretchFact - How much particles stretch based on velocity (spark only).
@@ -63,7 +65,6 @@ export function createPointParticles({
     spawnRate,
     area,
     speed = 1,
-    elevDivs,
     size,
     sizeGrowth = 0,
     fadeRate = 0,
@@ -71,13 +72,12 @@ export function createPointParticles({
     color,
     maxCount,
     startPozs,
-    sparks = false,
-    damping = 1,
-    scaleFactor = 1,
-    stretchFact = 1,
+    scaleFactor,
+    sparkProps,
   },
 }: PointParticlesInterface): CreateParticlesReturn {
   const clr = new Color(color);
+  let { damping, stretchFact, elevDivs } = sparkProps ?? {};
 
   const textureArray = Array.isArray(textures)
     ? textures.map((t) => t ?? defaultTexture)
@@ -98,8 +98,8 @@ export function createPointParticles({
     const i3 = i * 3;
     startPos(startPozs, position, i3, area);
 
-    if (sparks && elevDivs) {
-      sparkVel(vel, i3, elevDivs, speed);
+    if (sparkProps && sparkProps.elevDivs) {
+      sparkVel(vel, i3, sparkProps.elevDivs, speed);
     } else {
       startVel(vel, i3);
     }
@@ -143,12 +143,12 @@ export function createPointParticles({
       ...cUniforms,
       diffuseTexture: { value: dTex },
     };
-
+    const isSpark = !!(sparkProps && sparkProps.elevDivs);
     const material = new RawShaderMaterial({
       glslVersion: GLSL3,
       uniforms,
-      vertexShader: sparks ? SparkVS : VS,
-      fragmentShader: sparks ? SparksFS : FS,
+      vertexShader: isSpark ? SparkVS : VS,
+      fragmentShader: isSpark ? SparksFS : FS,
       transparent: true,
       depthWrite: false,
       blending: AdditiveBlending,
@@ -181,7 +181,7 @@ export function createPointParticles({
         const i = nextIndex % maxCount;
         const i3 = i * 3;
         startPos(startPozs, position, i3, area);
-        if (sparks && elevDivs) sparkVel(vel, i3, elevDivs, speed);
+        if (sparkProps && elevDivs) sparkVel(vel, i3, elevDivs, speed);
         else startVel(vel, i3);
         startTime[i] = cUniforms.u_time.value;
         nextIndex++;
@@ -198,140 +198,68 @@ export function createPointParticles({
   //
   // ------------------ GUI Updater ------------------
   //
-  const update: UpdateFn = (key, value) => {
-    switch (key) {
-      case "spawnRate":
-        spawnRate = value as number;
-        break;
-      case "area":
-        area = value as number;
-        break;
-      case "speed":
-        speed = value as number;
-        break;
-      case "elevDivs": {
-        const v = value as ElevationDividers;
-        elevDivs = { ...v };
-        break;
+  const guiHandlers: {
+    [K in UpdateKey]?: (value: UpdateValue<K>) => void;
+  } = {
+    spawnRate: (value) => {
+      spawnRate = value;
+    },
+    area: (value) => {
+      area = value;
+    },
+    speed: (value) => {
+      speed = value!;
+    },
+    "sparkProps.elevDivs": (value) => {
+      elevDivs = { ...value };
+    },
+
+    // --- ATTRIBUTES (CPU + flag) ---
+    size: (value) => {
+      size = value;
+      sizeArr.fill(value);
+      markAttrFlags(mainGeo, ["size"]);
+    },
+    sizeGrowth: (value) => {
+      sizeGrowth = value!;
+      growthArr.fill(value!);
+      markAttrFlags(mainGeo, ["sizeGrowth"]);
+    },
+    fadeRate: (value) => {
+      fadeRate = value!;
+      fadeArr.fill(value!);
+      markAttrFlags(mainGeo, ["fadeRate"]);
+    },
+    opacity: (value) => {
+      opacity = value!;
+      for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = value!;
+      markAttrFlags(mainGeo, ["colour"]);
+    },
+    color: (value) => {
+      const c = new Color(value as string);
+      clr.copy(c);
+      for (let i = 0; i < maxCount; i++) {
+        const i4 = i * 4;
+        colsArr[i4] = c.r;
+        colsArr[i4 + 1] = c.g;
+        colsArr[i4 + 2] = c.b;
       }
-      // --- ATTRIBUTES (CPU + flag) ---
-      case "size": {
-        const v = value as number;
-        size = v;
-        sizeArr.fill(v);
-        markAttrFlags(mainGeo, ["size"]);
-        break;
-      }
-      case "sizeGrowth": {
-        const v = value as number;
-        sizeGrowth = v;
-        growthArr.fill(v);
-        markAttrFlags(mainGeo, ["sizeGrowth"]);
-        break;
-      }
-      case "fadeRate": {
-        const v = value as number;
-        fadeRate = v;
-        fadeArr.fill(v);
-        markAttrFlags(mainGeo, ["fadeRate"]);
-        break;
-      }
-      case "opacity": {
-        const v = value as number;
-        opacity = v;
-        for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = v;
-        markAttrFlags(mainGeo, ["colour"]);
-        break;
-      }
-      case "color": {
-        const c = new Color(value as any);
-        clr.copy(c);
-        for (let i = 0; i < maxCount; i++) {
-          const i4 = i * 4;
-          colsArr[i4] = c.r;
-          colsArr[i4 + 1] = c.g;
-          colsArr[i4 + 2] = c.b;
-        }
-        markAttrFlags(mainGeo, ["colour"]);
-        break;
-      }
-      // --- UNIFORMS ---
-      case "scaleFactor":
-        cUniforms.u_scale.value = value as number;
-        break;
-      case "damping":
-        cUniforms.u_damping.value = value as number;
-        break;
-      case "stretchFact":
-        cUniforms.u_stretch.value = value as number;
-        break;
-      default:
-        break;
-    }
+      markAttrFlags(mainGeo, ["colour"]);
+    },
+
+    // --- UNIFORMS ---
+    scaleFactor: (value) => {
+      cUniforms.u_scale.value = value;
+    },
+    "sparkProps.damping": (value) => {
+      cUniforms.u_damping.value = value;
+    },
+    "sparkProps.stretchFact": (value) => {
+      cUniforms.u_stretch.value = value;
+    },
   };
 
+  const update = createGuiUpdater(guiHandlers);
+
   return { step, updtScreen, update };
-}
-
-//Constructional Helpers
-
-type GeometryAttributes = BufferGeometry["attributes"];
-type AttributeKey = Extract<keyof GeometryAttributes, string>;
-
-export function markAttrFlags(
-  geo: BufferGeometry,
-  names: AttributeKey[]
-): void {
-  const attrs = geo.attributes as GeometryAttributes;
-  for (let i = 0; i < names.length; i++) {
-    const attr = attrs[names[i]];
-    if (attr) attr.needsUpdate = true;
-  }
-}
-
-//Calculational helpers
-function startPos(
-  startPozs: { x: number; y: number; z: number },
-  pos: Float32Array,
-  i3: number = 0,
-  area: number
-) {
-  pos[i3] = startPozs.x + (Math.random() * 2 - 1) * area;
-  pos[i3 + 1] = startPozs.y;
-  pos[i3 + 2] = startPozs.z + (Math.random() * 2 - 1) * area;
-}
-
-function startVel(v: Float32Array, i3 = 0) {
-  v[i3] = (Math.random() - 0.5) * 0.2;
-  v[i3 + 1] = Math.random() * 0.5 + 0.2;
-  v[i3 + 2] = (Math.random() - 0.5) * 0.2;
-}
-
-function sparkVel(
-  v: Float32Array,
-  i3 = 0,
-  elevDivs: ElevationDividers,
-  speed: number
-) {
-  const speedo = Math.random() * 1.0 + speed;
-  const minElev = Math.PI / elevDivs.min;
-  const maxElev = Math.PI / elevDivs.max;
-
-  const elev = minElev + Math.random() * (maxElev - minElev);
-
-  const azim = Math.random() * Math.PI * 2;
-
-  const cosE = Math.cos(elev),
-    sinE = Math.sin(elev);
-  v[i3 + 0] = speedo * cosE * Math.cos(azim);
-  v[i3 + 1] = speedo * sinE;
-  v[i3 + 2] = speedo * cosE * Math.sin(azim);
-}
-
-function colUpt(i: number, colsArr: Float32Array, col: Color, opacity: number) {
-  const i4 = i * 4;
-  colsArr[i4] = col.r;
-  colsArr[i4 + 1] = col.g;
-  colsArr[i4 + 2] = col.b;
-  colsArr[i4 + 3] = opacity;
 }

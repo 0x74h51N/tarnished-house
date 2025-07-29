@@ -1,5 +1,5 @@
 import { Scene, TextureLoader, PerspectiveCamera, Texture } from "three";
-import { createPointParticles, createFlame } from "./utils";
+
 import config from "config.json";
 import {
   ParticleSystemRefs,
@@ -8,6 +8,8 @@ import {
   PointParticlesInterface,
   FlameParticlesInterface,
 } from "./types";
+import { createFlame } from "./FlameParticles/flameParticles";
+import { createPointParticles } from "./PointParticles/pointParticles";
 
 interface ParticlesCreatorInterface {
   scene: Scene;
@@ -23,8 +25,7 @@ export function particleSystem({
   scene,
   texLoader,
 }: ParticlesCreatorInterface): ParticleSystemRefs {
-  const configs: ParticleConfigs = config.assets
-    .particles as unknown as ParticleConfigs;
+  const configs: ParticleConfigs = config.assets.particles as ParticleConfigs;
   const acc = {} as ParticleSystemRefs;
 
   for (const name in configs) {

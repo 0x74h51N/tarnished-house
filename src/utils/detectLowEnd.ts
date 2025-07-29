@@ -1,4 +1,4 @@
-import { ManagerRefs, SpawnableName } from "components/assetLoader";
+import { ManagerRefs, SpawnableName } from "@/loaders";
 import config from "config.json";
 
 export function detectLowEnd() {
