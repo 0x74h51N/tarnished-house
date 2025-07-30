@@ -8,8 +8,9 @@ import {
 } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { ManagerRefs } from "@/loaders";
-import { LightBundle } from "@/Systems/Lights/types";
-import { ParticleSystemRefs } from "@/Systems";
+import { LightBundle } from "@/engine/lights/types";
+import { ParticleSystemRefs } from "@/engine";
+import { AudioBundle } from "@/types";
 
 export interface SetupGUIInterface {
   renderer: WebGLRenderer;
@@ -17,7 +18,7 @@ export interface SetupGUIInterface {
   cameraHelper: CameraHelper;
   randomMeshes: ManagerRefs;
   antialias: boolean;
-  onVolumeChange: (v: number) => void;
+  audio: AudioBundle;
   bloomPass: UnrealBloomPass;
   lights: LightBundle;
   scene: Scene;

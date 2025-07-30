@@ -3,8 +3,8 @@ import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { shadowDispose } from "../../../utils";
 import config from "config.json";
 import GUI from "lil-gui";
-import { shadowTypes, toneMappingMap } from "../../settings";
-import { LightBundle } from "@/Systems/Lights/types";
+import { LightBundle } from "@/engine";
+import { toneMappingMap, shadowTypes } from "@/types";
 
 export function createGraphicsSettings(
   gui: GUI,

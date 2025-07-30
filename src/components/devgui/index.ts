@@ -1,15 +1,16 @@
+export * from "./types";
+
 import GUI from "lil-gui";
 import config from "config.json";
 import {
-  SetupGUIInterface,
   createHelpers,
   createGraphicsSettings,
   createLightSettings,
   createSceneSettings,
   createCameraSettings,
   createParticleSettings,
-  HelperParams,
-} from ".";
+} from "./folders";
+import { HelperParams, SetupGUIInterface } from ".";
 
 const createParams = () => ({
   helpers: {
@@ -27,13 +28,13 @@ const createParams = () => ({
   volume: config.scene.audio.volume,
 });
 
-export function setupGUI({
+export function initSetupGUI({
   renderer,
   camera,
   cameraHelper,
   randomMeshes,
   antialias,
-  onVolumeChange,
+  audio,
   bloomPass,
   lights,
   scene,
@@ -60,7 +61,10 @@ export function setupGUI({
     .add(params, "volume", 0, 1.5, 0.1)
     .name("Volume")
     .onChange((v: number) => {
-      if (onVolumeChange) onVolumeChange(v);
+      if (audio.setVolume) {
+        audio.setVolume(v);
+        audio.updateIcon(v);
+      }
     });
 
   createHelpers(gui, scene, params.helpers);

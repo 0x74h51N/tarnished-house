@@ -1,4 +1,4 @@
-export { intro, credits } from "./domManup";
-export { setupGUI } from "./gui/_gui";
-export { settings } from "./settings";
-export { createSound } from "./sounds";
+export * from "./devgui";
+export * from "./settings";
+export * from "./audio";
+export * from "./ui";

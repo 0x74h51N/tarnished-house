@@ -1,86 +1,9 @@
-import {
-  ACESFilmicToneMapping,
-  BasicShadowMap,
-  CineonToneMapping,
-  DirectionalLight,
-  LinearToneMapping,
-  NoToneMapping,
-  PCFShadowMap,
-  PCFSoftShadowMap,
-  ReinhardToneMapping,
-  ToneMapping,
-  VSMShadowMap,
-} from "three";
+import { fog } from "@/engine/postprocess/fog";
+import { shadowTypes, toneMappingMap } from "@/types";
+import { shadowDispose } from "@/utils";
 import config from "config.json";
-import {
-  GeneralControl,
-  GeneralSettingsParams,
-  GraphicsSettingsParams,
-  SceneSettingsParams,
-} from "./types";
-import { SpawnableName } from "../../loaders";
-import { shadowDispose } from "../../utils";
-import { spawnMeshes } from "@/loaders/utils";
-import { fog } from "@/Systems/PostProcess/fog";
-
-export const shadowTypes = {
-  Basic: BasicShadowMap,
-  PCF: PCFShadowMap,
-  PCFSoft: PCFSoftShadowMap,
-  VSM: VSMShadowMap,
-};
-
-export const toneMappingMap = {
-  NoToneMapping,
-  LinearToneMapping,
-  ReinhardToneMapping,
-  CineonToneMapping,
-  ACESFilmicToneMapping,
-} as const;
-
-export function makeGeneralSettings({
-  renderer,
-  onVolumeChange,
-}: GeneralSettingsParams): GeneralControl[] {
-  const volumeVal =
-    typeof config.scene.audio.volume === "number"
-      ? config.scene.audio.volume * 100
-      : 0;
-  const toneVal = renderer.toneMappingExposure;
-
-  return [
-    {
-      type: "range",
-      id: "volume",
-      label: "Volume",
-      min: "0",
-      max: "100",
-      step: "1",
-      value: volumeVal.toString(),
-      span: "volumeValue",
-      onChange: (e) => {
-        const val = +e.target.value;
-        document.getElementById("volumeValue")!.textContent = String(val);
-        onVolumeChange(val / 100);
-      },
-    },
-    {
-      type: "range",
-      id: "brightness",
-      label: "Brightness",
-      min: "0",
-      max: "2",
-      step: "0.1",
-      value: toneVal.toString(),
-      span: "brightnessValue",
-      onChange: (e) => {
-        const val = +e.target.value;
-        document.getElementById("brightnessValue")!.textContent = String(val);
-        renderer.toneMappingExposure = val;
-      },
-    },
-  ];
-}
+import { DirectionalLight, ToneMapping } from "three";
+import { GraphicsSettingsParams, GeneralControl } from "../types";
 
 export function makeGraphicsSettings({
   scene,
@@ -92,6 +15,7 @@ export function makeGraphicsSettings({
   const shadowConfg = config.scene.renderer.shadows;
   const lightArr = [lights.fireLight.light, lights.directLight.light];
   const defDist = shadowConfg.defDistance as keyof typeof shadowConfg.distance;
+
   return [
     {
       type: "checkbox",
@@ -240,33 +164,4 @@ export function makeGraphicsSettings({
       },
     },
   ];
-}
-
-export function makeSceneSettings({
-  randomMeshes,
-}: SceneSettingsParams): GeneralControl[] {
-  const spawnable = config.assets.models.spawnable;
-  const arr = [] as GeneralControl[];
-
-  for (const k in spawnable) {
-    const key = k as SpawnableName;
-    const managerRef = randomMeshes[key];
-    arr.push({
-      type: "range",
-      id: `${key}countId`,
-      label: `${key} Count`,
-      min: "1",
-      max: "150",
-      step: "1",
-      value: spawnable[key].spawn.count.toString(),
-      span: `${key}CountValue`,
-      onChange: (e) => {
-        const v = +e.target.value;
-        document.getElementById(`${key}CountValue`)!.textContent = v.toString();
-        spawnable[key].spawn.count = v;
-        spawnMeshes(managerRef);
-      },
-    });
-  }
-  return arr;
 }

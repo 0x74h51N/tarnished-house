@@ -5,7 +5,7 @@ import {
   ParticleSystemRefs,
   FlameProps,
   PointProps,
-} from "@/Systems";
+} from "@/engine";
 import { minMax } from "@/types";
 
 export function createParticleSettings(

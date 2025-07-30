@@ -1,7 +1,7 @@
 import { ManagerRefs } from "@/loaders";
-import { toneMappingMap } from "./settingsData";
 import { Scene, WebGLRenderer } from "three";
-import { LightBundle } from "@/Systems/Lights/types";
+import { LightBundle } from "@/engine/lights/types";
+import { AudioBundle } from "@/types";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,
@@ -42,21 +42,18 @@ export interface SelectControl extends BaseControl<HTMLSelectElement> {
 
 export type GeneralControl = RangeControl | CheckboxControl | SelectControl;
 
-export type ToneMappingKey = keyof typeof toneMappingMap;
-
 export interface SettingsInterface {
   lights: LightBundle;
   renderer: WebGLRenderer;
   randomMeshes: ManagerRefs;
   antialias: boolean;
-  onVolumeChange: (v: number) => void;
+  audio: AudioBundle;
   scene: Scene;
   stats: Stats;
 }
-
 export type GeneralSettingsParams = Pick<
   SettingsInterface,
-  "renderer" | "onVolumeChange"
+  "renderer" | "audio"
 >;
 
 export type GraphicsSettingsParams = Pick<
