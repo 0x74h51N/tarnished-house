@@ -8,8 +8,8 @@ import {
   PointParticlesInterface,
   FlameParticlesInterface,
 } from "./types";
-import { createFlame } from "./FlameParticles/flameParticles";
-import { createPointParticles } from "./PointParticles/pointParticles";
+import { createFlame } from "./flame/flameParticles";
+import { createPointParticles } from "./point/pointParticles";
 
 interface ParticlesCreatorInterface {
   scene: Scene;
@@ -50,3 +50,5 @@ export function particleSystem({
 
   return acc;
 }
+
+export * from "./types";

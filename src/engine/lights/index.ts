@@ -24,3 +24,5 @@ export function createLights(scene: Scene): LightBundle {
     directLight,
   };
 }
+
+export * from "./types";
