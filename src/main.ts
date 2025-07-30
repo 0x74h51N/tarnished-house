@@ -1,6 +1,13 @@
 import Stats from "stats.js";
 import config from "config.json";
-import { intro, credits, settings, createSound } from "./components/";
+import {
+  settings,
+  initIntroModal,
+  hideLoadingScreen,
+  showIntroModal,
+  initCreditsModal,
+  setupToggleButton,
+} from "./components";
 import {
   Scene,
   LoadingManager,
@@ -8,7 +15,6 @@ import {
   CameraHelper,
   Color,
 } from "three";
-import { detectLowEnd } from "./utils";
 
 import { loadAssets, randomMeshes } from "./loaders";
 import {
@@ -16,9 +22,12 @@ import {
   createComposer,
   createLights,
   createRenderer,
+  createSound,
+  detectLowEnd,
   Loop,
   particleSystem,
-} from "./Systems";
+} from "./engine";
+import { AudioBundle } from "./types";
 
 //
 // Mobile Detection & Performance Optimization
@@ -37,16 +46,8 @@ const sizes = {
 };
 
 const scene = new Scene();
-
 const loadingManager = new LoadingManager();
 const texLoader = new TextureLoader(loadingManager);
-
-//
-// Dom Manupulations
-//
-
-intro(loadingManager);
-credits();
 
 //
 // Camera & Orbit Control
@@ -104,15 +105,29 @@ window.addEventListener("resize", () => {
 //
 // Sounds
 //
-const { positionalSound, onVolumeChange } = createSound({
+const { onVolumeChange, positionalSound } = createSound({
   camera,
   loadingManager,
-  toggleButtonId: "sound-toggle-btn",
-  iconId: "sound-toggle-icon",
 });
 
+const { btn, updateIcon } = setupToggleButton();
+let isMuted = true;
+
+btn.addEventListener("click", () => {
+  isMuted = !isMuted;
+  const volume = isMuted ? 0 : config.scene.audio.volume;
+  onVolumeChange(volume);
+  updateIcon(volume);
+});
+
+const audio: AudioBundle = {
+  setVolume: onVolumeChange,
+  updateIcon: updateIcon,
+};
+
 //
-// Assetichus
+// ASSET LOADING
+// Load static models and textures
 //
 loadAssets({
   scene,
@@ -122,17 +137,30 @@ loadAssets({
   texLoader,
 });
 
-//Randommes
+//
+// Randomized mesh placement system (e.g. graves, trees, etc.)
 const managers = randomMeshes({ scene, loadingManager });
 
 //
-//Partichiles
+
+//
+// PARTICLE SYSTEM
+// Initialize flame, smoke, and spark emitters
 //
 const { flame, smoke, sparks } = particleSystem({ scene, texLoader, camera });
 
 //
-//Settingis
+//-----------------Dom Manupulations-----------------
 //
+//
+//SetupGui
+//
+loadingManager.onLoad = () => {
+  hideLoadingScreen();
+  showIntroModal();
+};
+initCreditsModal();
+initIntroModal();
 
 const stats = new Stats();
 stats.showPanel(1);
@@ -142,14 +170,14 @@ let guiLoaded = false;
 window.addEventListener("keydown", async (e) => {
   if (e.key.toLowerCase() === "h" && !guiLoaded) {
     guiLoaded = true;
-    const { setupGUI } = await import("./components/gui/_gui");
-    setupGUI({
+    const { initSetupGUI } = await import("./components");
+    initSetupGUI({
       renderer,
       camera,
       cameraHelper: cameraHelper as CameraHelper,
       randomMeshes: managers,
       antialias,
-      onVolumeChange,
+      audio,
       bloomPass,
       scene,
       lights,
@@ -158,18 +186,25 @@ window.addEventListener("keydown", async (e) => {
   }
 });
 
+//
+//Settingis
+//
 settings({
   lights,
   renderer,
   randomMeshes: managers,
   antialias,
-  onVolumeChange,
+  audio,
   scene,
   stats,
 });
 
+//---------------------------------------------------
+
 //
-// Animatichis
+//
+// Main loop
+// Updates animations & renders frames
 //
 let bloom = config.scene.postProcessing.bloom;
 scene.background = new Color(config.scene.postProcessing.fog.color);
