@@ -6,6 +6,42 @@ I developed the random mesh generation (trees, graves etc.), scene composition, 
 I mostly used ready assets, and the scene is enhanced with GLSL shaders.
 It will keep evolving as I learn more. Maybe it’ll become a small playable Souls-like browser game someday... who knows?
 
+## Structure
+
+```
+├── src
+│   ├── config.json              // Global configuration file
+│   ├── components               // UI-related DOM elements and interaction handlers
+│   │   ├── audio                // Sound toggle button and UI controls
+│   │   ├── devgui               // Developer GUI (debug panels)
+│   │   │   ├── folders
+│   │   ├── settings             // Settings panel and user config management
+│   │   │   ├── data
+│   │   │   └── utils
+│   │   └── ui                   // General UI elements like loading and intro modals
+│   │       ├── credits
+│   │       ├── intro
+│   │       └── loading
+│   ├── engine                   // Core engine logic and rendering
+│   │   ├── audio                // 3D audio system and sound sources
+│   │   │   └── sounds
+│   │   ├── camera               // Camera setup and user controls
+│   │   ├── lights               // Lighting setup including firelight and ambient
+│   │   ├── particles            // Particle systems flame and point particles (smoke, sparks)
+│   │   │   ├── flame
+│   │   │   └── point
+│   │   ├── postprocess          // Post-processing effects like bloom and fog
+│   │   └── renderer             // Render loop and WebGL renderer creation
+│   ├── loaders                  // Asset loaders for models, textures, and placement (random or static)
+│   │   └── utils
+│   ├── main.ts                  // Main entry point
+│   ├── types.ts                 // Shared TypeScript types
+│   └── utils                    // General utilities and helpers
+├── tsconfig.json
+└── vite.config.ts
+
+```
+
 ## Credits
 
 - **Bushes**

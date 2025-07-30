@@ -14,7 +14,7 @@ export default defineConfig(() => {
       alias: {
         "@": path.resolve(__dirname, "src"),
         components: path.resolve(__dirname, "src/components"),
-        "config.json": path.resolve(__dirname, "./config.json"),
+        "config.json": path.resolve(__dirname, "src/config.json"),
       },
     },
     server: {
