@@ -8,17 +8,11 @@ import {
   initCreditsModal,
   setupToggleButton,
 } from "./components";
-import {
-  Scene,
-  LoadingManager,
-  TextureLoader,
-  CameraHelper,
-  Color,
-} from "three";
+import { Scene, LoadingManager, TextureLoader, Color } from "three";
 
 import { loadAssets, randomMeshes } from "./loaders";
 import {
-  createCameraSystem,
+  CameraController,
   createComposer,
   createLights,
   createRenderer,
@@ -46,18 +40,19 @@ const sizes = {
 };
 
 const scene = new Scene();
+scene.background = new Color(config.scene.postProcessing.fog.color);
+
 const loadingManager = new LoadingManager();
 const texLoader = new TextureLoader(loadingManager);
 
 //
 // Camera & Orbit Control
 //
-const { camera, cameraHelper, controls, clampCameraPosition } =
-  createCameraSystem({
-    scene,
-    canvas,
-    sizes,
-  });
+const CamController = CameraController({
+  scene,
+  canvas,
+  sizes,
+});
 
 //
 // Lights
@@ -78,7 +73,7 @@ const renderer = createRenderer({ sizes, canvas, antialias });
 const { composer, bloomPass } = createComposer({
   renderer,
   scene,
-  camera,
+  camera: CamController.camera,
 });
 
 //
@@ -88,8 +83,8 @@ window.addEventListener("resize", () => {
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
 
-  camera.aspect = sizes.width / sizes.height;
-  camera.updateProjectionMatrix();
+  CamController.camera.aspect = sizes.width / sizes.height;
+  CamController.camera.updateProjectionMatrix();
 
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -101,12 +96,11 @@ window.addEventListener("resize", () => {
   smoke.updtScreen();
   sparks.updtScreen();
 });
-
 //
 // Sounds
 //
 const { onVolumeChange, positionalSound } = createSound({
-  camera,
+  camera: CamController.camera,
   loadingManager,
 });
 
@@ -147,7 +141,11 @@ const managers = randomMeshes({ scene, loadingManager });
 // PARTICLE SYSTEM
 // Initialize flame, smoke, and spark emitters
 //
-const { flame, smoke, sparks } = particleSystem({ scene, texLoader, camera });
+const { flame, smoke, sparks } = particleSystem({
+  scene,
+  texLoader,
+  camera: CamController.camera,
+});
 
 //
 //-----------------Dom Manupulations-----------------
@@ -173,8 +171,7 @@ window.addEventListener("keydown", async (e) => {
     const { initSetupGUI } = await import("./components");
     initSetupGUI({
       renderer,
-      camera,
-      cameraHelper: cameraHelper as CameraHelper,
+      CamController,
       randomMeshes: managers,
       antialias,
       audio,
@@ -197,6 +194,7 @@ settings({
   audio,
   scene,
   stats,
+  camPositioner: CamController.positioner,
 });
 
 //---------------------------------------------------
@@ -207,13 +205,14 @@ settings({
 // Updates animations & renders frames
 //
 let bloom = config.scene.postProcessing.bloom;
-scene.background = new Color(config.scene.postProcessing.fog.color);
-const loop = new Loop();
-loop.addUpdate((delta, elapsed) => {
-  controls.update();
-  clampCameraPosition();
 
-  camera.updateMatrix();
+const loop = new Loop();
+
+loop.addUpdate((delta, elapsed) => {
+  CamController.controls.update();
+  CamController.clampCameraPosition();
+
+  CamController.camera.updateMatrix();
 
   sparks.step(delta);
   flame.step(delta);
@@ -221,13 +220,16 @@ loop.addUpdate((delta, elapsed) => {
 
   lights.fireLight.animator.update(elapsed);
 });
+
 loop.addRender(() => {
   stats.begin();
+
   if (bloom.enabled && !composer.passes.includes(bloomPass)) {
     composer.addPass(bloomPass);
   } else if (!bloom.enabled) {
     composer.removePass(bloomPass);
   }
+
   composer.render();
 
   stats.end();

@@ -26,12 +26,12 @@
       }
     },
     "renderer": {
-      "toneMapping": "ACESFilmic",
+      "toneMapping": "ACES Filmic",
       "toneMappingExposure": 0.5,
       "maxPixelRatio": 2,
       "shadows": {
         "enabled": true,
-        "type": "PCFSoftShadowMap",
+        "type": "PCFSoft",
         "defMapSize": 512,
         "defDistance": "three",
         "mapSizes": [256, 512, 1024, 2048, 4096],
@@ -174,7 +174,7 @@
         "spawn": {
           "count": 10,
           "radius": {
-            "min": 7,
+            "min": 9,
             "max": 35
           }
         }
@@ -183,7 +183,7 @@
         "spawn": {
           "count": 30,
           "radius": {
-            "min": 8,
+            "min": 10,
             "max": 30
           }
         }
@@ -198,30 +198,6 @@
         }
       }
     }
-  },
-  "options": {
-    "toneMappingTypes": [
-      {
-        "value": "NoToneMapping",
-        "text": "None"
-      },
-      {
-        "value": "LinearToneMapping",
-        "text": "Linear"
-      },
-      {
-        "value": "ReinhardToneMapping",
-        "text": "Reinhard"
-      },
-      {
-        "value": "CineonToneMapping",
-        "text": "Cineon"
-      },
-      {
-        "value": "ACESFilmicToneMapping",
-        "text": "ACES"
-      }
-    ]
   },
   "assets": {
     "decoder": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
@@ -425,5 +401,9 @@
       "texture": "/moon.jpg",
       "emissive": "/moon-emissive.jpg"
     }
+  },
+  "settings": {
+    "targetPos": { "x": 0.46, "y": -1.7, "z": -7.68 },
+    "cameraPos": { "x": -32, "y": 15.2, "z": -14.41 }
   }
 }

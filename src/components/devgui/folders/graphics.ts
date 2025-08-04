@@ -4,7 +4,7 @@ import { shadowDispose } from "../../../utils";
 import config from "config.json";
 import GUI from "lil-gui";
 import { LightBundle } from "@/engine";
-import { toneMappingMap, shadowTypes } from "@/types";
+import { toneMappingMap, shadowTypes, ToneMappingKey } from "@/types";
 
 export function createGraphicsSettings(
   gui: GUI,
@@ -43,7 +43,7 @@ export function createGraphicsSettings(
     .add(graphicsParams, "toneMapping", Object.keys(toneMappingMap))
     .name("Tone Mapping")
     .onChange((v: string) => {
-      renderer.toneMapping = toneMappingMap[v as keyof typeof toneMappingMap];
+      renderer.toneMapping = toneMappingMap[v as ToneMappingKey];
       renderer.toneMappingExposure = graphicsParams.toneMappingExposure || 1;
     });
 

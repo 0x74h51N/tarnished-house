@@ -69,7 +69,7 @@ body {
   opacity: 1;
   pointer-events: all;
   transition: opacity 0.4s;
-  z-index: 10010;
+  z-index: 1010;
 }
 
 .loader {
@@ -167,15 +167,19 @@ body {
 }
 
 /* Decorative Corners */
-.btn-container::before,
-.btn-container::after,
 .modal-content-wrapper::before,
-.modal-content-wrapper::after {
+.modal-content-wrapper::after,
+.btn-container::before,
+.btn-container::after {
   content: "";
   position: absolute;
   background: url("../static/corner.svg") no-repeat center/contain;
   pointer-events: none;
   z-index: 150;
+}
+
+#settings-modal .modal-content-wrapper::after {
+  content: none !important;
 }
 
 .modal-content-wrapper::before,
@@ -216,7 +220,6 @@ body {
 /* Modal Wrapper & Content */
 .modal-content-wrapper {
   position: relative;
-  border-radius: 18px;
 }
 .modal-content {
   background: var(--color-bg-modal);
@@ -233,8 +236,21 @@ body {
   z-index: 2;
 }
 
+.inner-content {
+  background: var(--color-bg-modal);
+  border: 1.5px solid var(--color-gold-soft);
+  border-radius: 10px;
+  color: var(--color-text);
+  box-shadow: 0 2px 10px var(--color-shadow-card);
+  font-size: 1.3rem;
+  text-align: center;
+  font-family: "IM Fell English SC", serif;
+  font-weight: 200;
+  letter-spacing: 0.5px;
+}
+
 /* Headings */
-.modal-inner h2,
+.modal-content h2,
 .project-title {
   font-family: "UnifrakturCook", cursive;
   font-size: 2.3rem;
@@ -246,42 +262,24 @@ body {
 }
 
 /* Project Info */
-.project-info {
-  background: var(--color-bg-modal);
-  border: 1.5px solid var(--color-gold-soft);
-  border-radius: 10px;
-  color: var(--color-text);
-  box-shadow: 0 2px 10px var(--color-shadow-card);
+
+.credits-content {
   padding: 4rem 10rem;
   margin-bottom: 2rem;
-  font-size: 1.3rem;
-  text-align: center;
-  font-family: "IM Fell English SC", serif;
-  font-weight: 200;
-  letter-spacing: 0.5px;
-}
-.project-info strong,
-.asset-card strong {
-  color: var(--color-gold);
-  font-weight: 700;
-}
-.project-info em {
-  font-style: italic;
-  color: var(--color-gold);
-}
-.project-info .license-normal {
-  font-size: 0.7rem;
-  color: var(--color-text);
-}
-.project-info a,
-.asset-list a {
-  color: var(--color-gold);
-  text-decoration: underline;
-  transition: color 0.2s;
-}
-.project-info a:hover,
-.asset-list a:hover {
-  color: var(--color-text);
+
+  strong,
+  .asset-card strong {
+    color: var(--color-gold);
+    font-weight: 700;
+  }
+  em {
+    font-style: italic;
+    color: var(--color-gold);
+  }
+  .license-normal {
+    font-size: 0.7rem;
+    color: var(--color-text);
+  }
 }
 
 /* Asset List & Cards */
@@ -292,6 +290,14 @@ body {
   display: grid;
   gap: 1.2rem;
   grid-template-columns: 1fr 1fr;
+  a {
+    color: var(--color-gold);
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+  a:hover {
+    color: var(--color-text);
+  }
 }
 .asset-card {
   background: var(--color-bg-modal);
@@ -304,13 +310,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-}
-.asset-card .asset-author,
-.asset-card .asset-license,
-.asset-card .asset-source {
-  color: var(--color-text);
-  font-size: 0.8em;
-  margin-left: 0.2em;
+
+  .asset-author,
+  .asset-license,
+  .asset-source {
+    color: var(--color-text);
+    font-size: 0.8em;
+    margin-left: 0.2em;
+  }
 }
 
 /* Tooltip */
@@ -387,63 +394,94 @@ body {
 }
 
 /* Settings Panel */
-#settings label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  cursor: pointer;
-  margin-bottom: 1.2rem;
+#settings-modal {
+  background: none !important;
+  .hidden {
+    display: none;
+    opacity: 0;
+  }
+  .active {
+    display: block;
+    opacity: 1;
+  }
+
+  .modal-content {
+    box-sizing: border-box;
+    min-height: 100dvh !important;
+    border-radius: 0px !important;
+    display: flex;
+    flex-direction: column;
+    padding: 2.2rem 1.5rem 0.5rem;
+
+    h2 {
+      margin-bottom: 0.4rem;
+    }
+  }
 }
-#settings label:has(input[type="checkbox"]) {
-  justify-content: flex-start;
-  gap: 10px;
+
+@media (min-width: 450px) {
+  #settings-modal {
+    position: absolute !important;
+    width: unset !important;
+    height: unset !important;
+    align-items: start;
+    justify-content: start;
+  }
 }
-#settings input[type="range"] {
-  flex: 1;
-  margin-left: 10px;
-  accent-color: var(--color-gold);
-}
-#settings input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--color-gold);
-}
-#settings select {
-  background: var(--color-bg-dark);
-  color: var(--color-gold);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 1rem;
-  width: 104px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffd700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 6px center;
-  background-size: 16px;
-  padding-right: 28px;
-}
-#settings select option {
-  background: var(--color-bg-dark);
-  color: var(--color-gold);
-}
-#settings span {
-  min-width: 32px;
-  display: inline-block;
-  text-align: right;
-  color: var(--color-gold);
-  font-weight: bold;
-}
-#settings-modal.hidden {
-  display: none;
-  opacity: 0;
-}
-#settings-modal.active {
-  display: flex;
-  opacity: 1;
+
+.settings-content {
+  padding: 2.8rem;
+  height: 100vh;
+  label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 1.2rem;
+  }
+  label:has(input[type="checkbox"]) {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  input[type="range"] {
+    flex: 1;
+    margin-left: 10px;
+    accent-color: var(--color-gold);
+  }
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-gold);
+  }
+  select {
+    background: var(--color-bg-dark);
+    color: var(--color-gold);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 1rem;
+    width: 104px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffd700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 16px;
+    padding-right: 28px;
+  }
+  select option {
+    background: var(--color-bg-dark);
+    color: var(--color-gold);
+  }
+  span {
+    min-width: 32px;
+    display: inline-block;
+    text-align: right;
+    color: var(--color-gold);
+    font-weight: bold;
+  }
 }
 
 /* Responsive Breakpoints */
@@ -488,11 +526,11 @@ body {
     padding: 2rem 1.5rem 1.5rem;
     max-height: 87svh;
   }
-  .modal-inner h2,
+  .modal-content h2,
   .project-title {
     font-size: 1.8rem;
   }
-  .project-info {
+  .credits-content {
     padding: 2rem 4rem;
     font-size: 1.1rem;
   }
@@ -518,34 +556,40 @@ body {
     justify-content: center;
   }
 
-  #settings label {
-    font-size: 0.95rem;
-    padding: 0.3rem 0;
+  #settings-modal .modal-content {
   }
 
-  #settings input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
+  #settings {
+    label {
+      font-size: 0.95rem;
+      padding: 0.3rem 0;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+    }
+    select {
+      font-size: 0.9rem;
+      width: 100px;
+      background-position: right 4px center;
+      background-size: 14px;
+    }
+    .control-label {
+      padding: 0;
+      margin-bottom: 0.4rem;
+    }
+    .range-control {
+      flex-wrap: wrap;
+    }
+    .range-control input[type="range"] {
+      margin: 0.5rem 0;
+    }
+    .range-value {
+      margin-left: auto;
+    }
   }
-  #settings select {
-    font-size: 0.9rem;
-    width: 100px;
-    background-position: right 4px center;
-    background-size: 14px;
-  }
-  #settings .control-label {
-    padding: 0;
-    margin-bottom: 0.4rem;
-  }
-  #settings .range-control {
-    flex-wrap: wrap;
-  }
-  #settings .range-control input[type="range"] {
-    margin: 0.5rem 0;
-  }
-  #settings .range-value {
-    margin-left: auto;
-  }
+
   /* Loader Mobile */
   .loading-text {
     font-size: 1.5rem;
@@ -555,6 +599,7 @@ body {
     width: 35px;
     height: 35px;
   }
+
   /* Touch Targets & Scrolling */
   button,
   .btn,
@@ -570,6 +615,7 @@ body {
     -webkit-overflow-scrolling: touch;
   }
 }
+
 #sound-toggle-icon {
   width: 20px;
   user-select: none;
@@ -583,7 +629,7 @@ body {
     width: 85vw;
   }
 
-  .project-info {
+  .credits-content {
     padding: 1.5rem 1rem;
     font-size: 1rem;
   }
@@ -623,7 +669,7 @@ body {
     height: 100px;
   }
 
-  .modal-inner h2,
+  .modal-content h2,
   .project-title {
     font-size: 1.5rem;
   }

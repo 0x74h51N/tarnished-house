@@ -30,8 +30,7 @@ const createParams = () => ({
 
 export function initSetupGUI({
   renderer,
-  camera,
-  cameraHelper,
+  CamController,
   randomMeshes,
   antialias,
   audio,
@@ -75,7 +74,8 @@ export function initSetupGUI({
 
   createSceneSettings(gui, randomMeshes);
 
-  createCameraSettings(gui, scene, camera, cameraHelper);
+  const { camera, cameraHelper } = CamController;
+  createCameraSettings(gui, scene, camera, cameraHelper!);
 
   createParticleSettings(gui, particleSystems);
 

@@ -1,3 +1,4 @@
-export { shadowDispose } from "./shadowDispose";
+export * from "./shadowDispose";
 export * from "./typeHelpers";
-export { createGuiUpdater } from "./guiUpdate";
+export * from "./guiUpdate";
+export * from "./helpers";

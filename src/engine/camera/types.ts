@@ -1,4 +1,4 @@
-import { CameraHelper, PerspectiveCamera, Scene } from "three";
+import { CameraHelper, PerspectiveCamera, Scene, Vector3 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons";
 
 export interface CameraOptions {
@@ -27,6 +27,24 @@ export interface ClampRtrn {
   clampCameraPosition: () => void;
 }
 
+export interface CameraPositionerInterface {
+  camera: PerspectiveCamera;
+  controls: OrbitControls;
+}
+
+export interface PositionArgs {
+  targetPos: Vector3;
+  cameraPos: Vector3;
+}
+
+export interface CameraPositionerReturn {
+  setPosition: (args: PositionArgs) => void;
+  restorePosition: () => void;
+}
+export type CamPositionerFn = ({
+  camera,
+  controls,
+}: CameraPositionerInterface) => CameraPositionerReturn;
 export interface CameraSystemOptions {
   scene: Scene;
   canvas: HTMLCanvasElement;
@@ -36,4 +54,6 @@ export interface CameraSystemOptions {
 export interface CameraSystemReturn
   extends CameraReturn,
     ControlReturn,
-    ClampRtrn {}
+    ClampRtrn {
+  positioner: CameraPositionerReturn;
+}

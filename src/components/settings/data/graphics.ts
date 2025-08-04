@@ -1,8 +1,13 @@
 import { fog } from "@/engine/postprocess/fog";
-import { shadowTypes, toneMappingMap } from "@/types";
+import {
+  ShadowTypeKey,
+  shadowTypes,
+  ToneMappingKey,
+  toneMappingMap,
+} from "@/types";
 import { shadowDispose } from "@/utils";
 import config from "config.json";
-import { DirectionalLight, ToneMapping } from "three";
+import { DirectionalLight } from "three";
 import { GraphicsSettingsParams, GeneralControl } from "../types";
 
 export function makeGraphicsSettings({
@@ -30,7 +35,7 @@ export function makeGraphicsSettings({
     {
       type: "checkbox",
       id: "antialiasing",
-      label: "Antialiasing",
+      label: "Antialiasing (will restart)",
       checked: antialias,
       onChange: (e) => {
         localStorage.setItem("antialias", String(e.target.checked));
@@ -136,14 +141,12 @@ export function makeGraphicsSettings({
       options: Object.entries(shadowTypes).map(([k]) => ({
         v: k,
         t: k,
-        s:
-          renderer.shadowMap.type ===
-          shadowTypes[k as keyof typeof shadowTypes],
+        s: renderer.shadowMap.type === shadowTypes[k as ShadowTypeKey],
       })),
       onChange: (e) => {
-        const key = e.target.value as keyof typeof shadowTypes;
+        const v = e.target.value as ShadowTypeKey;
         shadowDispose(lightArr);
-        renderer.shadowMap.type = shadowTypes[key];
+        renderer.shadowMap.type = shadowTypes[v];
         renderer.shadowMap.needsUpdate = true;
       },
     },
@@ -151,16 +154,14 @@ export function makeGraphicsSettings({
       type: "select",
       id: "toneMapping",
       label: "Tone Mapping",
-      options: config.options.toneMappingTypes.map((o) => ({
-        v: o.value,
-        t: o.text,
-        s:
-          renderer.toneMapping ==
-          toneMappingMap[o.value as keyof typeof toneMappingMap],
+      options: Object.entries(toneMappingMap).map(([k]) => ({
+        v: k,
+        t: k,
+        s: renderer.toneMapping == toneMappingMap[k as ToneMappingKey],
       })),
       onChange: (e) => {
-        const value = e.target!.value as keyof typeof toneMappingMap;
-        renderer.toneMapping = toneMappingMap[value] as ToneMapping;
+        const v = e.target!.value as ToneMappingKey;
+        renderer.toneMapping = toneMappingMap[v];
       },
     },
   ];

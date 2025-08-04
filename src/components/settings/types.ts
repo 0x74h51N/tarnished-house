@@ -1,7 +1,7 @@
 import { ManagerRefs } from "@/loaders";
 import { Scene, WebGLRenderer } from "three";
-import { LightBundle } from "@/engine/lights/types";
 import { AudioBundle } from "@/types";
+import { CameraPositionerReturn, LightBundle } from "@/engine";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,
@@ -50,6 +50,7 @@ export interface SettingsInterface {
   audio: AudioBundle;
   scene: Scene;
   stats: Stats;
+  camPositioner: CameraPositionerReturn;
 }
 export type GeneralSettingsParams = Pick<
   SettingsInterface,

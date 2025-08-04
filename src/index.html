@@ -26,9 +26,7 @@
       <div class="modal-content-wrapper">
         <div class="modal-content">
           <span id="close-intro" class="close-modal">&times;</span>
-          <div class="modal-inner">
-            <p id="intro-text"></p>
-          </div>
+          <p id="intro-text"></p>
         </div>
       </div>
     </div>
@@ -43,10 +41,8 @@
       <div class="modal-content-wrapper">
         <div class="modal-content">
           <span id="close-settings" class="close-modal">&times;</span>
-          <div class="modal-inner">
-            <h2>Settings</h2>
-            <div class="project-info" id="settings"></div>
-          </div>
+          <h2>Settings</h2>
+          <div class="inner-content settings-content" id="settings"></div>
         </div>
       </div>
     </div>
@@ -54,38 +50,36 @@
       <div class="modal-content-wrapper">
         <div class="modal-content">
           <span id="close-credits" class="close-modal">&times;</span>
-          <div class="modal-inner">
-            <h2>Credits</h2>
-            <div class="project-info">
-              <p id="credits-text"></p>
-              <div class="credits-footer" id="credits-footer">
-                <span class="license-normal"
-                  >GNU General Public License (GPL)</span
+          <h2>Credits</h2>
+          <div class="inner-content credits-content">
+            <p id="credits-text"></p>
+            <div class="credits-footer" id="credits-footer">
+              <span class="license-normal"
+                >GNU General Public License (GPL)</span
+              >
+              <div class="logos">
+                <a
+                  href="https://github.com/0x74h51N/tarnished-house"
+                  target="_blank"
+                  class="tooltip"
                 >
-                <div class="logos">
-                  <a
-                    href="https://github.com/0x74h51N/tarnished-house"
-                    target="_blank"
-                    class="tooltip"
-                  >
-                    <img src="./github.svg" alt="Github Repo" />
-                    <span class="tooltiptext">Source Code</span>
-                  </a>
-                  <br />
-                  <a
-                    href="https://crunchypix.com"
-                    target="_blank"
-                    class="tooltip"
-                  >
-                    <img src="./web.svg" alt="Webpage" height="40px" />
-                    <span class="tooltiptext">Creator Webpage</span>
-                  </a>
-                </div>
+                  <img src="./github.svg" alt="Github Repo" />
+                  <span class="tooltiptext">Source Code</span>
+                </a>
+                <br />
+                <a
+                  href="https://crunchypix.com"
+                  target="_blank"
+                  class="tooltip"
+                >
+                  <img src="./web.svg" alt="Webpage" height="40px" />
+                  <span class="tooltiptext">Creator Webpage</span>
+                </a>
               </div>
             </div>
-            <h2 style="margin-top: 2rem">Assets</h2>
-            <ul class="asset-list" id="asset-list"></ul>
           </div>
+          <h2 style="margin-top: 2rem">Assets</h2>
+          <ul class="asset-list" id="asset-list"></ul>
         </div>
       </div>
     </div>

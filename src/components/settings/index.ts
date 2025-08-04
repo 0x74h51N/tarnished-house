@@ -5,8 +5,9 @@ import {
   makeGraphicsSettings,
   makeSceneSettings,
 } from "./data";
-import { controlRenderer } from "./utils/controlRenderer";
+import { inputRender } from "./inputRender";
 import { SettingsInterface } from "./types";
+import { settingModalController } from "./controller";
 
 export function settings({
   lights,
@@ -16,10 +17,12 @@ export function settings({
   audio,
   scene,
   stats,
+  camPositioner,
 }: SettingsInterface) {
   const settingsDiv = document.getElementById("settings");
 
-  //Controllers
+  //----------------------- Settings Menu -----------------------
+  //Input Controllers
   const controls = makeGeneralSettings({ renderer, audio });
   const graphics = makeGraphicsSettings({
     lights,
@@ -30,37 +33,23 @@ export function settings({
   });
   const sceneOpts = makeSceneSettings({ randomMeshes });
 
-  //Settings controllers dom penetration!
+  // Input Controllers Dom penetration!
   settingsDiv!.innerHTML =
-    controls.map((c) => controlRenderer(c)).join("") +
+    controls.map((c) => inputRender(c)).join("") +
     "<h3>Graphics</h3>" +
-    graphics.map((c) => controlRenderer(c)).join("") +
+    graphics.map((c) => inputRender(c)).join("") +
     "<h3>Scene</h3>" +
-    sceneOpts.map((c) => controlRenderer(c)).join("") +
+    sceneOpts.map((c) => inputRender(c)).join("") +
     "<br /><em>Secrets lie beneath<br />Should thy fingers recall<br />the first glyph of help twice</em>";
 
-  //Event listeners
+  //Input Event listeners
   [...controls, ...graphics, ...sceneOpts].forEach((c) => {
     const el = document.getElementById(c.id)!;
     const evt = c.type === "range" ? "input" : "change";
     el.addEventListener(evt, c.onChange as EventListener);
   });
+  //----------------------------------------------
 
-  //Settings Button Slapper
-  const toggleBtn = document.getElementById("settings-btn");
-  const modal = document.getElementById("settings-modal");
-  const closeBtn = document.getElementById("close-settings");
-
-  const hideModal = () => {
-    modal!.classList.remove("active");
-    setTimeout(() => modal!.classList.add("hidden"), 200);
-  };
-  toggleBtn!.addEventListener("click", () => {
-    modal!.classList.remove("hidden");
-    setTimeout(() => modal!.classList.add("active"), 100);
-  });
-  closeBtn!.addEventListener("click", hideModal);
-  modal!.addEventListener("click", (e) => {
-    if (e.target === modal) hideModal();
-  });
+  //Settings Modal Button Slapper
+  settingModalController({ camPositioner });
 }
