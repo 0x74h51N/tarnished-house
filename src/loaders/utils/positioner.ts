@@ -7,11 +7,10 @@ type Positioner = (i: number, mesh: Mesh) => void;
 // avoiding overlap using a minimum distance threshold if provided.
 export function createPositioner(opts: SpawnOptions): Positioner {
   const placedPositions: [number, number][] = [];
+  const { count, radius, scale, minDistance = 0, yPosition = 0 } = opts;
+  const nScale = scale.min + Math.random() * (scale.max - scale.min);
 
   return (i: number, mesh: Mesh) => {
-    const { count, radius, scale, minDistance = 0, yPosition = 0 } = opts;
-    const nScale = scale.min + Math.random() * (scale.max - scale.min);
-
     mesh.scale.setScalar(nScale);
 
     mesh.position.set(0, 0, 0);

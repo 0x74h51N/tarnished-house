@@ -201,42 +201,49 @@ export function createPointParticles({
   const guiHandlers: {
     [K in UpdateKey]?: (value: UpdateValue<K>) => void;
   } = {
-    spawnRate: (value) => {
-      spawnRate = value;
+    spawnRate: (v) => {
+      spawnRate = v;
     },
-    area: (value) => {
-      area = value;
+
+    area: (v) => {
+      area = v;
     },
-    speed: (value) => {
-      speed = value!;
+
+    speed: (v) => {
+      speed = v!;
     },
-    "sparkProps.elevDivs": (value) => {
-      elevDivs = { ...value };
+
+    "sparkProps.elevDivs": (v) => {
+      elevDivs = { ...v };
     },
 
     // --- ATTRIBUTES (CPU + flag) ---
-    size: (value) => {
-      size = value;
-      sizeArr.fill(value);
+    size: (v) => {
+      size = v;
+      sizeArr.fill(v);
       markAttrFlags(mainGeo, ["size"]);
     },
-    sizeGrowth: (value) => {
-      sizeGrowth = value!;
-      growthArr.fill(value!);
+
+    sizeGrowth: (v) => {
+      sizeGrowth = v!;
+      growthArr.fill(v!);
       markAttrFlags(mainGeo, ["sizeGrowth"]);
     },
-    fadeRate: (value) => {
-      fadeRate = value!;
-      fadeArr.fill(value!);
+
+    fadeRate: (v) => {
+      fadeRate = v!;
+      fadeArr.fill(v!);
       markAttrFlags(mainGeo, ["fadeRate"]);
     },
-    opacity: (value) => {
-      opacity = value!;
-      for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = value!;
+
+    opacity: (v) => {
+      opacity = v!;
+      for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = v!;
       markAttrFlags(mainGeo, ["colour"]);
     },
-    color: (value) => {
-      const c = new Color(value as string);
+
+    color: (v) => {
+      const c = new Color(v);
       clr.copy(c);
       for (let i = 0; i < maxCount; i++) {
         const i4 = i * 4;
@@ -248,14 +255,16 @@ export function createPointParticles({
     },
 
     // --- UNIFORMS ---
-    scaleFactor: (value) => {
-      cUniforms.u_scale.value = value;
+    scaleFactor: (v) => {
+      cUniforms.u_scale.value = v;
     },
-    "sparkProps.damping": (value) => {
-      cUniforms.u_damping.value = value;
+
+    "sparkProps.damping": (v) => {
+      cUniforms.u_damping.value = v;
     },
-    "sparkProps.stretchFact": (value) => {
-      cUniforms.u_stretch.value = value;
+
+    "sparkProps.stretchFact": (v) => {
+      cUniforms.u_stretch.value = v;
     },
   };
 

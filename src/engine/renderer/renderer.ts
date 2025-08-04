@@ -1,10 +1,11 @@
-import {
-  ACESFilmicToneMapping,
-  PCFSoftShadowMap,
-  SRGBColorSpace,
-  WebGLRenderer,
-} from "three";
+import { SRGBColorSpace, WebGLRenderer } from "three";
 import config from "config.json";
+import {
+  ShadowTypeKey,
+  shadowTypes,
+  ToneMappingKey,
+  toneMappingMap,
+} from "@/types";
 
 interface RendererInterface {
   sizes: { width: number; height: number };
@@ -17,20 +18,29 @@ export function createRenderer({
   canvas,
   antialias,
 }: RendererInterface): WebGLRenderer {
+  const rendererConfg = config.scene.renderer;
+
   const renderer = new WebGLRenderer({
     canvas: canvas,
     antialias: antialias,
     context: canvas.getContext("webgl2") as WebGL2RenderingContext,
     alpha: true,
   });
+
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, config.scene.renderer.maxPixelRatio)
+    Math.min(window.devicePixelRatio, rendererConfg.maxPixelRatio)
   );
-  renderer.shadowMap.enabled = config.scene.renderer.shadows.enabled;
-  renderer.shadowMap.type = PCFSoftShadowMap;
-  renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.toneMappingExposure = config.scene.renderer.toneMappingExposure;
+
+  renderer.shadowMap.enabled = rendererConfg.shadows.enabled;
+
+  renderer.shadowMap.type =
+    shadowTypes[rendererConfg.shadows.type as ShadowTypeKey];
+
+  renderer.toneMapping =
+    toneMappingMap[rendererConfg.toneMapping as ToneMappingKey];
+
+  renderer.toneMappingExposure = rendererConfg.toneMappingExposure;
   renderer.outputColorSpace = SRGBColorSpace;
 
   return renderer;

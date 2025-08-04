@@ -1,21 +1,12 @@
-import {
-  WebGLRenderer,
-  CameraHelper,
-  PerspectiveCamera,
-  Scene,
-  AxesHelper,
-  GridHelper,
-} from "three";
+import { WebGLRenderer, Scene, AxesHelper, GridHelper } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { ManagerRefs } from "@/loaders";
-import { LightBundle } from "@/engine/lights/types";
-import { ParticleSystemRefs } from "@/engine";
+import { CameraSystemReturn, LightBundle, ParticleSystemRefs } from "@/engine";
 import { AudioBundle } from "@/types";
 
 export interface SetupGUIInterface {
   renderer: WebGLRenderer;
-  camera: PerspectiveCamera;
-  cameraHelper: CameraHelper;
+  CamController: CameraSystemReturn;
   randomMeshes: ManagerRefs;
   antialias: boolean;
   audio: AudioBundle;

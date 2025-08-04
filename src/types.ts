@@ -9,7 +9,6 @@ import {
   ReinhardToneMapping,
   VSMShadowMap,
 } from "three";
-import { CreateSoundReturn } from "./engine/audio/types";
 
 //
 // Min max value slapper type
@@ -31,11 +30,11 @@ export type ShadowTypeValue = ShadowTypeMap[ShadowTypeKey];
 //
 // ToneMapping types map
 export const toneMappingMap = {
-  NoToneMapping,
-  LinearToneMapping,
-  ReinhardToneMapping,
-  CineonToneMapping,
-  ACESFilmicToneMapping,
+  None: NoToneMapping,
+  Linear: LinearToneMapping,
+  Reinhard: ReinhardToneMapping,
+  Cineon: CineonToneMapping,
+  "ACES Filmic": ACESFilmicToneMapping,
 } as const;
 
 export type ToneMappingMap = typeof toneMappingMap;
