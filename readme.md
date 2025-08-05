@@ -1,10 +1,19 @@
 # Tarnished House
 
-While the original idea was inspired by the Three.js Journey Haunted House lesson,
-I developed the random mesh generation (trees, graves etc.), scene composition, object/texture optimization, particles (flame, smoke, sparks), UI design, and modular structure.
+Procedural haunted scene built with Three.js, TypeScript & GLSL featuring random mesh generation, optimized assets, custom particle effects, and basic mobile support.
 
-I mostly used ready assets, and the scene is enhanced with GLSL shaders.
-It will keep evolving as I learn more. Maybe it’ll become a small playable Souls-like browser game someday... who knows?
+## Overview
+
+- **Procedural Generation**  
+  Trees, graves and props are placed at randomly.
+- **Custom Shaders**  
+  Fire, smoke and spark systems plus post-processing (bloom, fog) powered by GLSL.
+- **Responsive UI**  
+  Real-time controls to scene options as like graphic settings, effects or random mesh counts.
+- **Live Project**  
+  Under active development, applying new learnings, performance tuning, and maybe pychic engine and playable features.
+
+While the original idea was inspired by the Three.js Journey Haunted House lesson, I built everything else from scratch: random mesh placement, scene composition, asset optimization, particle systems (flame, smoke, sparks), UI design and more. I’ll keep evolving this project as I learn and who knows, it might turn into a small playable browser Souls-like game someday...
 
 ## Structure
 
@@ -43,6 +52,10 @@ It will keep evolving as I learn more. Maybe it’ll become a small playable Sou
 ```
 
 ## Credits
+
+This project is licensed under GPL-3.0. See [license](./LICENSE).
+
+### Resource Library
 
 - **Bushes**
 
