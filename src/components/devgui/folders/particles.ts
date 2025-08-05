@@ -32,29 +32,29 @@ export function createParticleSettings(
   flameFolder
     .add(flameParams, "size", 0.1, 3, 0.01)
     .name("Size")
-    .onChange((value: number) => {
-      particleSystems.flame!.update("size", value);
+    .onChange((v: number) => {
+      particleSystems.flame!.update("size", v);
     });
 
   flameFolder
     .add(flameParams, "speed", 0.1, 10, 0.1)
     .name("Speed")
-    .onChange((value: number) => {
-      particleSystems.flame!.update("speed", value);
+    .onChange((v: number) => {
+      particleSystems.flame!.update("speed", v);
     });
 
   flameFolder
     .addColor(flameParams, "color")
     .name("Color")
-    .onChange((value: string) => {
-      particleSystems.flame!.update("color", value);
+    .onChange((v: string) => {
+      particleSystems.flame!.update("color", v);
     });
 
   flameFolder
     .add(flameParams, "colorMixStr", 0, 1, 0.01)
     .name("Color Mix Strength")
-    .onChange((value: number) => {
-      particleSystems.flame!.update("colorMixStr", value);
+    .onChange((v: number) => {
+      particleSystems.flame!.update("colorMixStr", v);
     });
 
   const flamePositionFolder = flameFolder.addFolder("Position");
@@ -63,24 +63,24 @@ export function createParticleSettings(
   flamePositionFolder
     .add(flameParams.startPozs, "x", -5, 5, 0.01)
     .name("X Position")
-    .onChange((value: number) => {
-      const newPos = { ...flameParams.startPozs, x: value };
+    .onChange((v: number) => {
+      const newPos = { ...flameParams.startPozs, x: v };
       particleSystems.flame!.update("startPozs", newPos);
     });
 
   flamePositionFolder
     .add(flameParams.startPozs, "y", 0, 3, 0.01)
     .name("Y Position")
-    .onChange((value: number) => {
-      const newPos = { ...flameParams.startPozs, y: value };
+    .onChange((v: number) => {
+      const newPos = { ...flameParams.startPozs, y: v };
       particleSystems.flame!.update("startPozs", newPos);
     });
 
   flamePositionFolder
     .add(flameParams.startPozs, "z", -5, 5, 0.01)
     .name("Z Position")
-    .onChange((value: number) => {
-      const newPos = { ...flameParams.startPozs, z: value };
+    .onChange((v: number) => {
+      const newPos = { ...flameParams.startPozs, z: v };
       particleSystems.flame!.update("startPozs", newPos);
     });
 
@@ -90,17 +90,17 @@ export function createParticleSettings(
   flameNoiseFolder
     .add(flameParams.noise, "magnitude", 0.1, 5, 0.01)
     .name("Magnitude")
-    .onChange((value: number) => {
-      particleSystems.flame!.update("noise.magnitude", value);
+    .onChange((v: number) => {
+      particleSystems.flame!.update("noise.magnitude", v);
     });
 
   flameNoiseFolder
     .add(flameParams.noise, "lacunarity", 1, 4, 0.01)
     .name("Lacunarity")
-    .onChange((value: number) => {
+    .onChange((v: number) => {
       const newNoise: NoiseParams = {
         ...flameParams.noise,
-        lacunarity: value,
+        lacunarity: v,
       };
       particleSystems.flame!.update("noise", newNoise);
     });
@@ -108,18 +108,18 @@ export function createParticleSettings(
   flameNoiseFolder
     .add(flameParams.noise, "gain", 0.1, 1, 0.01)
     .name("Gain")
-    .onChange((value: number) => {
-      const newNoise: NoiseParams = { ...flameParams.noise, gain: value };
+    .onChange((v: number) => {
+      const newNoise: NoiseParams = { ...flameParams.noise, gain: v };
       particleSystems.flame!.update("noise", newNoise);
     });
 
   flameNoiseFolder
     .add(flameParams.noise, "octaves", 1, 8, 1)
     .name("Octaves")
-    .onChange((value: number) => {
+    .onChange((v: number) => {
       const newNoise: NoiseParams = {
         ...flameParams.noise,
-        octaves: value,
+        octaves: v,
       };
       particleSystems.flame!.update("noise", newNoise);
     });
@@ -133,57 +133,57 @@ export function createParticleSettings(
   smokeFolder
     .add(smokeParams, "area", 0.1, 2, 0.01)
     .name("Area")
-    .onChange((value: number) => {
-      particleSystems.smoke!.update("area", value);
+    .onChange((v: number) => {
+      particleSystems.smoke!.update("area", v);
     });
 
   smokeFolder
     .add(smokeParams, "size", 0.1, 2, 0.01)
     .name("Size")
-    .onChange((value: number) => {
-      particleSystems.smoke!.update("size", value);
+    .onChange((v: number) => {
+      particleSystems.smoke!.update("size", v);
     });
 
   smokeFolder
     .add(smokeParams, "spawnRate", 0.1, 10, 0.1)
     .name("Spawn Rate")
-    .onChange((value: number) => {
-      particleSystems.smoke!.update("spawnRate", value);
+    .onChange((v: number) => {
+      particleSystems.smoke!.update("spawnRate", v);
     });
 
   smokeFolder
     .add(smokeParams, "opacity", 0, 1, 0.01)
     .name("Opacity")
-    .onChange((value: number) => {
-      particleSystems.smoke!.update("opacity", value);
+    .onChange((v: number) => {
+      particleSystems.smoke!.update("opacity", v);
     });
 
   smokeFolder
     .addColor(smokeParams, "color")
     .name("Color")
-    .onChange((value: string) => {
-      particleSystems.smoke!.update("color", value);
+    .onChange((v: string) => {
+      particleSystems.smoke!.update("color", v);
     });
 
   smokeFolder
     .add(smokeParams, "sizeGrowth", 0, 2, 0.01)
     .name("Size Growth")
-    .onChange((value: number) => {
-      particleSystems.smoke!.update("sizeGrowth", value);
+    .onChange((v: number) => {
+      particleSystems.smoke!.update("sizeGrowth", v);
     });
 
   smokeFolder
     .add(smokeParams, "fadeRate", 0.01, 0.5, 0.01)
     .name("Fade Rate")
-    .onChange((value: number) => {
-      particleSystems.smoke!.update("fadeRate", value);
+    .onChange((v: number) => {
+      particleSystems.smoke!.update("fadeRate", v);
     });
 
   smokeFolder
     .add(smokeParams, "scaleFactor", 0.5, 5, 0.01)
     .name("Scale Factor")
-    .onChange((value: number) => {
-      particleSystems.smoke!.update("scaleFactor", value);
+    .onChange((v: number) => {
+      particleSystems.smoke!.update("scaleFactor", v);
     });
 
   // Sparks
@@ -195,50 +195,64 @@ export function createParticleSettings(
   sparksFolder
     .addColor(sparksParams, "color")
     .name("Color")
-    .onChange((value: string) => {
-      particleSystems.sparks!.update("color", value);
+    .onChange((v: string) => {
+      particleSystems.sparks!.update("color", v);
     });
 
   sparksFolder
     .add(sparksParams, "area", 0.1, 1, 0.01)
     .name("Area")
-    .onChange((value: number) => {
-      particleSystems.sparks!.update("area", value);
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("area", v);
     });
 
   sparksFolder
     .add(sparksParams, "size", 0.01, 0.5, 0.001)
     .name("Size")
-    .onChange((value: number) => {
-      particleSystems.sparks!.update("size", value);
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("size", v);
     });
 
   sparksFolder
     .add(sparksParams, "spawnRate", 1, 30, 0.1)
     .name("Spawn Rate")
-    .onChange((value: number) => {
-      particleSystems.sparks!.update("spawnRate", value);
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("spawnRate", v);
     });
 
   sparksFolder
     .add(sparksParams, "speed", 1, 10, 0.1)
     .name("Speed")
-    .onChange((value: number) => {
-      particleSystems.sparks!.update("speed", value);
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("speed", v);
     });
 
   sparksFolder
     .add(sparksParams.sparkProps!, "damping", 0.1, 1, 0.01)
     .name("Damping")
-    .onChange((value: number) => {
-      particleSystems.sparks!.update("sparkProps.damping", value);
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("sparkProps.damping", v);
     });
 
   sparksFolder
     .add(sparksParams.sparkProps!, "stretchFact", 1, 20, 0.1)
     .name("Stretch Factor")
-    .onChange((value: number) => {
-      particleSystems.sparks!.update("sparkProps.stretchFact", value);
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("sparkProps.stretchFact", v);
+    });
+
+  sparksFolder
+    .add(sparksParams.sparkProps!, "waveAmp", 0, 1, 0.001)
+    .name("Wave Amptitude")
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("sparkProps.waveAmp", v);
+    });
+
+  sparksFolder
+    .add(sparksParams.sparkProps!, "waveFreq", 1, 20, 0.5)
+    .name("Wave Frequency")
+    .onChange((v: number) => {
+      particleSystems.sparks!.update("sparkProps.waveFreq", v);
     });
 
   const elevationFolder = sparksFolder.addFolder("Elevation");
@@ -247,10 +261,10 @@ export function createParticleSettings(
   elevationFolder
     .add(sparksParams.sparkProps!.elevDivs!, "min", 1, 15, 0.1)
     .name("Min Elevation")
-    .onChange((value: number) => {
+    .onChange((v: number) => {
       const newElevDivs: minMax = {
         ...sparksParams.sparkProps!.elevDivs!,
-        min: value,
+        min: v,
       };
       particleSystems.sparks!.update("sparkProps.elevDivs", newElevDivs);
     });
@@ -258,10 +272,10 @@ export function createParticleSettings(
   elevationFolder
     .add(sparksParams.sparkProps!.elevDivs!, "max", 1, 15, 0.1)
     .name("Max Elevation")
-    .onChange((value: number) => {
+    .onChange((v: number) => {
       const newElevDivs: minMax = {
         ...sparksParams.sparkProps!.elevDivs!,
-        max: value,
+        max: v,
       };
       particleSystems.sparks!.update("sparkProps.elevDivs", newElevDivs);
     });

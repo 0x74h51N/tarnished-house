@@ -15,6 +15,8 @@ export interface SparkProps {
   damping: number;
   stretchFact: number;
   elevDivs: minMax;
+  waveFreq: number;
+  waveAmp: number;
 }
 export interface PointProps extends BaseProps {
   opacity?: number;

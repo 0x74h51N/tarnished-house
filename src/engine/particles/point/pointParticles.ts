@@ -1,3 +1,28 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+/**
+ * pointParticles.ts
+ *
+ * GPU-driven point particle system for textured (smoke) or spark effects.
+ * Implements pooled buffer geometry with per-particle attributes and
+ * dynamic behaviors (damping, stretching, and wave motion) via custom shaders.
+ *
+ * Copyright (C) 2025 Tahsin Önemli
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import {
   DataTexture,
   RGBAFormat,
@@ -6,10 +31,10 @@ import {
   BufferGeometry,
   AdditiveBlending,
   BufferAttribute,
-  RawShaderMaterial,
   Vector2,
   Vector3,
   GLSL3,
+  ShaderMaterial,
 } from "three";
 import {
   CreateParticlesReturn,
@@ -77,7 +102,6 @@ export function createPointParticles({
   },
 }: PointParticlesInterface): CreateParticlesReturn {
   const clr = new Color(color);
-  let { damping, stretchFact, elevDivs } = sparkProps ?? {};
 
   const textureArray = Array.isArray(textures)
     ? textures.map((t) => t ?? defaultTexture)
@@ -127,9 +151,17 @@ export function createPointParticles({
     resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
     u_time: { value: 0 },
     u_scale: { value: scaleFactor },
+  };
+
+  // -------------- Spark Uniforms -------------------
+  let { damping, stretchFact, elevDivs, waveFreq, waveAmp } = sparkProps ?? {};
+
+  const sUniforms = sparkProps && {
     u_damping: { value: damping },
-    u_axisRatio: { value: new Vector3(0.67, 1.0, 0.67) },
     u_stretch: { value: stretchFact },
+    u_axisRatio: { value: new Vector3(0.67, 1.0, 0.67) },
+    u_wave_freq: { value: waveFreq },
+    u_wave_amp: { value: waveAmp },
   };
 
   const pointsArr: Points[] = [];
@@ -140,11 +172,12 @@ export function createPointParticles({
   for (let i = 0; i < numVariants; i++) {
     const dTex = textureArray[i] ?? textureArray[0];
     const uniforms = {
+      ...sUniforms,
       ...cUniforms,
       diffuseTexture: { value: dTex },
     };
     const isSpark = !!(sparkProps && sparkProps.elevDivs);
-    const material = new RawShaderMaterial({
+    const material = new ShaderMaterial({
       glslVersion: GLSL3,
       uniforms,
       vertexShader: isSpark ? SparkVS : VS,
@@ -161,7 +194,6 @@ export function createPointParticles({
     parent.add(pts);
     pointsArr.push(pts);
   }
-
   const mainGeo = geometry;
 
   //
@@ -180,9 +212,12 @@ export function createPointParticles({
       for (let s = 0; s < toSpawn; s++) {
         const i = nextIndex % maxCount;
         const i3 = i * 3;
+
         startPos(startPozs, position, i3, area);
+
         if (sparkProps && elevDivs) sparkVel(vel, i3, elevDivs, speed);
         else startVel(vel, i3);
+
         startTime[i] = cUniforms.u_time.value;
         nextIndex++;
       }
@@ -260,11 +295,19 @@ export function createPointParticles({
     },
 
     "sparkProps.damping": (v) => {
-      cUniforms.u_damping.value = v;
+      sUniforms.u_damping.value = v;
     },
 
     "sparkProps.stretchFact": (v) => {
-      cUniforms.u_stretch.value = v;
+      sUniforms.u_stretch.value = v;
+    },
+
+    "sparkProps.waveAmp": (v) => {
+      sUniforms.u_wave_amp.value = v;
+    },
+
+    "sparkProps.waveFreq": (v) => {
+      sUniforms.u_wave_freq.value = v;
     },
   };
 

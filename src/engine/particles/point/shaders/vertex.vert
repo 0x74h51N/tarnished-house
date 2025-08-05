@@ -1,12 +1,32 @@
-precision mediump float;
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+/**
+*
+*    Particle vertex shader which takes texture as like smoke.
+*    Copyright (C) 2025  Tahsin Önemli
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*
+*/
+
+// Chrome-based browsers may produce visual glitches when using mediump precision in this shader.
+precision highp float;
 
 uniform vec2 resolution;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
 uniform float u_time;
 uniform float u_scale;
 
-in vec3 position;
 in vec3 velocity;
 in float startTime;
 in float size;

@@ -344,7 +344,7 @@
           "color": "#ff0000",
           "noise": {
             "noiseScale": { "x": 0.71, "y": 1.3, "z": 1.0, "w": 0.3 },
-            "magnitude": 1.2,
+            "magnitude": 1.9,
             "lacunarity": 2.17,
             "gain": 0.53,
             "octaves": 3
@@ -387,8 +387,10 @@
           "scaleFactor": 1.5,
           "sparkProps": {
             "damping": 0.82,
-            "elevDivs": { "min": 8, "max": 2 },
-            "stretchFact": 10.5
+            "elevDivs": { "min": 4, "max": 2 },
+            "stretchFact": 10.5,
+            "waveFreq": 5.5,
+            "waveAmp": 0.015
           }
         }
       }
