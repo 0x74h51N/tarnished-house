@@ -5,7 +5,7 @@ Procedural haunted scene built with Three.js, TypeScript & GLSL featuring random
 ## Overview
 
 - **Procedural Generation**  
-  Trees, graves and props are placed at randomly.
+  Trees, graves, bushes and roots are procedurally placed in random positions when the scene initializes or when the object count is updated (for now).
 - **Custom Shaders**  
   Fire, smoke and spark systems plus post-processing (bloom, fog) powered by GLSL.
 - **Responsive UI**  
