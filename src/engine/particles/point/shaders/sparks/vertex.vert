@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 uniform vec2  resolution;
 uniform float u_time;
 uniform float u_scale;
@@ -41,34 +42,42 @@ out vec2  vRot;
 out float vSpeedRatio;
 
 void main() {
-  float age = max(u_time - startTime, 0.0);
+  // ---- Damping -----
+  float age    = max(u_time - startTime, 0.0);
   float invDen = 1.0 / (1.0 + u_damping * age);
-  float t = age * invDen;
+  float t      = age * invDen;
 
-  vec3 axisVel = velocity * u_axisRatio;
+  // ---- Base motion ----
+  vec3 axisVel   = velocity * u_axisRatio;
   vec3 dampedVel = axisVel * invDen;
-  vec3 offset = axisVel * t;
+  vec3 offset    = axisVel * t;
   float traveled = length(offset);
-
-  vec3 worldPos = position + offset;
-  vec4 mv = modelViewMatrix * vec4(worldPos, 1.0);
-  vec4 clip = projectionMatrix  * mv;
-
-  // compute billboard rotation
-  vec3 velView = (modelViewMatrix * vec4(axisVel, 0.0)).xyz;
-  float angle = atan(velView.y, velView.x);
-  vRot = vec2(cos(-angle), sin(-angle));
-
-  vColour = colour;
-  vSpeedRatio = clamp(length(dampedVel) / length(axisVel), 0.0, 1.0);
-
-  // apply sinus wave offset in clip space
-  vec2 perp = vec2(-vRot.y, vRot.x);
-  float amp = u_wave_amp * vSpeedRatio;
-  float wave = sin(traveled * u_wave_freq) * amp;
+  float speed    = length(dampedVel);
+  float phase    = traveled * u_wave_freq;
   
-  clip.xy += perp * wave * clip.w;
+  vSpeedRatio    = clamp(speed/ length(axisVel), 0.0, 1.0);
+  float amp      = u_wave_amp * vSpeedRatio;
 
-  gl_Position = clip;
-  gl_PointSize = (size * resolution.y * u_scale / gl_Position.w) * vSpeedRatio;
+  // ---- Sin-wave offset in world position ----
+  vec3 dirNorm   = normalize(axisVel);
+  vec3 perpWorld = normalize(cross(dirNorm, vec3(0.0,1.0,0.0)));
+  vec3 wave      = perpWorld * (sin(phase) * amp);
+
+  // ---- World & clip position ----
+  vec3 worldPos = position + offset + wave;
+  vec4 mv       = modelViewMatrix * vec4(worldPos, 1.0);
+  vec4 clip     = projectionMatrix  * mv ;
+
+  // ---- Velocity direction angle (for vRot) ----
+  float dWave_dt = amp * cos(phase) * u_wave_freq * speed;
+  vec3 totalVel = dampedVel + perpWorld * dWave_dt;
+
+  vec4 velClip = projectionMatrix * modelViewMatrix * vec4(totalVel, 0.0);
+  vec2 velDir  = normalize(velClip.xy);
+  float angle  = atan(velDir.y, velDir.x);
+
+  vRot         = vec2(cos(-angle), sin(-angle));
+  vColour      = colour;
+  gl_Position  = clip;
+  gl_PointSize = (size * resolution.y * u_scale / clip.w) * vSpeedRatio;
 }

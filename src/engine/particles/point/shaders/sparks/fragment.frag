@@ -22,7 +22,7 @@
  */
 
 
-precision mediump float;
+precision highp float;
 
 in vec2  vRot; 
 in vec4  vColour;
@@ -39,7 +39,7 @@ void main() {
   vec2 rotLoc = R * local;
 
   // apply speed-proportional stretch along local Y axis
-  float stretch = mix(0.4, u_stretch, vSpeedRatio);
+  float stretch = mix(0.0, u_stretch, vSpeedRatio);
   rotLoc.y     *= stretch;
 
   // compute radial falloff
