@@ -25,12 +25,10 @@ export function spawnMeshes({ manager, opts }: CountOpts) {
 
     mesh.traverse((child) => {
       if (child instanceof Mesh) {
-        const m = child;
-        m.castShadow = opts.castShadow;
-        m.receiveShadow = opts.receiveShadow;
+        child.castShadow = opts.castShadow;
+        child.receiveShadow = opts.receiveShadow;
 
-        // Fix center pivot because some 3D idiots can't model properly
-        opts.getGeoCenterXZ && centerGeometryXZ(m.geometry);
+        opts.getGeoCenterXZ && centerGeometryXZ(child.geometry);
       }
     });
 

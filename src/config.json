@@ -2,8 +2,8 @@
   "scene": {
     "camera": {
       "fov": 45,
-      "near": 0.01,
-      "far": 70,
+      "near": 0.1,
+      "far": 90,
       "position": {
         "x": 7,
         "y": 5,
@@ -244,20 +244,20 @@
       "spawnable": {
         "trees": {
           "path": "./trees/trees.gltf",
-          "meshPath": [0, 0, 0],
+          "meshPath": [],
           "spawn": {
             "count": 100,
             "scale": {
-              "min": 0.0048,
-              "max": 0.0049
+              "min": 0.55,
+              "max": 0.7
             },
             "radius": {
-              "min": 11.5,
+              "min": 14.5,
               "max": 66
             },
-            "minDistance": 4.5,
+            "minDistance": 10,
             "castShadow": true,
-            "receiveShadow": false,
+            "receiveShadow": true,
             "rotation": {
               "y": { "min": -0.5, "max": 0.5 }
             }
