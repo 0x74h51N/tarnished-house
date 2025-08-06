@@ -51,32 +51,42 @@ void main() {
   vec3 axisVel   = velocity * u_axisRatio;
   vec3 dampedVel = axisVel * invDen;
   vec3 offset    = axisVel * t;
-  float traveled = length(offset);
-  float speed    = length(dampedVel);
-  float phase    = traveled * u_wave_freq;
   
-  vSpeedRatio    = clamp(speed/ length(axisVel), 0.0, 1.0);
-  float amp      = u_wave_amp * vSpeedRatio;
+  float traveled = length(offset);                   // Magnitude of traveled from origin aka Euclidean distance
+  float speed    = length(dampedVel);                // Damped instantaneous speed, magnitude of velocity
+  float iSpeed   = length(axisVel);                  // Initial speed                
+
+  vSpeedRatio    = clamp(speed/ iSpeed, 0.0, 1.0);
+
 
   // ---- Sin-wave offset in world position ----
-  vec3 dirNorm   = normalize(axisVel);
-  vec3 perpWorld = normalize(cross(dirNorm, vec3(0.0,1.0,0.0)));
-  vec3 wave      = perpWorld * (sin(phase) * amp);
+  float phase    = u_wave_freq * traveled;
+  float amp      = u_wave_amp * vSpeedRatio;
+
+  vec3 dirNorm   = axisVel / iSpeed;               // Normalize - pure direction, no magnitude
+  vec3 perp      = cross(dirNorm, vec3(0.0,1.0,0.0)); // Perpendicular to motion direction, on horizontal plane (Y-up)
+  vec3 perpWorld = normalize(perp);                   // Normalize - pure direction, no magnitude
+  vec3 wave      = perpWorld * (sin(phase) * amp);    // Sinusoidal offset on the perpendicular
+
 
   // ---- World & clip position ----
+  mat4 viewProj = projectionMatrix * modelViewMatrix;
   vec3 worldPos = position + offset + wave;
-  vec4 mv       = modelViewMatrix * vec4(worldPos, 1.0);
-  vec4 clip     = projectionMatrix  * mv ;
+  vec4 clip     = viewProj * vec4(worldPos, 1.0);
 
   // ---- Velocity direction angle (for vRot) ----
-  float dWave_dt = amp * cos(phase) * u_wave_freq * speed;
-  vec3 totalVel = dampedVel + perpWorld * dWave_dt;
+  float dWave_dt = amp            // Deritative of sin wave in time (scalar speed of wave)
+                  * cos(phase)      // d/dt[ perpWorld * (sin(phase) * amp) ] = cos(phase) * dPhase/dt
+                  * u_wave_freq     // dPhase/dt = u_wave_freq * d(traveled)/dt
+                  * speed;          // d(traveled)/dt ~= speed
 
-  vec4 velClip = projectionMatrix * modelViewMatrix * vec4(totalVel, 0.0);
-  vec2 velDir  = normalize(velClip.xy);
-  float angle  = atan(velDir.y, velDir.x);
+  vec3 totalVel = dampedVel + perpWorld * dWave_dt;    // Forward + oscillation 
 
-  vRot         = vec2(cos(-angle), sin(-angle));
+  vec4 velClip = viewProj * vec4(totalVel, 0.0);       // Velocity direction transformed to clip space
+  vec2 velDir  = normalize(velClip.xy);                     
+  float angle  = atan(velDir.y, velDir.x);             // Radian angle from X axis in 2D
+
+  vRot         = vec2(cos(-angle), sin(-angle));      
   vColour      = colour;
   gl_Position  = clip;
   gl_PointSize = (size * resolution.y * u_scale / clip.w) * vSpeedRatio;
