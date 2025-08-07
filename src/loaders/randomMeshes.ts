@@ -1,5 +1,5 @@
 import { Group, LoadingManager, Mesh, Scene } from "three";
-import { spawnMeshes, crtGLTFLoader, parentFinder } from "./utils";
+import { spawnMeshes, crtGLTFLoader } from "./utils";
 import config from "config.json";
 import {
   ManagerRefs,
@@ -30,9 +30,7 @@ export function randomMeshes({
     const manager: ManagerType = { baseMeshes: [], group };
 
     gltfLoader.load(cfg.path, (gltf) => {
-      manager.baseMeshes = parentFinder(gltf.scene, cfg.meshPath)
-        .children as Mesh[];
-
+      manager.baseMeshes = gltf.scene.children as Mesh[];
       spawnMeshes({
         manager,
         opts: cfg.spawn,
