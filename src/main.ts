@@ -75,7 +75,7 @@ const { composer, bloomPass } = createComposer({
   scene,
   camera: CamController.camera,
 });
-
+const pixelRatio = renderer.getPixelRatio();
 //
 //Size Update
 //
@@ -92,9 +92,9 @@ window.addEventListener("resize", () => {
   composer.setSize(sizes.width, sizes.height);
   bloomPass.setSize(sizes.width, sizes.height);
 
-  flame.updtScreen();
-  smoke.updtScreen();
-  sparks.updtScreen();
+  flame.updtScreen(pixelRatio);
+  smoke.updtScreen(pixelRatio);
+  sparks.updtScreen(pixelRatio);
 });
 //
 // Sounds
@@ -142,6 +142,7 @@ const managers = randomMeshes({ scene, loadingManager });
 // Initialize flame, smoke, and spark emitters
 //
 const { flame, smoke, sparks } = particleSystem({
+  pixelRatio,
   scene,
   texLoader,
   camera: CamController.camera,

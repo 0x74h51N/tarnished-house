@@ -15,6 +15,7 @@ interface ParticlesCreatorInterface {
   scene: Scene;
   texLoader: TextureLoader;
   camera: PerspectiveCamera;
+  pixelRatio: number;
 }
 function tLoader(loader: TextureLoader, path: string): Texture {
   const tex = loader.load(path);
@@ -24,6 +25,7 @@ function tLoader(loader: TextureLoader, path: string): Texture {
 export function particleSystem({
   scene,
   texLoader,
+  pixelRatio,
 }: ParticlesCreatorInterface): ParticleSystemRefs {
   const configs: ParticleConfigs = config.assets.particles as ParticleConfigs;
   const acc = {} as ParticleSystemRefs;
@@ -37,6 +39,7 @@ export function particleSystem({
     const params = {
       parent: scene,
       props: properties,
+      pixelRatio,
       textures: Array.isArray(textures)
         ? textures.map((p) => tLoader(texLoader, p))
         : tLoader(texLoader, textures as string),

@@ -47,6 +47,7 @@ const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
  *   update(params)   - Update particle system parameters in real-time.
  */
 export const createFlame = ({
+  pixelRatio,
   parent,
   textures,
   props: {
@@ -96,7 +97,13 @@ export const createFlame = ({
     u_height: { value: u_height },
     u_bottom: { value: u_bottom },
 
-    resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
+    resolution: {
+      value: new Vector2(
+        window.innerWidth * pixelRatio,
+        window.innerHeight * pixelRatio
+      ),
+    },
+    u_pixelRatio: { value: pixelRatio },
     color: {
       value: new Color(color),
     },
@@ -128,8 +135,12 @@ export const createFlame = ({
     uniforms.invModelMatrix.value.copy(flame.matrixWorld).invert();
   };
 
-  function updtScreen() {
-    uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+  function updtScreen(pr: number) {
+    uniforms.resolution.value.set(
+      window.innerWidth * pr,
+      window.innerHeight * pr
+    );
+    uniforms.u_pixelRatio.value = pr;
   }
 
   //

@@ -35,7 +35,6 @@ export type SpawnableName = keyof SpawnableConfig;
 
 export type SpawnableType = {
   path: string;
-  meshPath: number[];
   spawn: SpawnOptions;
 };
 

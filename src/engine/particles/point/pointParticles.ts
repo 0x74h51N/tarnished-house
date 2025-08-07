@@ -84,6 +84,7 @@ const defaultTexture = new DataTexture(
  */
 
 export function createPointParticles({
+  pixelRatio,
   parent,
   textures,
   props: {
@@ -148,7 +149,13 @@ export function createPointParticles({
 
   // --------------- Common Uniforms ----------------
   const cUniforms = {
-    resolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
+    resolution: {
+      value: new Vector2(
+        window.innerWidth * pixelRatio,
+        window.innerHeight * pixelRatio
+      ),
+    },
+    u_pixelRatio: { value: pixelRatio },
     u_time: { value: 0 },
     u_scale: { value: scaleFactor },
   };
@@ -226,8 +233,12 @@ export function createPointParticles({
     cUniforms.u_time.value += delta;
   };
 
-  function updtScreen() {
-    cUniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+  function updtScreen(pr: number) {
+    cUniforms.resolution.value.set(
+      window.innerWidth * pr,
+      window.innerHeight * pr
+    );
+    cUniforms.u_pixelRatio.value = pr;
   }
 
   //

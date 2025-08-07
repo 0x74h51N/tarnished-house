@@ -124,6 +124,36 @@ export function createParticleSettings(
       particleSystems.flame!.update("noise", newNoise);
     });
 
+  function _onChangeNoiseScale() {
+    particleSystems.flame!.update(
+      "noise.noiseScale",
+      flameParams.noise.noiseScale
+    );
+  }
+
+  const noiseScaleFolder = flameNoiseFolder.addFolder("Scale");
+  noiseScaleFolder.close();
+
+  noiseScaleFolder
+    .add(flameParams.noise.noiseScale, "x", 0.1, 10, 0.1)
+    .name("Noise Scale X")
+    .onChange(_onChangeNoiseScale);
+
+  noiseScaleFolder
+    .add(flameParams.noise.noiseScale, "y", 0.1, 10, 0.1)
+    .name("Noise Scale Y")
+    .onChange(_onChangeNoiseScale);
+
+  noiseScaleFolder
+    .add(flameParams.noise.noiseScale, "z", 0.1, 10, 0.1)
+    .name("Noise Scale Z")
+    .onChange(_onChangeNoiseScale);
+
+  noiseScaleFolder
+    .add(flameParams.noise.noiseScale, "w", 0.1, 10, 0.1)
+    .name("Noise Scale W")
+    .onChange(_onChangeNoiseScale);
+
   // Smoke
   const smokeFolder = particlesFolder.addFolder("Smoke");
   smokeFolder.close();

@@ -51,12 +51,14 @@ export interface FlameProps extends BaseProps {
 export type ParticlesInterface = PointProps | FlameProps;
 
 export interface PointParticlesInterface {
+  pixelRatio: number;
   parent: Object3D;
   textures?: Texture | Texture[];
   props: PointProps;
 }
 
 export interface FlameParticlesInterface {
+  pixelRatio: number;
   parent: Object3D;
   textures?: Texture;
   props: FlameProps;
@@ -82,7 +84,7 @@ export type Step = (delta: number) => void;
 
 export interface CreateParticlesReturn {
   step: Step;
-  updtScreen: () => void;
+  updtScreen: (pr: number) => void;
   update: UpdateFn;
 }
 export type ParticleConfg = {
