@@ -627,6 +627,9 @@ body {
     width: 100vw;
     min-height: 100dvh;
   }
+  #intro-modal .modal-content {
+    align-content: center !important;
+  }
 
   .credits-content {
     padding: 1.5rem 1rem;
