@@ -47,3 +47,11 @@ export interface AudioBundle {
   setVolume: VolumeSetter;
   updateIcon: IconUpdt;
 }
+
+//window size obj
+export interface Sizes {
+  width: number;
+  height: number;
+  pixelRatio: number;
+  update: () => void;
+}

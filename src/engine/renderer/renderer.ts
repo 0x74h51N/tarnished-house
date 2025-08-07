@@ -3,12 +3,13 @@ import config from "config.json";
 import {
   ShadowTypeKey,
   shadowTypes,
+  Sizes,
   ToneMappingKey,
   toneMappingMap,
 } from "@/types";
 
 interface RendererInterface {
-  sizes: { width: number; height: number };
+  sizes: Sizes;
   canvas: HTMLCanvasElement;
   antialias: boolean;
 }
@@ -28,9 +29,7 @@ export function createRenderer({
   });
 
   renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, rendererConfg.maxPixelRatio)
-  );
+  renderer.setPixelRatio(sizes.pixelRatio);
 
   renderer.shadowMap.enabled = rendererConfg.shadows.enabled;
 

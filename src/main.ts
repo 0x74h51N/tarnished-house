@@ -22,6 +22,7 @@ import {
   particleSystem,
 } from "./engine";
 import { AudioBundle } from "./types";
+import { createSizes } from "./utils/windowSize";
 
 //
 // Mobile Detection & Performance Optimization
@@ -34,10 +35,7 @@ detectLowEnd();
 //
 
 const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-};
+const sizes = createSizes();
 
 const scene = new Scene();
 scene.background = new Color(config.scene.postProcessing.fog.color);
@@ -75,27 +73,26 @@ const { composer, bloomPass } = createComposer({
   scene,
   camera: CamController.camera,
 });
-const pixelRatio = renderer.getPixelRatio();
+
 //
 //Size Update
 //
 window.addEventListener("resize", () => {
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
+  sizes.update();
 
   CamController.camera.aspect = sizes.width / sizes.height;
   CamController.camera.updateProjectionMatrix();
 
   renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(sizes.pixelRatio);
 
   composer.setSize(sizes.width, sizes.height);
   bloomPass.setSize(sizes.width, sizes.height);
 
-  flame.updtScreen(pixelRatio);
-  smoke.updtScreen(pixelRatio);
-  sparks.updtScreen(pixelRatio);
+  smoke.updtScreen!(sizes.pixelRatio);
+  sparks.updtScreen!(sizes.pixelRatio);
 });
+
 //
 // Sounds
 //
@@ -142,7 +139,7 @@ const managers = randomMeshes({ scene, loadingManager });
 // Initialize flame, smoke, and spark emitters
 //
 const { flame, smoke, sparks } = particleSystem({
-  pixelRatio,
+  sizes,
   scene,
   texLoader,
   camera: CamController.camera,

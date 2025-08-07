@@ -10,12 +10,13 @@ import {
 } from "./types";
 import { createFlame } from "./flame/flameParticles";
 import { createPointParticles } from "./point/pointParticles";
+import { Sizes } from "@/types";
 
 interface ParticlesCreatorInterface {
   scene: Scene;
   texLoader: TextureLoader;
   camera: PerspectiveCamera;
-  pixelRatio: number;
+  sizes: Sizes;
 }
 function tLoader(loader: TextureLoader, path: string): Texture {
   const tex = loader.load(path);
@@ -25,7 +26,7 @@ function tLoader(loader: TextureLoader, path: string): Texture {
 export function particleSystem({
   scene,
   texLoader,
-  pixelRatio,
+  sizes,
 }: ParticlesCreatorInterface): ParticleSystemRefs {
   const configs: ParticleConfigs = config.assets.particles as ParticleConfigs;
   const acc = {} as ParticleSystemRefs;
@@ -39,7 +40,7 @@ export function particleSystem({
     const params = {
       parent: scene,
       props: properties,
-      pixelRatio,
+      sizes,
       textures: Array.isArray(textures)
         ? textures.map((p) => tLoader(texLoader, p))
         : tLoader(texLoader, textures as string),

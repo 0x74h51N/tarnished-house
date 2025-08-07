@@ -1,7 +1,7 @@
 import type { Color, Object3D, Texture, Vector3Like, Vector4Like } from "three";
 import config from "config.json";
 import { NestedKeys, GetValue } from "@/utils";
-import { minMax } from "@/types";
+import { minMax, Sizes } from "@/types";
 
 export interface BaseProps {
   startPozs: Vector3Like;
@@ -50,19 +50,17 @@ export interface FlameProps extends BaseProps {
 
 export type ParticlesInterface = PointProps | FlameProps;
 
-export interface PointParticlesInterface {
-  pixelRatio: number;
+export interface BaseParticlesInterface<
+  T extends ParticlesInterface = ParticlesInterface
+> {
+  sizes: Sizes;
   parent: Object3D;
   textures?: Texture | Texture[];
-  props: PointProps;
+  props: T;
 }
 
-export interface FlameParticlesInterface {
-  pixelRatio: number;
-  parent: Object3D;
-  textures?: Texture;
-  props: FlameProps;
-}
+export type PointParticlesInterface = BaseParticlesInterface<PointProps>;
+export type FlameParticlesInterface = BaseParticlesInterface<FlameProps>;
 
 export type UpdateKey = Extract<
   NestedKeys<FlameProps> | NestedKeys<PointProps>,
@@ -84,7 +82,7 @@ export type Step = (delta: number) => void;
 
 export interface CreateParticlesReturn {
   step: Step;
-  updtScreen: (pr: number) => void;
+  updtScreen?: (pr: number) => void;
   update: UpdateFn;
 }
 export type ParticleConfg = {

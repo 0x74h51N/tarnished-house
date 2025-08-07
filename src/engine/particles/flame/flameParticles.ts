@@ -8,9 +8,8 @@ import {
   Matrix4,
   Mesh,
   RawShaderMaterial,
-  Vector2,
+  Texture,
   Vector3,
-  Vector3Like,
   Vector4,
   Vector4Like,
 } from "three";
@@ -47,7 +46,6 @@ const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
  *   update(params)   - Update particle system parameters in real-time.
  */
 export const createFlame = ({
-  pixelRatio,
   parent,
   textures,
   props: {
@@ -63,7 +61,7 @@ export const createFlame = ({
 }: FlameParticlesInterface): CreateParticlesReturn => {
   let speed = initialSpeed;
 
-  const fireTex = textures;
+  const fireTex = textures as Texture;
 
   fireTex!.flipY = false;
   fireTex!.wrapS = fireTex!.wrapT = ClampToEdgeWrapping;
@@ -97,13 +95,6 @@ export const createFlame = ({
     u_height: { value: u_height },
     u_bottom: { value: u_bottom },
 
-    resolution: {
-      value: new Vector2(
-        window.innerWidth * pixelRatio,
-        window.innerHeight * pixelRatio
-      ),
-    },
-    u_pixelRatio: { value: pixelRatio },
     color: {
       value: new Color(color),
     },
@@ -134,14 +125,6 @@ export const createFlame = ({
     flame.updateMatrixWorld(true);
     uniforms.invModelMatrix.value.copy(flame.matrixWorld).invert();
   };
-
-  function updtScreen(pr: number) {
-    uniforms.resolution.value.set(
-      window.innerWidth * pr,
-      window.innerHeight * pr
-    );
-    uniforms.u_pixelRatio.value = pr;
-  }
 
   //
   // ------------------ GUI Updater ------------------
@@ -195,5 +178,5 @@ export const createFlame = ({
 
   const update = createGuiUpdater(guiHandlers);
 
-  return { step, updtScreen, update };
+  return { step, update };
 };
