@@ -159,7 +159,6 @@
     "moonLightEnabled": false,
     "maxPixelRatio": 2,
     "floorGeometryDivider": 3,
-    "particlesDivider": 2,
     "spawnables": {
       "trees": {
         "spawn": {
@@ -200,6 +199,25 @@
           },
           "castShadow": false,
           "receiveShadow": false
+        }
+      }
+    },
+    "particles": {
+      "flame": {},
+      "smoke": {
+        "properties": {
+          "maxCount": 18,
+          "spawnRate": 1.5
+        }
+      },
+      "sparks": {
+        "properties": {
+          "maxCount": 18,
+          "spawnRate": 4,
+          "sparkProps": {
+            "waveFreq": 2.8,
+            "waveAmp": 0.12
+          }
         }
       }
     }
@@ -387,8 +405,8 @@
             "damping": 0.3,
             "elevDivs": { "min": 4, "max": 2 },
             "stretchFact": 11.5,
-            "waveFreq": 5,
-            "waveAmp": 0.15
+            "waveFreq": 4,
+            "waveAmp": 0.13
           }
         }
       }

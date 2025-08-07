@@ -1,5 +1,6 @@
 import { SpawnableName } from "@/loaders";
 import config from "config.json";
+import { ParticleConfigs, ParticleName, PointProps } from "../particles";
 
 export function detectLowEnd() {
   const canvas = document.createElement("canvas");
@@ -43,16 +44,39 @@ export function detectLowEnd() {
 
     config.scene.renderer.maxPixelRatio = mobileConfig.maxPixelRatio;
 
-    config.assets.particles.smoke.properties.maxCount! /=
-      mobileConfig.particlesDivider;
-    config.assets.particles.sparks.properties.maxCount! /=
-      mobileConfig.particlesDivider;
+    const orParticles = config.assets.particles as ParticleConfigs;
+    const mobileParticles =
+      mobileConfig.particles as unknown as Partial<ParticleConfigs>;
+
+    for (const k in orParticles) {
+      const key = k as ParticleName;
+      const orig = orParticles[key];
+
+      const override = mobileParticles[key];
+      if (!override?.properties) continue;
+
+      //TODO deep merge function
+      orParticles[key] = {
+        ...orig,
+        properties: {
+          ...orig.properties,
+          ...override.properties,
+          ...((override.properties as PointProps).sparkProps && {
+            sparkProps: {
+              ...(orig.properties as PointProps).sparkProps,
+              ...(override.properties as PointProps).sparkProps,
+            },
+          }),
+        },
+      };
+    }
 
     const orSpawn = config.assets.models.spawnable;
     for (const k in orSpawn) {
       const key = k as SpawnableName;
       const override = mobileConfig.spawnables[key].spawn || {};
 
+      //TODO deep merge function
       orSpawn[key].spawn = {
         ...orSpawn[key].spawn,
         ...override,
