@@ -171,8 +171,6 @@ export function createPointParticles({
     u_wave_amp: { value: waveAmp },
   };
 
-  const pointsArr: Points[] = [];
-
   //
   // ------------------ Initial Spawn ------------------
   //
@@ -199,7 +197,6 @@ export function createPointParticles({
     const pts = new Points(geometry, material);
     pts.renderOrder = 4;
     parent.add(pts);
-    pointsArr.push(pts);
   }
   const mainGeo = geometry;
 
