@@ -419,7 +419,7 @@ body {
   }
 }
 
-@media (min-width: 450px) {
+@media (min-width: 520px) {
   #settings-modal {
     position: absolute !important;
     width: unset !important;
@@ -556,9 +556,6 @@ body {
     justify-content: center;
   }
 
-  #settings-modal .modal-content {
-  }
-
   #settings {
     label {
       font-size: 0.95rem;
@@ -624,9 +621,11 @@ body {
 
 @media (max-width: 520px) {
   .modal-content {
-    padding: 1.5rem 1rem;
+    box-sizing: border-box;
+    padding: 2.5rem 1rem;
     border-radius: 14px;
-    width: 85vw;
+    width: 100vw;
+    min-height: 100dvh;
   }
 
   .credits-content {
@@ -648,6 +647,21 @@ body {
     height: 40px;
   }
 
+  .settings-content {
+    padding: 1.3rem;
+  }
+
+  #settings .range-control {
+    justify-content: center !important;
+  }
+  .range-value {
+    margin-left: 1px !important;
+  }
+
+  #settings input[type="range"] {
+    max-width: 130px;
+  }
+
   #settings select {
     width: 85px;
     font-size: 0.8rem;
@@ -658,11 +672,14 @@ body {
     background-size: 12px;
   }
 }
-@media (max-width: 360px) {
+@media (max-width: 380px) {
   .modal-content {
-    width: 90vw;
-    padding: 1.2rem 1rem;
+    padding: 1.1rem 0.9rem;
   }
+  .settings-content {
+    padding: 1rem;
+  }
+
   .modal-content-wrapper::before,
   .modal-content-wrapper::after {
     width: 100px;
@@ -690,9 +707,11 @@ body {
     background-position: right 2px center;
     background-size: 12px;
   }
+
   #settings input[type="range"] {
-    max-width: 130px;
+    max-width: 100px;
   }
+
   #settings .range-value {
     margin-left: 5px;
     min-width: 5px;
