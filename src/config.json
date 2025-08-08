@@ -123,7 +123,7 @@
         "enabled": true,
         "strength": 0.6,
         "radius": 1.2,
-        "threshold": 0.98
+        "threshold": 0.7
       },
       "fog": {
         "enabled": true,
@@ -288,10 +288,10 @@
         "bushes": {
           "path": "./burchellii/bushes.gltf",
           "spawn": {
-            "count": 40,
+            "count": 50,
             "scale": {
-              "min": 0.2,
-              "max": 0.4
+              "min": 0.3,
+              "max": 0.8
             },
             "radius": {
               "min": 8,
@@ -380,13 +380,13 @@
         ],
         "properties": {
           "area": 0.25,
-          "size": 0.45,
+          "size": 0.35,
           "maxCount": 42,
           "spawnRate": 1.8,
-          "startPozs": { "x": 0, "y": 1.15, "z": 1.5 },
+          "startPozs": { "x": 0, "y": 1.13, "z": 1.5 },
           "opacity": 0.5,
           "color": "#444444",
-          "sizeGrowth": 0.8,
+          "sizeGrowth": 0.95,
           "fadeRate": 0.12,
           "scaleFactor": 1.5
         }
@@ -396,7 +396,7 @@
           "color": "#FF0000",
           "area": 0.28,
           "size": 0.1,
-          "maxCount": 50,
+          "maxCount": 40,
           "spawnRate": 5,
           "speed": 2.2,
           "startPozs": { "x": 0, "y": 0.65, "z": 1.5 },

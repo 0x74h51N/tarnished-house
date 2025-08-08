@@ -16,28 +16,32 @@
     />
   </head>
   <body>
-    <div id="loading-screen">
-      <div class="loader">
-        <div class="spinner"></div>
-        <div class="loading-text">Loading...</div>
-      </div>
-    </div>
-    <div class="modal" id="intro-modal" class="hidden">
-      <div class="modal-content-wrapper">
-        <div class="modal-content">
-          <span id="close-intro" class="close-modal">&times;</span>
-          <p id="intro-text"></p>
+    <div class="" id="loading-screen">
+      <div id="intro-modal">
+        <div class="modal-content-wrapper">
+          <div class="modal-content">
+            <p id="intro-text"></p>
+          </div>
         </div>
       </div>
+      <div id="loader" class="loader">
+        <div class="loader-content">
+          <div class="spinner"></div>
+          <div class="loading-text">Loading...</div>
+        </div>
+      </div>
+      <div class="enter-container">
+        <button id="enter-scene" class="btn">Enter</button>
+      </div>
     </div>
-    <div class="btn-container">
+    <div id="btn-container" class="btn-container hidden">
       <button class="btn" id="settings-btn">Settings</button>
       <button class="btn" id="credits-btn">Credits</button>
       <button class="btn" id="sound-toggle-btn" aria-label="Toggle sound">
         <img id="sound-toggle-icon" src="/sound-off.svg" alt="Sound off" />
       </button>
     </div>
-    <div class="modal" id="settings-modal" class="hidden">
+    <div class="modal hidden" id="settings-modal">
       <div class="modal-content-wrapper">
         <div class="modal-content">
           <span id="close-settings" class="close-modal">&times;</span>
@@ -46,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div class="modal" id="credits-modal" class="hidden">
+    <div class="modal hidden" id="credits-modal">
       <div class="modal-content-wrapper">
         <div class="modal-content">
           <span id="close-credits" class="close-modal">&times;</span>
