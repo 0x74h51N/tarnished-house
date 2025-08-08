@@ -700,6 +700,12 @@ canvas {
   pointer-events: none;
 }
 
+#photo-icon {
+  width: 20px;
+  user-select: none;
+  pointer-events: none;
+}
+
 @media (max-width: 520px) {
   .modal-content {
     box-sizing: border-box;

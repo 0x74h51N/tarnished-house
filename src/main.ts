@@ -5,6 +5,7 @@ import {
   initIntroModal,
   setupToggleButton,
   initCreditsModal,
+  initScreenshotButton,
 } from "./components";
 import { Scene, LoadingManager, TextureLoader, Color } from "three";
 
@@ -191,6 +192,8 @@ randomMeshes({ scene }).then((m) => {
     stats,
     camPositioner: CamController.positioner,
   });
+
+  initScreenshotButton({ renderer, composer });
 });
 //---------------------------------------------------
 
