@@ -38,4 +38,6 @@ export type SpawnableType = {
   spawn: SpawnOptions;
 };
 
+export type SpawnableObjects = Record<SpawnableName, SpawnableType>;
+
 export type ManagerRefs = Record<SpawnableName, CountOpts>;

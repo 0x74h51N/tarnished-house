@@ -1,5 +1,5 @@
 import config from "config.json";
-import { crtGLTFLoader } from "./utils";
+import { createGLTFLoader } from "./utils";
 import type { GLTF } from "three/examples/jsm/Addons";
 import {
   Scene,
@@ -32,7 +32,7 @@ export function loadAssets({
   positionalSound,
   texLoader,
 }: LoadAssetsInterface) {
-  const gltfLoader = crtGLTFLoader({ loadingManager });
+  const gltfLoader = createGLTFLoader(loadingManager);
 
   //
   //   ─── Floor ─────────────────────────────────────────────────────────

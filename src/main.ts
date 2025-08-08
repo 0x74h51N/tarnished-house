@@ -3,14 +3,12 @@ import config from "config.json";
 import {
   settings,
   initIntroModal,
-  hideLoadingScreen,
-  showIntroModal,
-  initCreditsModal,
   setupToggleButton,
+  initCreditsModal,
 } from "./components";
 import { Scene, LoadingManager, TextureLoader, Color } from "three";
 
-import { loadAssets, randomMeshes } from "./loaders";
+import { loadAssets, ManagerRefs, randomMeshes } from "./loaders";
 import {
   CameraController,
   createComposer,
@@ -24,10 +22,11 @@ import {
 import { AudioBundle } from "./types";
 import { createSizes } from "./utils/windowSize";
 
+const showEnterButton = initIntroModal();
+
 //
 // Mobile Detection & Performance Optimization
 //
-
 detectLowEnd();
 
 //
@@ -75,6 +74,19 @@ const { composer, bloomPass } = createComposer({
 });
 
 //
+
+//
+// PARTICLE SYSTEM
+// Initialize flame, smoke, and spark emitters
+//
+const { flame, smoke, sparks } = particleSystem({
+  sizes,
+  scene,
+  texLoader,
+  camera: CamController.camera,
+});
+
+//
 //Size Update
 //
 window.addEventListener("resize", () => {
@@ -103,13 +115,13 @@ const { onVolumeChange, positionalSound } = createSound({
 
 const { btn, updateIcon } = setupToggleButton();
 let isMuted = true;
-
-btn.addEventListener("click", () => {
+const muteBtn = () => {
   isMuted = !isMuted;
   const volume = isMuted ? 0 : config.scene.audio.volume;
   onVolumeChange(volume);
   updateIcon(volume);
-});
+};
+btn.addEventListener("click", muteBtn);
 
 const audio: AudioBundle = {
   setVolume: onVolumeChange,
@@ -130,71 +142,56 @@ loadAssets({
 
 //
 // Randomized mesh placement system (e.g. graves, trees, etc.)
-const managers = randomMeshes({ scene, loadingManager });
+let managers: ManagerRefs | undefined;
 
-//
-
-//
-// PARTICLE SYSTEM
-// Initialize flame, smoke, and spark emitters
-//
-const { flame, smoke, sparks } = particleSystem({
-  sizes,
-  scene,
-  texLoader,
-  camera: CamController.camera,
-});
-
-//
-//-----------------Dom Manupulations-----------------
-//
-//
-//SetupGui
-//
 loadingManager.onLoad = () => {
-  hideLoadingScreen();
-  showIntroModal();
+  showEnterButton(muteBtn);
+  initCreditsModal();
 };
-initCreditsModal();
-initIntroModal();
 
+//
+// Stats
 const stats = new Stats();
 stats.showPanel(1);
 stats.showPanel(0);
+
 let guiLoaded = false;
 
-window.addEventListener("keydown", async (e) => {
-  if (e.key.toLowerCase() === "h" && !guiLoaded) {
-    guiLoaded = true;
-    const { initSetupGUI } = await import("./components");
-    initSetupGUI({
-      renderer,
-      CamController,
-      randomMeshes: managers,
-      antialias,
-      audio,
-      bloomPass,
-      scene,
-      lights,
-      particleSystems: { flame, smoke, sparks },
-    });
-  }
-});
+randomMeshes({ scene }).then((m) => {
+  managers = m;
 
-//
-//Settingis
-//
-settings({
-  lights,
-  renderer,
-  randomMeshes: managers,
-  antialias,
-  audio,
-  scene,
-  stats,
-  camPositioner: CamController.positioner,
-});
+  window.addEventListener("keydown", async (e) => {
+    if (e.key.toLowerCase() === "h" && !guiLoaded) {
+      guiLoaded = true;
+      const { initSetupGUI } = await import("./components");
+      initSetupGUI({
+        renderer,
+        CamController,
+        randomMeshes: managers!,
+        antialias,
+        audio,
+        bloomPass,
+        scene,
+        lights,
+        particleSystems: { flame, smoke, sparks },
+      });
+    }
+  });
 
+  //
+  //Settingis
+  //
+  settings({
+    lights,
+    renderer,
+    randomMeshes: managers!,
+    antialias,
+    audio,
+    scene,
+    stats,
+    camPositioner: CamController.positioner,
+  });
+});
 //---------------------------------------------------
 
 //
