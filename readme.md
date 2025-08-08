@@ -57,10 +57,10 @@ This project is licensed under GPL-3.0. See [license](./LICENSE).
 
 ### Resource Library
 
-- **Roots**
+- **Branches**
 
-  - **Authors:** Rob Tuytel
-  - **Source:** [Poly Haven - Pine Roots](https://www.polyhaven.com/a/pine_roots)
+  - **Authors:** Rico Cilliers
+  - **Source:** [Poly Haven - Dry Branches Medium 01](https://polyhaven.com/a/dry_branches_medium_01)
   - **License:** CC0
 
 - **Bushes**

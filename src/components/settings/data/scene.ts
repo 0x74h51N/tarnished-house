@@ -15,7 +15,7 @@ export function makeSceneSettings({
     arr.push({
       type: "range",
       id: `${key}countId`,
-      label: `${key} Count`,
+      label: `${key} count`,
       min: "1",
       max: "150",
       step: "1",
