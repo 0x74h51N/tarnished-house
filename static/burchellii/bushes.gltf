@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.4.56",
+		"generator":"Khronos glTF Blender I/O v4.5.47",
 		"version":"2.0"
 	},
 	"extensionsUsed":[
@@ -14,39 +14,14 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0,
-				1,
-				2
+				0
 			]
 		}
 	],
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"searsia_burchellii_large_LOD0",
-			"translation":[
-				2,
-				0,
-				0
-			]
-		},
-		{
-			"mesh":1,
-			"name":"searsia_burchellii_medium_LOD0",
-			"translation":[
-				-1,
-				0,
-				0
-			]
-		},
-		{
-			"mesh":2,
-			"name":"searsia_burchellii_small_LOD0",
-			"translation":[
-				-3,
-				0,
-				0
-			]
+			"name":"searsia_burchellii_medium_LOD0"
 		}
 	],
 	"materials":[
@@ -103,7 +78,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Cube.014",
+			"name":"Cube.015",
 			"primitives":[
 				{
 					"attributes":{
@@ -166,136 +141,6 @@
 					"mode":4
 				}
 			]
-		},
-		{
-			"name":"Cube.015",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":12,
-						"NORMAL":13,
-						"TEXCOORD_0":14
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":3,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":15,
-					"material":0,
-					"mode":4
-				},
-				{
-					"attributes":{
-						"POSITION":16,
-						"NORMAL":17,
-						"TEXCOORD_0":18
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":4,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":19,
-					"material":1,
-					"mode":4
-				},
-				{
-					"attributes":{
-						"POSITION":20,
-						"NORMAL":21,
-						"TEXCOORD_0":22
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":5,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":23,
-					"material":2,
-					"mode":4
-				}
-			]
-		},
-		{
-			"name":"Cube.016",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":24,
-						"NORMAL":25,
-						"TEXCOORD_0":26
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":6,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":27,
-					"material":0,
-					"mode":4
-				},
-				{
-					"attributes":{
-						"POSITION":28,
-						"NORMAL":29,
-						"TEXCOORD_0":30
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":7,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":31,
-					"material":1,
-					"mode":4
-				},
-				{
-					"attributes":{
-						"POSITION":32,
-						"NORMAL":33,
-						"TEXCOORD_0":34
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":8,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":35,
-					"material":2,
-					"mode":4
-				}
-			]
 		}
 	],
 	"textures":[
@@ -317,11 +162,11 @@
 		},
 		{
 			"sampler":0,
-			"source":1
+			"source":3
 		},
 		{
 			"sampler":0,
-			"source":2
+			"source":4
 		},
 		{
 			"sampler":0,
@@ -338,122 +183,42 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/webp",
+			"mimeType":"image/avif",
 			"name":"searsia_burchellii_nor_gl_1k",
-			"uri":"textures_/searsia_burchellii_nor_gl_1k.webp"
+			"uri":"textures/searsia_burchellii_nor_gl_1k.avif"
 		},
 		{
-			"mimeType":"image/webp",
-			"name":"searsia_burchellii_diff_1k",
-			"uri":"textures_/searsia_burchellii_diff_1k.webp"
+			"mimeType":"image/avif",
+			"name":"searsia_burchellii_diff-searsia_burchellii_alpha-alpha",
+			"uri":"textures/searsia_burchellii_diff-searsia_burchellii_alpha-alpha.avif"
 		},
 		{
-			"mimeType":"image/webp",
+			"mimeType":"image/avif",
 			"name":"searsia_burchellii_arm_1k",
-			"uri":"textures_/searsia_burchellii_arm_1k.webp"
+			"uri":"textures/searsia_burchellii_arm_1k.avif"
+		},
+		{
+			"mimeType":"image/avif",
+			"name":"searsia_burchellii_diff_1k",
+			"uri":"textures/searsia_burchellii_diff_1k.avif"
+		},
+		{
+			"mimeType":"image/avif",
+			"name":"searsia_burchellii_arm_1k",
+			"uri":"textures/searsia_burchellii_arm_1k.avif"
 		}
 	],
 	"accessors":[
 		{
 			"componentType":5126,
-			"count":247248,
-			"max":[
-				2.2925784587860107,
-				3.1853103637695312,
-				2.7523937225341797
-			],
-			"min":[
-				-1.544677734375,
-				0.12488004565238953,
-				-2.296138286590576
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":247248,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":247248,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5125,
-			"count":370872,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":193254,
-			"max":[
-				2.2652039527893066,
-				3.20957612991333,
-				2.6920647621154785
-			],
-			"min":[
-				-1.7160481214523315,
-				-0.029464565217494965,
-				-2.2872703075408936
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":193254,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":193254,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5125,
-			"count":593664,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":44006,
-			"max":[
-				2.384669303894043,
-				3.1873857975006104,
-				2.732976198196411
-			],
-			"min":[
-				-1.7734739780426025,
-				0.0011102030985057354,
-				-2.280196189880371
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":44006,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":44006,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":120138,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
 			"count":150520,
 			"max":[
-				1.604352593421936,
+				1.5906167030334473,
 				2.5587735176086426,
 				1.2416009902954102
 			],
 			"min":[
-				-1.5628736019134521,
+				-1.576609492301941,
 				0.09203975647687912,
 				-1.187920093536377
 			],
@@ -478,12 +243,12 @@
 			"componentType":5126,
 			"count":96794,
 			"max":[
-				1.5414270162582397,
+				1.527691125869751,
 				2.5020341873168945,
 				1.1944351196289062
 			],
 			"min":[
-				-1.6102334260940552,
+				-1.623969316482544,
 				-0.028660189360380173,
 				-1.137372612953186
 			],
@@ -508,12 +273,12 @@
 			"componentType":5126,
 			"count":42078,
 			"max":[
-				1.6037590503692627,
+				1.590023159980774,
 				2.523421287536621,
 				1.4262630939483643
 			],
 			"min":[
-				-1.9710510969161987,
+				-1.9847869873046875,
 				0.0028379764407873154,
 				-1.1836278438568115
 			],
@@ -533,143 +298,23 @@
 			"componentType":5123,
 			"count":114816,
 			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":27452,
-			"max":[
-				0.6477775573730469,
-				1.874085783958435,
-				1.049755334854126
-			],
-			"min":[
-				-0.9327142834663391,
-				0.11959625780582428,
-				-1.0235482454299927
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":27452,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":27452,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":41178,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":23717,
-			"max":[
-				0.6796889305114746,
-				1.8983455896377563,
-				1.0208991765975952
-			],
-			"min":[
-				-0.9661638736724854,
-				-0.03740235045552254,
-				-1.2233688831329346
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":23717,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":23717,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":74070,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":6698,
-			"max":[
-				0.6832414865493774,
-				1.8283729553222656,
-				1.0271259546279907
-			],
-			"min":[
-				-0.9716964960098267,
-				0.014271467924118042,
-				-1.0649422407150269
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":6698,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":6698,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":18300,
-			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1217180,
+			"byteLength":957363,
 			"byteOffset":0
 		},
 		{
 			"buffer":0,
-			"byteLength":1022521,
-			"byteOffset":1217180
+			"byteLength":688855,
+			"byteOffset":957364
 		},
 		{
 			"buffer":0,
-			"byteLength":213864,
-			"byteOffset":2239704
-		},
-		{
-			"buffer":0,
-			"byteLength":767797,
-			"byteOffset":2453568
-		},
-		{
-			"buffer":0,
-			"byteLength":536928,
-			"byteOffset":3221368
-		},
-		{
-			"buffer":0,
-			"byteLength":205183,
-			"byteOffset":3758296
-		},
-		{
-			"buffer":0,
-			"byteLength":145744,
-			"byteOffset":3963480
-		},
-		{
-			"buffer":0,
-			"byteLength":135689,
-			"byteOffset":4109224
-		},
-		{
-			"buffer":0,
-			"byteLength":33491,
-			"byteOffset":4244916
+			"byteLength":250346,
+			"byteOffset":1646220
 		}
 	],
 	"samplers":[
@@ -680,7 +325,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":4278408,
+			"byteLength":1896568,
 			"uri":"bushes.bin"
 		}
 	]
