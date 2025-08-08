@@ -1,14 +1,5 @@
 [
   {
-    "type": "Bushes",
-    "author": "James Ray Cock, Jenelle van Heerden",
-    "source": {
-      "name": "Poly Haven - Searsia Burchellii",
-      "url": "https://polyhaven.com/a/searsia_burchellii"
-    },
-    "license": "CC0"
-  },
-  {
     "type": "Roots",
     "author": "Rob Tuytel",
     "source": {
@@ -16,6 +7,15 @@
       "url": "https://www.polyhaven.com/a/pine_roots"
     },
     "license": "CC0"
+  },
+  {
+    "type": "Bushes",
+    "author": "PlantCatalog",
+    "source": {
+      "name": "Realistic HD Rosemary willow",
+      "url": "https://sketchfab.com/3d-models/realistic-hd-rosemary-willow-9799-83dc6c88f9184ac08d294e9751d8029c"
+    },
+    "license": "CC-BY 4.0"
   },
   {
     "type": "Gravestones",

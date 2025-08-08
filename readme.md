@@ -57,17 +57,17 @@ This project is licensed under GPL-3.0. See [license](./LICENSE).
 
 ### Resource Library
 
-- **Bushes**
-
-  - **Authors:** James Ray Cock, Jenelle van Heerden
-  - **Source:** [Poly Haven - Searsia Burchellii](https://polyhaven.com/a/searsia_burchellii)
-  - **License:** CC0
-
 - **Roots**
 
   - **Authors:** Rob Tuytel
   - **Source:** [Poly Haven - Pine Roots](https://www.polyhaven.com/a/pine_roots)
   - **License:** CC0
+
+- **Bushes**
+
+  - **Authors:** PlantCatalog
+  - **Source:** [Sketchfab - Realistic HD Rosemary willow](https://sketchfab.com/3d-models/realistic-hd-rosemary-willow-9799-83dc6c88f9184ac08d294e9751d8029c)
+  - **License:** CC-BY 4.0
 
 - **Gravestones**
 

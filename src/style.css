@@ -10,7 +10,13 @@ html,
 body {
   overflow: hidden;
 }
-
+canvas {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
 .webgl {
   position: fixed;
   top: 0;
