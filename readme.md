@@ -2,7 +2,7 @@
 
 Procedural haunted scene built with Three.js, TypeScript & GLSL featuring random mesh generation, optimized assets, custom particle effects, and basic mobile support.
 
-<img width="3524" height="2320" alt="screenshot" src="https://github.com/user-attachments/assets/39f0220d-acf4-420e-a41b-799bec9b48ef" />
+<img width="3524" height="2320" alt="screenshot" src="https://github.com/user-attachments/assets/9a8fb4c7-7f65-43d1-8b10-dbbadb1592c3" />
 
 ## Overview
 
