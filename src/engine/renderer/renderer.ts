@@ -24,8 +24,8 @@ export function createRenderer({
   const renderer = new WebGLRenderer({
     canvas: canvas,
     antialias: antialias,
+    premultipliedAlpha: false,
     context: canvas.getContext("webgl2") as WebGL2RenderingContext,
-    alpha: true,
   });
 
   renderer.setSize(sizes.width, sizes.height);

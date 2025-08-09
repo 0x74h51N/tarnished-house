@@ -92,12 +92,12 @@
       "fireLight": {
         "color": "#ffae42",
         "position": {
-          "x": 0,
+          "x": -0.3,
           "y": 0.95,
-          "z": 1.5
+          "z": 2
         },
-        "intensity": 35,
-        "distance": 13,
+        "intensity": 38,
+        "distance": 15,
         "decay": 0.9,
         "animation": {
           "intensity": {
@@ -121,9 +121,9 @@
     "postProcessing": {
       "bloom": {
         "enabled": true,
-        "strength": 0.6,
-        "radius": 1.2,
-        "threshold": 0.7
+        "strength": 0.27,
+        "radius": 0.6,
+        "threshold": 0.77
       },
       "fog": {
         "enabled": true,
@@ -226,7 +226,7 @@
     "decoder": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
     "floor": {
       "color": "#cccccc",
-      "displacementScale": 0.24,
+      "displacementScale": 0.2,
       "textures": {
         "baseColor": "./floor/textures/ground-diff.avif",
         "normalMap": "./floor/textures/ground-norm.avif",
@@ -236,8 +236,8 @@
         "repeat": 18
       },
       "geometry": {
-        "width": 200,
-        "height": 200,
+        "width": 180,
+        "height": 180,
         "widthSegments": 200,
         "heightSegments": 200
       }
@@ -247,22 +247,23 @@
         "path": "./abandoned_house/abandonedHouse.gltf",
         "position": {
           "x": 0.02,
-          "y": 0.2,
-          "z": -10
+          "y": 0.25,
+          "z": -12
         },
-        "scale": 2,
+        "scale": 2.5,
         "castShadow": true,
         "receiveShadow": true
       },
       "bonfire": {
         "path": "./bonfire/bonfire.gltf",
-        "scale": 2.2,
+        "scale": 2.4,
         "position": {
-          "x": 0,
-          "y": 0.2,
-          "z": 1.5
+          "x": -0.3,
+          "y": 0.13,
+          "z": 2
         },
-        "castShadow": true
+        "castShadow": true,
+        "receiveShadow": true
       },
       "spawnable": {
         "trees": {
@@ -355,13 +356,13 @@
       "flame": {
         "textures": "./fire.png",
         "properties": {
-          "size": 1.35,
+          "size": 1.1,
           "speed": 4.5,
-          "startPozs": { "x": 0, "y": 0.45, "z": 1.5 },
+          "startPozs": { "x": -0.3, "y": 0.55, "z": 2 },
           "color": "#ff0000",
           "noise": {
-            "noiseScale": { "x": 0.71, "y": 1.2, "z": 1.0, "w": 0.3 },
-            "magnitude": 2.2,
+            "noiseScale": { "x": 0.8, "y": 1.2, "z": 1.0, "w": 0.29 },
+            "magnitude": 2.5,
             "lacunarity": 2.17,
             "gain": 0.53,
             "octaves": 3
@@ -384,7 +385,7 @@
           "size": 0.35,
           "maxCount": 42,
           "spawnRate": 1.8,
-          "startPozs": { "x": 0, "y": 1.13, "z": 1.5 },
+          "startPozs": { "x": -0.3, "y": 1.13, "z": 2 },
           "opacity": 0.5,
           "color": "#444444",
           "sizeGrowth": 0.95,
@@ -400,7 +401,7 @@
           "maxCount": 40,
           "spawnRate": 5,
           "speed": 2.2,
-          "startPozs": { "x": 0, "y": 0.65, "z": 1.5 },
+          "startPozs": { "x": -0.3, "y": 0.65, "z": 2 },
           "scaleFactor": 1,
           "sparkProps": {
             "damping": 0.3,
@@ -422,7 +423,7 @@
     }
   },
   "settings": {
-    "targetPos": { "x": 0.46, "y": -1.7, "z": -7.68 },
+    "targetPos": { "x": 0.46, "y": -2, "z": -7.68 },
     "cameraPos": { "x": -32, "y": 15.2, "z": -14.41 }
   }
 }

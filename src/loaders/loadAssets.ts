@@ -118,12 +118,14 @@ export function loadAssets({
 
   const bonfireAsset = config.assets.models.bonfire;
   gltfLoader.load(bonfireAsset.path, (bonfireGLTF: GLTF) => {
-    const bonfire = bonfireGLTF.scene.children[0];
-    bonfire.traverse((child: Object3D) => {
-      if (child instanceof Mesh) {
-        child.castShadow = bonfireAsset.castShadow;
-      }
-    });
+    const bonfire = bonfireGLTF.scene;
+
+    const terrain = bonfire.getObjectByName("material_3") as Mesh;
+    terrain.renderOrder = 3;
+    terrain.receiveShadow = bonfireAsset.receiveShadow;
+
+    const stones = bonfire.getObjectByName("material_4") as Mesh;
+    stones.castShadow = bonfireAsset.castShadow;
 
     bonfire.scale.setScalar(bonfireAsset.scale);
     const { x, y, z } = bonfireAsset.position;
