@@ -258,6 +258,11 @@ canvas {
   content: none !important;
 }
 
+.range-value.hidden {
+  display: none;
+  pointer-events: none;
+}
+
 .modal-content-wrapper::before,
 .modal-content-wrapper::after {
   width: 250px;
@@ -749,10 +754,6 @@ canvas {
   }
   .range-value {
     margin-left: 1px !important;
-  }
-
-  #settings input[type="range"] {
-    max-width: 130px;
   }
 
   #settings select {

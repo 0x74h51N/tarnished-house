@@ -15,12 +15,13 @@ export function makeSceneSettings({
     arr.push({
       type: "range",
       id: `${key}countId`,
-      label: `${key} count`,
+      label: `${key}`,
       min: "1",
       max: "150",
       step: "1",
       value: spawnable[key].spawn.count.toString(),
       span: `${key}CountValue`,
+      hide: true,
       onChange: (e) => {
         const v = +e.target.value;
         document.getElementById(`${key}CountValue`)!.textContent = v.toString();

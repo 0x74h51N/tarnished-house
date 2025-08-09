@@ -2,9 +2,13 @@ import { GeneralControl } from "./types";
 
 export const inputRender = (c: GeneralControl) =>
   c.type === "range"
-    ? `<label class="control-label range-control">${c.label}:<input type="range" id="${c.id}" 
+    ? `<label class="control-label range-control">${
+        c.label
+      }:<input type="range" id="${c.id}" 
         min="${c.min}" max="${c.max}" step="${c.step}" 
-        value="${c.value}"/><span id="${c.span}" class="range-value">${c.value}
+        value="${c.value}"/><span id="${c.span}" class="range-value ${
+        c.hide && "hidden"
+      }">${c.value}
         </span>
         </label>`
     : c.type === "checkbox"

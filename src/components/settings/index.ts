@@ -38,7 +38,7 @@ export function settings({
     controls.map((c) => inputRender(c)).join("") +
     "<h3>Graphics</h3>" +
     graphics.map((c) => inputRender(c)).join("") +
-    "<h3>Scene</h3>" +
+    "<h3>Scene</h3><h4>Intensity</h4>" +
     sceneOpts.map((c) => inputRender(c)).join("") +
     "<br /><em>Secrets lie beneath<br />Should thy fingers recall<br />the first glyph of help twice</em>";
 

@@ -27,6 +27,7 @@ export interface RangeControl
     InputRangeAttributes {
   type: "range";
   span: string;
+  hide?: boolean;
 }
 
 export interface CheckboxControl
