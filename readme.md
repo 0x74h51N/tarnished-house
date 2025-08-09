@@ -2,6 +2,8 @@
 
 Procedural haunted scene built with Three.js, TypeScript & GLSL featuring random mesh generation, optimized assets, custom particle effects, and basic mobile support.
 
+<img width="3524" height="2320" alt="screenshot" src="https://github.com/user-attachments/assets/39f0220d-acf4-420e-a41b-799bec9b48ef" />
+
 ## Overview
 
 - **Procedural Generation**  
