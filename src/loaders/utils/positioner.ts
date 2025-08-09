@@ -5,9 +5,12 @@ type Positioner = (i: number, mesh: Mesh) => void;
 
 // Returns a reusable positioning function that spaces meshes in a radial pattern,
 // avoiding overlap using a minimum distance threshold if provided.
-export function createPositioner(opts: SpawnOptions): Positioner {
+export function createPositioner(
+  opts: SpawnOptions,
+  maxTry: number
+): Positioner {
   const placedPositions: [number, number][] = [];
-  const { count, radius, scale, minDistance = 0, yPosition = 0 } = opts;
+  const { count, radius, scale, minDistance, yPosition = 0 } = opts;
   const nScale = scale.min + Math.random() * (scale.max - scale.min);
 
   return (i: number, mesh: Mesh) => {
@@ -21,7 +24,7 @@ export function createPositioner(opts: SpawnOptions): Positioner {
     let z = 0;
     let tryCount = 0;
 
-    while (!positionFound && tryCount < 140) {
+    while (!positionFound && tryCount < maxTry) {
       const nRadius = radius.min + Math.random() * (radius.max - radius.min);
       x = Math.cos(angle) * nRadius;
       z = Math.sin(angle) * nRadius;

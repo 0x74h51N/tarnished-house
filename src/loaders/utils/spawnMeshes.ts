@@ -17,11 +17,12 @@ export function spawnMeshes({ manager, opts }: CountOpts) {
   });
   group.clear();
 
+  const positioner = createPositioner(opts, 200);
+
   // Randomly select and clone meshes from baseMeshes to the spawn count
   for (let i = 0; i < opts.count; i++) {
     const base = baseMeshes[Math.floor(Math.random() * baseMeshes.length)];
     const mesh = base.clone(true);
-    const positioner = createPositioner(opts);
 
     mesh.traverse((child) => {
       if (child instanceof Mesh) {

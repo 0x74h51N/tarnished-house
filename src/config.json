@@ -278,7 +278,7 @@
               "min": 14,
               "max": 66
             },
-            "minDistance": 4,
+            "minDistance": 8,
             "castShadow": true,
             "receiveShadow": true,
             "rotation": {
