@@ -1,7 +1,7 @@
 import { ManagerRefs } from "@/loaders";
 import { Scene, WebGLRenderer } from "three";
 import { AudioBundle } from "@/types";
-import { CameraPositionerReturn, LightBundle } from "@/engine";
+import { CameraSystemReturn, LightBundle, CameraReturn } from "@/engine";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,
@@ -51,16 +51,20 @@ export interface SettingsInterface {
   audio: AudioBundle;
   scene: Scene;
   stats: Stats;
-  camPositioner: CameraPositionerReturn;
+  CamController: CameraSystemReturn;
 }
-export type GeneralSettingsParams = Pick<
+export type GeneralSettingsParams = Pick<SettingsInterface, "audio">;
+
+export type DisplaySettingsParams = Pick<
   SettingsInterface,
-  "renderer" | "audio"
->;
+  "renderer" | "stats"
+> & {
+  camera: CameraSystemReturn["camera"];
+};
 
 export type GraphicsSettingsParams = Pick<
   SettingsInterface,
-  "scene" | "lights" | "renderer" | "antialias" | "stats"
+  "scene" | "lights" | "renderer" | "antialias"
 >;
 
 export type SceneSettingsParams = Pick<SettingsInterface, "randomMeshes">;

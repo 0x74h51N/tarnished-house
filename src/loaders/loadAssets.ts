@@ -119,12 +119,12 @@ export function loadAssets({
   const bonfireAsset = config.assets.models.bonfire;
   gltfLoader.load(bonfireAsset.path, (bonfireGLTF: GLTF) => {
     const bonfire = bonfireGLTF.scene;
-
-    const terrain = bonfire.getObjectByName("material_3") as Mesh;
+    console.log(bonfire);
+    const terrain = bonfire.getObjectByName("floor") as Mesh;
     terrain.renderOrder = 3;
     terrain.receiveShadow = bonfireAsset.receiveShadow;
 
-    const stones = bonfire.getObjectByName("material_4") as Mesh;
+    const stones = bonfire.getObjectByName("stones") as Mesh;
     stones.castShadow = bonfireAsset.castShadow;
 
     bonfire.scale.setScalar(bonfireAsset.scale);

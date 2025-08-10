@@ -1,10 +1,14 @@
-import { WebGLRenderer, OrthographicCamera } from "three";
+import { WebGLRenderer, OrthographicCamera, AmbientLight } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { shadowDispose } from "../../../utils";
 import config from "config.json";
 import GUI from "lil-gui";
-import { LightBundle } from "@/engine";
+import { LightBundle, MapSizeKey } from "@/engine";
 import { toneMappingMap, shadowTypes, ToneMappingKey } from "@/types";
+import {
+  applyShadowSizeAndBias,
+  createShadowBiasProxy,
+} from "@/engine/lights/utils";
 
 export function createGraphicsSettings(
   gui: GUI,
@@ -75,26 +79,28 @@ export function createGraphicsSettings(
   const shadows = graphics.addFolder("Shadows");
   shadows.close();
 
-  const shadowBias = shadowConfg.bias;
+  const biasProxy = createShadowBiasProxy(lights, shadowMapSizes);
+
+  const highCtrl = shadows
+    .add(biasProxy, "high", -0.005, 0.005, 0.0001)
+    .name("Shadow Bias");
+  const normalCtrl = shadows
+    .add(biasProxy, "normal", 0.0, 0.5, 0.0005)
+    .name("Normal Bias");
 
   shadows
-    .add(shadowBias, "high", -0.005, 0.005, 0.0001)
-    .name("Shadow Bias")
+    .add(
+      graphicsParams,
+      "shadowMapSize",
+      Object.keys(shadowMapSizes).map(Number)
+    )
+    .name("Shadow Resolution")
     .onChange((v: number) => {
-      if (fireLight.light.shadow) {
-        fireLight.light.shadow.bias = v;
-        directLight.light.shadow.bias = v;
-      }
-    });
-
-  shadows
-    .add(shadowBias, "normal", 0.0, 0.5, 0.0005)
-    .name("Normal Bias")
-    .onChange((v: number) => {
-      if (fireLight.light.shadow) {
-        fireLight.light.shadow.normalBias = v;
-        directLight.light.shadow.normalBias = v;
-      }
+      shadowDispose(lightArr);
+      applyShadowSizeAndBias(lights, v, shadowMapSizes);
+      highCtrl.updateDisplay();
+      normalCtrl.updateDisplay();
+      renderer.shadowMap.needsUpdate = true;
     });
 
   shadows
@@ -119,21 +125,6 @@ export function createGraphicsSettings(
     .onChange((v: string) => {
       shadowDispose(lightArr);
       renderer.shadowMap.type = shadowTypes[v as keyof typeof shadowTypes];
-      renderer.shadowMap.needsUpdate = true;
-    });
-
-  shadows
-    .add(graphicsParams, "shadowMapSize", shadowMapSizes)
-    .name("Shadow Resolution")
-    .onChange((v: number) => {
-      shadowDispose(lightArr);
-
-      if (fireLight.light.shadow) {
-        fireLight.light.shadow.mapSize.set(Number(v), Number(v));
-      }
-      if (directLight.light.shadow) {
-        directLight.light.shadow.mapSize.set(Number(v), Number(v));
-      }
       renderer.shadowMap.needsUpdate = true;
     });
 }

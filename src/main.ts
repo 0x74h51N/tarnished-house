@@ -16,19 +16,19 @@ import {
   createLights,
   createRenderer,
   createSound,
-  detectLowEnd,
+  applyLowEnd,
   Loop,
   particleSystem,
 } from "./engine";
 import { AudioBundle } from "./types";
 import { createSizes } from "./utils/windowSize";
 
-const showEnterButton = initIntroModal();
-
 //
 // Mobile Detection & Performance Optimization
 //
-detectLowEnd();
+applyLowEnd();
+
+const showEnterButton = initIntroModal();
 
 //
 // Canvas
@@ -190,7 +190,7 @@ randomMeshes({ scene }).then((m) => {
     audio,
     scene,
     stats,
-    camPositioner: CamController.positioner,
+    CamController,
   });
 
   initScreenshotButton({ renderer, composer });

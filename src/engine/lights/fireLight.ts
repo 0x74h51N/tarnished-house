@@ -1,10 +1,10 @@
 import { PointLight, PointLightHelper, Scene } from "three";
 import config from "config.json";
-import { FireLight } from "./types";
+import { FireLight, MapSizeKey } from "./types";
 import { animateValue } from "./utils";
 
 export const createFireLight = (scene: Scene): FireLight => {
-  const { defMapSize, bias } = config.scene.renderer.shadows;
+  const { defMapSize, mapSizes } = config.scene.renderer.shadows;
   const lightConfg = config.scene.lighting.fireLight;
 
   const light = new PointLight(
@@ -16,8 +16,9 @@ export const createFireLight = (scene: Scene): FireLight => {
 
   light.castShadow = true;
   light.shadow.mapSize.set(defMapSize, defMapSize);
-  light.shadow.bias = bias.high;
-  light.shadow.normalBias = bias.normal;
+  light.shadow.bias = mapSizes[defMapSize.toString() as MapSizeKey].bias.high;
+  light.shadow.normalBias =
+    mapSizes[defMapSize.toString() as MapSizeKey].bias.normal;
 
   light.position.set(
     lightConfg.position.x,

@@ -529,6 +529,7 @@ canvas {
   }
   input[type="range"] {
     flex: 1;
+    max-width: 250px;
     margin-left: 10px;
     accent-color: var(--color-gold);
   }

@@ -4,3 +4,4 @@ export * from "./renderer";
 export * from "./particles";
 export * from "./postprocess/createComposer";
 export * from "./audio";
+export * from "./lowEndProfile";

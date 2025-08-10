@@ -6,6 +6,7 @@ import {
   PointLight,
   PointLightHelper,
 } from "three";
+import config from "config.json";
 
 export type FireLight = {
   light: PointLight;
@@ -24,3 +25,6 @@ export type LightBundle = {
   fireLight: FireLight;
   directLight: DirectLight;
 };
+export type MapSizes = typeof config.scene.renderer.shadows.mapSizes;
+
+export type MapSizeKey = keyof MapSizes;

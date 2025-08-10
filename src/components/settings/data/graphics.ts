@@ -1,37 +1,22 @@
 import { fog } from "@/engine/postprocess/fog";
-import {
-  ShadowTypeKey,
-  shadowTypes,
-  ToneMappingKey,
-  toneMappingMap,
-} from "@/types";
+import { ShadowTypeKey, shadowTypes } from "@/types";
 import { shadowDispose } from "@/utils";
 import config from "config.json";
 import { DirectionalLight } from "three";
 import { GraphicsSettingsParams, GeneralControl } from "../types";
+import { applyShadowSizeAndBias } from "@/engine/lights/utils";
 
 export function makeGraphicsSettings({
   scene,
   lights,
   renderer,
   antialias,
-  stats,
 }: GraphicsSettingsParams): GeneralControl[] {
   const shadowConfg = config.scene.renderer.shadows;
   const lightArr = [lights.fireLight.light, lights.directLight.light];
   const defDist = shadowConfg.defDistance as keyof typeof shadowConfg.distance;
 
   return [
-    {
-      type: "checkbox",
-      id: "fpsCounter",
-      label: "Show FPS",
-      checked: Boolean(config.scene.debug.fpsCounter),
-      onChange: (e) => {
-        if (e.target.checked) document.body.appendChild(stats.dom);
-        else stats.dom.remove();
-      },
-    },
     {
       type: "checkbox",
       id: "antialiasing",
@@ -122,15 +107,15 @@ export function makeGraphicsSettings({
       type: "select",
       id: "shadowResolution",
       label: "Shadow Resolution",
-      options: shadowConfg.mapSizes.map((s) => ({
-        v: s,
-        t: String(s),
-        s: shadowConfg.defMapSize === s,
+      options: Object.keys(shadowConfg.mapSizes).map((size) => ({
+        v: Number(size),
+        t: size,
+        s: shadowConfg.defMapSize === Number(size),
       })),
       onChange: (e) => {
         const res = +e.target.value;
         shadowDispose(lightArr);
-        lightArr.forEach((l) => l.shadow!.mapSize.set(res, res));
+        applyShadowSizeAndBias(lights, Number(res), shadowConfg.mapSizes);
         renderer.shadowMap.needsUpdate = true;
       },
     },
@@ -148,20 +133,6 @@ export function makeGraphicsSettings({
         shadowDispose(lightArr);
         renderer.shadowMap.type = shadowTypes[v];
         renderer.shadowMap.needsUpdate = true;
-      },
-    },
-    {
-      type: "select",
-      id: "toneMapping",
-      label: "Tone Mapping",
-      options: Object.entries(toneMappingMap).map(([k]) => ({
-        v: k,
-        t: k,
-        s: renderer.toneMapping == toneMappingMap[k as ToneMappingKey],
-      })),
-      onChange: (e) => {
-        const v = e.target!.value as ToneMappingKey;
-        renderer.toneMapping = toneMappingMap[v];
       },
     },
   ];

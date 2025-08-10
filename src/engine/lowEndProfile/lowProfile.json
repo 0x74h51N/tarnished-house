@@ -1,0 +1,81 @@
+{
+  "moonLightEnabled": false,
+  "maxPixelRatio": 2,
+  "shadows": {
+    "defMapSize": 512,
+    "defDistance": "half"
+  },
+  "assets": {
+    "floor": {
+      "textures": {
+        "repeat": 10
+      },
+      "geometry": {
+        "widthSegments": 60,
+        "heightSegments": 60
+      }
+    },
+    "spawnables": {
+      "trees": {
+        "spawn": {
+          "count": 40,
+          "radius": {
+            "min": 14,
+            "max": 40
+          },
+          "receiveShadow": false
+        }
+      },
+      "bushes": {
+        "spawn": {
+          "count": 10,
+          "radius": {
+            "min": 9,
+            "max": 35
+          },
+          "receiveShadow": false
+        }
+      },
+      "graves": {
+        "spawn": {
+          "count": 30,
+          "radius": {
+            "min": 10,
+            "max": 30
+          },
+          "receiveShadow": false
+        }
+      },
+      "branches": {
+        "spawn": {
+          "count": 8,
+          "radius": {
+            "min": 8,
+            "max": 20
+          },
+          "castShadow": false,
+          "receiveShadow": false
+        }
+      }
+    },
+    "particles": {
+      "flame": {},
+      "smoke": {
+        "properties": {
+          "maxCount": 18,
+          "spawnRate": 1.5
+        }
+      },
+      "sparks": {
+        "properties": {
+          "maxCount": 18,
+          "spawnRate": 4,
+          "sparkProps": {
+            "waveFreq": 2.8,
+            "waveAmp": 0.12
+          }
+        }
+      }
+    }
+  }
+}

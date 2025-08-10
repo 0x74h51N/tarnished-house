@@ -1,7 +1,7 @@
 {
   "scene": {
     "camera": {
-      "fov": 45,
+      "fov": 35,
       "near": 0.1,
       "far": 90,
       "position": {
@@ -27,17 +27,38 @@
     },
     "renderer": {
       "toneMapping": "ACES Filmic",
-      "toneMappingExposure": 0.5,
+      "toneMappingExposure": 0.4,
       "maxPixelRatio": 2,
       "shadows": {
         "enabled": true,
         "type": "PCFSoft",
-        "defMapSize": 512,
-        "defDistance": "three",
-        "mapSizes": [256, 512, 1024, 2048, 4096],
-        "bias": {
-          "high": -0.0004,
-          "normal": 0.12
+        "defMapSize": 2048,
+        "defDistance": "full",
+        "mapSizes": {
+          "512": {
+            "bias": {
+              "high": -0.0005,
+              "normal": 0.12
+            }
+          },
+          "1024": {
+            "bias": {
+              "high": -0.0007,
+              "normal": 0.05
+            }
+          },
+          "2048": {
+            "bias": {
+              "high": -0.0005,
+              "normal": 0.01
+            }
+          },
+          "4096": {
+            "bias": {
+              "high": -0.0005,
+              "normal": 0.02
+            }
+          }
         },
         "distance": {
           "half": {
@@ -69,7 +90,7 @@
         "intensity": 3.5,
         "position": {
           "x": 4,
-          "y": 15,
+          "y": 20,
           "z": 45
         },
         "shadow": {
@@ -92,11 +113,11 @@
       "fireLight": {
         "color": "#ffae42",
         "position": {
-          "x": -0.3,
-          "y": 0.95,
+          "x": -0.55,
+          "y": 0.75,
           "z": 2
         },
-        "intensity": 50,
+        "intensity": 35,
         "distance": 12.5,
         "decay": 0.8,
         "animation": {
@@ -121,9 +142,9 @@
     "postProcessing": {
       "bloom": {
         "enabled": true,
-        "strength": 0.27,
-        "radius": 0.6,
-        "threshold": 0.77
+        "strength": 0.26,
+        "radius": 0.11,
+        "threshold": 0.5
       },
       "fog": {
         "enabled": true,
@@ -155,89 +176,22 @@
       }
     }
   },
-  "performance": {
-    "moonLightEnabled": false,
-    "maxPixelRatio": 2,
-    "floorGeometryDivider": 3,
-    "spawnables": {
-      "trees": {
-        "spawn": {
-          "count": 40,
-          "radius": {
-            "min": 14,
-            "max": 40
-          },
-          "receiveShadow": false
-        }
-      },
-      "bushes": {
-        "spawn": {
-          "count": 10,
-          "radius": {
-            "min": 9,
-            "max": 35
-          },
-          "receiveShadow": false
-        }
-      },
-      "graves": {
-        "spawn": {
-          "count": 30,
-          "radius": {
-            "min": 10,
-            "max": 30
-          },
-          "receiveShadow": false
-        }
-      },
-      "branches": {
-        "spawn": {
-          "count": 8,
-          "radius": {
-            "min": 8,
-            "max": 20
-          },
-          "castShadow": false,
-          "receiveShadow": false
-        }
-      }
-    },
-    "particles": {
-      "flame": {},
-      "smoke": {
-        "properties": {
-          "maxCount": 18,
-          "spawnRate": 1.5
-        }
-      },
-      "sparks": {
-        "properties": {
-          "maxCount": 18,
-          "spawnRate": 4,
-          "sparkProps": {
-            "waveFreq": 2.8,
-            "waveAmp": 0.12
-          }
-        }
-      }
-    }
-  },
   "assets": {
     "decoder": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
     "floor": {
       "color": "#cccccc",
-      "displacementScale": 0.2,
+      "displacementScale": 0.15,
       "textures": {
         "baseColor": "./floor/textures/ground-diff.avif",
         "normalMap": "./floor/textures/ground-norm.avif",
         "armTex": "./floor/textures/ground-arm.avif",
         "displacementMap": "./floor/textures/ground-disp.avif",
         "alphaMap": "./floor/alpha.jpg",
-        "repeat": 18
+        "repeat": 20
       },
       "geometry": {
-        "width": 180,
-        "height": 180,
+        "width": 140,
+        "height": 140,
         "widthSegments": 200,
         "heightSegments": 200
       }
@@ -256,10 +210,10 @@
       },
       "bonfire": {
         "path": "./bonfire/bonfire.gltf",
-        "scale": 2.4,
+        "scale": 2.55,
         "position": {
-          "x": -0.3,
-          "y": 0.13,
+          "x": -0.55,
+          "y": 0.089,
           "z": 2
         },
         "castShadow": true,
@@ -275,7 +229,7 @@
               "max": 0.7
             },
             "radius": {
-              "min": 14,
+              "min": 16,
               "max": 66
             },
             "minDistance": 8,
@@ -358,7 +312,7 @@
         "properties": {
           "size": 1.2,
           "speed": 4.5,
-          "startPozs": { "x": -0.3, "y": 0.55, "z": 2 },
+          "startPozs": { "x": -0.55, "y": 0.55, "z": 2 },
           "color": "#ff0000",
           "noise": {
             "noiseScale": { "x": 0.8, "y": 1.2, "z": 1.0, "w": 0.29 },
@@ -383,9 +337,9 @@
         "properties": {
           "area": 0.25,
           "size": 0.35,
-          "maxCount": 42,
-          "spawnRate": 1.8,
-          "startPozs": { "x": -0.3, "y": 1.13, "z": 2 },
+          "maxCount": 35,
+          "spawnRate": 1.7,
+          "startPozs": { "x": -0.55, "y": 1.13, "z": 2 },
           "opacity": 0.5,
           "color": "#444444",
           "sizeGrowth": 0.95,
@@ -401,7 +355,7 @@
           "maxCount": 40,
           "spawnRate": 5,
           "speed": 2.2,
-          "startPozs": { "x": -0.3, "y": 0.65, "z": 2 },
+          "startPozs": { "x": -0.55, "y": 0.65, "z": 2 },
           "scaleFactor": 1,
           "sparkProps": {
             "damping": 0.3,

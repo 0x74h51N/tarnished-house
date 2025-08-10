@@ -1,10 +1,11 @@
 import { vec3From } from "@/utils";
 import { SettingsInterface } from "./types";
 import config from "config.json";
+import { CameraSystemReturn } from "@/engine";
 
 export function settingModalController({
-  camPositioner,
-}: Pick<SettingsInterface, "camPositioner">) {
+  positioner,
+}: Pick<CameraSystemReturn, "positioner">) {
   const toggleBtn = document.getElementById("settings-btn");
   const modal = document.getElementById("settings-modal");
   const closeBtn = document.getElementById("close-settings");
@@ -12,14 +13,14 @@ export function settingModalController({
   if (!toggleBtn || !modal || !closeBtn) return;
 
   const hideModal = () => {
-    camPositioner.restorePosition();
+    positioner.restorePosition();
 
     modal.classList.remove("active");
     setTimeout(() => modal.classList.add("hidden"), 200);
   };
 
   const showModal = () => {
-    camPositioner.setPosition({
+    positioner.setPosition({
       cameraPos: vec3From(config.settings.cameraPos),
       targetPos: vec3From(config.settings.targetPos),
     });

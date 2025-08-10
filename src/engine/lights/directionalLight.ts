@@ -5,17 +5,13 @@ import {
   Scene,
 } from "three";
 import config from "config.json";
-import { DirectLight } from "./types";
+import { DirectLight, MapSizeKey } from "./types";
 
 export function createDirectLight(scene: Scene): DirectLight {
   const shadowConfg = config.scene.renderer.shadows;
   const {
     renderer: {
-      shadows: {
-        defMapSize,
-        defDistance,
-        bias: { high: biasHigh, normal: biasNormal },
-      },
+      shadows: { defMapSize, defDistance, mapSizes },
     },
     lighting: {
       directional: {
@@ -55,8 +51,9 @@ export function createDirectLight(scene: Scene): DirectLight {
 
   light.shadow.camera.updateProjectionMatrix();
   light.shadow.mapSize.set(defMapSize, defMapSize);
-  light.shadow.bias = biasHigh;
-  light.shadow.normalBias = biasNormal;
+  light.shadow.bias = mapSizes[defMapSize.toString() as MapSizeKey].bias.high;
+  light.shadow.normalBias =
+    mapSizes[defMapSize.toString() as MapSizeKey].bias.normal;
 
   light.target.position.set(targetX, targetY, targetZ);
   scene.add(light.target);
