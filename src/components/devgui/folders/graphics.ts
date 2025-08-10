@@ -82,10 +82,10 @@ export function createGraphicsSettings(
   const biasProxy = createShadowBiasProxy(lights, shadowMapSizes);
 
   const highCtrl = shadows
-    .add(biasProxy, "high", -0.005, 0.005, 0.0001)
+    .add(biasProxy, "high", -0.05, 0.05, 0.0001)
     .name("Shadow Bias");
   const normalCtrl = shadows
-    .add(biasProxy, "normal", 0.0, 0.5, 0.0005)
+    .add(biasProxy, "normal", -0.5, 0.5, 0.0001)
     .name("Normal Bias");
 
   shadows
