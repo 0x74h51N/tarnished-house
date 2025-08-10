@@ -11,8 +11,8 @@
         "repeat": 10
       },
       "geometry": {
-        "widthSegments": 60,
-        "heightSegments": 60
+        "widthSegments": 80,
+        "heightSegments": 80
       }
     },
     "spawnables": {
