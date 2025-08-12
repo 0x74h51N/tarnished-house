@@ -1,18 +1,40 @@
-import { VolumeSetter } from "@/types";
 import {
-  PerspectiveCamera,
-  LoadingManager,
+  AudioLoader,
   PositionalAudio,
-  Audio,
+  Audio as ThreeAudio,
+  AudioListener,
+  Object3D,
 } from "three";
 
-export interface CreateSoundInterface {
-  camera: PerspectiveCamera;
-  loadingManager: LoadingManager;
+export type PositionalOpts = {
+  loop: boolean;
+  volume: number;
+  refDistance: number;
+  rolloffFactor: number;
+  autoplay: boolean;
+};
+
+export interface PositionalSoundArgs {
+  url: string;
+  opts: PositionalOpts;
 }
 
-export interface CreateSoundReturn {
-  positionalSound: PositionalAudio;
-  ambianceSound: Audio;
-  onVolumeChange: VolumeSetter;
+export interface OneShotArgs {
+  url: string;
+  opts: PositionalOpts;
+}
+
+export interface AudioAPI {
+  setVol(v: number): void;
+  createPositional({
+    url,
+    opts,
+  }: PositionalSoundArgs): Promise<PositionalAudio>;
+  createAmbience(url: string): ThreeAudio;
+  resume(): Promise<void>;
+}
+
+export interface SoundCreator {
+  loader: AudioLoader;
+  listener: AudioListener;
 }

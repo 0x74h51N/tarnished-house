@@ -1,19 +1,14 @@
-import { AudioListener, AudioLoader, Audio } from "three";
-import config from "config.json";
+import { Audio as ThreeAudio } from "three";
+import { SoundCreator } from "..";
 
-export function createAmbianceSound(
-  listener: AudioListener,
-  loader: AudioLoader
-): { sound: Audio } {
-  const sound = new Audio(listener);
-
-  loader.load(config.assets.sounds.ambiance, (buffer) => {
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.setVolume(config.scene.audio.volume);
-  });
-
-  return {
-    sound,
+export const createAmbianceSound = ({ listener, loader }: SoundCreator) => {
+  return function createAmbience(url: string) {
+    const s = new ThreeAudio(listener);
+    loader.load(url, (buffer) => {
+      s.setBuffer(buffer);
+      s.setLoop(true);
+      s.setVolume(1);
+    });
+    return s;
   };
-}
+};

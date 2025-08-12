@@ -1,6 +1,6 @@
 import { Group, Mesh, Scene, LoadingManager } from "three";
 import { spawnMeshes, createGLTFLoader } from "./utils";
-import config from "config.json";
+import assets from "assets.json";
 import {
   ManagerRefs,
   ManagerType,
@@ -14,7 +14,7 @@ export async function randomMeshes({
   scene: Scene;
 }): Promise<ManagerRefs> {
   const acc = {} as ManagerRefs;
-  const spawnable = config.assets.models.spawnable as SpawnableObjects;
+  const spawnable = assets.models.spawnable as SpawnableObjects;
 
   const randomManager = new LoadingManager();
   randomManager.onError = (u) => console.error("random failed", u);

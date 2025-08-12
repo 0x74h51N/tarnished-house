@@ -59,21 +59,19 @@
       }
     },
     "particles": {
-      "flame": {},
+      "flame": {
+        "march": { "iterations": 20 }
+      },
       "smoke": {
-        "properties": {
-          "maxCount": 18,
-          "spawnRate": 1.5
-        }
+        "maxCount": 18,
+        "spawnRate": 1.5
       },
       "sparks": {
-        "properties": {
-          "maxCount": 18,
-          "spawnRate": 4,
-          "sparkProps": {
-            "waveFreq": 2.8,
-            "waveAmp": 0.12
-          }
+        "maxCount": 18,
+        "spawnRate": 4,
+        "sparkProps": {
+          "waveFreq": 2.8,
+          "waveAmp": 0.12
         }
       }
     }

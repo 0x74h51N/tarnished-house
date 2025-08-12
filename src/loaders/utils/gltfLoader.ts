@@ -1,11 +1,11 @@
 import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons";
 import { LoadingManager } from "three";
-import config from "config.json";
+import assets from "assets.json";
 
 export function createGLTFLoader(loadingManager: LoadingManager): GLTFLoader {
   const dracoLoader = new DRACOLoader();
   dracoLoader.setDecoderConfig({ type: "wasm" });
-  dracoLoader.setDecoderPath(config.assets.decoder);
+  dracoLoader.setDecoderPath(assets.decoder);
 
   const gltfLoader = new GLTFLoader(loadingManager);
   gltfLoader.setDRACOLoader(dracoLoader);

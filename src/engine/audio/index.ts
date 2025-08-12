@@ -1,35 +1,37 @@
-import { AudioListener, AudioLoader } from "three";
-import config from "config.json";
-import { CreateSoundInterface, CreateSoundReturn } from "./types";
-import { createPositionalSound } from "./sounds/positional";
-import { createAmbianceSound } from "./sounds/ambiance";
-import { VolumeSetter } from "@/types";
+import { AudioListener, AudioLoader, LoadingManager } from "three";
+import { AudioAPI } from "./types";
+import { CameraReturn } from "../camera";
+import { createPositionalSound, createAmbianceSound } from "./sounds";
 
-export function createSound({
-  camera,
-  loadingManager,
-}: CreateSoundInterface): CreateSoundReturn {
+interface CreateAudio {
+  camera: CameraReturn["camera"];
+  loadingManager: LoadingManager;
+}
+
+export function createAudio({ camera, loadingManager }: CreateAudio): AudioAPI {
   const listener = new AudioListener();
   camera.add(listener);
 
   const loader = new AudioLoader(loadingManager);
 
-  const { sound: positionalSound } = createPositionalSound(listener, loader);
-  const { sound: ambianceSound } = createAmbianceSound(listener, loader);
+  function setVol(v: number) {
+    listener.setMasterVolume(v);
+  }
 
-  const soundMult = config.scene.audio.positionalAudio.fireVolumeMultiplier;
-
-  const onVolumeChange: VolumeSetter = (v) => {
-    positionalSound.setVolume(v * soundMult);
-    ambianceSound.setVolume(v);
-
-    if (!positionalSound.isPlaying) positionalSound.play();
-    if (!ambianceSound.isPlaying) ambianceSound.play();
+  const createAudio = {
+    loader,
+    listener,
   };
+  const createPositional = createPositionalSound(createAudio);
 
-  return {
-    positionalSound,
-    ambianceSound,
-    onVolumeChange,
-  };
+  const createAmbience = createAmbianceSound(createAudio);
+
+  async function resume() {
+    if (listener.context.state !== "running") await listener.context.resume();
+  }
+
+  return { setVol, createPositional, createAmbience, resume };
 }
+
+export * from "./utils";
+export * from "./types";

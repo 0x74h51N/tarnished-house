@@ -1,0 +1,19 @@
+{
+  "size": 1.4,
+  "speed": 4.65,
+  "startPozs": { "x": 0, "y": 0.1, "z": 0 },
+  "color": "#ff0000",
+  "noise": {
+    "noiseScale": { "x": 0.7, "y": 1.62, "z": 0.7, "w": 0.29 },
+    "magnitude": 2.8,
+    "lacunarity": 1.54,
+    "gain": 0.53,
+    "octaves": 3
+  },
+  "march": {
+    "iterations": 25,
+    "rayStepFactor": 0.0288
+  },
+  "colorMixStr": 0.65,
+  "texture": "./fire.png"
+}

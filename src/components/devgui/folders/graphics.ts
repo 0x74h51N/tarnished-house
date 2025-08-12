@@ -1,9 +1,9 @@
-import { WebGLRenderer, OrthographicCamera, AmbientLight } from "three";
+import { WebGLRenderer, OrthographicCamera } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { shadowDispose } from "../../../utils";
 import config from "config.json";
 import GUI from "lil-gui";
-import { LightBundle, MapSizeKey } from "@/engine";
+import { LightBundle } from "@/engine";
 import { toneMappingMap, shadowTypes, ToneMappingKey } from "@/types";
 import {
   applyShadowSizeAndBias,
@@ -75,7 +75,7 @@ export function createGraphicsSettings(
 
   // Shadows
   const { directLight, fireLight } = lights;
-  const lightArr = [lights.fireLight.light, lights.directLight.light];
+  const lightArr = [lights.fireLight!.light, lights.directLight.light];
   const shadows = graphics.addFolder("Shadows");
   shadows.close();
 
@@ -111,7 +111,7 @@ export function createGraphicsSettings(
       shadowDispose(lightArr);
 
       directLight.light.castShadow = v;
-      fireLight.light.castShadow = v;
+      fireLight!.light.castShadow = v;
 
       if (directLight.light.shadow && "camera" in directLight.light.shadow) {
         (directLight.light.shadow.camera as OrthographicCamera).visible = v;

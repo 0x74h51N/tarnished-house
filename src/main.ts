@@ -1,5 +1,6 @@
 import Stats from "stats.js";
 import config from "config.json";
+import assets from "assets.json";
 import {
   settings,
   initIntroModal,
@@ -7,7 +8,13 @@ import {
   initCreditsModal,
   initScreenshotButton,
 } from "./components";
-import { Scene, LoadingManager, TextureLoader, Color } from "three";
+import {
+  Scene,
+  LoadingManager,
+  TextureLoader,
+  Color,
+  PositionalAudio,
+} from "three";
 
 import { loadAssets, ManagerRefs, randomMeshes } from "./loaders";
 import {
@@ -15,13 +22,13 @@ import {
   createComposer,
   createLights,
   createRenderer,
-  createSound,
   applyLowEnd,
   Loop,
-  particleSystem,
+  createAudio,
 } from "./engine";
 import { AudioBundle } from "./types";
 import { createSizes } from "./utils/windowSize";
+import { Bonfire, createIgniteBtn } from "./prefabs";
 
 //
 // Mobile Detection & Performance Optimization
@@ -53,12 +60,6 @@ const CamController = CameraController({
 });
 
 //
-// Lights
-//
-
-const lights = createLights(scene);
-
-//
 // renderer
 //
 
@@ -75,16 +76,14 @@ const { composer, bloomPass } = createComposer({
 });
 
 //
-
+// ASSET LOADING
+// Load static models and textures
 //
-// PARTICLE SYSTEM
-// Initialize flame, smoke, and spark emitters
-//
-const { flame, smoke, sparks } = particleSystem({
-  sizes,
+loadAssets({
   scene,
+  loadingManager,
+  renderer,
   texLoader,
-  camera: CamController.camera,
 });
 
 //
@@ -109,46 +108,95 @@ window.addEventListener("resize", () => {
 //
 // Sounds
 //
-const { onVolumeChange, positionalSound } = createSound({
+const { setVol, resume, createAmbience, createPositional } = createAudio({
   camera: CamController.camera,
   loadingManager,
 });
+const ambianceS = createAmbience(config.sounds.ambiance);
 
-const { btn, updateIcon } = setupToggleButton();
-let isMuted = true;
-const muteBtn = () => {
-  isMuted = !isMuted;
-  const volume = isMuted ? 0 : config.scene.audio.volume;
-  onVolumeChange(volume);
-  updateIcon(volume);
-};
-btn.addEventListener("click", muteBtn);
+const { btn, updateIcon } = setupToggleButton(); // Settings and audio mute button
+
+let audioUnlocked = false;
+let muted = true;
+const targetVolume = config.scene.audio.volume;
+
+function setMuted(val: boolean) {
+  muted = val;
+  const v = muted ? 0 : targetVolume;
+  setVol(v);
+  updateIcon(v);
+}
+
+async function startAudio() {
+  if (!audioUnlocked) {
+    await resume();
+    effect.play();
+    ambianceS.play();
+    audioUnlocked = true;
+  }
+  setMuted(false);
+}
+
+btn.addEventListener("click", () => setMuted(!muted), { passive: true });
 
 const audio: AudioBundle = {
-  setVolume: onVolumeChange,
+  setVolume: setVol,
   updateIcon: updateIcon,
 };
-
-//
-// ASSET LOADING
-// Load static models and textures
-//
-loadAssets({
-  scene,
-  loadingManager,
-  renderer,
-  positionalSound,
-  texLoader,
-});
 
 //
 // Randomized mesh placement system (e.g. graves, trees, etc.)
 let managers: ManagerRefs | undefined;
 
 loadingManager.onLoad = () => {
-  showEnterButton(muteBtn);
+  showEnterButton(startAudio);
   initCreditsModal();
 };
+
+//
+// Lights
+//
+
+const lights = createLights(scene);
+
+//
+// Ignite Button
+const { button: igniteBtn, dispose } = createIgniteBtn({
+  camera: CamController.camera,
+  canvas,
+  onClick: () => {
+    bonfire.ignite();
+    scene.remove(igniteBtn);
+    dispose();
+  },
+});
+
+//
+// Bonfire
+//
+const bonfire = await Bonfire.create(sizes, assets.models.bonfire["inst-1"]);
+
+const audioOpts = assets.models.bonfire.audio;
+createPositional(audioOpts).then((s) => bonfire.attachAudio(s));
+
+let effect: PositionalAudio;
+createPositional({
+  url: audioOpts.firestartUrl,
+  opts: { ...audioOpts.opts, loop: false, autoplay: false, volume: 1 },
+}).then((s) => {
+  bonfire.attachIgnite(s);
+  effect = s;
+});
+
+scene.add(bonfire);
+
+igniteBtn.position.copy(bonfire.position);
+igniteBtn.position.z += 2.0;
+
+scene.add(igniteBtn);
+
+lights.fireLight = bonfire.fireLight;
+const { smoke, sparks, flame } = bonfire;
 
 //
 // Stats
@@ -212,11 +260,7 @@ loop.addUpdate((delta, elapsed) => {
 
   CamController.camera.updateMatrix();
 
-  sparks.step(delta);
-  flame.step(delta);
-  smoke.step(delta);
-
-  lights.fireLight.animator.update(elapsed);
+  bonfire!.step(delta, elapsed);
 });
 
 loop.addRender(() => {

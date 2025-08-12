@@ -13,7 +13,7 @@ export function makeGraphicsSettings({
   antialias,
 }: GraphicsSettingsParams): GeneralControl[] {
   const shadowConfg = config.scene.renderer.shadows;
-  const lightArr = [lights.fireLight.light, lights.directLight.light];
+  const lightArr = [lights.fireLight!.light, lights.directLight.light];
   const defDist = shadowConfg.defDistance as keyof typeof shadowConfg.distance;
 
   return [

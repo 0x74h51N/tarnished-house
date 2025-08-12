@@ -1,5 +1,5 @@
 import { Group, Mesh } from "three";
-import config from "config.json";
+import assets from "assets.json";
 import { minMax } from "@/types";
 
 export type rotationType = minMax | number | undefined;
@@ -30,7 +30,7 @@ export type CountOpts = {
   opts: SpawnOptions;
 };
 
-type SpawnableConfig = typeof config.assets.models.spawnable;
+type SpawnableConfig = typeof assets.models.spawnable;
 export type SpawnableName = keyof SpawnableConfig;
 
 export type SpawnableType = {

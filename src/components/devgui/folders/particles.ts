@@ -1,25 +1,21 @@
 import GUI from "lil-gui";
-import config from "config.json";
-import {
-  NoiseParams,
-  ParticleSystemRefs,
-  FlameProps,
-  PointProps,
-} from "@/engine";
+import { NoiseParams, FlameProps } from "@/engine";
 import { minMax } from "@/types";
+import {
+  BonfireParticles,
+  flameConfig,
+  smokeConfig,
+  sparkConfig,
+} from "@/prefabs";
 
 export function createParticleSettings(
   gui: GUI,
-  particleSystems: ParticleSystemRefs
+  particleSystems: BonfireParticles
 ) {
   const particlesFolder = gui.addFolder("Particles Settings");
   particlesFolder.close();
 
-  const flameConfig = config.assets.particles.flame;
-  const smokeConfig = config.assets.particles.smoke;
-  const sparksConfig = config.assets.particles.sparks;
-
-  if (!flameConfig || !smokeConfig || !sparksConfig) {
+  if (!sparkConfig || !smokeConfig || !flameConfig) {
     console.error("Particle configurations not found in config");
     return;
   }
@@ -27,7 +23,7 @@ export function createParticleSettings(
   const flameFolder = particlesFolder.addFolder("Flame");
   flameFolder.close();
 
-  const flameParams = flameConfig.properties as FlameProps;
+  const flameParams = flameConfig as FlameProps;
 
   flameFolder
     .add(flameParams, "size", 0.1, 3, 0.01)
@@ -158,7 +154,7 @@ export function createParticleSettings(
   const smokeFolder = particlesFolder.addFolder("Smoke");
   smokeFolder.close();
 
-  const smokeParams = smokeConfig.properties as PointProps;
+  const smokeParams = smokeConfig;
 
   smokeFolder
     .add(smokeParams, "area", 0.1, 2, 0.01)
@@ -220,7 +216,7 @@ export function createParticleSettings(
   const sparksFolder = particlesFolder.addFolder("Sparks");
   sparksFolder.close();
 
-  const sparksParams = sparksConfig.properties as PointProps;
+  const sparksParams = sparkConfig;
 
   sparksFolder
     .addColor(sparksParams, "color")
@@ -293,7 +289,7 @@ export function createParticleSettings(
     .name("Min Elevation")
     .onChange((v: number) => {
       const newElevDivs: minMax = {
-        ...sparksParams.sparkProps!.elevDivs!,
+        ...sparksParams.sparkProps.elevDivs,
         min: v,
       };
       particleSystems.sparks!.update("sparkProps.elevDivs", newElevDivs);
@@ -304,7 +300,7 @@ export function createParticleSettings(
     .name("Max Elevation")
     .onChange((v: number) => {
       const newElevDivs: minMax = {
-        ...sparksParams.sparkProps!.elevDivs!,
+        ...sparksParams.sparkProps.elevDivs,
         max: v,
       };
       particleSystems.sparks!.update("sparkProps.elevDivs", newElevDivs);

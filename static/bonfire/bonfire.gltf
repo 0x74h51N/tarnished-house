@@ -1,799 +1,725 @@
 {
-	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.5.47",
-		"version":"2.0"
-	},
-	"extensionsUsed":[
-		"KHR_draco_mesh_compression",
-		"KHR_materials_emissive_strength"
-	],
-	"extensionsRequired":[
-		"KHR_draco_mesh_compression"
-	],
-	"scene":0,
-	"scenes":[
-		{
-			"name":"Scene",
-			"nodes":[
-				0,
-				1,
-				2,
-				3,
-				4,
-				5,
-				6
-			]
-		}
-	],
-	"nodes":[
-		{
-			"mesh":0,
-			"name":"skulls"
-		},
-		{
-			"mesh":1,
-			"name":"bones"
-		},
-		{
-			"mesh":2,
-			"name":"hilt"
-		},
-		{
-			"mesh":3,
-			"name":"stones"
-		},
-		{
-			"mesh":4,
-			"name":"floor"
-		},
-		{
-			"mesh":5,
-			"name":"sword"
-		},
-		{
-			"mesh":6,
-			"name":"ashes"
-		}
-	],
-	"materials":[
-		{
-			"doubleSided":false,
-			"name":"skullMat",
-			"normalTexture":{
-				"index":0
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":1
-				},
-				"metallicFactor":0,
-				"roughnessFactor":0.9770992398262024
-			}
-		},
-		{
-			"doubleSided":false,
-			"name":"boneMat",
-			"normalTexture":{
-				"index":2
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":3
-				},
-				"metallicFactor":0,
-				"roughnessFactor":0.9351145029067993
-			}
-		},
-		{
-			"doubleSided":false,
-			"emissiveFactor":[
-				1,
-				1,
-				1
-			],
-			"emissiveTexture":{
-				"index":4
-			},
-			"extensions":{
-				"KHR_materials_emissive_strength":{
-					"emissiveStrength":3
-				}
-			},
-			"name":"hiltMat",
-			"normalTexture":{
-				"index":5
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":6
-				},
-				"metallicFactor":0,
-				"metallicRoughnessTexture":{
-					"index":7
-				}
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"stoneMat",
-			"normalTexture":{
-				"index":8
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":9
-				},
-				"metallicFactor":0,
-				"roughnessFactor":0.88
-			}
-		},
-		{
-			"alphaMode":"BLEND",
-			"doubleSided":false,
-			"name":"floorMat",
-			"normalTexture":{
-				"index":10
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":11
-				},
-				"metallicFactor":0
-			}
-		},
-		{
-			"doubleSided":false,
-			"emissiveFactor":[
-				1,
-				1,
-				1
-			],
-			"emissiveTexture":{
-				"index":12
-			},
-			"extensions":{
-				"KHR_materials_emissive_strength":{
-					"emissiveStrength":9
-				}
-			},
-			"name":"swordMat",
-			"normalTexture":{
-				"index":13,
-				"scale":1.3
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":14
-				},
-				"metallicFactor":0.8,
-				"metallicRoughnessTexture":{
-					"index":15
-				}
-			}
-		},
-		{
-			"doubleSided":false,
-			"name":"ashes",
-			"normalTexture":{
-				"index":16
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":17
-				},
-				"metallicFactor":0,
-				"metallicRoughnessTexture":{
-					"index":18
-				}
-			}
-		}
-	],
-	"meshes":[
-		{
-			"name":"skullMaterial",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":0,
-						"NORMAL":1,
-						"TEXCOORD_0":2
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":0,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":3,
-					"material":0,
-					"mode":4
-				}
-			]
-		},
-		{
-			"name":"bonesMaterial",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":4,
-						"NORMAL":5,
-						"TEXCOORD_0":6
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":1,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":7,
-					"material":1,
-					"mode":4
-				}
-			]
-		},
-		{
-			"name":"hiltMaterial",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":8,
-						"NORMAL":9,
-						"TEXCOORD_0":10
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":2,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":11,
-					"material":2,
-					"mode":4
-				}
-			]
-		},
-		{
-			"name":"stoneMaterial",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":12,
-						"NORMAL":13,
-						"TEXCOORD_0":14
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":3,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":15,
-					"material":3,
-					"mode":4
-				}
-			]
-		},
-		{
-			"name":"floorMaterial",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":16,
-						"NORMAL":17,
-						"TEXCOORD_0":18
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":4,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":19,
-					"material":4,
-					"mode":4
-				}
-			]
-		},
-		{
-			"name":"swordMaterial",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":20,
-						"NORMAL":21,
-						"TEXCOORD_0":22
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":5,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":23,
-					"material":5,
-					"mode":4
-				}
-			]
-		},
-		{
-			"name":"ashesMaterial",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":24,
-						"NORMAL":25,
-						"TEXCOORD_0":26
-					},
-					"extensions":{
-						"KHR_draco_mesh_compression":{
-							"bufferView":6,
-							"attributes":{
-								"POSITION":0,
-								"NORMAL":1,
-								"TEXCOORD_0":2
-							}
-						}
-					},
-					"indices":27,
-					"material":6,
-					"mode":4
-				}
-			]
-		}
-	],
-	"textures":[
-		{
-			"sampler":0,
-			"source":0
-		},
-		{
-			"sampler":0,
-			"source":1
-		},
-		{
-			"sampler":0,
-			"source":2
-		},
-		{
-			"sampler":0,
-			"source":3
-		},
-		{
-			"sampler":0,
-			"source":4
-		},
-		{
-			"sampler":0,
-			"source":5
-		},
-		{
-			"sampler":0,
-			"source":6
-		},
-		{
-			"sampler":0,
-			"source":7
-		},
-		{
-			"sampler":0,
-			"source":8
-		},
-		{
-			"sampler":0,
-			"source":9
-		},
-		{
-			"sampler":0,
-			"source":10
-		},
-		{
-			"sampler":0,
-			"source":11
-		},
-		{
-			"sampler":0,
-			"source":12
-		},
-		{
-			"sampler":0,
-			"source":13
-		},
-		{
-			"sampler":0,
-			"source":14
-		},
-		{
-			"sampler":0,
-			"source":15
-		},
-		{
-			"sampler":0,
-			"source":10
-		},
-		{
-			"sampler":0,
-			"source":16
-		},
-		{
-			"sampler":0,
-			"source":17
-		}
-	],
-	"images":[
-		{
-			"mimeType":"image/avif",
-			"name":"schaedel_normal",
-			"uri":"textures/schaedel_normal.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"schaedel_diffuse",
-			"uri":"textures/schaedel_diffuse.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"knochen_normal",
-			"uri":"textures/knochen_normal.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"knochen_diffuse",
-			"uri":"textures/knochen_diffuse.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"griff_emissive",
-			"uri":"textures/griff_emissive.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"griff_normal",
-			"uri":"textures/griff_normal.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"griff_diffuse",
-			"uri":"textures/griff_diffuse.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"griff_specularGlossiness",
-			"uri":"textures/griff_specularGlossiness.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"steine_normal",
-			"uri":"textures/steine_normal.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"steine_diffuse",
-			"uri":"textures/steine_diffuse.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"asche_normal",
-			"uri":"textures/asche_normal.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"boden-alpha",
-			"uri":"textures/boden-alpha.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"klinge_emissive",
-			"uri":"textures/klinge_emissive.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"klinge_normal",
-			"uri":"textures/klinge_normal.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"klinge_diffuse",
-			"uri":"textures/klinge_diffuse.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"klinge_specularGlossiness",
-			"uri":"textures/klinge_specularGlossiness.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"asche_diffuse",
-			"uri":"textures/asche_diffuse.avif"
-		},
-		{
-			"mimeType":"image/avif",
-			"name":"asche_specularGlossiness",
-			"uri":"textures/asche_specularGlossiness.avif"
-		}
-	],
-	"accessors":[
-		{
-			"componentType":5126,
-			"count":21485,
-			"max":[
-				0.13729900121688843,
-				0.16015362739562988,
-				0.22820305824279785
-			],
-			"min":[
-				-0.18379400670528412,
-				-0.04123342037200928,
-				-0.1747010499238968
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":21485,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":21485,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":22572,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":1581,
-			"max":[
-				0.3234420120716095,
-				0.16917064785957336,
-				0.31923508644104004
-			],
-			"min":[
-				-0.32433998584747314,
-				-0.021213412284851074,
-				-0.2876150608062744
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":1581,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":1581,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":7416,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":1175,
-			"max":[
-				-0.013102400116622448,
-				1.2378736734390259,
-				0.08020982146263123
-			],
-			"min":[
-				-0.1944900006055832,
-				0.8117225170135498,
-				-0.08020982146263123
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":1175,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":1175,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":5370,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":11041,
-			"max":[
-				0.48881399631500244,
-				0.1005806028842926,
-				0.48538410663604736
-			],
-			"min":[
-				-0.5044050216674805,
-				-0.10756045579910278,
-				-0.4931181073188782
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":11041,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":11041,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":47544,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":61,
-			"max":[
-				0.7318093776702881,
-				0.0010294723324477673,
-				0.7318095564842224
-			],
-			"min":[
-				-0.7318093776702881,
-				0.0010294723324477673,
-				-0.7318095564842224
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":61,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":61,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":288,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":410,
-			"max":[
-				0.039806000888347626,
-				0.8206185102462769,
-				0.02542860619723797
-			],
-			"min":[
-				-0.11164099723100662,
-				-0.07185673713684082,
-				-0.02542860619723797
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":410,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":410,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":1176,
-			"type":"SCALAR"
-		},
-		{
-			"componentType":5126,
-			"count":141,
-			"max":[
-				0.45594701170921326,
-				0.16155162453651428,
-				0.4774841070175171
-			],
-			"min":[
-				-0.5320979952812195,
-				-0.007891416549682617,
-				-0.47197312116622925
-			],
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":141,
-			"type":"VEC3"
-		},
-		{
-			"componentType":5126,
-			"count":141,
-			"type":"VEC2"
-		},
-		{
-			"componentType":5123,
-			"count":780,
-			"type":"SCALAR"
-		}
-	],
-	"bufferViews":[
-		{
-			"buffer":0,
-			"byteLength":138529,
-			"byteOffset":0
-		},
-		{
-			"buffer":0,
-			"byteLength":11629,
-			"byteOffset":138532
-		},
-		{
-			"buffer":0,
-			"byteLength":8531,
-			"byteOffset":150164
-		},
-		{
-			"buffer":0,
-			"byteLength":71781,
-			"byteOffset":158696
-		},
-		{
-			"buffer":0,
-			"byteLength":509,
-			"byteOffset":230480
-		},
-		{
-			"buffer":0,
-			"byteLength":3113,
-			"byteOffset":230992
-		},
-		{
-			"buffer":0,
-			"byteLength":1404,
-			"byteOffset":234108
-		}
-	],
-	"samplers":[
-		{
-			"magFilter":9729,
-			"minFilter":9987
-		}
-	],
-	"buffers":[
-		{
-			"byteLength":235512,
-			"uri":"bonfire.bin"
-		}
-	]
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v4.5.47",
+    "version": "2.0"
+  },
+  "extensionsUsed": [
+    "KHR_draco_mesh_compression",
+    "KHR_materials_emissive_strength"
+  ],
+  "extensionsRequired": ["KHR_draco_mesh_compression"],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [0, 1, 2, 3, 4, 5, 6]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "skulls"
+    },
+    {
+      "mesh": 1,
+      "name": "bones"
+    },
+    {
+      "mesh": 2,
+      "name": "hilt"
+    },
+    {
+      "mesh": 3,
+      "name": "stones"
+    },
+    {
+      "mesh": 4,
+      "name": "floor"
+    },
+    {
+      "mesh": 5,
+      "name": "sword"
+    },
+    {
+      "mesh": 6,
+      "name": "ashes"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": false,
+      "name": "skullMat",
+      "normalTexture": {
+        "index": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 0.9770992398262024
+      }
+    },
+    {
+      "doubleSided": false,
+      "name": "boneMat",
+      "normalTexture": {
+        "index": 2
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 3
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 0.9351145029067993
+      }
+    },
+    {
+      "doubleSided": false,
+      "emissiveFactor": [1, 1, 1],
+      "emissiveTexture": {
+        "index": 4
+      },
+      "extensions": {
+        "KHR_materials_emissive_strength": {
+          "emissiveStrength": 0
+        }
+      },
+      "name": "hiltMat",
+      "normalTexture": {
+        "index": 5
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 6
+        },
+        "metallicFactor": 0,
+        "metallicRoughnessTexture": {
+          "index": 7
+        }
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "stoneMat",
+      "normalTexture": {
+        "index": 8
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 9
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 0.88
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "doubleSided": false,
+      "name": "floorMat",
+      "normalTexture": {
+        "index": 10
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 11
+        },
+        "metallicFactor": 0
+      }
+    },
+    {
+      "doubleSided": false,
+      "emissiveFactor": [1, 1, 1],
+      "emissiveTexture": {
+        "index": 12
+      },
+      "extensions": {
+        "KHR_materials_emissive_strength": {
+          "emissiveStrength": 0
+        }
+      },
+      "name": "swordMat",
+      "normalTexture": {
+        "index": 13,
+        "scale": 1.3
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 14
+        },
+        "metallicFactor": 0.8,
+        "metallicRoughnessTexture": {
+          "index": 15
+        }
+      }
+    },
+    {
+      "doubleSided": false,
+      "name": "ashes",
+      "normalTexture": {
+        "index": 16
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 17
+        },
+        "metallicFactor": 0,
+        "metallicRoughnessTexture": {
+          "index": 18
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "skullMaterial",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "extensions": {
+            "KHR_draco_mesh_compression": {
+              "bufferView": 0,
+              "attributes": {
+                "POSITION": 0,
+                "NORMAL": 1,
+                "TEXCOORD_0": 2
+              }
+            }
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "bonesMaterial",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "NORMAL": 5,
+            "TEXCOORD_0": 6
+          },
+          "extensions": {
+            "KHR_draco_mesh_compression": {
+              "bufferView": 1,
+              "attributes": {
+                "POSITION": 0,
+                "NORMAL": 1,
+                "TEXCOORD_0": 2
+              }
+            }
+          },
+          "indices": 7,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "hiltMaterial",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 8,
+            "NORMAL": 9,
+            "TEXCOORD_0": 10
+          },
+          "extensions": {
+            "KHR_draco_mesh_compression": {
+              "bufferView": 2,
+              "attributes": {
+                "POSITION": 0,
+                "NORMAL": 1,
+                "TEXCOORD_0": 2
+              }
+            }
+          },
+          "indices": 11,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "stoneMaterial",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 12,
+            "NORMAL": 13,
+            "TEXCOORD_0": 14
+          },
+          "extensions": {
+            "KHR_draco_mesh_compression": {
+              "bufferView": 3,
+              "attributes": {
+                "POSITION": 0,
+                "NORMAL": 1,
+                "TEXCOORD_0": 2
+              }
+            }
+          },
+          "indices": 15,
+          "material": 3,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "floorMaterial",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 16,
+            "NORMAL": 17,
+            "TEXCOORD_0": 18
+          },
+          "extensions": {
+            "KHR_draco_mesh_compression": {
+              "bufferView": 4,
+              "attributes": {
+                "POSITION": 0,
+                "NORMAL": 1,
+                "TEXCOORD_0": 2
+              }
+            }
+          },
+          "indices": 19,
+          "material": 4,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "swordMaterial",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 20,
+            "NORMAL": 21,
+            "TEXCOORD_0": 22
+          },
+          "extensions": {
+            "KHR_draco_mesh_compression": {
+              "bufferView": 5,
+              "attributes": {
+                "POSITION": 0,
+                "NORMAL": 1,
+                "TEXCOORD_0": 2
+              }
+            }
+          },
+          "indices": 23,
+          "material": 5,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "ashesMaterial",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 24,
+            "NORMAL": 25,
+            "TEXCOORD_0": 26
+          },
+          "extensions": {
+            "KHR_draco_mesh_compression": {
+              "bufferView": 6,
+              "attributes": {
+                "POSITION": 0,
+                "NORMAL": 1,
+                "TEXCOORD_0": 2
+              }
+            }
+          },
+          "indices": 27,
+          "material": 6,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    },
+    {
+      "sampler": 0,
+      "source": 3
+    },
+    {
+      "sampler": 0,
+      "source": 4
+    },
+    {
+      "sampler": 0,
+      "source": 5
+    },
+    {
+      "sampler": 0,
+      "source": 6
+    },
+    {
+      "sampler": 0,
+      "source": 7
+    },
+    {
+      "sampler": 0,
+      "source": 8
+    },
+    {
+      "sampler": 0,
+      "source": 9
+    },
+    {
+      "sampler": 0,
+      "source": 10
+    },
+    {
+      "sampler": 0,
+      "source": 11
+    },
+    {
+      "sampler": 0,
+      "source": 12
+    },
+    {
+      "sampler": 0,
+      "source": 13
+    },
+    {
+      "sampler": 0,
+      "source": 14
+    },
+    {
+      "sampler": 0,
+      "source": 15
+    },
+    {
+      "sampler": 0,
+      "source": 10
+    },
+    {
+      "sampler": 0,
+      "source": 16
+    },
+    {
+      "sampler": 0,
+      "source": 17
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/avif",
+      "name": "schaedel_normal",
+      "uri": "textures/schaedel_normal.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "schaedel_diffuse",
+      "uri": "textures/schaedel_diffuse.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "knochen_normal",
+      "uri": "textures/knochen_normal.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "knochen_diffuse",
+      "uri": "textures/knochen_diffuse.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "griff_emissive",
+      "uri": "textures/griff_emissive.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "griff_normal",
+      "uri": "textures/griff_normal.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "griff_diffuse",
+      "uri": "textures/griff_diffuse.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "griff_specularGlossiness",
+      "uri": "textures/griff_specularGlossiness.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "steine_normal",
+      "uri": "textures/steine_normal.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "steine_diffuse",
+      "uri": "textures/steine_diffuse.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "asche_normal",
+      "uri": "textures/asche_normal.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "boden-alpha",
+      "uri": "textures/boden-alpha.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "klinge_emissive",
+      "uri": "textures/klinge_emissive.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "klinge_normal",
+      "uri": "textures/klinge_normal.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "klinge_diffuse",
+      "uri": "textures/klinge_diffuse.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "klinge_specularGlossiness",
+      "uri": "textures/klinge_specularGlossiness.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "asche_diffuse",
+      "uri": "textures/asche_diffuse.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "asche_specularGlossiness",
+      "uri": "textures/asche_specularGlossiness.avif"
+    }
+  ],
+  "accessors": [
+    {
+      "componentType": 5126,
+      "count": 21485,
+      "max": [0.13729900121688843, 0.16015362739562988, 0.22820305824279785],
+      "min": [-0.18379400670528412, -0.04123342037200928, -0.1747010499238968],
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 21485,
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 21485,
+      "type": "VEC2"
+    },
+    {
+      "componentType": 5123,
+      "count": 22572,
+      "type": "SCALAR"
+    },
+    {
+      "componentType": 5126,
+      "count": 1581,
+      "max": [0.3234420120716095, 0.16917064785957336, 0.31923508644104004],
+      "min": [-0.32433998584747314, -0.021213412284851074, -0.2876150608062744],
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 1581,
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 1581,
+      "type": "VEC2"
+    },
+    {
+      "componentType": 5123,
+      "count": 7416,
+      "type": "SCALAR"
+    },
+    {
+      "componentType": 5126,
+      "count": 1175,
+      "max": [-0.013102400116622448, 1.2378736734390259, 0.08020982146263123],
+      "min": [-0.1944900006055832, 0.8117225170135498, -0.08020982146263123],
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 1175,
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 1175,
+      "type": "VEC2"
+    },
+    {
+      "componentType": 5123,
+      "count": 5370,
+      "type": "SCALAR"
+    },
+    {
+      "componentType": 5126,
+      "count": 11041,
+      "max": [0.48881399631500244, 0.1005806028842926, 0.48538410663604736],
+      "min": [-0.5044050216674805, -0.10756045579910278, -0.4931181073188782],
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 11041,
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 11041,
+      "type": "VEC2"
+    },
+    {
+      "componentType": 5123,
+      "count": 47544,
+      "type": "SCALAR"
+    },
+    {
+      "componentType": 5126,
+      "count": 61,
+      "max": [0.7318093776702881, 0.0010294723324477673, 0.7318095564842224],
+      "min": [-0.7318093776702881, 0.0010294723324477673, -0.7318095564842224],
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 61,
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 61,
+      "type": "VEC2"
+    },
+    {
+      "componentType": 5123,
+      "count": 288,
+      "type": "SCALAR"
+    },
+    {
+      "componentType": 5126,
+      "count": 410,
+      "max": [0.039806000888347626, 0.8206185102462769, 0.02542860619723797],
+      "min": [-0.11164099723100662, -0.07185673713684082, -0.02542860619723797],
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 410,
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 410,
+      "type": "VEC2"
+    },
+    {
+      "componentType": 5123,
+      "count": 1176,
+      "type": "SCALAR"
+    },
+    {
+      "componentType": 5126,
+      "count": 141,
+      "max": [0.45594701170921326, 0.16155162453651428, 0.4774841070175171],
+      "min": [-0.5320979952812195, -0.007891416549682617, -0.47197312116622925],
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 141,
+      "type": "VEC3"
+    },
+    {
+      "componentType": 5126,
+      "count": 141,
+      "type": "VEC2"
+    },
+    {
+      "componentType": 5123,
+      "count": 780,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 138529,
+      "byteOffset": 0
+    },
+    {
+      "buffer": 0,
+      "byteLength": 11629,
+      "byteOffset": 138532
+    },
+    {
+      "buffer": 0,
+      "byteLength": 8531,
+      "byteOffset": 150164
+    },
+    {
+      "buffer": 0,
+      "byteLength": 71781,
+      "byteOffset": 158696
+    },
+    {
+      "buffer": 0,
+      "byteLength": 509,
+      "byteOffset": 230480
+    },
+    {
+      "buffer": 0,
+      "byteLength": 3113,
+      "byteOffset": 230992
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1404,
+      "byteOffset": 234108
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 235512,
+      "uri": "bonfire.bin"
+    }
+  ]
 }

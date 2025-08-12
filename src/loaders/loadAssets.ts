@@ -1,11 +1,10 @@
-import config from "config.json";
+import assets from "assets.json";
 import { createGLTFLoader } from "./utils";
 import type { GLTF } from "three/examples/jsm/Addons";
 import {
   Scene,
   LoadingManager,
   WebGLRenderer,
-  PositionalAudio,
   TextureLoader,
   SRGBColorSpace,
   RepeatWrapping,
@@ -16,12 +15,12 @@ import {
   LinearFilter,
   Object3D,
 } from "three";
+import { Bonfire } from "@/prefabs";
 
 interface LoadAssetsInterface {
   scene: Scene;
   loadingManager: LoadingManager;
   renderer: WebGLRenderer;
-  positionalSound: PositionalAudio;
   texLoader: TextureLoader;
 }
 
@@ -29,7 +28,6 @@ export function loadAssets({
   scene,
   loadingManager,
   renderer,
-  positionalSound,
   texLoader,
 }: LoadAssetsInterface) {
   const gltfLoader = createGLTFLoader(loadingManager);
@@ -38,7 +36,7 @@ export function loadAssets({
   //   ─── Floor ─────────────────────────────────────────────────────────
   //
 
-  const floorAsset = config.assets.floor;
+  const floorAsset = assets.floor;
   const { repeat, ...texPaths } = floorAsset.textures;
 
   const textures = Object.fromEntries(
@@ -79,7 +77,7 @@ export function loadAssets({
   // ─── HOUSE ─────────────────────────────────────────────────────────
   //
 
-  const houseAsset = config.assets.models.house;
+  const houseAsset = assets.models.house;
   gltfLoader.load(houseAsset.path, (houseGLTF: GLTF) => {
     const house = houseGLTF.scene;
 
@@ -116,21 +114,8 @@ export function loadAssets({
   // ─── BONFIRE ───────────────────────────────────────────────────────
   //
 
-  const bonfireAsset = config.assets.models.bonfire;
-  gltfLoader.load(bonfireAsset.path, (bonfireGLTF: GLTF) => {
-    const bonfire = bonfireGLTF.scene;
-    console.log(bonfire);
-    const terrain = bonfire.getObjectByName("floor") as Mesh;
-    terrain.renderOrder = 3;
-    terrain.receiveShadow = bonfireAsset.receiveShadow;
-
-    const stones = bonfire.getObjectByName("stones") as Mesh;
-    stones.castShadow = bonfireAsset.castShadow;
-
-    bonfire.scale.setScalar(bonfireAsset.scale);
-    const { x, y, z } = bonfireAsset.position;
-    bonfire.position.set(x, y, z);
-    bonfire.add(positionalSound);
-    scene.add(bonfire);
+  const bonfireAsset = assets.models.bonfire;
+  gltfLoader.load(bonfireAsset.path, (g: GLTF) => {
+    Bonfire.setTemplate(g.scene);
   });
 }

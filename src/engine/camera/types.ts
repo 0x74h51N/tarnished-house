@@ -51,9 +51,6 @@ export interface CameraSystemOptions {
   sizes: { width: number; height: number };
 }
 
-export interface CameraSystemReturn
-  extends CameraReturn,
-    ControlReturn,
-    ClampRtrn {
+export interface CamController extends CameraReturn, ControlReturn, ClampRtrn {
   positioner: CameraPositionerReturn;
 }

@@ -1,0 +1,17 @@
+{
+  "textures": [
+    "./smoke/smoke1.png",
+    "./smoke/smoke2.png",
+    "./smoke/smoke3.png"
+  ],
+  "area": 0.25,
+  "size": 0.35,
+  "maxCount": 35,
+  "spawnRate": 1.7,
+  "startPozs": { "x": 0, "y": 0.43, "z": 0 },
+  "opacity": 0.5,
+  "color": "#444444",
+  "sizeGrowth": 0.95,
+  "fadeRate": 0.12,
+  "scaleFactor": 1.5
+}

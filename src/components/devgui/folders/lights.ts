@@ -1,5 +1,6 @@
 import { Scene, OrthographicCamera } from "three";
 import config from "config.json";
+import assets from "assets.json";
 import GUI from "lil-gui";
 import { LightBundle } from "@/engine/lights/types";
 
@@ -29,15 +30,15 @@ export function createLightSettings(
   const fireLightGui = lightingFolder.addFolder("Fire Light Settings");
   fireLightGui.close();
 
-  const fireLightParam = config.scene.lighting.fireLight;
+  const fireLightParam = assets.models.bonfire.fireLight!;
   fireLightGui
     .add(config.scene.debug.lightHelpers, "fire")
     .name("Light Helper")
     .onChange((v: boolean) => {
       if (v) {
-        scene.add(fireLight.helper);
+        scene.add(fireLight!.helper);
       } else {
-        scene.remove(fireLight.helper);
+        scene.remove(fireLight!.helper);
       }
     });
 
@@ -45,7 +46,7 @@ export function createLightSettings(
 
   fireLightGui.add(fireLightParam, "distance", 0, 200, 0.1).name("Distance");
 
-  fireLightGui.add(fireLight.light, "decay", 0, 10, 0.01).name("Decay");
+  fireLightGui.add(fireLight!.light, "decay", 0, 10, 0.01).name("Decay");
 
   // Directional Light Settings
   const directionalLightGui = lightingFolder.addFolder(

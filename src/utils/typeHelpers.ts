@@ -25,3 +25,11 @@ export type PathValue<T, P extends string[]> = P extends [
   : T;
 
 export type GetValue<T, K extends string> = PathValue<T, Split<K, ".">>;
+
+export type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends (infer A)[]
+    ? T[K]
+    : T[K] extends object
+    ? DeepPartial<T[K]>
+    : T[K];
+};

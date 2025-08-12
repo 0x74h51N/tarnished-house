@@ -5,7 +5,8 @@ import {
   Scene,
 } from "three";
 import config from "config.json";
-import { DirectLight, MapSizeKey } from "./types";
+import { MapSizeKey } from "@/types";
+import { DirectLight } from "./types";
 
 export function createDirectLight(scene: Scene): DirectLight {
   const shadowConfg = config.scene.renderer.shadows;

@@ -1,19 +1,20 @@
 import { WebGLRenderer, Scene, AxesHelper, GridHelper } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import { ManagerRefs } from "@/loaders";
-import { CameraSystemReturn, LightBundle, ParticleSystemRefs } from "@/engine";
+import { CamController, LightBundle } from "@/engine";
 import { AudioBundle } from "@/types";
+import { BonfireParticles } from "@/prefabs";
 
 export interface SetupGUIInterface {
   renderer: WebGLRenderer;
-  CamController: CameraSystemReturn;
+  CamController: CamController;
   randomMeshes: ManagerRefs;
   antialias: boolean;
   audio: AudioBundle;
   bloomPass: UnrealBloomPass;
   lights: LightBundle;
   scene: Scene;
-  particleSystems: ParticleSystemRefs;
+  particleSystems: BonfireParticles;
 }
 
 export interface HelperParams {

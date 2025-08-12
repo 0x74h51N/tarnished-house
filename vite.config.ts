@@ -15,6 +15,7 @@ export default defineConfig(() => {
         "@": path.resolve(__dirname, "src"),
         components: path.resolve(__dirname, "src/components"),
         "config.json": path.resolve(__dirname, "src/config.json"),
+        "assets.json": path.resolve(__dirname, "src/assets.json"),
       },
     },
     server: {

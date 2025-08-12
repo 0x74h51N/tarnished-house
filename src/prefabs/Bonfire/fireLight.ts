@@ -1,11 +1,13 @@
-import { PointLight, PointLightHelper, Scene } from "three";
+import { PointLight, PointLightHelper } from "three";
 import config from "config.json";
-import { FireLight, MapSizeKey } from "./types";
-import { animateValue } from "./utils";
+import assets from "assets.json";
+import { animateValue } from "../../engine/lights/utils";
+import { MapSizeKey } from "@/types";
+import { FireLight } from "./types";
 
-export const createFireLight = (scene: Scene): FireLight => {
+export const createFireLight = (): FireLight => {
   const { defMapSize, mapSizes } = config.scene.renderer.shadows;
-  const lightConfg = config.scene.lighting.fireLight;
+  const lightConfg = assets.models.bonfire.fireLight;
 
   const light = new PointLight(
     lightConfg.color,
@@ -26,27 +28,25 @@ export const createFireLight = (scene: Scene): FireLight => {
     lightConfg.position.z
   );
 
-  scene.add(light);
-
   const helper = new PointLightHelper(light, lightConfg.helper.size);
 
   //animation
   const animator = {
-    update: (elapsed: number) => {
+    update: (e: number) => {
       light.intensity = animateValue(
         lightConfg.intensity,
         lightConfg.animation.intensity,
-        elapsed
+        e
       );
       light.distance = animateValue(
         lightConfg.distance,
         lightConfg.animation.distance,
-        elapsed
+        e
       );
       light.position.y = animateValue(
         lightConfg.position.y,
         lightConfg.animation.position,
-        elapsed
+        e
       );
     },
   };

@@ -2,13 +2,13 @@ import { createCamera } from "./camera";
 import { createCamPositioner } from "./cameraPositioner";
 import { createClamp } from "./clamp";
 import { setupControls } from "./control";
-import { CameraSystemOptions, CameraSystemReturn } from "./types";
+import { CameraSystemOptions, CamController } from "./types";
 
 export function CameraController({
   scene,
   canvas,
   sizes,
-}: CameraSystemOptions): CameraSystemReturn {
+}: CameraSystemOptions): CamController {
   const { camera, cameraHelper } = createCamera({ sizes });
   scene.add(camera);
 

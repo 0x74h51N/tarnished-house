@@ -1,12 +1,12 @@
 import { SpawnableName } from "@/loaders";
 import { spawnMeshes } from "@/loaders/utils";
 import { GeneralControl, SceneSettingsParams } from "..";
-import config from "config.json";
+import assets from "assets.json";
 
 export function makeSceneSettings({
   randomMeshes,
 }: SceneSettingsParams): GeneralControl[] {
-  const spawnable = config.assets.models.spawnable;
+  const spawnable = assets.models.spawnable;
   const arr = [] as GeneralControl[];
 
   for (const k in spawnable) {

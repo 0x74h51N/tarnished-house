@@ -17,7 +17,8 @@
     "paths": {
       "@/*": ["src/*"],
       "components/*": ["src/components/*"],
-      "config.json": ["src/config.json"]
+      "config.json": ["src/config.json"],
+      "assets.json": ["src/assets.json"]
     }
   },
   "include": ["src"],

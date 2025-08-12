@@ -1,21 +1,16 @@
-import { AudioListener, AudioLoader, PositionalAudio } from "three";
-import config from "config.json";
+import { PositionalAudio } from "three";
+import { loadBuffer, PositionalSoundArgs, SoundCreator } from "../";
 
-export function createPositionalSound(
-  listener: AudioListener,
-  loader: AudioLoader
-): { sound: PositionalAudio } {
-  const sound = new PositionalAudio(listener);
-  const audioConfig = config.scene.audio;
-  loader.load(config.assets.sounds.fire, (buffer) => {
-    sound.setBuffer(buffer);
-    sound.setRefDistance(audioConfig.positionalAudio.refDistance);
-    sound.setLoop(true);
-    sound.setVolume(
-      audioConfig.volume * audioConfig.positionalAudio.fireVolumeMultiplier
-    );
-  });
-  return {
-    sound,
+export const createPositionalSound = ({ loader, listener }: SoundCreator) => {
+  return async function createPositional({ url, opts }: PositionalSoundArgs) {
+    const buffer = await loadBuffer(url, loader);
+    const s = new PositionalAudio(listener);
+    s.setBuffer(buffer);
+    s.setLoop(opts.loop);
+    s.setRefDistance(opts.refDistance);
+    s.setRolloffFactor(opts.rolloffFactor);
+    s.setVolume(opts.volume);
+    if (opts.autoplay) s.play();
+    return s;
   };
-}
+};

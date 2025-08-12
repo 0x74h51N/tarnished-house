@@ -1,6 +1,5 @@
 import { Scene, AmbientLight } from "three";
 import config from "config.json";
-import { createFireLight } from "./fireLight";
 import { createDirectLight } from "./directionalLight";
 import { LightBundle } from "./types";
 
@@ -16,11 +15,9 @@ export function createLights(scene: Scene): LightBundle {
   const directLight = createDirectLight(scene);
 
   // Fire point light
-  const fireLight = createFireLight(scene);
 
   return {
     ambientLight,
-    fireLight,
     directLight,
   };
 }

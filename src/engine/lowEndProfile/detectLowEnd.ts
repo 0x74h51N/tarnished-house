@@ -6,7 +6,7 @@ export function detectLowEnd(): boolean {
     canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
   if (gl instanceof WebGLRenderingContext) {
     const maxTex = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : 8192;
-    isLowTex = maxTex <= 2048;
+    isLowTex = maxTex <= 4096;
 
     const maxVertUni = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
     isLowVertUni = maxVertUni < 256;

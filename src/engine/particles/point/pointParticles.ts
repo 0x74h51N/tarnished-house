@@ -35,20 +35,29 @@ import {
   Vector3,
   GLSL3,
   ShaderMaterial,
+  Group,
+  TextureLoader,
+  Texture,
+  LinearMipMapLinearFilter,
+  LinearFilter,
 } from "three";
 import {
-  CreateParticlesReturn,
-  PointParticlesInterface,
-  Step,
-  UpdateKey,
-  UpdateValue,
-} from "../types";
+  PointUpdateKey,
+  PointUpdateValue,
+  PointParticles,
+  SmokeOpts,
+  PointParticleInterface,
+  SparkOpts,
+  isSmoke,
+  isSpark,
+} from "./types";
 import VS from "./shaders/vertex.vert";
 import FS from "./shaders/fragment.frag";
 import SparkVS from "./shaders/sparks/vertex.vert";
 import SparksFS from "./shaders/sparks/fragment.frag";
 import { startPos, sparkVel, startVel, colUpt, markAttrFlags } from "./utils";
 import { createGuiUpdater } from "@/utils";
+import { Step } from "../types";
 
 const defaultTexture = new DataTexture(
   new Uint8Array([255, 255, 255, 255]),
@@ -59,7 +68,6 @@ const defaultTexture = new DataTexture(
 /**
  * Creates a GPU particle system using custom shaders and buffer attributes.
  *
- * @param parent   - The Object3D to attach the particle system to.
  * @param textures - Optional texture(s) for the particles (single or multiple variants).
  * @param props.spawnRate   - How many particles spawn per second.
  * @param props.area        - Radius around the start position where particles spawn.
@@ -78,36 +86,52 @@ const defaultTexture = new DataTexture(
  * @param props.stretchFact - How much particles stretch based on velocity (spark only).
  *
  * @returns { step, updtScreen, update }
+ *   points         - Group<Object3DEventMap>
  *   step(delta)    - Call each frame to spawn & advance particles.
  *   updtScreen     - Call on resize to update resolution uniform.
  *   update(params) - Update particle system parameters in real-time.
  */
+export function createPointParticles(
+  args: PointParticleInterface<SmokeOpts>
+): PointParticles;
+export function createPointParticles(
+  args: PointParticleInterface<SparkOpts>
+): PointParticles;
 
-export function createPointParticles({
-  sizes,
-  parent,
-  textures,
-  props: {
+export function createPointParticles(
+  args: PointParticleInterface<SparkOpts | SmokeOpts>
+): PointParticles {
+  const { sizes, props } = args;
+  let {
     spawnRate,
     area,
     speed = 1,
     size,
     sizeGrowth = 0,
     fadeRate = 0,
-    opacity = 1,
     color,
     maxCount,
     startPozs,
     scaleFactor,
-    sparkProps,
-  },
-}: PointParticlesInterface): CreateParticlesReturn {
+  } = props;
+  const loader = new TextureLoader();
+
+  let opacity = isSmoke(props) ? props.opacity : 1;
+
+  const sparkProps = isSpark(props) ? props.sparkProps : undefined;
+
   const clr = new Color(color);
 
-  const textureArray = Array.isArray(textures)
-    ? textures.map((t) => t ?? defaultTexture)
-    : [textures ?? defaultTexture];
-  const numVariants = textureArray.length;
+  const smokeTexPaths = isSmoke(props) ? props.textures : undefined;
+
+  const textureArray: Texture[] = smokeTexPaths
+    ? Array.isArray(smokeTexPaths)
+      ? smokeTexPaths.map((p) => loader.load(p))
+      : [loader.load(smokeTexPaths)]
+    : [];
+
+  const isSparkV = !!(sparkProps && sparkProps.elevDivs);
+  const numVariants = isSparkV ? 1 : Math.max(textureArray.length, 1);
 
   // ------------------ BUFFERS ------------------
   const position = new Float32Array(maxCount * 3);
@@ -170,6 +194,7 @@ export function createPointParticles({
     u_wave_amp: { value: waveAmp },
   };
 
+  const points = new Group();
   //
   // ------------------ Initial Spawn ------------------
   //
@@ -180,12 +205,18 @@ export function createPointParticles({
       ...cUniforms,
       diffuseTexture: { value: dTex },
     };
-    const isSpark = !!(sparkProps && sparkProps.elevDivs);
+
+    if (!isSparkV) {
+      const dTex = textureArray[i] || textureArray[0] || defaultTexture;
+      uniforms.diffuseTexture = { value: dTex };
+    }
+
     const material = new ShaderMaterial({
       glslVersion: GLSL3,
       uniforms,
-      vertexShader: isSpark ? SparkVS : VS,
-      fragmentShader: isSpark ? SparksFS : FS,
+      vertexShader: isSparkV ? SparkVS : VS,
+      fragmentShader: isSparkV ? SparksFS : FS,
+      toneMapped: false,
       transparent: true,
       depthWrite: false,
       blending: AdditiveBlending,
@@ -195,7 +226,7 @@ export function createPointParticles({
 
     const pts = new Points(geometry, material);
     pts.renderOrder = 4;
-    parent.add(pts);
+    points.add(pts);
   }
   const mainGeo = geometry;
 
@@ -237,7 +268,7 @@ export function createPointParticles({
   // ------------------ GUI Updater ------------------
   //
   const guiHandlers: {
-    [K in UpdateKey]?: (value: UpdateValue<K>) => void;
+    [K in PointUpdateKey]?: (value: PointUpdateValue<K>) => void;
   } = {
     spawnRate: (v) => {
       spawnRate = v;
@@ -298,23 +329,23 @@ export function createPointParticles({
     },
 
     "sparkProps.damping": (v) => {
-      sUniforms.u_damping.value = v;
+      sUniforms!.u_damping.value = v;
     },
 
     "sparkProps.stretchFact": (v) => {
-      sUniforms.u_stretch.value = v;
+      sUniforms!.u_stretch.value = v;
     },
 
     "sparkProps.waveAmp": (v) => {
-      sUniforms.u_wave_amp.value = v;
+      sUniforms!.u_wave_amp.value = v;
     },
 
     "sparkProps.waveFreq": (v) => {
-      sUniforms.u_wave_freq.value = v;
+      sUniforms!.u_wave_freq.value = v;
     },
   };
 
   const update = createGuiUpdater(guiHandlers);
 
-  return { step, updtScreen, update };
+  return { points, step, updtScreen, update };
 }

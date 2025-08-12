@@ -8,29 +8,24 @@ import {
   Matrix4,
   Mesh,
   RawShaderMaterial,
-  Texture,
+  TextureLoader,
   Vector3,
-  Vector4,
-  Vector4Like,
 } from "three";
 import vertex from "./shaders/vertex.vert";
 import frag from "./shaders/fragment.frag";
+import { Step } from "../types";
+import { createGuiUpdater, v4 } from "@/utils";
 import {
-  CreateParticlesReturn,
-  FlameParticlesInterface,
-  Step,
-  UpdateKey,
-  UpdateValue,
-} from "../types";
-import { createGuiUpdater } from "@/utils";
-
-const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
+  Flame,
+  FlameInterface,
+  FlameUpdateKey,
+  FlameUpdateValue,
+} from "./types";
 
 /**
  * Creates a volumetric flame mesh using animated raymarching shaders.
  *
- * @param parent           - The Object3D to attach the flame mesh to.
- * @param textures         - Optional texture for the flame appearance.
+ * @param texture          - Optional texture for the flame appearance.
  * @param props.startPozs  - Flame position in world space.
  * @param props.size       - Base size of the flame geometry.
  * @param props.speed      - Controls how fast the flame animates.
@@ -41,27 +36,24 @@ const v4 = (o: Vector4Like) => new Vector4(o.x, o.y, o.z, o.w);
  * @param props.colorMixStr- How much the final color mixes with base color.
  *
  * @returns { step, updtScreen }
+ *   flame            - Mesh
  *   step(delta)      - Call each frame to spawn & advance particles.
- *   updtScreen       - Call on resize to update resolution uniform.
  *   update(params)   - Update particle system parameters in real-time.
  */
 export const createFlame = ({
-  parent,
-  textures,
-  props: {
-    startPozs,
-    size,
-    speed: initialSpeed = 1,
-    color,
-    seed = Math.random() * 19.19,
-    noise,
-    march,
-    colorMixStr,
-  },
-}: FlameParticlesInterface): CreateParticlesReturn => {
+  texture,
+  startPozs,
+  size,
+  speed: initialSpeed = 1,
+  color,
+  seed = Math.random() * 19.19,
+  noise,
+  march,
+  colorMixStr,
+}: FlameInterface): Flame => {
   let speed = initialSpeed;
-
-  const fireTex = textures as Texture;
+  const loader = new TextureLoader();
+  const fireTex = loader.load(texture);
 
   fireTex!.flipY = false;
   fireTex!.wrapS = fireTex!.wrapT = ClampToEdgeWrapping;
@@ -109,11 +101,11 @@ export const createFlame = ({
     depthWrite: false,
     uniforms,
     blending: AdditiveBlending,
+    toneMapped: false,
   });
 
   const flame = new Mesh(geometry, material);
   flame.position.set(startPozs.x, startPozs.y, startPozs.z);
-  parent.add(flame);
 
   flame.renderOrder = 3;
   flame.updateMatrixWorld(true);
@@ -122,15 +114,13 @@ export const createFlame = ({
   //Animation steps
   const step: Step = (delta) => {
     uniforms.u_time.value += delta * speed;
-    flame.updateMatrixWorld(true);
-    uniforms.invModelMatrix.value.copy(flame.matrixWorld).invert();
   };
 
   //
   // ------------------ GUI Updater ------------------
   //
   const guiHandlers: {
-    [K in UpdateKey]?: (value: UpdateValue<K>) => void;
+    [K in FlameUpdateKey]?: (value: FlameUpdateValue<K>) => void;
   } = {
     size: (v) => {
       uniforms.scale.value.setScalar(v);
@@ -153,6 +143,8 @@ export const createFlame = ({
 
     startPozs: (v) => {
       flame.position.set(v.x, v.y, v.z);
+      flame.updateMatrixWorld();
+      uniforms.invModelMatrix.value.copy(flame.matrixWorld).invert();
     },
 
     "noise.magnitude": (v) => {
@@ -178,5 +170,5 @@ export const createFlame = ({
 
   const update = createGuiUpdater(guiHandlers);
 
-  return { step, update };
+  return { flame, step, update };
 };

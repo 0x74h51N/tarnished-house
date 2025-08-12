@@ -10,6 +10,8 @@ import {
   VSMShadowMap,
 } from "three";
 
+import config from "config.json";
+
 //
 // Min max value slapper type
 export type minMax = { min: number; max: number };
@@ -55,3 +57,7 @@ export interface Sizes {
   pixelRatio: number;
   update: () => void;
 }
+
+export type MapSizes = typeof config.scene.renderer.shadows.mapSizes;
+
+export type MapSizeKey = keyof MapSizes;
