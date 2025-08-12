@@ -3,7 +3,7 @@
   "description": "First three.js project, inspired by threejs-journey tutorial",
   "author": "Tahsin Önemli aka 0x74h51n <mr.tahsin@windowslive.com>",
   "private": false,
-  "version": "0.4",
+  "version": "0.41",
   "repository": {
     "type": "git",
     "url": "https://github.com/0x74h51N/tarnished-house"

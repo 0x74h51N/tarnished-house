@@ -7,27 +7,30 @@ import {
   Vector2,
   Camera,
   CanvasTexture,
+  Vector3Like,
 } from "three";
 
-type IgniteBtnOpts = {
+type BtnOpts = {
   camera: Camera;
   canvas: HTMLCanvasElement;
   onClick: () => void;
-  label?: string;
-  width?: number;
-  height?: number;
+  label: string;
+  width: number;
+  height: number;
+  rotation: Vector3Like;
   fontFamily?: string;
 };
 
-export function createIgniteBtn({
+export async function createBtn({
   camera,
   canvas,
   onClick,
-  label = "Ignite",
-  width = 0.62,
-  height = 0.22,
+  label,
+  width,
+  height,
+  rotation,
   fontFamily = "UnifrakturCook",
-}: IgniteBtnOpts) {
+}: BtnOpts) {
   const W = 512,
     H = 128;
   const cv = document.createElement("canvas");
@@ -61,8 +64,8 @@ export function createIgniteBtn({
     tex.needsUpdate = true;
   };
 
-  if ((document as any).fonts?.ready) {
-    (document as any).fonts.ready.then(draw).catch(draw);
+  if (await (document as Document).fonts.ready) {
+    (document as Document).fonts.ready.then(draw).catch(draw);
   } else {
     draw();
   }
@@ -76,8 +79,8 @@ export function createIgniteBtn({
   });
 
   const button = new Mesh(new PlaneGeometry(width, height), mat);
-  button.name = "igniteButton";
-  button.rotation.x = -Math.PI / 2;
+  button.name = label + "Button";
+  button.rotation.set(rotation.x, rotation.y, rotation.z);
   button.renderOrder = 10;
 
   const ray = new Raycaster();
@@ -122,7 +125,7 @@ export function createIgniteBtn({
     canvas.removeEventListener("pointerdown", onDown);
     tex.dispose();
     mat.dispose();
-    (button.geometry as any).dispose?.();
+    button.geometry.dispose?.();
   };
 
   return { button, dispose };

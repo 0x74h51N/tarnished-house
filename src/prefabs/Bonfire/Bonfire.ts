@@ -125,6 +125,9 @@ export class Bonfire extends Group {
     this._syncFlame();
 
     this._fireLight = createFireLight();
+    this._root.add(this._fireLight.light);
+    this._fireLight.light.intensity = 0.001;
+    this._fireLight.light.shadow.needsUpdate = true;
   }
 
   attachAudio(sound: PositionalAudio, dy = 0.25) {
@@ -147,10 +150,7 @@ export class Bonfire extends Group {
 
     if (this._igniteEfc) this._igniteEfc.play();
 
-    this._root.add(this._fireLight.light);
-    this._fireLight.light.position.y += dy;
     this._attachFlame(dy);
-
     this._staggerAttach(this._sparks.points, 10, delay);
     this._staggerAttach(this._smoke.points, 2400, delay, (o) => {
       o.position.y += dy;

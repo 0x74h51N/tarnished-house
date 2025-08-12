@@ -6,7 +6,7 @@ import lowEnd from "./lowProfile.json";
 import { sparkConfig, smokeConfig, flameConfig } from "@/prefabs";
 import { deepAssign } from "@/utils";
 
-export function applyLowEnd() {
+export async function applyLowEnd() {
   const isLowEnd = detectLowEnd();
   if (isLowEnd) {
     console.log("Low End Detected");

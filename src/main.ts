@@ -25,15 +25,16 @@ import {
   applyLowEnd,
   Loop,
   createAudio,
+  createBtn,
 } from "./engine";
 import { AudioBundle } from "./types";
 import { createSizes } from "./utils/windowSize";
-import { Bonfire, createIgniteBtn } from "./prefabs";
+import { Bonfire } from "./prefabs";
 
 //
 // Mobile Detection & Performance Optimization
 //
-applyLowEnd();
+await applyLowEnd();
 
 const showEnterButton = initIntroModal();
 
@@ -161,13 +162,19 @@ const lights = createLights(scene);
 
 //
 // Ignite Button
-const { button: igniteBtn, dispose } = createIgniteBtn({
+const { button: igniteBtn, dispose } = await createBtn({
   camera: CamController.camera,
   canvas,
+  width: 0.65,
+  height: 0.23,
+  label: "Ignite",
+  rotation: { x: -Math.PI / 2, y: 0, z: 0 },
   onClick: () => {
     bonfire.ignite();
-    scene.remove(igniteBtn);
-    dispose();
+    setTimeout(() => {
+      scene.remove(igniteBtn);
+      dispose();
+    }, 80);
   },
 });
 

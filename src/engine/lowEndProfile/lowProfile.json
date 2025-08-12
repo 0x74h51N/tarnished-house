@@ -18,9 +18,9 @@
     "spawnables": {
       "trees": {
         "spawn": {
-          "count": 40,
+          "count": 35,
           "radius": {
-            "min": 14,
+            "min": 15,
             "max": 40
           },
           "receiveShadow": false
@@ -38,7 +38,7 @@
       },
       "graves": {
         "spawn": {
-          "count": 30,
+          "count": 25,
           "radius": {
             "min": 10,
             "max": 30
@@ -60,7 +60,10 @@
     },
     "particles": {
       "flame": {
-        "march": { "iterations": 20 }
+        "noise": {
+          "magnitude": 1.98
+        },
+        "march": { "iterations": 12 }
       },
       "smoke": {
         "maxCount": 18,

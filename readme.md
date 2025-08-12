@@ -4,7 +4,6 @@ Procedural haunted scene built with Three.js, TypeScript & GLSL featuring random
 
 ![capture_1754956951170](https://github.com/user-attachments/assets/db83bf29-aa6d-4aec-a2bf-f663a076080d)
 
-
 ## Overview
 
 - **Procedural Generation**  
@@ -21,36 +20,32 @@ While the original idea was inspired by the Three.js Journey Haunted House lesso
 ## Structure
 
 ```
+.
 ├── src
+│   ├── assets.json              // Asset options
 │   ├── config.json              // Global configuration file
 │   ├── components               // UI-related DOM elements and interaction handlers
 │   │   ├── audio                // Sound toggle button and UI controls
 │   │   ├── devgui               // Developer GUI (debug panels)
-│   │   │   ├── folders
+│   │   ├── photo
 │   │   ├── settings             // Settings panel and user config management
-│   │   │   ├── data
-│   │   │   └── utils
 │   │   └── ui                   // General UI elements like loading and intro modals
-│   │       ├── credits
-│   │       ├── intro
-│   │       └── loading
 │   ├── engine                   // Core engine logic and rendering
+│   │   ├── 3dui                 // 3d world interaction buttons etc.
 │   │   ├── audio                // 3D audio system and sound sources
-│   │   │   └── sounds
 │   │   ├── camera               // Camera setup and user controls
 │   │   ├── lights               // Lighting setup including firelight and ambient
+│   │   ├── lowEndProfile        // Mobile and lowEnd pc detech & change onfigs
 │   │   ├── particles            // Particle systems flame and point particles (smoke, sparks)
-│   │   │   ├── flame
-│   │   │   └── point
 │   │   ├── postprocess          // Post-processing effects like bloom and fog
 │   │   └── renderer             // Render loop and WebGL renderer creation
 │   ├── loaders                  // Asset loaders for models, textures, and placement (random or static)
-│   │   └── utils
-│   ├── main.ts                  // Main entry point
+│   ├── prefabs                  // Reusable scene entities, that package models with behavior and effects
+│   │   └── Bonfire
+│   ├── style.css
+│   ├── main.ts
 │   ├── types.ts                 // Shared TypeScript types
 │   └── utils                    // General utilities and helpers
-├── tsconfig.json
-└── vite.config.ts
 
 ```
 
