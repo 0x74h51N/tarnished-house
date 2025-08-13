@@ -43,39 +43,11 @@
           "autoplay": false
         }
       },
-      "fireLight": {
-        "color": "#ffae42",
-        "position": {
-          "x": 0,
-          "y": 0.28,
-          "z": 0
-        },
-        "intensity": 35,
-        "distance": 12.5,
-        "decay": 0.8,
-        "animation": {
-          "intensity": {
-            "speed": 12,
-            "amplitude": 4
-          },
-          "position": {
-            "speed": 11,
-            "amplitude": 0.05
-          },
-          "distance": {
-            "speed": 10,
-            "amplitude": 1
-          }
-        },
-        "helper": {
-          "size": 0.2
-        }
-      },
       "inst-1": {
         "scale": 2.55,
         "position": {
           "x": -0.55,
-          "y": 0.089,
+          "y": 0.093,
           "z": 2
         },
         "rotation": { "x": 0, "y": 0, "z": 0 },

@@ -117,11 +117,12 @@
     "license": "CC0"
   },
   {
-    "type": "Fire Start Effect",
+    "type": "Fire Start Sound Effect",
     "author": "LookIMadeAThing",
     "source": {
       "name": "Basic Fire whoosh",
       "url": "https://freesound.org/people/LookIMadeAThing/sounds/260554/"
-    }
+    },
+    "license": "CC0"
   }
 ]

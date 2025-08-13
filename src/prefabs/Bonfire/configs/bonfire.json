@@ -1,18 +1,62 @@
 {
   "dy": 0.25,
-
-  "emissiveFx": {
-    "to": 20,
-    "dur": 12
+  "cooldown": 10,
+  "timings": {
+    "flameSizeIgniteDur": 0.5,
+    "flameSizeExtinguishDur": 0.7,
+    "flamePosDur": 1.0,
+    "cooldownEaseIgnite": 0.2,
+    "cooldownEaseExtinguish": 0.3,
+    "decayEaseInDur": 0.7,
+    "decayExtinguishDur": 1.0
   },
+  "animation": {
+    "easeInPow": 3,
+    "easeOutPow": 3
+  },
+  "swordEmiFx": {
+    "to": 20,
+    "dur": 12,
+    "hiltFactor": 0.5
+  },
+
   "particleFx": {
     "sparks": {
       "intervalMs": 10,
-      "delay": 50
+      "delay": 50,
+      "resetDelayMs": 100,
+      "spawnRamp": {
+        "fromFactor": 4,
+        "dur": 3
+      }
     },
     "smoke": {
       "intervalMs": 2800,
       "delay": 50
+    },
+    "uTimeMult": {
+      "ignite": { "from": 2, "to": 1 },
+      "extinguish": { "from": 1, "to": 2 }
     }
+  },
+  "flame": {
+    "initialSize": 0.2
+  },
+  "fireLight": {
+    "color": "#ffae42",
+    "position": { "x": 0, "y": 0.28, "z": 0 },
+    "intensity": 35,
+    "minIntensity": 0.85,
+    "distance": 12.5,
+    "decay": 0.8,
+
+    "decayStart": 2,
+    "decayExtinguishTo": 2.5,
+    "animation": {
+      "intensity": { "speed": 12, "amplitude": 4 },
+      "position": { "speed": 11, "amplitude": 0.05 },
+      "distance": { "speed": 10, "amplitude": 1 }
+    },
+    "helper": { "size": 0.2 }
   }
 }

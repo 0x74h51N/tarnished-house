@@ -62,8 +62,10 @@ export class Bonfire extends PrefabActor {
     // Materials
     this._sword = (root.getObjectByName("sword") as Mesh)
       .material as MeshStandardMaterial;
+
     this._hilt = (root.getObjectByName("hilt") as Mesh)
       .material as MeshStandardMaterial;
+
     (root.getObjectByName("floor") as Mesh).renderOrder = 3;
 
     // Transform
@@ -92,7 +94,7 @@ export class Bonfire extends PrefabActor {
     // Light
     this._fireLight = createFireLight();
     this._root.add(this._fireLight.light);
-    this._fireLight.light.intensity = 0.001;
+    this._fireLight.light.intensity = bonfireConf.fireLight.minIntensity;
     this._fireLight.light.shadow.needsUpdate = true;
   }
 
@@ -108,48 +110,50 @@ export class Bonfire extends PrefabActor {
     // Recover particles
     setTimeout(() => {
       this._sparks.update("reset", true);
-    }, 100);
+    }, bonfireConf.particleFx.sparks.resetDelayMs);
+
     this._smoke.update("spawnRate", smokeConf.spawnRate);
 
     this._ease((v) => this._sparks.update("spawnRate", v), {
-      from: sparkConf.spawnRate * 4,
+      from:
+        sparkConf.spawnRate *
+        bonfireConf.particleFx.sparks.spawnRamp.fromFactor,
       to: sparkConf.spawnRate,
-      dur: 3,
+      dur: bonfireConf.particleFx.sparks.spawnRamp.dur,
     });
 
     this._ease((v) => this._sparks.update("uTimeMult", v), {
-      from: 2,
-      to: 1,
-      dur: this._cooldown * 0.2,
+      from: bonfireConf.particleFx.uTimeMult.ignite.from,
+      to: bonfireConf.particleFx.uTimeMult.ignite.to,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseIgnite,
     });
     this._ease((v) => this._smoke.update("uTimeMult", v), {
-      from: 2,
-      to: 1,
-      dur: this._cooldown * 0.2,
+      from: bonfireConf.particleFx.uTimeMult.ignite.from,
+      to: bonfireConf.particleFx.uTimeMult.ignite.to,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseIgnite,
     });
 
-    // Start particles
+    // firelight decay
+    this._easeOut((v) => (this._fireLight.light.decay = v), {
+      from: bonfireConf.fireLight.decayStart,
+      to: bonfireConf.fireLight.decay,
+      dur: bonfireConf.timings.decayEaseInDur,
+    });
+
+    // flame size
     this._root.attach(this._flame.flame);
     this._easeOut((v) => this._flame.update("size", v), {
-      from: 0.2,
+      from: bonfireConf.flame.initialSize,
       to: flameConf.size,
-      dur: 0.5,
+      dur: bonfireConf.timings.flameSizeIgniteDur,
     });
 
+    // flame Y position
     const startY = this._flame.flame.position.y;
-
     this._easeOut(
-      (y) => {
-        this._flame.update("startPozs", {
-          ...this._flame.flame.position,
-          y: y,
-        });
-      },
-      {
-        from: startY,
-        to: bonfireConf.dy,
-        dur: 1,
-      }
+      (y) =>
+        this._flame.update("startPozs", { ...this._flame.flame.position, y }),
+      { from: startY, to: bonfireConf.dy, dur: bonfireConf.timings.flamePosDur }
     );
 
     this._staggerAttach(this._sparks.points, bonfireConf.particleFx.sparks);
@@ -164,13 +168,13 @@ export class Bonfire extends PrefabActor {
     // Emissive ease
     this._ease((v) => (this._sword.emissiveIntensity = v), {
       from: this._sword.emissiveIntensity,
-      to: bonfireConf.emissiveFx.to,
-      dur: bonfireConf.emissiveFx.dur,
+      to: bonfireConf.swordEmiFx.to,
+      dur: bonfireConf.swordEmiFx.dur,
     });
     this._ease((v) => (this._hilt.emissiveIntensity = v), {
       from: this._hilt.emissiveIntensity,
-      to: bonfireConf.emissiveFx.to * 0.5,
-      dur: bonfireConf.emissiveFx.dur,
+      to: bonfireConf.swordEmiFx.to * 0.5,
+      dur: bonfireConf.swordEmiFx.dur,
     });
   }
 
@@ -182,62 +186,75 @@ export class Bonfire extends PrefabActor {
     this._trigSfx();
     if (this._sound?.isPlaying) this._sound.stop();
 
-    this._cooldown = 10;
+    this._cooldown = bonfireConf.cooldown;
 
-    // Smoke & spark
     this._smoke.update("spawnRate", 0);
     this._sparks.update("spawnRate", 0);
 
     this._easeOut((v) => this._smoke.update("uTimeMult", v), {
-      from: 1,
-      to: 2,
-      dur: this._cooldown * 0.3,
+      from: bonfireConf.particleFx.uTimeMult.extinguish.from,
+      to: bonfireConf.particleFx.uTimeMult.extinguish.to,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish,
     });
     this._easeOut((v) => this._sparks.update("uTimeMult", v), {
-      from: 1,
-      to: 2,
-      dur: this._cooldown * 0.3,
+      from: bonfireConf.particleFx.uTimeMult.extinguish.from,
+      to: bonfireConf.particleFx.uTimeMult.extinguish.to,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish,
     });
 
-    // Flame size and poz
+    // flame size
     this._easeOut((v) => this._flame.update("size", v), {
       from: flameConf.size,
       to: 0,
-      dur: 0.7,
+      dur: bonfireConf.timings.flameSizeExtinguishDur,
     });
 
-    const startY = this._flame.flame.position.y;
-
+    // flame Y
+    const startY2 = this._flame.flame.position.y;
     this._easeOut(
-      (y) => {
-        this._flame.update("startPozs", {
-          ...this._flame.flame.position,
-          y: y,
-        });
-      },
+      (y) =>
+        this._flame.update("startPozs", { ...this._flame.flame.position, y }),
       {
-        from: startY,
-        to: startY - bonfireConf.dy,
-        dur: 1,
+        from: startY2,
+        to: startY2 - bonfireConf.dy,
+        dur: bonfireConf.timings.flamePosDur,
       }
     );
 
-    this._easeOut((v) => (this._fireLight.light.intensity = v), {
-      from: this._fireLight.light.intensity,
-      to: 0.01,
-      dur: 0.5,
+    // light decay
+    this._easeOut((v) => (this._fireLight.light.decay = v), {
+      from: bonfireConf.fireLight.decay,
+      to: bonfireConf.fireLight.decayExtinguishTo,
+      dur: bonfireConf.timings.decayExtinguishDur,
     });
 
-    // Emissive ease
+    // light intensity
+    this._easeOut((v) => (this._fireLight.light.intensity = v), {
+      from: this._fireLight.light.intensity * 0.5,
+      to: bonfireConf.fireLight.minIntensity,
+      dur: Math.max(
+        this._sword.emissiveIntensity * 0.9,
+        bonfireConf.swordEmiFx.dur * 0.5
+      ),
+    });
+
+    // emissive ease
     this._easeOut((v) => (this._sword.emissiveIntensity = v), {
       from: this._sword.emissiveIntensity,
       to: 0,
-      dur: this._cooldown * this._sword.emissiveIntensity * 0.3,
+      dur: Math.max(
+        this._sword.emissiveIntensity,
+        bonfireConf.swordEmiFx.dur * 0.6
+      ),
     });
+
     this._easeOut((v) => (this._hilt.emissiveIntensity = v), {
       from: this._hilt.emissiveIntensity,
       to: 0,
-      dur: this._cooldown * this._hilt.emissiveIntensity * 0.3,
+      dur: Math.max(
+        this._hilt.emissiveIntensity,
+        bonfireConf.swordEmiFx.dur * 0.6
+      ),
     });
   }
 

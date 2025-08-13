@@ -133,6 +133,8 @@ This project is licensed under GPL-3.0. See [license](./LICENSE).
   - **Source:** [Freesound - The Fireplace 3.wav](https://freesound.org/people/NoOneIsReal/sounds/387128/)
   - **License:** CC0
 
-- **Moon Photo**
-  - **Authors:** 0x74h51n (by me!)
-  - **Source:** [Github]()
+- **Fire Start Sound Effect**
+
+  - **Authors:** LookIMadeAThing
+  - **Source:** [Freesound - Basic Fire whoosh](https://freesound.org/people/LookIMadeAThing/sounds/260554/)
+  - **License:** CC0

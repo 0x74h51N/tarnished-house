@@ -3,6 +3,7 @@ import config from "config.json";
 import assets from "assets.json";
 import GUI from "lil-gui";
 import { LightBundle } from "@/engine/lights/types";
+import { bonfireConf } from "@/prefabs";
 
 export function createLightSettings(
   gui: GUI,
@@ -30,7 +31,7 @@ export function createLightSettings(
   const fireLightGui = lightingFolder.addFolder("Fire Light Settings");
   fireLightGui.close();
 
-  const fireLightParam = assets.models.bonfire.fireLight!;
+  const fireLightParam = bonfireConf.fireLight!;
   fireLightGui
     .add(config.scene.debug.lightHelpers, "fire")
     .name("Light Helper")

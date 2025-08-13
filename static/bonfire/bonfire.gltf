@@ -183,7 +183,7 @@
 			},
 			"extensions":{
 				"KHR_materials_emissive_strength":{
-					"emissiveStrength":3
+					"emissiveStrength":3.6
 				}
 			},
 			"name":"ashes",
