@@ -38,8 +38,6 @@ import {
   Group,
   TextureLoader,
   Texture,
-  LinearMipMapLinearFilter,
-  LinearFilter,
 } from "three";
 import {
   PointUpdateKey,
@@ -71,7 +69,6 @@ const defaultTexture = new DataTexture(
  * @param textures - Optional texture(s) for the particles (single or multiple variants).
  * @param props.spawnRate   - How many particles spawn per second.
  * @param props.area        - Radius around the start position where particles spawn.
- * @param props.speed       - Base velocity multiplier for particles.
  * @param props.elevDivs    - Elevation range for spark direction (used only if sparks is true).
  * @param props.size        - Initial size of each particle.
  * @param props.sizeGrowth  - Growth rate for particle size over time.
@@ -80,10 +77,13 @@ const defaultTexture = new DataTexture(
  * @param props.color       - Starting color of all particles (Color, hex, or string).
  * @param props.maxCount    - Maximum number of particles active at once.
  * @param props.startPozs   - Center position where particles are spawned around.
- * @param props.sparkProps
- * @param props.damping     - Velocity damping (resistance during motion).
- * @param props.scaleFactor - Uniform scale multiplier for all particles.
- * @param props.stretchFact - How much particles stretch based on velocity (spark only).
+ * @param props.sparkProps  - Spark options
+ * @param props.uTimeMult   - Time uniform multiplier, instance speed
+ * @param props.sparkProps.damping       - Velocity damping (resistance during motion).
+ * @param props.sparkProps.scaleFactor   - Uniform scale multiplier for all particles.
+ * @param props.sparkProps.stretchFact   - How much particles stretch based on velocity (spark only).
+ * @param props.sparkProps.speed         - Base velocity multiplier for spark particles.
+ *
  *
  * @returns { step, updtScreen, update }
  *   points         - Group<Object3DEventMap>
@@ -105,7 +105,6 @@ export function createPointParticles(
   let {
     spawnRate,
     area,
-    speed = 1,
     size,
     sizeGrowth = 0,
     fadeRate = 0,
@@ -113,6 +112,7 @@ export function createPointParticles(
     maxCount,
     startPozs,
     scaleFactor,
+    uTimeMult = 1,
   } = props;
   const loader = new TextureLoader();
 
@@ -130,7 +130,7 @@ export function createPointParticles(
       : [loader.load(smokeTexPaths)]
     : [];
 
-  const isSparkV = !!(sparkProps && sparkProps.elevDivs);
+  const isSparkV = sparkProps && sparkProps.elevDivs && sparkProps.speed;
   const numVariants = isSparkV ? 1 : Math.max(textureArray.length, 1);
 
   // ------------------ BUFFERS ------------------
@@ -147,8 +147,8 @@ export function createPointParticles(
     const i3 = i * 3;
     startPos(startPozs, position, i3, area);
 
-    if (sparkProps && sparkProps.elevDivs) {
-      sparkVel(vel, i3, sparkProps.elevDivs, speed);
+    if (sparkProps) {
+      sparkVel(vel, i3, sparkProps.elevDivs, sparkProps.speed);
     } else {
       startVel(vel, i3);
     }
@@ -184,7 +184,8 @@ export function createPointParticles(
   };
 
   // -------------- Spark Uniforms -------------------
-  let { damping, stretchFact, elevDivs, waveFreq, waveAmp } = sparkProps ?? {};
+  let { damping, stretchFact, elevDivs, waveFreq, waveAmp, speed } =
+    sparkProps ?? {};
 
   const sUniforms = sparkProps && {
     u_damping: { value: damping },
@@ -249,7 +250,7 @@ export function createPointParticles(
 
         startPos(startPozs, position, i3, area);
 
-        if (sparkProps && elevDivs) sparkVel(vel, i3, elevDivs, speed);
+        if (isSparkV) sparkVel(vel, i3, elevDivs!, speed!);
         else startVel(vel, i3);
 
         startTime[i] = cUniforms.u_time.value;
@@ -257,7 +258,7 @@ export function createPointParticles(
       }
       markAttrFlags(geometry, POS_VEL_TIME_KEYS);
     }
-    cUniforms.u_time.value += delta;
+    cUniforms.u_time.value += delta * uTimeMult;
   };
 
   function updtScreen(pr: number) {
@@ -268,8 +269,13 @@ export function createPointParticles(
   // ------------------ GUI Updater ------------------
   //
   const guiHandlers: {
-    [K in PointUpdateKey]?: (value: PointUpdateValue<K>) => void;
+    [K in PointUpdateKey | any]: (value: PointUpdateValue<K | any>) => void;
   } = {
+    reset: () => {
+      nextIndex = 0;
+      spawnAccumulator = maxCount;
+    },
+
     spawnRate: (v) => {
       spawnRate = v;
     },
@@ -278,7 +284,11 @@ export function createPointParticles(
       area = v;
     },
 
-    speed: (v) => {
+    uTimeMult: (v) => {
+      uTimeMult = v!;
+    },
+
+    "sparkProps.speed": (v) => {
       speed = v!;
     },
 

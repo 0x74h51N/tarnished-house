@@ -1,6 +1,6 @@
 {
   "size": 1.4,
-  "speed": 4.65,
+  "uTimeMult": 4.65,
   "startPozs": { "x": 0, "y": 0.1, "z": 0 },
   "color": "#ff0000",
   "noise": {

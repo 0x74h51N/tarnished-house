@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0
+// Copyright (C) 2025 Tahsin Önemli
+// This file is part of Tarnished-house. See the LICENSE file for details.
+
 import Stats from "stats.js";
 import config from "config.json";
 import assets from "assets.json";
@@ -162,7 +166,8 @@ const lights = createLights(scene);
 
 //
 // Ignite Button
-const { button: igniteBtn, dispose } = await createBtn({
+let ignited = false;
+const { button: igniteBtn, setLabel } = await createBtn({
   camera: CamController.camera,
   canvas,
   width: 0.65,
@@ -170,11 +175,9 @@ const { button: igniteBtn, dispose } = await createBtn({
   label: "Ignite",
   rotation: { x: -Math.PI / 2, y: 0, z: 0 },
   onClick: () => {
-    bonfire.ignite();
-    setTimeout(() => {
-      scene.remove(igniteBtn);
-      dispose();
-    }, 80);
+    ignited ? bonfire.extinguish() : bonfire.ignite();
+    ignited = !ignited;
+    setLabel(ignited ? "Extinguish" : "Ignite");
   },
 });
 
@@ -191,7 +194,7 @@ createPositional({
   url: audioOpts.firestartUrl,
   opts: { ...audioOpts.opts, loop: false, autoplay: false, volume: 1 },
 }).then((s) => {
-  bonfire.attachIgnite(s);
+  bonfire.attachSfx(s);
   effect = s;
 });
 

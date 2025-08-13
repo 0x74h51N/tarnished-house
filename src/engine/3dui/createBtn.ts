@@ -2,13 +2,13 @@ import {
   Mesh,
   PlaneGeometry,
   MeshBasicMaterial,
-  DoubleSide,
   Raycaster,
   Vector2,
   Camera,
   CanvasTexture,
   Vector3Like,
 } from "three";
+import { roundRect } from "./utils";
 
 type BtnOpts = {
   camera: Camera;
@@ -38,11 +38,24 @@ export async function createBtn({
   cv.height = H;
   const ctx = cv.getContext("2d")!;
 
+  const tex = new CanvasTexture(cv);
+  const mat = new MeshBasicMaterial({
+    map: tex,
+    transparent: true,
+    depthWrite: false,
+  });
+
+  const button = new Mesh(new PlaneGeometry(width, height), mat);
+  button.rotation.set(rotation.x, rotation.y, rotation.z);
+  button.renderOrder = 10;
+
+  let currentLabel = label;
+
   const draw = () => {
     const gold = "#ffd700";
     ctx.clearRect(0, 0, W, H);
 
-    ctx.fillStyle = "rgba(12, 12, 16, 0.72)";
+    ctx.fillStyle = "rgba(12,12,16,0.72)";
     roundRect(ctx, 12, 12, W - 24, H - 24, 16, true, false);
 
     ctx.strokeStyle = gold;
@@ -58,27 +71,22 @@ export async function createBtn({
     ctx.lineWidth = 2;
 
     ctx.font = `72px "${fontFamily}", serif`;
-    ctx.fillText(label, W * 0.5, H * 0.52);
-    ctx.strokeText(label, W * 0.5, H * 0.52);
+    ctx.fillText(currentLabel, W * 0.5, H * 0.52);
+    ctx.strokeText(currentLabel, W * 0.5, H * 0.52);
 
-    tex.needsUpdate = true;
+    tex.needsUpdate = true; // ✅
   };
 
-  if (await (document as Document).fonts.ready) {
-    (document as Document).fonts.ready.then(draw).catch(draw);
-  } else {
+  draw();
+  (document as Document).fonts?.ready?.then(() => draw()).catch(() => {});
+
+  const setLabel = (s: string) => {
+    if (s === currentLabel) return;
+    currentLabel = s;
+    button.name = s + "Button";
     draw();
-  }
+  };
 
-  const tex = new CanvasTexture(cv);
-  const mat = new MeshBasicMaterial({
-    map: tex,
-    transparent: true,
-    depthWrite: false,
-    side: DoubleSide,
-  });
-
-  const button = new Mesh(new PlaneGeometry(width, height), mat);
   button.name = label + "Button";
   button.rotation.set(rotation.x, rotation.y, rotation.z);
   button.renderOrder = 10;
@@ -128,25 +136,5 @@ export async function createBtn({
     button.geometry.dispose?.();
   };
 
-  return { button, dispose };
-}
-
-function roundRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number,
-  fill: boolean,
-  stroke: boolean
-) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  if (fill) ctx.fill();
-  if (stroke) ctx.stroke();
+  return { button, dispose, setLabel };
 }

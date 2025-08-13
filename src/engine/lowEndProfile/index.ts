@@ -3,7 +3,7 @@ import { SpawnableName } from "@/loaders";
 import config from "config.json";
 import assets from "assets.json";
 import lowEnd from "./lowProfile.json";
-import { sparkConfig, smokeConfig, flameConfig } from "@/prefabs";
+import { sparkConf, smokeConf, flameConf } from "@/prefabs";
 import { deepAssign } from "@/utils";
 
 export async function applyLowEnd() {
@@ -22,9 +22,9 @@ export async function applyLowEnd() {
     // Particles
     const pOverrides = lowEnd.assets.particles;
 
-    deepAssign(flameConfig, pOverrides.flame);
-    deepAssign(smokeConfig, pOverrides.smoke);
-    deepAssign(sparkConfig, pOverrides.sparks);
+    deepAssign(flameConf, pOverrides.flame);
+    deepAssign(smokeConf, pOverrides.smoke);
+    deepAssign(sparkConf, pOverrides.sparks);
 
     // Random sppawn
     const orSpawn = assets.models.spawnable;

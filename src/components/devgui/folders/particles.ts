@@ -1,12 +1,7 @@
 import GUI from "lil-gui";
 import { NoiseParams, FlameProps } from "@/engine";
 import { minMax } from "@/types";
-import {
-  BonfireParticles,
-  flameConfig,
-  smokeConfig,
-  sparkConfig,
-} from "@/prefabs";
+import { BonfireParticles, flameConf, smokeConf, sparkConf } from "@/prefabs";
 
 export function createParticleSettings(
   gui: GUI,
@@ -15,7 +10,7 @@ export function createParticleSettings(
   const particlesFolder = gui.addFolder("Particles Settings");
   particlesFolder.close();
 
-  if (!sparkConfig || !smokeConfig || !flameConfig) {
+  if (!sparkConf || !smokeConf || !flameConf) {
     console.error("Particle configurations not found in config");
     return;
   }
@@ -23,7 +18,7 @@ export function createParticleSettings(
   const flameFolder = particlesFolder.addFolder("Flame");
   flameFolder.close();
 
-  const flameParams = flameConfig as FlameProps;
+  const flameParams = flameConf as FlameProps;
 
   flameFolder
     .add(flameParams, "size", 0.1, 3, 0.01)
@@ -33,10 +28,10 @@ export function createParticleSettings(
     });
 
   flameFolder
-    .add(flameParams, "speed", 0.1, 10, 0.1)
+    .add(flameParams, "uTimeMult", 0.1, 10, 0.1)
     .name("Speed")
     .onChange((v: number) => {
-      particleSystems.flame!.update("speed", v);
+      particleSystems.flame!.update("uTimeMult", v);
     });
 
   flameFolder
@@ -154,7 +149,7 @@ export function createParticleSettings(
   const smokeFolder = particlesFolder.addFolder("Smoke");
   smokeFolder.close();
 
-  const smokeParams = smokeConfig;
+  const smokeParams = smokeConf;
 
   smokeFolder
     .add(smokeParams, "area", 0.1, 2, 0.01)
@@ -216,7 +211,7 @@ export function createParticleSettings(
   const sparksFolder = particlesFolder.addFolder("Sparks");
   sparksFolder.close();
 
-  const sparksParams = sparkConfig;
+  const sparksParams = sparkConf;
 
   sparksFolder
     .addColor(sparksParams, "color")
@@ -247,10 +242,10 @@ export function createParticleSettings(
     });
 
   sparksFolder
-    .add(sparksParams, "speed", 1, 10, 0.1)
+    .add(sparksParams.sparkProps, "speed", 1, 10, 0.1)
     .name("Speed")
     .onChange((v: number) => {
-      particleSystems.sparks!.update("speed", v);
+      particleSystems.sparks!.update("sparkProps.speed", v);
     });
 
   sparksFolder

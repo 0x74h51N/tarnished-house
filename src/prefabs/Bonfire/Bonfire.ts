@@ -1,11 +1,12 @@
+// SPDX-License-Identifier: GPL-3.0
+// Copyright (C) 2025 Tahsin Ö.
+// This file is part of Tarnished-house. See the LICENSE file for details.
+
 import {
   createFlame,
   createPointParticles,
   Flame,
-  FlameProps,
   PointParticles,
-  SmokeOpts,
-  SparkOpts,
 } from "@/engine";
 import {
   type Object3D,
@@ -14,42 +15,16 @@ import {
   Quaternion,
   Vector3,
   MeshStandardMaterial,
-  PositionalAudio,
 } from "three";
 
 import { Sizes } from "@/types";
 import { v3 } from "@/utils";
 import { BonfireOpts, FireLight } from "./types";
 import { createFireLight } from "./fireLight";
-import { flameConfig, smokeConfig, sparkConfig } from "./configs";
+import { flameConf, smokeConf, sparkConf, bonfireConf } from "./configs";
+import { PrefabActor } from "../core/PrefabActor";
 
-const smoke = smokeConfig as SmokeOpts;
-const flame = flameConfig as FlameProps;
-const spark = sparkConfig as SparkOpts;
-
-export class Bonfire extends Group {
-  private static _template: Object3D;
-
-  private static _resolveReady?: () => void;
-  private static _ready = new Promise<void>((r) => (Bonfire._resolveReady = r));
-
-  static setTemplate(template: Object3D): void {
-    this._template = template;
-    this._template.updateMatrixWorld(true);
-    this._resolveReady?.();
-  }
-
-  static async create(sizes: Sizes, opts: BonfireOpts) {
-    if (!this._template) await this._ready;
-    return new Bonfire(sizes, opts);
-  }
-
-  static isReady(): boolean {
-    return !!this._template;
-  }
-
-  private _root: Group;
-  private _sizes: Sizes;
+export class Bonfire extends PrefabActor {
   private _smoke: PointParticles;
   private _sparks: PointParticles;
   private _flame: Flame;
@@ -57,9 +32,7 @@ export class Bonfire extends Group {
   private _ignited: boolean;
   private _sword: MeshStandardMaterial;
   private _hilt: MeshStandardMaterial;
-  private _emiTick?: (dt: number) => void;
-  private _sound?: PositionalAudio;
-  private _igniteEfc?: PositionalAudio;
+  private _cooldown = 0;
 
   get smoke(): PointParticles {
     return this._smoke;
@@ -70,22 +43,19 @@ export class Bonfire extends Group {
   get flame(): Flame {
     return this._flame;
   }
-
   get fireLight(): FireLight {
     return this._fireLight;
   }
 
   constructor(sizes: Sizes, opts: BonfireOpts) {
-    super();
-    this._sizes = sizes;
+    super(sizes);
     this._ignited = false;
 
     const tmpl = Bonfire._template;
-    if (!tmpl) {
+    if (!tmpl)
       throw new Error(
-        "Bonfire template not set. Call Bonfire.setTemplate(...) once after GLTF load."
+        "Bonfire template not set. Call Bonfire.setTemplate(...) after GLTF load."
       );
-    }
 
     const root = (tmpl as Group).clone(true) as Group;
 
@@ -94,86 +64,205 @@ export class Bonfire extends Group {
       .material as MeshStandardMaterial;
     this._hilt = (root.getObjectByName("hilt") as Mesh)
       .material as MeshStandardMaterial;
-    const floor = root.getObjectByName("floor") as Mesh;
+    (root.getObjectByName("floor") as Mesh).renderOrder = 3;
 
-    floor.renderOrder = 3;
-
-    // Bonfire scale and positions
+    // Transform
     this.scale.setScalar(opts.scale);
     const p = v3(opts.position);
     this.position.copy(p);
-
     const r = v3(opts.rotation);
     this.rotation.setFromVector3(r);
 
-    this._root = root;
-    this.add(root);
+    this._root.add(root);
 
     // Particles
     this._smoke = createPointParticles({
       sizes: this._sizes,
-      props: smoke,
+      props: smokeConf,
     });
-
     this._sparks = createPointParticles({
       sizes: this._sizes,
-      props: spark,
+      props: sparkConf,
     });
-
-    this._flame = createFlame(flame);
+    this._flame = createFlame(flameConf);
+    this._flame.update("size", 0.2);
     this._snapParticles();
     this._syncFlame();
 
+    // Light
     this._fireLight = createFireLight();
     this._root.add(this._fireLight.light);
     this._fireLight.light.intensity = 0.001;
     this._fireLight.light.shadow.needsUpdate = true;
   }
 
-  attachAudio(sound: PositionalAudio, dy = 0.25) {
-    this._sound = sound;
-    this._root.add(sound);
-    sound.position.y += dy;
-  }
-
-  attachIgnite(sound: PositionalAudio) {
-    this._igniteEfc = sound;
-    this._root.add(sound);
-  }
-
+  // ------ Public API ------
   ignite() {
     if (this._ignited) return;
-
-    const dy = 0.25;
-    const delay = 50;
     this._ignited = true;
+    this._killTicks();
 
-    if (this._igniteEfc) this._igniteEfc.play();
+    this._trigSfx();
+    if (this._sound) this._sound.play();
 
-    this._attachFlame(dy);
-    this._staggerAttach(this._sparks.points, 10, delay);
-    this._staggerAttach(this._smoke.points, 2400, delay, (o) => {
-      o.position.y += dy;
+    // Recover particles
+    setTimeout(() => {
+      this._sparks.update("reset", true);
+    }, 100);
+    this._smoke.update("spawnRate", smokeConf.spawnRate);
+
+    this._ease((v) => this._sparks.update("spawnRate", v), {
+      from: sparkConf.spawnRate * 4,
+      to: sparkConf.spawnRate,
+      dur: 3,
     });
-    if (this._sound && !this._sound.isPlaying) {
-      this._sound.play();
-    }
 
-    this._startEmissive(10, 14);
+    this._ease((v) => this._sparks.update("uTimeMult", v), {
+      from: 2,
+      to: 1,
+      dur: this._cooldown * 0.2,
+    });
+    this._ease((v) => this._smoke.update("uTimeMult", v), {
+      from: 2,
+      to: 1,
+      dur: this._cooldown * 0.2,
+    });
+
+    // Start particles
+    this._root.attach(this._flame.flame);
+    this._easeOut((v) => this._flame.update("size", v), {
+      from: 0.2,
+      to: flameConf.size,
+      dur: 0.5,
+    });
+
+    const startY = this._flame.flame.position.y;
+
+    this._easeOut(
+      (y) => {
+        this._flame.update("startPozs", {
+          ...this._flame.flame.position,
+          y: y,
+        });
+      },
+      {
+        from: startY,
+        to: bonfireConf.dy,
+        dur: 1,
+      }
+    );
+
+    this._staggerAttach(this._sparks.points, bonfireConf.particleFx.sparks);
+    this._staggerAttach(
+      this._smoke.points,
+      bonfireConf.particleFx.smoke,
+      (o) => {
+        o.position.y += bonfireConf.dy;
+      }
+    );
+
+    // Emissive ease
+    this._ease((v) => (this._sword.emissiveIntensity = v), {
+      from: this._sword.emissiveIntensity,
+      to: bonfireConf.emissiveFx.to,
+      dur: bonfireConf.emissiveFx.dur,
+    });
+    this._ease((v) => (this._hilt.emissiveIntensity = v), {
+      from: this._hilt.emissiveIntensity,
+      to: bonfireConf.emissiveFx.to * 0.5,
+      dur: bonfireConf.emissiveFx.dur,
+    });
   }
 
-  step(d: number, e: number) {
+  extinguish() {
     if (!this._ignited) return;
-    this._emiTick?.(d);
+    this._ignited = false;
+    this._killTicks();
+
+    this._trigSfx();
+    if (this._sound?.isPlaying) this._sound.stop();
+
+    this._cooldown = 10;
+
+    // Smoke & spark
+    this._smoke.update("spawnRate", 0);
+    this._sparks.update("spawnRate", 0);
+
+    this._easeOut((v) => this._smoke.update("uTimeMult", v), {
+      from: 1,
+      to: 2,
+      dur: this._cooldown * 0.3,
+    });
+    this._easeOut((v) => this._sparks.update("uTimeMult", v), {
+      from: 1,
+      to: 2,
+      dur: this._cooldown * 0.3,
+    });
+
+    // Flame size and poz
+    this._easeOut((v) => this._flame.update("size", v), {
+      from: flameConf.size,
+      to: 0,
+      dur: 0.7,
+    });
+
+    const startY = this._flame.flame.position.y;
+
+    this._easeOut(
+      (y) => {
+        this._flame.update("startPozs", {
+          ...this._flame.flame.position,
+          y: y,
+        });
+      },
+      {
+        from: startY,
+        to: startY - bonfireConf.dy,
+        dur: 1,
+      }
+    );
+
+    this._easeOut((v) => (this._fireLight.light.intensity = v), {
+      from: this._fireLight.light.intensity,
+      to: 0.01,
+      dur: 0.5,
+    });
+
+    // Emissive ease
+    this._easeOut((v) => (this._sword.emissiveIntensity = v), {
+      from: this._sword.emissiveIntensity,
+      to: 0,
+      dur: this._cooldown * this._sword.emissiveIntensity * 0.3,
+    });
+    this._easeOut((v) => (this._hilt.emissiveIntensity = v), {
+      from: this._hilt.emissiveIntensity,
+      to: 0,
+      dur: this._cooldown * this._hilt.emissiveIntensity * 0.3,
+    });
+  }
+
+  // ------ Update loop ------
+  step(d: number, e: number) {
+    super.step(d, e);
+
+    const alive = this._ignited || this._cooldown > 0;
+    if (!alive) return;
+
+    if (this._ignited) this._fireLight.animator.update(e);
+
     this._smoke.step(d);
     this._sparks.step(d);
     this._flame.step(d);
-    this._fireLight.animator.update(e);
+
+    if (!this._ignited && this._cooldown > 0) {
+      this._cooldown -= d;
+      if (this._cooldown <= 0) this._cooldown = 0;
+    }
   }
 
+  // ------ Helpers ------
   private _snapParticles() {
     this.updateMatrixWorld(true);
-
     const pos = new Vector3();
     const rot = new Quaternion();
     const scl = new Vector3();
@@ -190,28 +279,20 @@ export class Bonfire extends Group {
     this._sparks.points.children.forEach(apply);
   }
 
-  //Helpers
   private _syncFlame() {
-    const p = this._flame.flame.position;
-    this._flame.update("startPozs", { x: p.x, y: p.y, z: p.z });
-  }
-
-  private _attachFlame(dy: number) {
-    this._root.attach(this._flame.flame);
-    this._flame.flame.position.y += dy;
     const p = this._flame.flame.position;
     this._flame.update("startPozs", { x: p.x, y: p.y, z: p.z });
   }
 
   private _staggerAttach(
     g: Group,
-    intervalMs: number,
-    delay: number,
+    { intervalMs, delay }: { intervalMs: number; delay: number },
     onEach?: (o: Object3D) => void
   ) {
     const tick = () => {
       if (!g.children.length) return;
       setTimeout(() => {
+        if (!this._ignited) return;
         const c = g.children[0];
         this._root.attach(c);
         onEach?.(c);
@@ -219,18 +300,5 @@ export class Bonfire extends Group {
       }, delay);
     };
     tick();
-  }
-
-  private _startEmissive(to: number, dur: number) {
-    const from = 0;
-    let t = 0;
-    this._emiTick = (dt) => {
-      t += dt;
-      const k = Math.min(1, t / dur);
-      const eased = k * k * k;
-      this._sword.emissiveIntensity = from + (to - from) * eased;
-      this._hilt.emissiveIntensity = (from + (to - from) * eased) * 0.5;
-      if (k === 1) this._emiTick = undefined;
-    };
   }
 }

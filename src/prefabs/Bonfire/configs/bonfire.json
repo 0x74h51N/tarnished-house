@@ -1,0 +1,18 @@
+{
+  "dy": 0.25,
+
+  "emissiveFx": {
+    "to": 20,
+    "dur": 12
+  },
+  "particleFx": {
+    "sparks": {
+      "intervalMs": 10,
+      "delay": 50
+    },
+    "smoke": {
+      "intervalMs": 2800,
+      "delay": 50
+    }
+  }
+}

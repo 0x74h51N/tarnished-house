@@ -9,6 +9,7 @@ export interface SparkProps {
   elevDivs: minMax;
   waveFreq: number;
   waveAmp: number;
+  speed: number;
 }
 export interface PointProps extends BaseProps {
   maxCount: number;
@@ -37,17 +38,19 @@ export interface PointParticleInterface<
 
 export type PointInterface = PointParticleInterface<SmokeOpts | SparkOpts>;
 
-export type PointUpdateKey = Extract<
-  NestedKeys<SmokeOpts> | NestedKeys<SparkOpts>,
-  string
->;
+export type ParticleCmdKey = "reset";
 
-export type PointUpdateValue<K extends PointUpdateKey> =
-  K extends NestedKeys<SmokeOpts>
-    ? GetValue<SmokeOpts, K>
-    : K extends NestedKeys<SparkOpts>
-    ? GetValue<SparkOpts, K>
-    : never;
+export type PointUpdateKey =
+  | ParticleCmdKey
+  | Extract<NestedKeys<SmokeOpts> | NestedKeys<SparkOpts>, string>;
+
+export type PointUpdateValue<K extends PointUpdateKey> = K extends "reset"
+  ? boolean
+  : K extends NestedKeys<SmokeOpts>
+  ? GetValue<SmokeOpts, K>
+  : K extends NestedKeys<SparkOpts>
+  ? GetValue<SparkOpts, K>
+  : never;
 
 export type PointUpdateFn = <K extends PointUpdateKey>(
   key: K,

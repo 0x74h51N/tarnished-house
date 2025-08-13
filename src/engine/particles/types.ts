@@ -4,9 +4,9 @@ import { Sizes } from "@/types";
 export interface BaseProps {
   startPozs: Vector3Like;
   size: number;
-  speed?: number;
   color: Color | number | string;
   seed?: number;
+  uTimeMult?: number;
 }
 
 export interface BaseParticlesInterface<T> {

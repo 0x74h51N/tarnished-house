@@ -1,3 +1,4 @@
-export { default as sparkConfig } from "./spark.json";
-export { default as smokeConfig } from "./smoke.json";
-export { default as flameConfig } from "./flame.json";
+export { default as sparkConf } from "./spark.json";
+export { default as smokeConf } from "./smoke.json";
+export { default as flameConf } from "./flame.json";
+export { default as bonfireConf } from "./bonfire.json";

@@ -44,14 +44,13 @@ export const createFlame = ({
   texture,
   startPozs,
   size,
-  speed: initialSpeed = 1,
+  uTimeMult = 1,
   color,
   seed = Math.random() * 19.19,
   noise,
   march,
   colorMixStr,
 }: FlameInterface): Flame => {
-  let speed = initialSpeed;
   const loader = new TextureLoader();
   const fireTex = loader.load(texture);
 
@@ -113,7 +112,7 @@ export const createFlame = ({
 
   //Animation steps
   const step: Step = (delta) => {
-    uniforms.u_time.value += delta * speed;
+    uniforms.u_time.value += delta * uTimeMult;
   };
 
   //
@@ -129,8 +128,8 @@ export const createFlame = ({
       uniforms.u_bottom.value = -v * 0.8;
     },
 
-    speed: (v) => {
-      speed = v!;
+    uTimeMult: (v) => {
+      uTimeMult = v!;
     },
 
     color: (v) => {
