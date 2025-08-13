@@ -73,11 +73,6 @@ canvas {
   opacity: 0;
   pointer-events: none;
   transition: all 0.6s ease;
-
-  .modal-content {
-    box-sizing: content-box;
-    display: flex;
-  }
 }
 #intro-modal.visible {
   opacity: 1;
@@ -315,6 +310,18 @@ canvas {
   position: relative;
   z-index: 2;
 }
+.header {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  padding: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  margin: 0px !important;
+}
 
 #credits-modal .modal-content {
   min-height: 180px;
@@ -466,9 +473,6 @@ canvas {
 
 /* Close Button */
 .close-modal {
-  position: absolute;
-  top: 18px;
-  right: 22px;
   font-size: 2rem;
   color: var(--color-gold);
   cursor: pointer;
@@ -477,6 +481,7 @@ canvas {
 }
 .close-modal:hover {
   color: var(--color-white);
+  font-weight: bolder;
 }
 
 /* Settings Panel */
@@ -638,9 +643,6 @@ canvas {
     margin: -5px;
     min-width: 44px;
     min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   #settings {
