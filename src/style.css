@@ -518,7 +518,6 @@ canvas {
 .settings-content {
   padding: 2.8rem;
   box-sizing: border-box;
-  height: 100vh;
 
   label {
     display: flex;

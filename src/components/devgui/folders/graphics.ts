@@ -1,6 +1,5 @@
-import { WebGLRenderer, OrthographicCamera } from "three";
+import { WebGLRenderer, OrthographicCamera, Scene } from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons";
-import { shadowDispose } from "../../../utils";
 import config from "config.json";
 import GUI from "lil-gui";
 import { LightBundle } from "@/engine";
@@ -9,13 +8,15 @@ import {
   applyShadowSizeAndBias,
   createShadowBiasProxy,
 } from "@/engine/lights/utils";
+import { allMatUpdt, shadowDispose } from "@/utils";
 
 export function createGraphicsSettings(
   gui: GUI,
   renderer: WebGLRenderer,
   lights: LightBundle,
   bloomPass: UnrealBloomPass,
-  antialias: boolean
+  antialias: boolean,
+  scene: Scene
 ) {
   const shadowConfg = config.scene.renderer.shadows;
   const shadowMapSizes = shadowConfg.mapSizes;
@@ -117,6 +118,7 @@ export function createGraphicsSettings(
         (directLight.light.shadow.camera as OrthographicCamera).visible = v;
         renderer.shadowMap.needsUpdate = true;
       }
+      allMatUpdt(scene);
     });
 
   shadows
@@ -126,5 +128,7 @@ export function createGraphicsSettings(
       shadowDispose(lightArr);
       renderer.shadowMap.type = shadowTypes[v as keyof typeof shadowTypes];
       renderer.shadowMap.needsUpdate = true;
+
+      allMatUpdt(scene);
     });
 }

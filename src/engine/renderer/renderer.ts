@@ -25,8 +25,11 @@ export function createRenderer({
     canvas: canvas,
     antialias: antialias,
     premultipliedAlpha: false,
-    context: canvas.getContext("webgl2") as WebGL2RenderingContext,
+    powerPreference: "high-performance",
   });
+  if (!renderer.capabilities.isWebGL2) {
+    throw new Error("WebGL2 required for GLSL3 shaders.");
+  }
 
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(sizes.pixelRatio);

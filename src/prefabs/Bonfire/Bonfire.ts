@@ -22,9 +22,9 @@ import { v3 } from "@/utils";
 import { BonfireOpts, FireLight } from "./types";
 import { createFireLight } from "./fireLight";
 import { flameConf, smokeConf, sparkConf, bonfireConf } from "./configs";
-import { PrefabActor } from "../core/PrefabActor";
+import { Prefab } from "../core/PrefabActor";
 
-export class Bonfire extends PrefabActor {
+export class Bonfire extends Prefab {
   private _smoke: PointParticles;
   private _sparks: PointParticles;
   private _flame: Flame;

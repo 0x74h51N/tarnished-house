@@ -5,15 +5,15 @@
 import { Group, PositionalAudio, type Object3D } from "three";
 import type { Sizes } from "@/types";
 
-type ActorCtor<T extends PrefabActor, O> = new (sizes: Sizes, opts: O) => T;
+type ActorCtor<T extends Prefab, O> = new (sizes: Sizes, opts: O) => T;
 
-interface PrefabActorStatics {
+interface PrefabStatics {
   _template: Object3D;
   _resolveReady: () => void;
   _ready: Promise<void>;
 }
 
-export class PrefabActor extends Group {
+export class Prefab extends Group {
   protected _root: Group;
   protected _sizes: Sizes;
 
@@ -33,7 +33,7 @@ export class PrefabActor extends Group {
   }
 
   // ---------- Static template lifecycle ----------
-  static setTemplate(this: PrefabActorStatics, template: Object3D): void {
+  static setTemplate(this: PrefabStatics, template: Object3D): void {
     if (!this._ready) {
       this._ready = new Promise<void>(
         (resolve) => (this._resolveReady = resolve)
@@ -44,8 +44,8 @@ export class PrefabActor extends Group {
     this._resolveReady?.();
   }
 
-  static async create<T extends PrefabActor, O>(
-    this: ActorCtor<T, O> & PrefabActorStatics,
+  static async create<T extends Prefab, O>(
+    this: ActorCtor<T, O> & PrefabStatics,
     sizes: Sizes,
     opts: O
   ): Promise<T> {
@@ -58,7 +58,7 @@ export class PrefabActor extends Group {
     return new this(sizes, opts);
   }
 
-  static isReady(this: PrefabActorStatics): boolean {
+  static isReady(this: PrefabStatics): boolean {
     return !!this._template;
   }
 

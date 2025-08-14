@@ -1,8 +1,8 @@
 import { fog } from "@/engine/postprocess/fog";
 import { ShadowTypeKey, shadowTypes } from "@/types";
-import { shadowDispose } from "@/utils";
+import { allMatUpdt, shadowDispose } from "@/utils";
 import config from "config.json";
-import { DirectionalLight } from "three";
+import { DirectionalLight, Mesh, Object3D } from "three";
 import { GraphicsSettingsParams, GeneralControl } from "../types";
 import { applyShadowSizeAndBias } from "@/engine/lights/utils";
 
@@ -57,6 +57,7 @@ export function makeGraphicsSettings({
         lightArr.forEach((l) => (l.castShadow = v));
         renderer.shadowMap.enabled = v;
         renderer.shadowMap.needsUpdate = true;
+        allMatUpdt(scene);
       },
     },
     {
@@ -133,6 +134,7 @@ export function makeGraphicsSettings({
         shadowDispose(lightArr);
         renderer.shadowMap.type = shadowTypes[v];
         renderer.shadowMap.needsUpdate = true;
+        allMatUpdt(scene);
       },
     },
   ];

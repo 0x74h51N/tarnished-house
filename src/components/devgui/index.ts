@@ -68,7 +68,7 @@ export function initSetupGUI({
 
   createHelpers(gui, scene, params.helpers);
 
-  createGraphicsSettings(gui, renderer, lights, bloomPass, antialias);
+  createGraphicsSettings(gui, renderer, lights, bloomPass, antialias, scene);
 
   createLightSettings(gui, scene, lights);
 

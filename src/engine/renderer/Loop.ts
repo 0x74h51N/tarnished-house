@@ -1,4 +1,4 @@
-import { Timer } from "three/examples/jsm/Addons";
+import { Timer } from "three";
 
 export type UpdateFn = (delta: number, elapsed: number) => void;
 export type RenderFn = () => void;
