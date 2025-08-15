@@ -119,7 +119,7 @@ const { setVol, resume, createAmbience, createPositional } = createAudio({
 });
 const ambianceS = createAmbience(config.sounds.ambiance);
 
-const { btn, updateIcon } = setupToggleButton(); // Settings and audio mute button
+const { muteBtn, updtMuteIcon } = setupToggleButton(); // Audio mute button and icon
 
 let audioUnlocked = false;
 let muted = true;
@@ -129,7 +129,7 @@ function setMuted(val: boolean) {
   muted = val;
   const v = muted ? 0 : targetVolume;
   setVol(v);
-  updateIcon(v);
+  updtMuteIcon(v);
 }
 
 async function startAudio() {
@@ -142,11 +142,11 @@ async function startAudio() {
   setMuted(false);
 }
 
-btn.addEventListener("click", () => setMuted(!muted), { passive: true });
+muteBtn.addEventListener("click", () => setMuted(!muted), { passive: true });
 
 const audio: AudioBundle = {
-  setVolume: setVol,
-  updateIcon: updateIcon,
+  setVol,
+  updtMuteIcon,
 };
 
 //

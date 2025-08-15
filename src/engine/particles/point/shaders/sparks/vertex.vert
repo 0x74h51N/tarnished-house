@@ -35,9 +35,9 @@ uniform float u_wave_freq;
 in vec3   velocity;
 in float  startTime;
 in float  size;
-in vec4   colour;
+in vec4   aColor;
 
-out vec4  vColour;
+out vec4  vColor;
 out vec2  vRot;
 out float vSpeedRatio;
 
@@ -87,7 +87,7 @@ void main() {
   float angle  = atan(velDir.y, velDir.x);             // Radian angle from X axis in 2D
 
   vRot         = vec2(cos(-angle), sin(-angle));      
-  vColour      = colour;
+  vColor       = aColor;
   gl_Position  = clip;
   gl_PointSize = (size * resolution.y * u_scale / clip.w) * vSpeedRatio;
 }

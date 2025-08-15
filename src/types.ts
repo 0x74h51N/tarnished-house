@@ -46,8 +46,8 @@ export type ToneMappingValue = ToneMappingMap[ToneMappingKey];
 export type VolumeSetter = (v: number) => void;
 export type IconUpdt = (v: number) => void;
 export interface AudioBundle {
-  setVolume: VolumeSetter;
-  updateIcon: IconUpdt;
+  setVol: VolumeSetter;
+  updtMuteIcon: IconUpdt;
 }
 
 //window size obj

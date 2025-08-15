@@ -24,8 +24,6 @@
  */
 
 import {
-  DataTexture,
-  RGBAFormat,
   Color,
   Points,
   BufferGeometry,
@@ -57,16 +55,15 @@ import { startPos, sparkVel, startVel, colUpt, markAttrFlags } from "./utils";
 import { createGuiUpdater } from "@/utils";
 import { Step } from "../types";
 
-const defaultTexture = new DataTexture(
-  new Uint8Array([255, 255, 255, 255]),
-  1,
-  1,
-  RGBAFormat
-);
 /**
  * Creates a GPU particle system using custom shaders and buffer attributes.
  *
- * @param textures - Optional texture(s) for the particles (single or multiple variants).
+ * * Spawning model:
+ * - If `props.instant === true`  → all particles are spawned immediately.
+ * - If `props.instant === false` → all particles start "asleep". They become visible gradually
+ *   according to `spawnRate` in the step loop.
+ *
+ * @param texture           - Optional texture for the particles.
  * @param props.spawnRate   - How many particles spawn per second.
  * @param props.area        - Radius around the start position where particles spawn.
  * @param props.elevDivs    - Elevation range for spark direction (used only if sparks is true).
@@ -79,6 +76,7 @@ const defaultTexture = new DataTexture(
  * @param props.startPozs   - Center position where particles are spawned around.
  * @param props.sparkProps  - Spark options
  * @param props.uTimeMult   - Time uniform multiplier, instance speed
+ * @param props.instant     - Instant prefill of the pool (default: true).
  * @param props.sparkProps.damping       - Velocity damping (resistance during motion).
  * @param props.sparkProps.scaleFactor   - Uniform scale multiplier for all particles.
  * @param props.sparkProps.stretchFact   - How much particles stretch based on velocity (spark only).
@@ -91,12 +89,6 @@ const defaultTexture = new DataTexture(
  *   updtScreen     - Call on resize to update resolution uniform.
  *   update(params) - Update particle system parameters in real-time.
  */
-export function createPointParticles(
-  args: PointParticleInterface<SmokeOpts>
-): PointParticles;
-export function createPointParticles(
-  args: PointParticleInterface<SparkOpts>
-): PointParticles;
 
 export function createPointParticles(
   args: PointParticleInterface<SparkOpts | SmokeOpts>
@@ -113,6 +105,7 @@ export function createPointParticles(
     startPozs,
     scaleFactor,
     uTimeMult = 1,
+    instant = true,
   } = props;
   const loader = new TextureLoader();
 
@@ -122,16 +115,11 @@ export function createPointParticles(
 
   const clr = new Color(color);
 
-  const smokeTexPaths = isSmoke(props) ? props.textures : undefined;
+  const smokeTexPath = isSmoke(props) ? props.textures : undefined;
 
-  const textureArray: Texture[] = smokeTexPaths
-    ? Array.isArray(smokeTexPaths)
-      ? smokeTexPaths.map((p) => loader.load(p))
-      : [loader.load(smokeTexPaths)]
-    : [];
+  const texture: Texture = loader.load(smokeTexPath!);
 
   const isSparkV = sparkProps && sparkProps.elevDivs && sparkProps.speed;
-  const numVariants = isSparkV ? 1 : Math.max(textureArray.length, 1);
 
   // ------------------ BUFFERS ------------------
   const position = new Float32Array(maxCount * 3);
@@ -143,23 +131,9 @@ export function createPointParticles(
   const anglesArr = new Float32Array(maxCount);
   const colsArr = new Float32Array(maxCount * 4);
 
-  for (let i = 0; i < maxCount; i++) {
-    const i3 = i * 3;
-    startPos(startPozs, position, i3, area);
-
-    if (sparkProps) {
-      sparkVel(vel, i3, sparkProps.elevDivs, sparkProps.speed);
-    } else {
-      startVel(vel, i3);
-    }
-
-    startTime[i] = Math.random() * 0.1;
-    anglesArr[i] = Math.random() * Math.PI * 2;
-    colUpt(i, colsArr, clr, opacity);
-  }
-
   // ------------------ GEOMETRY ------------------
   const geometry = new BufferGeometry();
+
   geometry.setAttribute("position", new BufferAttribute(position, 3));
   geometry.setAttribute("velocity", new BufferAttribute(vel, 3));
   geometry.setAttribute("startTime", new BufferAttribute(startTime, 1));
@@ -167,7 +141,7 @@ export function createPointParticles(
   geometry.setAttribute("sizeGrowth", new BufferAttribute(growthArr, 1));
   geometry.setAttribute("fadeRate", new BufferAttribute(fadeArr, 1));
   geometry.setAttribute("angle", new BufferAttribute(anglesArr, 1));
-  geometry.setAttribute("colour", new BufferAttribute(colsArr, 4));
+  geometry.setAttribute("aColor", new BufferAttribute(colsArr, 4));
 
   const POS_VEL_TIME_KEYS = ["position", "velocity", "startTime"];
 
@@ -196,77 +170,95 @@ export function createPointParticles(
   };
 
   const points = new Group();
-  //
-  // ------------------ Initial Spawn ------------------
-  //
-  for (let i = 0; i < numVariants; i++) {
-    const dTex = textureArray[i] ?? textureArray[0];
-    const uniforms = {
-      ...sUniforms,
-      ...cUniforms,
-      diffuseTexture: { value: dTex },
-    };
 
-    if (!isSparkV) {
-      const dTex = textureArray[i] || textureArray[0] || defaultTexture;
-      uniforms.diffuseTexture = { value: dTex };
-    }
+  const dTex = texture;
+  const uniforms = {
+    ...sUniforms,
+    ...cUniforms,
+    diffuseTexture: { value: dTex },
+  };
 
-    const material = new ShaderMaterial({
-      glslVersion: GLSL3,
-      uniforms,
-      vertexShader: isSparkV ? SparkVS : VS,
-      fragmentShader: isSparkV ? SparksFS : FS,
-      toneMapped: false,
-      transparent: true,
-      depthWrite: false,
-      blending: AdditiveBlending,
-      dithering: true,
-      vertexColors: true,
-    });
+  const material = new ShaderMaterial({
+    glslVersion: GLSL3,
+    uniforms,
+    vertexShader: isSparkV ? SparkVS : VS,
+    fragmentShader: isSparkV ? SparksFS : FS,
+    toneMapped: false,
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    dithering: true,
+    vertexColors: true,
+  });
 
-    const pts = new Points(geometry, material);
-    pts.renderOrder = 4;
-    points.add(pts);
-  }
-  const mainGeo = geometry;
+  const pts = new Points(geometry, material);
+  pts.renderOrder = 4;
+  points.add(pts);
 
   //
-  // ------------------ Animation ------------------
+  // ----------------- Spawnication ----------------
   //
+  const INACTIVE_START = 1e9;
   let spawnAccumulator = 0;
   let nextIndex = 0;
 
+  // Spawner
+  function spawn(i: number, time: number) {
+    const i3 = i * 3;
+    startPos(startPozs, position, i3, area);
+    if (isSparkV) sparkVel(vel, i3, elevDivs!, speed!);
+    else startVel(vel, i3);
+    startTime[i] = time;
+  }
+
+  //
+  // Initial Spawn
+  if (instant) {
+    for (let i = 0; i < maxCount; i++) {
+      spawn(i, Math.random() * 0.1);
+
+      anglesArr[i] = Math.random() * Math.PI * 2;
+      colUpt(i, colsArr, clr, opacity);
+    }
+    nextIndex = maxCount;
+    markAttrFlags(geometry, [...POS_VEL_TIME_KEYS, "angle", "aColor"]);
+  } else {
+    for (let i = 0; i < maxCount; i++) {
+      spawn(i, INACTIVE_START);
+      anglesArr[i] = Math.random() * Math.PI * 2;
+      colUpt(i, colsArr, clr, opacity);
+    }
+    markAttrFlags(geometry, [...POS_VEL_TIME_KEYS, "angle", "aColor"]);
+  }
+
+  //
+  // Animation - Respawn
   const step: Step = (delta) => {
     spawnAccumulator += delta * spawnRate;
     const toSpawn = Math.floor(spawnAccumulator);
     spawnAccumulator -= toSpawn;
 
-    //re-spawn point and update attributes if it needed
     if (toSpawn > 0) {
       for (let s = 0; s < toSpawn; s++) {
         const i = nextIndex % maxCount;
-        const i3 = i * 3;
-
-        startPos(startPozs, position, i3, area);
-
-        if (isSparkV) sparkVel(vel, i3, elevDivs!, speed!);
-        else startVel(vel, i3);
-
-        startTime[i] = cUniforms.u_time.value;
+        spawn(i, cUniforms.u_time.value);
         nextIndex++;
       }
       markAttrFlags(geometry, POS_VEL_TIME_KEYS);
     }
+
     cUniforms.u_time.value += delta * uTimeMult;
   };
 
+  //
+  // ------------------ Res Updater ------------------
+  //
   function updtScreen(pr: number) {
     resolution.set(window.innerWidth * pr, window.innerHeight * pr);
   }
 
   //
-  // ------------------ GUI Updater ------------------
+  // ------------------ Particle Updater ------------------
   //
   const guiHandlers: {
     [K in PointUpdateKey | any]: (value: PointUpdateValue<K | any>) => void;
@@ -300,25 +292,25 @@ export function createPointParticles(
     size: (v) => {
       size = v;
       sizeArr.fill(v);
-      markAttrFlags(mainGeo, ["size"]);
+      markAttrFlags(geometry, ["size"]);
     },
 
     sizeGrowth: (v) => {
       sizeGrowth = v!;
       growthArr.fill(v!);
-      markAttrFlags(mainGeo, ["sizeGrowth"]);
+      markAttrFlags(geometry, ["sizeGrowth"]);
     },
 
     fadeRate: (v) => {
       fadeRate = v!;
       fadeArr.fill(v!);
-      markAttrFlags(mainGeo, ["fadeRate"]);
+      markAttrFlags(geometry, ["fadeRate"]);
     },
 
     opacity: (v) => {
       opacity = v!;
       for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = v!;
-      markAttrFlags(mainGeo, ["colour"]);
+      markAttrFlags(geometry, ["aColor"]);
     },
 
     color: (v) => {
@@ -330,7 +322,7 @@ export function createPointParticles(
         colsArr[i4 + 1] = c.g;
         colsArr[i4 + 2] = c.b;
       }
-      markAttrFlags(mainGeo, ["colour"]);
+      markAttrFlags(geometry, ["aColor"]);
     },
 
     // --- UNIFORMS ---

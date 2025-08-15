@@ -31,17 +31,22 @@ in vec3 velocity;
 in float startTime;
 in float size;
 in float angle;
-in vec4 colour;
+in vec4 aColor;
 in float sizeGrowth;   
 in float fadeRate;
 
-out vec4 vColour;
+out vec4 vColor;
 out vec2 vAngle;
 out float vFade;
+out float vage;
 
 void main() {
   float age = max(u_time - startTime, 0.0);
-
+if (age <= 0.0) {
+  gl_Position = vec4(2.0, 2.0, 0.0, 1.0);
+  gl_PointSize = 0.0;
+  return;
+}
   vec3  pos = position + velocity * age;
   vec4  mv  = modelViewMatrix * vec4(pos, 1.0);
   
@@ -55,6 +60,7 @@ void main() {
   gl_PointSize = grownSize * scale / gl_Position.w;
 
   vAngle  = vec2(cos(angle), sin(angle));
-  vColour = colour;
+  vColor = aColor;
   vFade = fadeRate * posDeltaY;
+  vage = age;
 }

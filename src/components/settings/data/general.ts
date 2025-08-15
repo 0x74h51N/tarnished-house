@@ -22,8 +22,8 @@ export function makeGeneralSettings({
       onChange: (e) => {
         const val = +e.target.value;
         document.getElementById("volumeValue")!.textContent = val.toString();
-        audio.setVolume(val / 100);
-        audio.updateIcon(val / 100);
+        audio.setVol(val / 100);
+        audio.updtMuteIcon(val / 100);
       },
     },
   ];

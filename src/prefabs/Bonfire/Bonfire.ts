@@ -8,14 +8,7 @@ import {
   Flame,
   PointParticles,
 } from "@/engine";
-import {
-  type Object3D,
-  type Mesh,
-  Group,
-  Quaternion,
-  Vector3,
-  MeshStandardMaterial,
-} from "three";
+import { type Mesh, Group, MeshStandardMaterial } from "three";
 
 import { Sizes } from "@/types";
 import { v3 } from "@/utils";
@@ -24,6 +17,21 @@ import { createFireLight } from "./fireLight";
 import { flameConf, smokeConf, sparkConf, bonfireConf } from "./configs";
 import { Prefab } from "../core/PrefabActor";
 
+/**
+ * Bonfire Prefab
+ *
+ * A reusable prefab actor representing a bonfire with interactive ignite/extinguish states.
+ * Handles:
+ *  - Particle effects (flame, smoke, sparks)
+ *  - Dynamic firelight with animated decay and intensity
+ *  - Emissive animation for sword/hilt materials
+ *  - Smooth state transitions with easing
+ *
+ * Public API:
+ *  - ignite(): Start flame/particle effects and light
+ *  - extinguish(): Stop effects and dim light
+ *  - step(): Per-frame update for particles and animations
+ */
 export class Bonfire extends Prefab {
   private _smoke: PointParticles;
   private _sparks: PointParticles;
@@ -82,14 +90,18 @@ export class Bonfire extends Prefab {
       sizes: this._sizes,
       props: smokeConf,
     });
+    this._snapParticle(this._smoke.points);
+
     this._sparks = createPointParticles({
       sizes: this._sizes,
       props: sparkConf,
     });
+    this._snapParticle(this._sparks.points);
+
     this._flame = createFlame(flameConf);
+    this._snapParticle(this._flame.flame);
+
     this._flame.update("size", 0.2);
-    this._snapParticles();
-    this._syncFlame();
 
     // Light
     this._fireLight = createFireLight();
@@ -98,7 +110,16 @@ export class Bonfire extends Prefab {
     this._fireLight.light.shadow.needsUpdate = true;
   }
 
-  // ------ Public API ------
+  /*
+  /* ====================== PUBLIC APIs ======================
+  */
+
+  /**
+   * Starts the ignition sequence for the bonfire.
+   * Triggers particle effects, light changes, and emissive animations.
+   *
+   * @returns void
+   */
   ignite() {
     if (this._ignited) return;
     this._ignited = true;
@@ -107,10 +128,9 @@ export class Bonfire extends Prefab {
     this._trigSfx();
     if (this._sound) this._sound.play();
 
-    // Recover particles
-    setTimeout(() => {
-      this._sparks.update("reset", true);
-    }, bonfireConf.particleFx.sparks.resetDelayMs);
+    //
+    // Recover particle states
+    this._sparks.update("reset", true);
 
     this._smoke.update("spawnRate", smokeConf.spawnRate);
 
@@ -122,6 +142,11 @@ export class Bonfire extends Prefab {
       dur: bonfireConf.particleFx.sparks.spawnRamp.dur,
     });
 
+    // Attach root
+    this._root.attach(this._sparks.points);
+    this._root.attach(this._smoke.points);
+
+    // Animate time multiplier for smoke/sparks
     this._ease((v) => this._sparks.update("uTimeMult", v), {
       from: bonfireConf.particleFx.uTimeMult.ignite.from,
       to: bonfireConf.particleFx.uTimeMult.ignite.to,
@@ -133,14 +158,14 @@ export class Bonfire extends Prefab {
       dur: this._cooldown * bonfireConf.timings.cooldownEaseIgnite,
     });
 
-    // firelight decay
+    // Light decay
     this._easeOut((v) => (this._fireLight.light.decay = v), {
       from: bonfireConf.fireLight.decayStart,
       to: bonfireConf.fireLight.decay,
       dur: bonfireConf.timings.decayEaseInDur,
     });
 
-    // flame size
+    // Flame growth
     this._root.attach(this._flame.flame);
     this._easeOut((v) => this._flame.update("size", v), {
       from: bonfireConf.flame.initialSize,
@@ -148,24 +173,19 @@ export class Bonfire extends Prefab {
       dur: bonfireConf.timings.flameSizeIgniteDur,
     });
 
-    // flame Y position
-    const startY = this._flame.flame.position.y;
+    // Flame Y
+    const p = this._flame.flame.position;
+    const startY = p.y;
+
     this._easeOut(
-      (y) =>
-        this._flame.update("startPozs", { ...this._flame.flame.position, y }),
+      (y) => {
+        p.y = y;
+        this._flame.update("startPozs", p);
+      },
       { from: startY, to: bonfireConf.dy, dur: bonfireConf.timings.flamePosDur }
     );
 
-    this._staggerAttach(this._sparks.points, bonfireConf.particleFx.sparks);
-    this._staggerAttach(
-      this._smoke.points,
-      bonfireConf.particleFx.smoke,
-      (o) => {
-        o.position.y += bonfireConf.dy;
-      }
-    );
-
-    // Emissive ease
+    // Emissive intensity animation for sword & hilt
     this._ease((v) => (this._sword.emissiveIntensity = v), {
       from: this._sword.emissiveIntensity,
       to: bonfireConf.swordEmiFx.to,
@@ -178,6 +198,12 @@ export class Bonfire extends Prefab {
     });
   }
 
+  /**
+   * Starts the ignition sequence for the bonfire.
+   * Triggers particle effects, light changes, and emissive animations.
+   *
+   * @returns void
+   */
   extinguish() {
     if (!this._ignited) return;
     this._ignited = false;
@@ -188,57 +214,64 @@ export class Bonfire extends Prefab {
 
     this._cooldown = bonfireConf.cooldown;
 
+    // Stop particle spawn
     this._smoke.update("spawnRate", 0);
     this._sparks.update("spawnRate", 0);
 
+    // Animate time multiplier decay
     this._easeOut((v) => this._smoke.update("uTimeMult", v), {
       from: bonfireConf.particleFx.uTimeMult.extinguish.from,
       to: bonfireConf.particleFx.uTimeMult.extinguish.to,
       dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish,
     });
+
     this._easeOut((v) => this._sparks.update("uTimeMult", v), {
       from: bonfireConf.particleFx.uTimeMult.extinguish.from,
       to: bonfireConf.particleFx.uTimeMult.extinguish.to,
       dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish,
     });
 
-    // flame size
+    // Flame size
     this._easeOut((v) => this._flame.update("size", v), {
       from: flameConf.size,
       to: 0,
       dur: bonfireConf.timings.flameSizeExtinguishDur,
     });
 
-    // flame Y
-    const startY2 = this._flame.flame.position.y;
+    // Flame Y
+    const p = this._flame.flame.position;
+    const startY = p.y;
+
     this._easeOut(
-      (y) =>
-        this._flame.update("startPozs", { ...this._flame.flame.position, y }),
+      (y) => {
+        p.y = y;
+        this._flame.update("startPozs", p);
+      },
       {
-        from: startY2,
-        to: startY2 - bonfireConf.dy,
+        from: startY,
+        to: startY - bonfireConf.dy,
         dur: bonfireConf.timings.flamePosDur,
       }
     );
 
-    // light decay
+    // Light decay
     this._easeOut((v) => (this._fireLight.light.decay = v), {
       from: bonfireConf.fireLight.decay,
       to: bonfireConf.fireLight.decayExtinguishTo,
       dur: bonfireConf.timings.decayExtinguishDur,
     });
 
-    // light intensity
+    // Light intensity fade
     this._easeOut((v) => (this._fireLight.light.intensity = v), {
       from: this._fireLight.light.intensity * 0.5,
       to: bonfireConf.fireLight.minIntensity,
       dur: Math.max(
-        this._sword.emissiveIntensity * 0.9,
+        this._sword.emissiveIntensity * 0.7,
         bonfireConf.swordEmiFx.dur * 0.5
       ),
     });
 
-    // emissive ease
+    // Emissive fade out
     this._easeOut((v) => (this._sword.emissiveIntensity = v), {
       from: this._sword.emissiveIntensity,
       to: 0,
@@ -258,7 +291,13 @@ export class Bonfire extends Prefab {
     });
   }
 
-  // ------ Update loop ------
+  /**
+   * Update loop for the Bonfire entity.
+   *
+   * @param d Delta Time
+   * @param e Elapsed Time
+   * @returns void
+   */
   step(d: number, e: number) {
     super.step(d, e);
 
@@ -275,47 +314,5 @@ export class Bonfire extends Prefab {
       this._cooldown -= d;
       if (this._cooldown <= 0) this._cooldown = 0;
     }
-  }
-
-  // ------ Helpers ------
-  private _snapParticles() {
-    this.updateMatrixWorld(true);
-    const pos = new Vector3();
-    const rot = new Quaternion();
-    const scl = new Vector3();
-    this.matrixWorld.decompose(pos, rot, scl);
-
-    const apply = (o: Object3D) => {
-      o.position.copy(pos);
-      o.quaternion.copy(rot);
-      o.updateMatrixWorld(true);
-    };
-
-    apply(this._flame.flame);
-    this._smoke.points.children.forEach(apply);
-    this._sparks.points.children.forEach(apply);
-  }
-
-  private _syncFlame() {
-    const p = this._flame.flame.position;
-    this._flame.update("startPozs", { x: p.x, y: p.y, z: p.z });
-  }
-
-  private _staggerAttach(
-    g: Group,
-    { intervalMs, delay }: { intervalMs: number; delay: number },
-    onEach?: (o: Object3D) => void
-  ) {
-    const tick = () => {
-      if (!g.children.length) return;
-      setTimeout(() => {
-        if (!this._ignited) return;
-        const c = g.children[0];
-        this._root.attach(c);
-        onEach?.(c);
-        setTimeout(tick, intervalMs);
-      }, delay);
-    };
-    tick();
   }
 }

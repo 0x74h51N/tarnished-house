@@ -25,7 +25,7 @@
 precision highp float;
 
 in vec2  vRot; 
-in vec4  vColour;
+in vec4  vColor;
 in float vSpeedRatio;
 uniform float u_stretch;
 
@@ -51,7 +51,7 @@ void main() {
   float bboost  = u_stretch * 0.5 - 1.0;
   strength     *= 1.0 + bboost * vSpeedRatio;
 
-  vec4 col     = vColour * strength;
+  vec4 col     = vColor * strength;
   col.a        = max(strength, 0.005);
 
   fragColor    = col;

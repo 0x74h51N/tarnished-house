@@ -18,6 +18,7 @@ export interface PointProps extends BaseProps {
   scaleFactor: number;
   sizeGrowth?: number;
   fadeRate?: number;
+  instant?: boolean;
 }
 
 export interface SparkOpts extends PointProps {
@@ -26,7 +27,7 @@ export interface SparkOpts extends PointProps {
 
 export interface SmokeOpts extends PointProps {
   opacity: number;
-  textures: string | string[];
+  textures: string;
 }
 
 export interface PointParticleInterface<

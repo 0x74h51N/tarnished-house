@@ -60,9 +60,9 @@ export function initSetupGUI({
     .add(params, "volume", 0, 1.5, 0.1)
     .name("Volume")
     .onChange((v: number) => {
-      if (audio.setVolume) {
-        audio.setVolume(v);
-        audio.updateIcon(v);
+      if (audio.setVol) {
+        audio.setVol(v);
+        audio.updtMuteIcon(v);
       }
     });
 
