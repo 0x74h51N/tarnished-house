@@ -2,6 +2,7 @@ import { ManagerRefs } from "@/loaders";
 import { Scene, WebGLRenderer } from "three";
 import { AudioBundle } from "@/types";
 import { CamController, LightBundle } from "@/engine";
+import Stats from "stats-gl";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,
@@ -50,14 +51,14 @@ export interface SettingsInterface {
   antialias: boolean;
   audio: AudioBundle;
   scene: Scene;
-  stats: Stats;
+  toggleStats: (show: boolean) => void;
   CamController: CamController;
 }
 export type GeneralSettingsParams = Pick<SettingsInterface, "audio">;
 
 export type DisplaySettingsParams = Pick<
   SettingsInterface,
-  "renderer" | "stats"
+  "renderer" | "toggleStats"
 > & {
   camera: CamController["camera"];
 };

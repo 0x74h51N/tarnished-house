@@ -2,7 +2,6 @@
 // Copyright (C) 2025 Tahsin Önemli
 // This file is part of Tarnished-house. See the LICENSE file for details.
 
-import Stats from "stats.js";
 import config from "config.json";
 import assets from "assets.json";
 import {
@@ -11,6 +10,7 @@ import {
   setupToggleButton,
   initCreditsModal,
   initScreenshotButton,
+  createPerfHUD,
 } from "./components";
 import {
   Scene,
@@ -19,7 +19,6 @@ import {
   Color,
   PositionalAudio,
 } from "three";
-
 import { loadAssets, ManagerRefs, randomMeshes } from "./loaders";
 import {
   CameraController,
@@ -210,9 +209,10 @@ const { smoke, sparks, flame } = bonfire;
 
 //
 // Stats
-const stats = new Stats();
-stats.showPanel(1);
-stats.showPanel(0);
+const hud = createPerfHUD({
+  renderer,
+  container: document.body,
+});
 
 let guiLoaded = false;
 
@@ -247,7 +247,7 @@ randomMeshes({ scene }).then((m) => {
     antialias,
     audio,
     scene,
-    stats,
+    toggleStats: hud.toggleStats,
     CamController,
   });
 
@@ -274,8 +274,6 @@ loop.addUpdate((delta, elapsed) => {
 });
 
 loop.addRender(() => {
-  stats.begin();
-
   if (bloom.enabled && !composer.passes.includes(bloomPass)) {
     composer.addPass(bloomPass);
   } else if (!bloom.enabled) {
@@ -283,8 +281,7 @@ loop.addRender(() => {
   }
 
   composer.render();
-
-  stats.end();
+  hud.updateOverlay();
 });
 
 loop.start();

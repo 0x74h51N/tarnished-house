@@ -317,10 +317,7 @@ export function createPointParticles(
       const c = new Color(v);
       clr.copy(c);
       for (let i = 0; i < maxCount; i++) {
-        const i4 = i * 4;
-        colsArr[i4] = c.r;
-        colsArr[i4 + 1] = c.g;
-        colsArr[i4 + 2] = c.b;
+        colUpt(i, colsArr, clr, 1);
       }
       markAttrFlags(geometry, ["aColor"]);
     },

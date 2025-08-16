@@ -478,6 +478,8 @@ canvas {
   cursor: pointer;
   z-index: 3;
   transition: color 0.2s;
+  display: flex;
+  justify-content: end;
 }
 .close-modal:hover {
   color: var(--color-white);
@@ -498,7 +500,7 @@ canvas {
 
 #settings-modal .modal-content {
   box-sizing: border-box;
-  max-height: 100dvh !important;
+  min-height: 100dvh !important;
   border-radius: 0px !important;
   display: flex;
   flex-direction: column;
@@ -518,6 +520,10 @@ canvas {
 .settings-content {
   padding: 2.8rem;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-around;
 
   label {
     display: flex;
@@ -662,7 +668,7 @@ canvas {
     }
     .control-label {
       padding: 1;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.9rem;
     }
     .range-control {
       flex-wrap: wrap;
@@ -752,7 +758,7 @@ canvas {
     padding: 0;
   }
   #settings .range-control {
-    justify-content: center !important;
+    justify-content: space-around !important;
   }
   .range-value {
     margin-left: 1px !important;
@@ -766,6 +772,10 @@ canvas {
     height: 32px;
     background-position: right 3px center;
     background-size: 12px;
+  }
+
+  #settings input[type="range"] {
+    max-width: 200px;
   }
 }
 @media (max-width: 380px) {
@@ -802,10 +812,6 @@ canvas {
     height: 28px;
     background-position: right 2px center;
     background-size: 12px;
-  }
-
-  #settings input[type="range"] {
-    max-width: 100px;
   }
 
   #settings .range-value {

@@ -17,7 +17,7 @@ export function settings({
   antialias,
   audio,
   scene,
-  stats,
+  toggleStats,
   CamController,
 }: SettingsInterface) {
   const settingsDiv = document.getElementById("settings");
@@ -28,7 +28,7 @@ export function settings({
     audio,
   });
   const display = makeDisplaySettings({
-    stats,
+    toggleStats,
     renderer,
     camera: CamController.camera,
   });

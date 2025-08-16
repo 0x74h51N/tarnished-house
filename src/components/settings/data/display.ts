@@ -5,7 +5,7 @@ import { ToneMappingKey, toneMappingMap } from "@/types";
 export function makeDisplaySettings({
   renderer,
   camera,
-  stats,
+  toggleStats,
 }: DisplaySettingsParams): GeneralControl[] {
   const toneVal = renderer.toneMappingExposure;
   const fovVal = config.scene.camera.fov;
@@ -17,8 +17,7 @@ export function makeDisplaySettings({
       label: "Show FPS",
       checked: Boolean(config.scene.debug.fpsCounter),
       onChange: (e) => {
-        if (e.target.checked) document.body.appendChild(stats.dom);
-        else stats.dom.remove();
+        toggleStats(e.target.checked);
       },
     },
     {

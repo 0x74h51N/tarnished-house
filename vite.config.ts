@@ -32,7 +32,6 @@ export default defineConfig(() => {
         output: {
           manualChunks: {
             three: ["three"],
-            stats: ["stats.js"],
           },
         },
       },

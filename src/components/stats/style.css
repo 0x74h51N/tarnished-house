@@ -1,0 +1,50 @@
+.perf-hud {
+  position: fixed;
+  width: 250px;
+  left: 0px;
+  top: 0px;
+  z-index: 90909;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.perf-hud-stats {
+  position: relative;
+  height: 50px;
+  width: auto;
+  transform-origin: left center;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.perf-hud-text {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.perf-hud-text label {
+  display: inline-block;
+  min-width: 100px;
+  text-align: right;
+  opacity: 0.9;
+}
+
+.perf-hud-text label::after {
+  content: ":";
+  margin: 0 8px 0 6px;
+  opacity: 0.6;
+}
+
+.perf-hud-text span {
+  min-width: 0;
+}

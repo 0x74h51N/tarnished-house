@@ -4,7 +4,7 @@
   "author": "Tahsin Önemli aka 0x74h51n <mr.tahsin@windowslive.com>",
   "license": "GPL-3.0",
   "private": false,
-  "version": "0.422",
+  "version": "0.424",
   "repository": {
     "type": "git",
     "url": "https://github.com/0x74h51N/tarnished-house"
@@ -17,10 +17,10 @@
     "analyze": "ANALYZE=1 vite build"
   },
   "devDependencies": {
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.3.0",
     "@types/three": "^0.179",
     "rollup-plugin-visualizer": "^6.0.3",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "vite": "^7.1.2",
     "vite-plugin-checker": "^0.10.2",
     "vite-plugin-glsl": "^1.5.1",
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "lil-gui": "^0.20.0",
-    "stats.js": "^0.17.0",
+    "stats-gl": "^3.6.0",
     "three": "^0.179.1"
   }
 }
