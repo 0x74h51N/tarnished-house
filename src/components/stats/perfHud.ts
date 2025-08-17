@@ -53,7 +53,8 @@ export function createPerfHUD(opts: Options): PerfHUD {
   }
 
   function getJsHeapMB(): string {
-    const mem = (performance as any).memory;
+    const mem = (performance as Performance & {memory?: { usedJSHeapSize: number };
+                }).memory;
     if (mem && mem.usedJSHeapSize) {
       return (mem.usedJSHeapSize / 1048576).toFixed(1) + " MB";
     }
@@ -66,7 +67,7 @@ export function createPerfHUD(opts: Options): PerfHUD {
     const r = renderer.info.render;
 
     const frameCalls = r.calls - prev.calls;
-    const frameTris = (r.triangles - prev.triangles) / 1000;
+    const frameTris = (r.triangles - prev.triangles);
     const framePoints = r.points - prev.points;
 
     prev.calls = r.calls;
