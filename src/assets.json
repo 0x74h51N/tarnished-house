@@ -8,7 +8,6 @@
       "normalMap": "./floor/textures/ground-norm.avif",
       "armTex": "./floor/textures/ground-arm.avif",
       "displacementMap": "./floor/textures/ground-disp.avif",
-      "alphaMap": "./floor/alpha.jpg",
       "repeat": 20
     },
     "geometry": {

@@ -10,7 +10,7 @@ import {
 } from "@/engine";
 import { type Mesh, Group, MeshStandardMaterial } from "three";
 
-import { Sizes } from "@/types";
+import { Sizes } from "@/types/global.types";
 import { v3 } from "@/utils";
 import { BonfireOpts, FireLight } from "./types";
 import { createFireLight } from "./fireLight";
@@ -41,6 +41,8 @@ export class Bonfire extends Prefab {
   private _sword: MeshStandardMaterial;
   private _hilt: MeshStandardMaterial;
   private _cooldown = 0;
+  private static _nextId = 0;
+  private readonly _id: number;
 
   get smoke(): PointParticles {
     return this._smoke;
@@ -64,6 +66,11 @@ export class Bonfire extends Prefab {
       throw new Error(
         "Bonfire template not set. Call Bonfire.setTemplate(...) after GLTF load."
       );
+
+    this._id = Bonfire._nextId++;
+    const name = `bonfire_${this._id}`;
+    this.name = name;
+    this._root.name = name;
 
     const root = (tmpl as Group).clone(true) as Group;
 

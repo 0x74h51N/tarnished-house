@@ -5,7 +5,7 @@ import {
   Scene,
 } from "three";
 import config from "config.json";
-import { MapSizeKey } from "@/types";
+import { MapSizeKey } from "@/types/global.types";
 import { DirectLight } from "./types";
 
 export function createDirectLight(scene: Scene): DirectLight {

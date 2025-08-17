@@ -16,7 +16,7 @@ import {
   Vector3,
   type Object3D,
 } from "three";
-import type { Sizes } from "@/types";
+import type { Sizes } from "@/types/global.types";
 
 type ActorCtor<T extends Prefab, O> = new (sizes: Sizes, opts: O) => T;
 

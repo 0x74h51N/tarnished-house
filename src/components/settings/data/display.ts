@@ -1,6 +1,6 @@
 import config from "config.json";
 import { GeneralControl, DisplaySettingsParams } from "..";
-import { ToneMappingKey, toneMappingMap } from "@/types";
+import { ToneMappingKey, toneMappingMap } from "@/types/global.types";
 
 export function makeDisplaySettings({
   renderer,

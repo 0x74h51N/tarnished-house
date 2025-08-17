@@ -1,0 +1,190 @@
+#settings-modal {
+  background: none !important;
+}
+
+#settings-modal.hidden,
+#credits-modal.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#settings-modal .modal-content-wrapper::after {
+  content: none !important;
+}
+
+#settings-modal .modal-content {
+  height: 100dvh !important;
+  border-radius: 0px !important;
+  display: flex;
+  flex-direction: column;
+  padding: 2.2rem 1.5rem 0.5rem;
+}
+
+@media (min-width: 520px) {
+  #settings-modal {
+    position: absolute !important;
+    width: unset !important;
+    height: unset !important;
+    align-items: start;
+    justify-content: start;
+  }
+}
+
+.settings-content {
+  padding: 2.8rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: flex-start;
+
+  label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 1.2rem;
+  }
+
+  label:has(input[type="checkbox"]) {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    max-width: 250px;
+    margin-left: 10px;
+    accent-color: var(--color-gold);
+  }
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-gold);
+  }
+
+  select {
+    background: var(--color-bg-dark);
+    color: var(--color-gold);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 1rem;
+    width: 104px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffd700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 16px;
+    padding-right: 28px;
+  }
+  select option {
+    background: var(--color-bg-dark);
+    color: var(--color-gold);
+  }
+  span {
+    min-width: 32px;
+    display: inline-block;
+    text-align: right;
+    color: var(--color-gold);
+    font-weight: bold;
+  }
+}
+
+.range-value.hidden {
+  display: none;
+  pointer-events: none;
+}
+
+/* Responsive Breakpoints */
+
+@media (max-width: 850px) {
+  label {
+    font-size: 0.95rem;
+    padding: 0.3rem 0;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+  select {
+    font-size: 0.9rem;
+    width: 100px;
+    background-position: right 4px center;
+    background-size: 14px;
+  }
+  .control-label {
+    padding: 1;
+    margin-bottom: 0.9rem;
+  }
+  .range-control {
+    flex-wrap: wrap;
+  }
+  .range-control input[type="range"] {
+    margin: 0.5rem 0;
+  }
+  .range-value {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .settings-content {
+    padding: 1.2rem;
+    font-size: 1.1em;
+  }
+
+  .control-label {
+    padding: 0;
+  }
+
+  .range-control {
+    justify-content: space-around !important;
+  }
+
+  .range-value {
+    margin-left: 1px !important;
+  }
+
+  select {
+    width: 85px;
+    font-size: 0.8rem;
+    padding: 4px 22px 4px 6px;
+    min-height: 32px;
+    height: 32px;
+    background-position: right 3px center;
+    background-size: 12px;
+  }
+
+  input[type="range"] {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 380px) {
+  .settings-content {
+    padding: 1rem;
+    font-size: 1em;
+  }
+
+  select {
+    width: 75px;
+    font-size: 0.75rem;
+    padding: 3px 20px 3px 5px;
+    min-height: 28px;
+    height: 28px;
+    background-position: right 2px center;
+    background-size: 12px;
+  }
+
+  .range-value {
+    margin-left: 5px;
+    min-width: 5px;
+  }
+}

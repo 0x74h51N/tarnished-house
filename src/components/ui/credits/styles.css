@@ -1,0 +1,164 @@
+#credits-modal .modal-content {
+  min-height: 180px;
+  max-height: 80svh;
+  border-radius: 18px;
+}
+
+.credits-content {
+  padding: 4rem 10rem;
+  margin-bottom: 2rem;
+
+  strong,
+  .asset-card strong {
+    color: var(--color-gold);
+    font-weight: 700;
+  }
+  em {
+    font-style: italic;
+    color: var(--color-gold);
+  }
+  .license-normal {
+    font-size: 0.7rem;
+    color: var(--color-text);
+  }
+}
+
+/* Credits Footer & Logos */
+.credits-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5rem 0 -0.5rem;
+}
+.logos {
+  display: flex;
+  gap: 0.5rem;
+}
+.logos a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logos img {
+  display: block;
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
+.logos img[alt="Webpage"] {
+  height: 35px;
+}
+.logos img:hover {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+.tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background: var(--color-shadow);
+  color: var(--color-white);
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 0;
+  position: absolute;
+  z-index: 10;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  font-size: 13px;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Asset List & Cards */
+.asset-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: 1fr 1fr;
+  a {
+    color: var(--color-gold);
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+  a:hover {
+    color: var(--color-text);
+  }
+}
+.asset-card {
+  background: var(--color-bg-modal);
+  border: 1.5px solid var(--color-gold-soft);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px var(--color-shadow-card);
+  color: var(--color-gold);
+  padding: 1rem 1.2rem 0.8rem;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  .asset-author,
+  .asset-license,
+  .asset-source {
+    color: var(--color-text);
+    font-size: 0.8em;
+    margin-left: 0.2em;
+  }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 850px) {
+  .credits-content {
+    padding: 2rem 4rem;
+    font-size: 1.1rem;
+  }
+  .asset-list {
+    grid-template-columns: 1fr;
+  }
+  .logos img {
+    height: 25px;
+  }
+  .logos img[alt="Webpage"] {
+    height: 30px;
+  }
+  .close-modal {
+    top: 15px;
+    right: 15px;
+    font-size: 1.8rem;
+    padding: 5px;
+    margin: -5px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 520px) {
+  .credits-content {
+    padding: 1.5rem 1rem;
+    font-size: 1rem;
+  }
+  .asset-card {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .asset-card {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+  }
+}

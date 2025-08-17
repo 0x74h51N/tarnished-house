@@ -1,7 +1,7 @@
 import { PointLight, PointLightHelper } from "three";
 import config from "config.json";
 import { animateValue } from "../../engine/lights/utils";
-import { MapSizeKey } from "@/types";
+import { MapSizeKey } from "@/types/global.types";
 import { FireLight } from "./types";
 import { bonfireConf } from "./configs";
 

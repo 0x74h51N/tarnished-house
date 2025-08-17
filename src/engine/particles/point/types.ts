@@ -1,6 +1,6 @@
 import type { Group, Object3DEventMap, Texture } from "three";
 import { NestedKeys, GetValue } from "@/utils";
-import { minMax, Sizes } from "@/types";
+import { minMax, Sizes } from "@/types/global.types";
 import { BaseProps, Particles } from "../types";
 
 export interface SparkProps {

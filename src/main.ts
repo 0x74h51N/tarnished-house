@@ -11,6 +11,7 @@ import {
   initCreditsModal,
   initScreenshotButton,
   createPerfHUD,
+  SetupGUI,
 } from "./components";
 import {
   Scene,
@@ -30,16 +31,37 @@ import {
   createAudio,
   createBtn,
 } from "./engine";
-import { AudioBundle } from "./types";
-import { createSizes } from "./utils/windowSize";
+import { AudioBundle } from "./types/global.types";
+import { createSizes } from "./utils";
 import { Bonfire } from "./prefabs";
+
+const IS_DEV: boolean = import.meta.env.DEV;
+const DEV_PROFILE = config.devProfile;
+if (IS_DEV) {
+  config.scene.camera.far = 500;
+  config.scene.postProcessing.fog.enabled = false;
+  config.scene.renderer.toneMappingExposure = 0.75;
+}
 
 //
 // Mobile Detection & Performance Optimization
 //
-await applyLowEnd();
-
+if (!(IS_DEV && DEV_PROFILE.skipLowEndOnDesktop)) {
+  await applyLowEnd();
+}
 const showEnterButton = initIntroModal();
+
+if (IS_DEV && DEV_PROFILE.skipIntro) {
+  showEnterButton();
+  requestAnimationFrame(() => {
+    const btn = document.getElementById(
+      "enter-scene"
+    ) as HTMLButtonElement | null;
+    if (btn) {
+      btn.click();
+    }
+  });
+}
 
 //
 // Canvas
@@ -57,6 +79,7 @@ const texLoader = new TextureLoader(loadingManager);
 //
 // Camera & Orbit Control
 //
+
 const CamController = CameraController({
   scene,
   canvas,
@@ -73,7 +96,7 @@ const renderer = createRenderer({ sizes, canvas, antialias });
 
 //Postprocessing
 
-const { composer, bloomPass } = createComposer({
+const { composer, bloomPass, syncBloom } = createComposer({
   renderer,
   scene,
   camera: CamController.camera,
@@ -152,10 +175,14 @@ const audio: AudioBundle = {
 // Randomized mesh placement system (e.g. graves, trees, etc.)
 let managers: ManagerRefs | undefined;
 
-loadingManager.onLoad = () => {
-  showEnterButton(startAudio);
+if (!IS_DEV) {
+  loadingManager.onLoad = () => {
+    showEnterButton(startAudio);
+    initCreditsModal();
+  };
+} else {
   initCreditsModal();
-};
+}
 
 //
 // Lights
@@ -209,32 +236,60 @@ const { smoke, sparks, flame } = bonfire;
 
 //
 // Stats
-const hud = createPerfHUD({
-  renderer,
-  container: document.body,
-});
+const hud = createPerfHUD({ renderer, container: document.body });
+if (IS_DEV && DEV_PROFILE.autoStats) {
+  try {
+    hud.toggleStats(true);
+  } catch {}
+}
+type SceneUpdate = (dt: number, elapsed: number) => void;
+
+const activeUpdate: SceneUpdate = (dt, elapsed) => {
+  bonfire!.step(dt, elapsed);
+};
+
+let runSceneUpdate: SceneUpdate = activeUpdate;
+let getTimeScale: () => number = () => 1;
 
 let guiLoaded = false;
+let devGUI: SetupGUI | undefined;
+async function openDevGUI() {
+  if (guiLoaded) return;
+  guiLoaded = true;
+  const { initSetupGUI } = await import("./components");
+
+  devGUI = initSetupGUI({
+    devMode: IS_DEV,
+    renderer,
+    CamController,
+    randomMeshes: managers!,
+    antialias,
+    audio,
+    bloomPass,
+    scene,
+    lights,
+    particleSystems: { flame, smoke, sparks },
+    syncBloom,
+  });
+  const r = devGUI.runtime;
+  getTimeScale = () => devGUI!.runtime.timeScale;
+
+  const origToggle = r.togglePause;
+  r.togglePause = () => {
+    origToggle();
+    const paused = r.isPaused();
+    runSceneUpdate = paused ? (_dt, _elapsed) => {} : activeUpdate;
+    renderer.shadowMap.autoUpdate = !paused;
+  };
+}
 
 randomMeshes({ scene }).then((m) => {
   managers = m;
 
-  window.addEventListener("keydown", async (e) => {
-    if (e.key.toLowerCase() === "h" && !guiLoaded) {
-      guiLoaded = true;
-      const { initSetupGUI } = await import("./components");
-      initSetupGUI({
-        renderer,
-        CamController,
-        randomMeshes: managers!,
-        antialias,
-        audio,
-        bloomPass,
-        scene,
-        lights,
-        particleSystems: { flame, smoke, sparks },
-      });
-    }
+  if (IS_DEV && DEV_PROFILE.autoOpenGUI) openDevGUI();
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === "h" && !guiLoaded) openDevGUI();
   });
 
   //
@@ -249,10 +304,12 @@ randomMeshes({ scene }).then((m) => {
     scene,
     toggleStats: hud.toggleStats,
     CamController,
+    syncBloom,
   });
 
   initScreenshotButton({ renderer, composer });
 });
+
 //---------------------------------------------------
 
 //
@@ -260,28 +317,34 @@ randomMeshes({ scene }).then((m) => {
 // Main loop
 // Updates animations & renders frames
 //
-let bloom = config.scene.postProcessing.bloom;
 
 const loop = new Loop();
 
+const controlUpdt: (d: number) => void = IS_DEV
+  ? (d) => CamController.devUpdate?.(d)
+  : () => {
+      CamController.clampCameraPosition();
+    };
+
 loop.addUpdate((delta, elapsed) => {
   CamController.controls.update();
-  CamController.clampCameraPosition();
-
+  controlUpdt(delta);
   CamController.camera.updateMatrix();
 
-  bonfire!.step(delta, elapsed);
+  const dtScaled = delta * getTimeScale();
+  runSceneUpdate(dtScaled, elapsed);
 });
 
 loop.addRender(() => {
-  if (bloom.enabled && !composer.passes.includes(bloomPass)) {
-    composer.addPass(bloomPass);
-  } else if (!bloom.enabled) {
-    composer.removePass(bloomPass);
-  }
-
   composer.render();
   hud.updateOverlay();
 });
 
 loop.start();
+
+const IS_E2E = import.meta.env.VITE_E2E === "1";
+
+if (IS_E2E) {
+  window.__SCENE__ = scene;
+  window.__RENDERER__ = renderer;
+}

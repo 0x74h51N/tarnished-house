@@ -1,4 +1,4 @@
-import { Sizes } from "@/types";
+import { Sizes } from "@/types/global.types";
 import config from "config.json";
 
 export function createSizes(): Sizes {

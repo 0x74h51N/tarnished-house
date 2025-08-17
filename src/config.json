@@ -1,4 +1,22 @@
 {
+  "devProfile": {
+    "skipIntro": true,
+    "autoOpenGUI": true,
+    "autoStats": true,
+    "skipLowEndOnDesktop": true,
+    "startAudioMuted": true
+  },
+  "helpers": {
+    "showAxes": false,
+    "axesSize": 500,
+    "axesPositionX": 0,
+    "axesPositionY": 0,
+    "axesPositionZ": 0.2,
+    "showGrid": false,
+    "gridSize": 1000,
+    "gridDivisions": 100,
+    "gridPositionY": 0.15
+  },
   "scene": {
     "camera": {
       "fov": 35,

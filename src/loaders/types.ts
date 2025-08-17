@@ -1,6 +1,6 @@
 import { Group, Mesh } from "three";
 import assets from "assets.json";
-import { minMax } from "@/types";
+import { minMax } from "@/types/global.types";
 
 export type rotationType = minMax | number | undefined;
 

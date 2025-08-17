@@ -1,0 +1,158 @@
+#intro-modal {
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.6s ease;
+}
+#intro-modal.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#loading-screen {
+  background-color: var(--color-bg-dark);
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out, background-color 1.6s ease-out;
+}
+
+#loading-screen.trans {
+  background: var(--color-bg-dark-opak);
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader {
+  position: absolute;
+  z-index: 1020;
+  bottom: 50px;
+  right: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-black);
+  border-top: 7px solid var(--color-gold);
+  border-radius: 50%;
+  animation: spin 1.1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+#enter-scene {
+  width: 150px;
+  height: 60px;
+  font-size: 1.8em;
+  border-top-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  background: var(--color-bg-dark);
+}
+#enter-scene:hover {
+  background: var(--color-gold);
+}
+#enter-scene.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.loader-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.enter-container {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader.enter-ready .loader-content {
+  display: none;
+}
+.loader.enter-ready .enter-container {
+  display: flex;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.loading-text {
+  color: var(--color-gold);
+  font-size: 2rem;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 12px #000, 0 0 8px var(--color-gold-shadow);
+  font-family: "UnifrakturCook", "Old English Text MT", "Goudy Medieval";
+  animation: pulse 0.8s infinite alternate;
+}
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#intro-text {
+  color: var(--color-text) !important;
+  font-family: "UnifrakturCook", "Old English Text MT", "Goudy Medieval";
+  font-size: 1.4rem;
+  text-align: center;
+  letter-spacing: 1.5px;
+  font-weight: lighter;
+  opacity: 1;
+  transition: all 0.8s;
+  pointer-events: none;
+  padding: 4rem 1.4rem;
+}
+
+#intro-text em {
+  color: var(--color-gold) !important;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 850px) {
+  /* Intro */
+  #intro-text {
+    font-size: 1rem;
+    padding: 1rem 1.2rem;
+    letter-spacing: 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Loader Mobile */
+  .loading-text {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
+  .spinner {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 520px) {
+  .modal-content {
+    box-sizing: border-box;
+    padding: 2.5rem 1rem;
+    border-radius: 14px;
+    width: 100vw;
+    min-height: 100dvh;
+  }
+  #intro-modal .modal-content {
+    align-content: center !important;
+    min-height: auto !important;
+  }
+}

@@ -9,7 +9,7 @@ import config from "config.json";
 // shadowmap size and bias utils
 import { AmbientLight } from "three";
 import { LightBundle } from "./types";
-import { MapSizeKey, MapSizes } from "@/types";
+import { MapSizeKey, MapSizes } from "@/types/global.types";
 
 export function applyShadowSizeAndBias(
   bundle: LightBundle,

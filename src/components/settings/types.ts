@@ -1,8 +1,7 @@
 import { ManagerRefs } from "@/loaders";
 import { Scene, WebGLRenderer } from "three";
-import { AudioBundle } from "@/types";
-import { CamController, LightBundle } from "@/engine";
-import Stats from "stats-gl";
+import { AudioBundle } from "@/types/global.types";
+import { CamController, Composer, LightBundle } from "@/engine";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,
@@ -53,6 +52,7 @@ export interface SettingsInterface {
   scene: Scene;
   toggleStats: (show: boolean) => void;
   CamController: CamController;
+  syncBloom: Composer["syncBloom"];
 }
 export type GeneralSettingsParams = Pick<SettingsInterface, "audio">;
 
@@ -65,7 +65,7 @@ export type DisplaySettingsParams = Pick<
 
 export type GraphicsSettingsParams = Pick<
   SettingsInterface,
-  "scene" | "lights" | "renderer" | "antialias"
+  "scene" | "lights" | "renderer" | "antialias" | "syncBloom"
 >;
 
 export type SceneSettingsParams = Pick<SettingsInterface, "randomMeshes">;

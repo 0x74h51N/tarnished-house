@@ -1,6 +1,6 @@
 import GUI from "lil-gui";
 import { NoiseParams, FlameProps } from "@/engine";
-import { minMax } from "@/types";
+import { minMax } from "@/types/global.types";
 import { BonfireParticles, flameConf, smokeConf, sparkConf } from "@/prefabs";
 
 export function createParticleSettings(

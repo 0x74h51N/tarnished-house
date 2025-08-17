@@ -1,5 +1,6 @@
 import config from "config.json";
 import { introText } from "./text";
+import "./styles.css";
 
 export function initIntroModal(): (fn?: () => void) => void {
   const introTextEl = document.getElementById("intro-text")!;

@@ -14,9 +14,10 @@ export interface ControlOptions {
   camera: PerspectiveCamera;
   canvas: HTMLCanvasElement;
 }
-
+export type DevUpdateFn = ((dt: number) => void) | undefined;
 export interface ControlReturn {
   controls: OrbitControls;
+  devUpdate?: DevUpdateFn;
 }
 
 export interface ClampFn {

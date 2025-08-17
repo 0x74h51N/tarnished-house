@@ -1,6 +1,7 @@
 import assets from "./licances.json";
 import config from "config.json";
 import { creditsText } from "./text";
+import "./styles.css";
 
 export function initCreditsModal() {
   const creditsBtn = document.getElementById("credits-btn")!;

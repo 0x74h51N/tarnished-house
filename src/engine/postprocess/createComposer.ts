@@ -4,7 +4,7 @@ import {
   RenderPass,
   UnrealBloomPass,
 } from "three/examples/jsm/Addons";
-
+import config from "config.json";
 import { createBloomPass } from "./bloomPass";
 import { fog } from "./fog";
 
@@ -16,26 +16,33 @@ export interface ComposerInterface {
   camera: PerspectiveCamera;
 }
 
-export interface ComposerResult {
+export interface Composer {
   composer: EffectComposer;
   bloomPass: UnrealBloomPass;
+  syncBloom: () => void;
 }
 
 export function createComposer({
   renderer,
   scene,
   camera,
-}: ComposerInterface): ComposerResult {
-  scene.fog = fog;
+}: ComposerInterface): Composer {
+  scene.fog = config.scene.postProcessing.fog.enabled ? fog : null;
 
   const composer = new EffectComposer(renderer);
-  composer.renderToScreen = true;
-
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
 
   const bloomPass = createBloomPass();
-  composer.addPass(bloomPass);
+  const bloom = config.scene.postProcessing.bloom;
 
-  return { composer, bloomPass };
+  const syncBloom = () => {
+    const has = composer.passes.includes(bloomPass);
+    if (bloom.enabled && !has) composer.addPass(bloomPass);
+    else if (!bloom.enabled && has) composer.removePass(bloomPass);
+  };
+
+  syncBloom();
+
+  return { composer, bloomPass, syncBloom };
 }

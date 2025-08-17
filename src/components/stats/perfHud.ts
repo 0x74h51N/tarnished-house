@@ -1,6 +1,7 @@
 import { WebGLRenderer } from "three";
 import StatsGL from "stats-gl";
 import "./style.css";
+import { fmt } from "./utils";
 
 export type PerfHUD = {
   updateOverlay: () => void;
@@ -31,7 +32,7 @@ export function createPerfHUD(opts: Options): PerfHUD {
   let mounted = false;
   const prev = { calls: 0, triangles: 0, points: 0 };
 
-  const stats = new StatsGL({ trackGPU: false, minimal: false });
+  const stats = new StatsGL({ trackGPU: true, minimal: false });
   stats.init(renderer);
 
   function mount() {
@@ -59,11 +60,6 @@ export function createPerfHUD(opts: Options): PerfHUD {
     return "n/a";
   }
 
-  function fmt(label: string, v: string | number) {
-    const s = typeof v === "number" ? v.toString() : v;
-    return `<div><label>${label}</label><span>${s}</span></div>`;
-  }
-
   function updateOverlay() {
     if (!mounted) return;
 
@@ -82,17 +78,11 @@ export function createPerfHUD(opts: Options): PerfHUD {
     const texs = renderer.info.memory.textures;
 
     text.innerHTML =
-      fmt("Draw Calls", frameCalls.toLocaleString("en-US")) +
-      fmt(
-        "Triangles",
-        `${frameTris.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}K`
-      ) +
-      fmt("Points", framePoints.toLocaleString("en-US")) +
-      fmt("Geometries", geos.toLocaleString("en-US")) +
-      fmt("Textures", texs.toLocaleString("en-US")) +
+      fmt("Draw Calls", frameCalls) +
+      fmt("Triangles", frameTris, true) +
+      fmt("Points", framePoints) +
+      fmt("Geometries", geos) +
+      fmt("Textures", texs) +
       fmt("Heap (JS)", heap);
 
     stats.update();

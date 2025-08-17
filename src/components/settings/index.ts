@@ -9,6 +9,7 @@ import { inputRender } from "./inputRender";
 import { SettingsInterface } from "./types";
 import { settingModalController } from "./controller";
 import { makeDisplaySettings } from "./data/display";
+import "./styles.css";
 
 export function settings({
   lights,
@@ -19,6 +20,7 @@ export function settings({
   scene,
   toggleStats,
   CamController,
+  syncBloom,
 }: SettingsInterface) {
   const settingsDiv = document.getElementById("settings");
 
@@ -37,6 +39,7 @@ export function settings({
     renderer,
     antialias,
     scene,
+    syncBloom,
   });
   const sceneOpts = makeSceneSettings({ randomMeshes });
 

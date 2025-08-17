@@ -1,4 +1,4 @@
-import { IconUpdt, VolumeSetter } from "@/types";
+import { IconUpdt, VolumeSetter } from "@/types/global.types";
 
 export function setupToggleButton(): {
   muteBtn: HTMLElement;

@@ -1,16 +1,22 @@
 import { AxesHelper, GridHelper, Scene } from "three";
-import { HelperParams, HelperState } from "../types";
+import { HelperState } from "../types";
 import GUI from "lil-gui";
+import config from "config.json";
 
-export function createHelpers(
-  gui: GUI,
-  scene: Scene,
-  params: HelperParams
-): HelperState {
+const IS_DEV: boolean = import.meta.env.DEV;
+
+export function createHelpers(gui: GUI, scene: Scene): HelperState {
   const state: HelperState = {
     axes: null,
     grid: null,
   };
+  const params = config.helpers;
+  if (IS_DEV) {
+    params.showAxes = true;
+    params.showGrid = true;
+    updateAxes();
+    updateGrid();
+  }
 
   function updateAxes() {
     if (state.axes) {

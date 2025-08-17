@@ -3,12 +3,17 @@ import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import config from "config.json";
 import GUI from "lil-gui";
 import { LightBundle } from "@/engine";
-import { toneMappingMap, shadowTypes, ToneMappingKey } from "@/types";
+import {
+  toneMappingMap,
+  shadowTypes,
+  ToneMappingKey,
+} from "@/types/global.types";
 import {
   applyShadowSizeAndBias,
   createShadowBiasProxy,
 } from "@/engine/lights/utils";
 import { allMatUpdt, shadowDispose } from "@/utils";
+import { SetupGUIInterface } from "../types";
 
 export function createGraphicsSettings(
   gui: GUI,
@@ -16,7 +21,8 @@ export function createGraphicsSettings(
   lights: LightBundle,
   bloomPass: UnrealBloomPass,
   antialias: boolean,
-  scene: Scene
+  scene: Scene,
+  syncBloom: SetupGUIInterface["syncBloom"]
 ) {
   const shadowConfg = config.scene.renderer.shadows;
   const shadowMapSizes = shadowConfg.mapSizes;
@@ -63,7 +69,10 @@ export function createGraphicsSettings(
   const bloom = graphics.addFolder("Bloom");
   bloom.close();
   const bloomParams = graphicsParams.bloomParams;
-  bloom.add(bloomParams, "enabled").name("Enable Bloom");
+  bloom
+    .add(bloomParams, "enabled")
+    .name("Enable Bloom")
+    .onChange(() => syncBloom());
   bloom
     .add(bloomParams, "strength", 0, 5)
     .onChange((v: number) => (bloomPass.strength = v));

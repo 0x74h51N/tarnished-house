@@ -6,7 +6,7 @@ import {
   Sizes,
   ToneMappingKey,
   toneMappingMap,
-} from "@/types";
+} from "@/types/global.types";
 
 interface RendererInterface {
   sizes: Sizes;

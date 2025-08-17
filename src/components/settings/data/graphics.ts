@@ -1,5 +1,5 @@
 import { fog } from "@/engine/postprocess/fog";
-import { ShadowTypeKey, shadowTypes } from "@/types";
+import { ShadowTypeKey, shadowTypes } from "@/types/global.types";
 import { allMatUpdt, shadowDispose } from "@/utils";
 import config from "config.json";
 import { DirectionalLight, Mesh, Object3D } from "three";
@@ -11,6 +11,7 @@ export function makeGraphicsSettings({
   lights,
   renderer,
   antialias,
+  syncBloom,
 }: GraphicsSettingsParams): GeneralControl[] {
   const shadowConfg = config.scene.renderer.shadows;
   const lightArr = [lights.fireLight!.light, lights.directLight.light];
@@ -34,6 +35,7 @@ export function makeGraphicsSettings({
       checked: Boolean(config.scene.postProcessing.bloom.enabled),
       onChange: (e) => {
         config.scene.postProcessing.bloom.enabled = e.target.checked;
+        syncBloom();
       },
     },
     {

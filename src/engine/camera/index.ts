@@ -12,7 +12,7 @@ export function CameraController({
   const { camera, cameraHelper } = createCamera({ sizes });
   scene.add(camera);
 
-  const { controls } = setupControls({ camera, canvas });
+  const { controls, devUpdate } = setupControls({ camera, canvas });
   const { clampCameraPosition } = createClamp({ camera });
   const positioner = createCamPositioner({ camera, controls });
 
@@ -20,6 +20,7 @@ export function CameraController({
     camera,
     cameraHelper,
     controls,
+    devUpdate,
     clampCameraPosition,
     positioner,
   };

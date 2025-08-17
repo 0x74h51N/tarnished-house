@@ -10,25 +10,12 @@ import {
   createCameraSettings,
   createParticleSettings,
 } from "./folders";
-import { HelperParams, SetupGUIInterface } from ".";
-
-const createParams = () => ({
-  helpers: {
-    showAxes: false,
-    axesSize: 50,
-    axesPositionX: 0,
-    axesPositionY: 1,
-    axesPositionZ: 1,
-    showGrid: false,
-    gridSize: 100,
-    gridDivisions: 10,
-    gridPositionY: 0,
-  } as HelperParams,
-
-  volume: config.scene.audio.volume,
-});
+import { SetupGUIInterface } from ".";
+import { SetupGUI } from "./types";
+import { createGeneral } from "./folders/general";
 
 export function initSetupGUI({
+  devMode,
   renderer,
   CamController,
   randomMeshes,
@@ -38,12 +25,12 @@ export function initSetupGUI({
   lights,
   scene,
   particleSystems,
-}: SetupGUIInterface) {
-  const params = createParams();
-
+  syncBloom,
+}: SetupGUIInterface): SetupGUI {
   // Initialize GUI
   const gui = new GUI({ title: "Settings" }).close();
-  gui.hide();
+
+  devMode ? gui.show() : gui.hide();
 
   document.addEventListener("keydown", (e) => {
     if (e.key.toLowerCase() === "h") {
@@ -55,29 +42,28 @@ export function initSetupGUI({
     }
   });
 
-  // Volume
-  gui
-    .add(params, "volume", 0, 1.5, 0.1)
-    .name("Volume")
-    .onChange((v: number) => {
-      if (audio.setVol) {
-        audio.setVol(v);
-        audio.updtMuteIcon(v);
-      }
-    });
+  const runtime = createGeneral(gui, audio);
 
-  createHelpers(gui, scene, params.helpers);
+  createHelpers(gui, scene);
 
-  createGraphicsSettings(gui, renderer, lights, bloomPass, antialias, scene);
+  createGraphicsSettings(
+    gui,
+    renderer,
+    lights,
+    bloomPass,
+    antialias,
+    scene,
+    syncBloom
+  );
 
   createLightSettings(gui, scene, lights);
 
-  createSceneSettings(gui, randomMeshes);
+  createSceneSettings(gui, randomMeshes, scene);
 
   const { camera, cameraHelper } = CamController;
   createCameraSettings(gui, scene, camera, cameraHelper!);
 
   createParticleSettings(gui, particleSystems);
 
-  return gui;
+  return { gui, runtime };
 }

@@ -43,11 +43,11 @@ export function loadAssets({
     Object.entries(texPaths).map(([key, path]) => {
       const tex = texLoader.load(path);
       if (key === "baseColor") tex.colorSpace = SRGBColorSpace;
-      if (key !== "alphaMap") {
-        tex.repeat.set(repeat, repeat);
-        tex.wrapS = RepeatWrapping;
-        tex.wrapT = RepeatWrapping;
-      }
+
+      tex.repeat.set(repeat, repeat);
+      tex.wrapS = RepeatWrapping;
+      tex.wrapT = RepeatWrapping;
+
       return [key, tex];
     })
   );
@@ -55,7 +55,6 @@ export function loadAssets({
     ...Object.values(floorAsset.geometry)
   );
   const floorMaterial = new MeshStandardMaterial({
-    alphaMap: textures.alphaMap,
     transparent: true,
     map: textures.baseColor,
     normalMap: textures.normalMap,
@@ -68,6 +67,9 @@ export function loadAssets({
   });
 
   const floor = new Mesh(floorGeometry, floorMaterial);
+  floor.name = "Floor";
+  floor.userData.textures = textures;
+  floor.userData.asset = floorAsset;
   floor.receiveShadow = true;
   floor.rotation.x = -Math.PI * 0.5;
 

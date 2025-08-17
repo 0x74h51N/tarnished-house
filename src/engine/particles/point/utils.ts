@@ -22,7 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { minMax } from "@/types";
+import { minMax } from "@/types/global.types";
 import { BufferGeometry, Color } from "three";
 
 //Calculational helpers
