@@ -1,7 +1,6 @@
 import assets from "assets.json";
 import GUI from "lil-gui";
-import { ManagerRefs, SpawnableName } from "@/loaders";
-import { spawnMeshes } from "@/loaders/utils";
+import { ManagerRefs, SpawnableName, spawnInstancedMesh } from "@/loaders";
 import {
   MeshStandardMaterial,
   PlaneGeometry,
@@ -33,7 +32,7 @@ export function createSceneSettings(
     f.close();
     f.add(spawnable[key].spawn, "count", 1, 10000, 1)
       .name("Count")
-      .onChange(() => spawnMeshes(managerRef));
+      .onChange(() => spawnInstancedMesh(managerRef));
 
     f.add(spawnable[key].spawn.radius, "min", 1, 1000, 1).name("Min Radius");
     f.add(spawnable[key].spawn.radius, "max", 1, 1000, 1).name("Max Radius");

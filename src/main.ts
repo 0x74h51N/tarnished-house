@@ -92,7 +92,7 @@ const CamController = CameraController({
 
 const antialias = localStorage.getItem("antialias") === "true";
 
-const renderer = createRenderer({ sizes, canvas, antialias });
+export const renderer = createRenderer({ sizes, canvas, antialias });
 
 //Postprocessing
 

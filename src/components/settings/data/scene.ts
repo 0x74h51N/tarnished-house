@@ -1,5 +1,4 @@
-import { SpawnableName } from "@/loaders";
-import { spawnMeshes } from "@/loaders/utils";
+import { SpawnableName, spawnInstancedMesh } from "@/loaders";
 import { GeneralControl, SceneSettingsParams } from "..";
 import assets from "assets.json";
 
@@ -26,7 +25,7 @@ export function makeSceneSettings({
         const v = +e.target.value;
         document.getElementById(`${key}CountValue`)!.textContent = v.toString();
         spawnable[key].spawn.count = v;
-        spawnMeshes(managerRef);
+        spawnInstancedMesh(managerRef);
       },
     });
   }

@@ -1,5 +1,5 @@
 import { Group, Mesh, Scene, LoadingManager } from "three";
-import { spawnMeshes, createGLTFLoader } from "./utils";
+import { createGLTFLoader } from "./utils";
 import assets from "assets.json";
 import {
   ManagerRefs,
@@ -7,6 +7,7 @@ import {
   SpawnableName,
   SpawnableObjects,
 } from "./types";
+import { spawnInstancedMesh } from "./instanced/instancedMeshes";
 
 export async function randomMeshes({
   scene,
@@ -27,9 +28,14 @@ export async function randomMeshes({
 
     try {
       const gltf = await loader.loadAsync(cfg.path);
+      gltf.scene.updateMatrixWorld(true);
+
       manager.baseMeshes = gltf.scene.children as Mesh[];
-      spawnMeshes({ manager, opts: cfg.spawn });
-      scene.add(group);
+
+      spawnInstancedMesh({ manager, opts: cfg.spawn });
+
+      scene.add(manager.group);
+
       acc[key as SpawnableName] = { manager, opts: cfg.spawn };
     } catch (error) {
       console.error(`Failed to load ${key}:`, error);

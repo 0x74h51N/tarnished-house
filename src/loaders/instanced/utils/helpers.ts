@@ -1,6 +1,6 @@
 import type { BufferGeometry, Mesh, Object3D, Object3DEventMap } from "three";
 
-import { rotationType } from "../types";
+import { rotationType } from "../../types";
 
 /**
  * Calculates a rotation value in radians based on a fixed number or a min/max range.
