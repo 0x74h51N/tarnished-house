@@ -32,7 +32,7 @@
     "vite-plugin-restart": "^1.0.0"
   },
   "dependencies": {
-    "@three.ez/instanced-mesh": "^0.3.5",
+    "@three.ez/instanced-mesh": "^0.3.6",
     "lil-gui": "^0.20.0",
     "stats-gl": "^3.6.0",
     "three": "^0.179.1"

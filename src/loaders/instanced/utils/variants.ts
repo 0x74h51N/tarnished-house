@@ -2,6 +2,7 @@ import { BufferGeometry, Material, Mesh, Object3D } from "three";
 import { InstancedMesh2 } from "@three.ez/instanced-mesh";
 import type { CountOpts } from "@/loaders/types";
 import { T } from "../types";
+import { renderer } from "@/main";
 
 export function getVariantsInst({ manager, opts }: CountOpts) {
   const { group, baseMeshes } = manager;
@@ -27,6 +28,7 @@ export function getVariantsInst({ manager, opts }: CountOpts) {
         const inst = new InstancedMesh2(geo, mat, {
           capacity: 1,
           createEntities: true,
+          renderer,
         });
 
         inst.castShadow = opts.castShadow;

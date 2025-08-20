@@ -15,9 +15,8 @@ export const createFireLight = (): FireLight => {
     lightConfg.distance,
     lightConfg.decay
   );
-  //
-  //InstancedMesh2 Error
-  light.castShadow = false;
+
+  light.castShadow = true;
   light.shadow.mapSize.set(defMapSize, defMapSize);
   light.shadow.bias = mapSizes[defMapSize.toString() as MapSizeKey].bias.high;
   light.shadow.normalBias =
