@@ -1,13 +1,23 @@
 import { Euler, Quaternion } from "three";
 import type { CountOpts } from "../types";
 import { T } from "./types";
-import { getVariantsInst, createPositioner, getRotation } from "./utils";
+import {
+  getVariants,
+  createPositioner,
+  getRotation,
+  getLODVariants,
+} from "./utils";
 
 export function spawnInstancedMesh({ manager, opts }: CountOpts) {
   const { baseMeshes } = manager;
   if (!baseMeshes?.length) return;
 
-  const { tr, vr, sets } = getVariantsInst({ manager, opts });
+  const { sets } = opts.lodsCount
+    ? getLODVariants({ manager, opts })
+    : getVariants({ manager, opts });
+
+  const tr: T[] = (manager.group.userData._tr ||= []);
+  const vr: number[] = (manager.group.userData._var ||= []);
 
   const diff = opts.count - tr.length;
   if (diff === 0) return;

@@ -6,6 +6,7 @@ import { InstancedMesh2 } from "@three.ez/instanced-mesh";
 export type rotationType = minMax | number | undefined;
 
 export interface SpawnOpts {
+  lodsCount?: number;
   count: number;
   scale: minMax;
   radius: minMax;

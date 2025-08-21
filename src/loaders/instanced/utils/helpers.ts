@@ -1,6 +1,11 @@
-import type { BufferGeometry, Mesh, Object3D, Object3DEventMap } from "three";
-
-import { rotationType } from "../../types";
+import { rotationType } from "@/loaders";
+import {
+  BufferGeometry,
+  Material,
+  Mesh,
+  Object3D,
+  Object3DEventMap,
+} from "three";
 
 /**
  * Calculates a rotation value in radians based on a fixed number or a min/max range.
@@ -51,4 +56,14 @@ export function parentFinder(
     parentNode = scene;
   }
   return parentNode;
+}
+
+export function findAllMeshes(
+  node: Object3D
+): Mesh<BufferGeometry, Material>[] {
+  const out: Mesh<BufferGeometry, Material>[] = [];
+  node.traverse((c) => {
+    if (c instanceof Mesh) out.push(c as Mesh<BufferGeometry, Material>);
+  });
+  return out;
 }

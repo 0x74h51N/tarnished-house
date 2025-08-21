@@ -59,6 +59,7 @@
         "path": "./trees/trees.gltf",
         "spawn": {
           "count": 90,
+          "lodsCount": 4,
           "yPosition": -0.11,
           "scale": {
             "min": 0.5,
