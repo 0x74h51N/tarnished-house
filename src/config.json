@@ -34,7 +34,7 @@
         "rotateSpeed": 0.46,
         "minDistance": 3,
         "maxDistance": 57,
-        "minPolarAngle": 0.5236,
+        "minPolarAngle": 0.3236,
         "maxPolarAngle": 1.4165,
         "positionLimits": {
           "x": { "min": -100, "max": 100 },
@@ -62,19 +62,19 @@
           },
           "1024": {
             "bias": {
-              "high": 0.0015,
-              "normal": 0.08
+              "high": 0.0001,
+              "normal": 0.24
             }
           },
           "2048": {
             "bias": {
               "high": 0.0001,
-              "normal": 0.1
+              "normal": 0.2
             }
           },
           "4096": {
             "bias": {
-              "high": 0.0001,
+              "high": -0.0001,
               "normal": 0.05
             }
           }
@@ -82,17 +82,20 @@
         "distance": {
           "half": {
             "name": "Half",
-            "width": 50,
+            "width": 90,
+            "height": 90,
             "far": 90
           },
           "three": {
             "name": "3/4",
-            "width": 100,
+            "width": 150,
+            "height": 150,
             "far": 180
           },
           "full": {
             "name": "Full",
-            "width": 160,
+            "width": 200,
+            "height": 200,
             "far": 250
           }
         }
@@ -114,7 +117,6 @@
         },
         "shadow": {
           "camera": {
-            "height": 100,
             "near": 1.0
           }
         },

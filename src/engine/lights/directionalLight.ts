@@ -21,7 +21,7 @@ export function createDirectLight(scene: Scene): DirectLight {
         intensity: baseIntensity,
         position: { x: posX, y: posY, z: posZ },
         shadow: {
-          camera: { height: camHeight, near: camNear },
+          camera: { near: camNear },
         },
         helper: { size: helperSize },
         target: {
@@ -35,8 +35,11 @@ export function createDirectLight(scene: Scene): DirectLight {
   light.position.set(posX, posY, posZ);
   light.castShadow = enabled;
 
-  const { width: camWidth, far: camFar } =
-    shadowConfg.distance[defDistance as keyof typeof shadowConfg.distance];
+  const {
+    height: camHeight,
+    width: camWidth,
+    far: camFar,
+  } = shadowConfg.distance[defDistance as keyof typeof shadowConfg.distance];
 
   const halfW = camWidth / 2;
   const halfH = camHeight / 2;

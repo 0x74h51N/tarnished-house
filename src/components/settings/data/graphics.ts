@@ -99,8 +99,11 @@ export function makeGraphicsSettings({
           (l) => l instanceof DirectionalLight
         ) as DirectionalLight;
         const half = o.width / 2;
+        const halfH = o.height / 2;
         dir.shadow.camera.left = -half;
         dir.shadow.camera.right = half;
+        dir.shadow.camera.bottom = -halfH;
+        dir.shadow.camera.top = halfH;
         dir.shadow.camera.far = o.far;
         dir.shadow.camera.updateProjectionMatrix();
         renderer.shadowMap.needsUpdate = true;

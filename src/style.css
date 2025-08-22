@@ -122,6 +122,28 @@ canvas {
   z-index: 150;
 }
 
+.line {
+  position: relative;
+  height: 32px;
+  margin: 8px 0 16px;
+}
+
+.line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 60px;
+  background: url("../static/line_2.svg") no-repeat center / contain;
+  pointer-events: none;
+  filter: drop-shadow(0 0 2px var(--color-gold-shadow-strong))
+    drop-shadow(0 0 1px var(--color-gold-shadow-bright)) brightness(1.2)
+    sepia(0.2) hue-rotate(-20deg) saturate(2);
+  z-index: 1;
+}
+
 .modal-content-wrapper::before,
 .modal-content-wrapper::after {
   width: 250px;
@@ -217,14 +239,23 @@ canvas {
 }
 
 /* Headings */
-.modal-content h2,
-.project-title {
+h2,
+h3 {
   font-family: "UnifrakturCook", cursive;
-  font-size: 2.3rem;
   color: var(--color-gold);
   font-weight: 700;
-  letter-spacing: 1px;
   text-shadow: 0 2px 12px #000, 0 0 8px var(--color-gold-shadow);
+}
+h3 {
+  font-size: 2rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+}
+
+.modal-content h2,
+.project-title {
+  font-size: 2.3rem;
+  letter-spacing: 1px;
   margin-bottom: 0.5em;
 }
 

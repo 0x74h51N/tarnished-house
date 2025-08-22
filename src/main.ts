@@ -323,7 +323,8 @@ const loop = new Loop();
 
 const controlUpdt: (d: number) => void = IS_DEV
   ? (d) => CamController.devUpdate?.(d)
-  : () => {
+  : (d) => {
+      CamController.devUpdate?.(d);
       CamController.clampCameraPosition();
     };
 

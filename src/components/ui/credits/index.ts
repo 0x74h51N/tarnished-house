@@ -1,4 +1,4 @@
-import assets from "./licances.json";
+import assets from "./licences.json";
 import config from "config.json";
 import { creditsText } from "./text";
 import "./styles.css";
@@ -9,11 +9,12 @@ export function initCreditsModal() {
   const closeModal = document.getElementById("close-credits")!;
   const assetList = document.getElementById("asset-list")!;
   const uiConfig = config.scene.ui.transitions;
+  const thanksList = document.getElementById("thanks-list")!;
 
   const creditTextEl = document.getElementById("credits-text")!;
-
   if (creditTextEl) creditTextEl.innerHTML = creditsText;
-  const list = assets
+
+  const list = assets.licenses
     .map(
       (asset) => `
       <li class="asset-card">
@@ -41,6 +42,15 @@ export function initCreditsModal() {
     .join("");
 
   assetList.innerHTML = list;
+
+  const thx = assets.ty
+    .map(
+      (p) =>
+        `<a href="${p.url}" target="_blank" rel="noopener noreferrer">${p.name}</a>`
+    )
+    .join("");
+
+  thanksList.innerHTML = thx;
 
   creditsBtn.addEventListener("click", () => {
     creditsModal.classList.add("active");

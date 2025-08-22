@@ -17,7 +17,7 @@ export function makeSceneSettings({
       id: `${key}countId`,
       label: `${key}`,
       min: "1",
-      max: "1500",
+      max: "1250",
       step: "1",
       value: spawnable[key].spawn.count.toString(),
       span: `${key}CountValue`,
