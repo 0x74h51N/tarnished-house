@@ -1,4 +1,3 @@
-import { Material, Sphere, Vector3 } from "three";
 import { InstancedMesh2 } from "@three.ez/instanced-mesh";
 import type { CountOpts } from "@/loaders/types";
 import { renderer } from "@/main";
@@ -8,62 +7,44 @@ import config from "config.json";
 export function getLODVariants({ manager, opts }: CountOpts) {
   const { group, baseMeshes } = manager;
 
-  const sets: InstancedMesh2[][] = (group.userData._sets ||= []);
-  if (!sets.length) {
-    const lodCountCfg = opts.lodsCount ?? 0;
-    const lodDistancesCfg = Object.values(config.scene.lodDists) as number[];
+  const sets: InstancedMesh2[] = (group.userData._sets ||= []);
 
-    const scaleMax = opts.scale.max;
-    const spawnR = opts.radius.max;
-    const pad = 2;
+  if (!sets.length) {
+    const lodDistancesCfg = Object.values(config.scene.lodDists) as number[];
 
     for (let v = 0; v < baseMeshes.length; v++) {
       const variantRoot = baseMeshes[v];
-
       const allLodNodes = variantRoot.children;
 
-      const lodSubMeshes = allLodNodes.map((n) => findAllMeshes(n));
+      const lodMerged = allLodNodes.map((n) => findAllMeshes(n));
+      if (!lodMerged.length) continue;
 
-      const baseSubs = lodSubMeshes[0];
-      sets[v] = [];
+      const base = lodMerged[0];
+      const baseMats = base!.materials.map((m) => m.clone());
+      const inst = new InstancedMesh2(base!.geometry, baseMats, {
+        capacity: 1,
+        createEntities: true,
+        renderer,
+      });
+      inst.name = variantRoot.name || `variant_${v}`;
 
-      for (let i = 0; i < baseSubs.length; i++) {
-        const src0 = baseSubs[i];
-        const geo0 = src0.geometry;
-        if (!geo0) continue;
+      const maxK = Math.min(lodMerged.length - 1, lodDistancesCfg.length);
+      for (let k = 1; k <= maxK; k++) {
+        const alt = lodMerged[k];
+        const dist = lodDistancesCfg[k - 1];
 
-        const mat0: Material = Array.isArray(src0.material)
-          ? src0.material[0]
-          : src0.material;
+        const mat = alt!.materials.map((m) => m.clone());
 
-        // LOD0
-        if (!geo0.boundingSphere) geo0.computeBoundingSphere?.();
-        const baseR0 = geo0.boundingSphere?.radius ?? 1;
-        geo0.boundingSphere = new Sphere(
-          new Vector3(0, 0, 0),
-          baseR0 * scaleMax + spawnR + pad
-        );
-        const inst = new InstancedMesh2(geo0, mat0, {
-          capacity: 1,
-          createEntities: true,
-          renderer,
-        });
-        inst.name = src0.name;
-
-        for (let k = 1; k < Math.min(lodCountCfg, lodSubMeshes.length); k++) {
-          const alt = lodSubMeshes[k][i];
-          if (!alt?.geometry) continue;
-          const dist = lodDistancesCfg[k - 1] ?? lodDistancesCfg.at(-1)!;
-          inst.addLOD(alt.geometry, mat0, dist);
-          inst.addShadowLOD(alt.geometry, dist);
-        }
-
-        // inst.computeBVH();
-        inst.castShadow = opts.castShadow;
-        inst.receiveShadow = opts.receiveShadow;
-        group.add(inst);
-        sets[v].push(inst);
+        inst.addLOD(alt!.geometry, mat, dist);
+        inst.addShadowLOD(alt!.geometry, dist);
       }
+
+      inst.computeBVH?.();
+      inst.castShadow = opts.castShadow;
+      inst.receiveShadow = opts.receiveShadow;
+
+      group.add(inst);
+      sets[v] = inst;
     }
   }
   return { sets };

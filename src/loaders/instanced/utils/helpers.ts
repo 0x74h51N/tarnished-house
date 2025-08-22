@@ -6,6 +6,7 @@ import {
   Object3D,
   Object3DEventMap,
 } from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 /**
  * Calculates a rotation value in radians based on a fixed number or a min/max range.
@@ -59,11 +60,28 @@ export function parentFinder(
 }
 
 export function findAllMeshes(
-  node: Object3D
-): Mesh<BufferGeometry, Material>[] {
-  const out: Mesh<BufferGeometry, Material>[] = [];
+  node: Object3D | Mesh
+): { geometry: BufferGeometry; materials: Material[] } | null {
+  const meshes: Mesh<BufferGeometry, Material | Material[]>[] = [];
   node.traverse((c) => {
-    if (c instanceof Mesh) out.push(c as Mesh<BufferGeometry, Material>);
+    if (c instanceof Mesh && c.geometry) meshes.push(c);
   });
-  return out;
+  if (!meshes.length) return null;
+
+  const mats: Material[] = [];
+
+  for (const m of meshes) {
+    if (Array.isArray(m.material)) {
+      mats.push(m.material[0]);
+    } else {
+      mats.push(m.material);
+    }
+  }
+  const geos = meshes.map((m) => {
+    const g = m.geometry;
+    return g;
+  });
+
+  const merged = mergeGeometries(geos, true);
+  return { geometry: merged, materials: mats };
 }

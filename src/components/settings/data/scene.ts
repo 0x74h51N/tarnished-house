@@ -11,12 +11,13 @@ export function makeSceneSettings({
   for (const k in spawnable) {
     const key = k as SpawnableName;
     const managerRef = randomMeshes[key];
+    if (key.includes("grave")) continue;
     arr.push({
       type: "range",
       id: `${key}countId`,
       label: `${key}`,
       min: "1",
-      max: "150",
+      max: "1500",
       step: "1",
       value: spawnable[key].spawn.count.toString(),
       span: `${key}CountValue`,

@@ -17,7 +17,6 @@ export function createCamPositioner({
     camera.position.copy(cameraPos);
     camera.lookAt(controls.target);
     controls.update();
-    controls.enabled = true;
   };
 
   const restorePosition = () => {

@@ -18,11 +18,11 @@
     "gridPositionY": 0.15
   },
   "scene": {
-    "lodDists": { "lod1": 50, "lod2": 80, "lod3": 150 },
+    "lodDists": { "lod1": 40, "lod2": 65, "lod3": 100 },
     "camera": {
       "fov": 35,
       "near": 0.1,
-      "far": 90,
+      "far": 200,
       "position": {
         "x": 7,
         "y": 5,
@@ -37,9 +37,9 @@
         "minPolarAngle": 0.5236,
         "maxPolarAngle": 1.4165,
         "positionLimits": {
-          "x": { "min": -50, "max": 50 },
-          "y": { "min": 1.98, "max": 30 },
-          "z": { "min": -50, "max": 50 }
+          "x": { "min": -100, "max": 100 },
+          "y": { "min": 1.98, "max": 45 },
+          "z": { "min": -100, "max": 100 }
         },
         "lerpFactor": 0.67
       }
@@ -56,26 +56,26 @@
         "mapSizes": {
           "512": {
             "bias": {
-              "high": 0.0009,
-              "normal": 0.15
+              "high": 0.003,
+              "normal": 0.1
             }
           },
           "1024": {
             "bias": {
-              "high": -0.0007,
-              "normal": 0.05
+              "high": 0.0015,
+              "normal": 0.08
             }
           },
           "2048": {
             "bias": {
-              "high": -0.0005,
-              "normal": 0.01
+              "high": 0.0001,
+              "normal": 0.1
             }
           },
           "4096": {
             "bias": {
-              "high": -0.0005,
-              "normal": 0.02
+              "high": 0.0001,
+              "normal": 0.05
             }
           }
         },
@@ -83,17 +83,17 @@
           "half": {
             "name": "Half",
             "width": 50,
-            "far": 50
+            "far": 90
           },
           "three": {
             "name": "3/4",
-            "width": 65,
-            "far": 70
+            "width": 100,
+            "far": 180
           },
           "full": {
             "name": "Full",
-            "width": 100,
-            "far": 100
+            "width": 160,
+            "far": 250
           }
         }
       }
@@ -101,20 +101,20 @@
     "lighting": {
       "ambient": {
         "color": "#446688",
-        "intensity": 2.4
+        "intensity": 2
       },
       "directional": {
         "enabled": true,
         "color": "#b0c4de",
         "intensity": 3.5,
         "position": {
-          "x": 4,
-          "y": 20,
-          "z": 45
+          "x": 0,
+          "y": 90,
+          "z": 105
         },
         "shadow": {
           "camera": {
-            "height": 35,
+            "height": 100,
             "near": 1.0
           }
         },
@@ -123,9 +123,9 @@
         },
         "target": {
           "position": {
-            "x": 0,
+            "x": 5.5,
             "y": 0,
-            "z": -4
+            "z": 30.0
           }
         }
       }
@@ -140,9 +140,9 @@
       "fog": {
         "enabled": true,
         "color": "#607276",
-        "density": 0.025,
-        "near": 1.4,
-        "far": 65
+        "density": 0.035,
+        "near": 10,
+        "far": 140
       }
     },
     "audio": {
@@ -172,6 +172,6 @@
   },
   "settings": {
     "targetPos": { "x": 0.46, "y": -2, "z": -7.68 },
-    "cameraPos": { "x": -32, "y": 15.2, "z": -14.41 }
+    "cameraPos": { "x": -46, "y": 32, "z": 25.41 }
   }
 }

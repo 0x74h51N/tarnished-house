@@ -6,7 +6,9 @@
       "name": "Poly Haven - Dry Branches Medium 01",
       "url": "https://polyhaven.com/a/dry_branches_medium_01"
     },
-    "license": "CC0"
+    "license": "CC0",
+    "modifiedBy": "0x74h51n",
+    "modifications": "Geometry shapes and material improved, LOD versions created."
   },
   {
     "type": "Bushes",
@@ -15,7 +17,9 @@
       "name": "Realistic HD Rosemary willow",
       "url": "https://sketchfab.com/3d-models/realistic-hd-rosemary-willow-9799-83dc6c88f9184ac08d294e9751d8029c"
     },
-    "license": "CC-BY 4.0"
+    "license": "CC-BY 4.0",
+    "modifiedBy": "0x74h51n",
+    "modifications": "Geometry shapes and material improved, LOD versions created."
   },
   {
     "type": "Gravestones",
@@ -33,16 +37,20 @@
       "name": "Sketchfab - Trees Pack",
       "url": "https://sketchfab.com/3d-models/trees-eed7470843504aa592514554a6100fbc"
     },
-    "license": "CC-BY 4.0"
+    "license": "CC-BY 4.0",
+    "modifiedBy": "0x74h51n",
+    "modifications": "Geometry and materials improved, branch diff and alpha map enhanced, LOD versions created."
   },
   {
     "type": "Abandoned House",
-    "author": "Sengchor & 0x74h51n",
+    "author": "Sengchor",
     "source": {
       "name": "Sketchfab - Abandoned House",
       "url": "https://sketchfab.com/3d-models/abandoned-house-a0c01ce35a474545b805c0739806aace"
     },
-    "license": "CC-BY 4.0"
+    "license": "CC-BY 4.0",
+    "modifiedBy": "0x74h51n",
+    "modifications": "Geometry shapes and materials improved, new textures added and mapped."
   },
   {
     "type": "Bonfire",
@@ -51,7 +59,9 @@
       "name": "Sketchfab - Dark Souls - Bonfire",
       "url": "https://sketchfab.com/3d-models/dark-souls-bonfire-b0d68c8f4cd0487da3d1fb8327ab1044"
     },
-    "license": "CC-BY 4.0"
+    "license": "CC-BY 4.0",
+    "modifiedBy": "0x74h51n",
+    "modifications": "Geometry shapes and materials improved."
   },
   {
     "type": "Ground Texture",

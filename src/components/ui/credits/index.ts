@@ -13,21 +13,33 @@ export function initCreditsModal() {
   const creditTextEl = document.getElementById("credits-text")!;
 
   if (creditTextEl) creditTextEl.innerHTML = creditsText;
-
   const list = assets
     .map(
       (asset) => `
       <li class="asset-card">
         <strong>${asset.type}</strong>
-        <div class="asset-author">Author: ${asset.author}</div>
-        <div class="asset-source">
-          Source: <a href="${asset.source.url}" target="_blank">${asset.source.name}</a>
+        <div id="asset-author">Author: ${asset.author}</div>
+        <div id="asset-source">
+          Source: <a href="${asset.source.url}" target="_blank">${
+        asset.source.name
+      }</a>
         </div>
-        <div class="asset-license">License: ${asset.license}</div>
+        <div id="asset-license">License: ${asset.license}</div>
+        ${
+          asset.modifiedBy
+            ? `<div id="asset-modified">Modified by: ${asset.modifiedBy}</div>`
+            : ""
+        }
+        ${
+          asset.modifications
+            ? `<div id="asset-modifications">Modifications: ${asset.modifications}</div>`
+            : ""
+        }
       </li>
     `
     )
     .join("");
+
   assetList.innerHTML = list;
 
   creditsBtn.addEventListener("click", () => {

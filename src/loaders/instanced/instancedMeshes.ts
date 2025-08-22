@@ -41,8 +41,12 @@ export function spawnInstancedMesh({ manager, opts }: CountOpts) {
       const v = (Math.random() * baseMeshes.length) | 0;
       vr.push(v);
 
-      for (const inst of sets[v]) {
-        inst.addInstances(1, (obj) => {
+      const target = sets[v];
+      if (!target) continue;
+      const list = Array.isArray(target) ? target : [target];
+
+      for (const inst of list) {
+        inst.addInstances(1, (obj: any) => {
           obj.position.copy(t.pos);
           obj.scale.copy(t.scl);
           obj.quaternion.copy(t.quat);
@@ -52,29 +56,31 @@ export function spawnInstancedMesh({ manager, opts }: CountOpts) {
     return;
   }
 
-  if (diff < 0) {
-    const startIdx = tr.length + diff;
+  // diff < 0
+  const startIdx = tr.length + diff;
 
-    const popsPerVariant = new Array(sets.length).fill(0);
-    for (let i = startIdx; i < tr.length; i++) popsPerVariant[vr[i]]++;
+  const popsPerVariant = new Array((sets as any).length).fill(0);
+  for (let i = startIdx; i < tr.length; i++) popsPerVariant[vr[i]]++;
 
-    for (let v = 0; v < sets.length; v++) {
-      const m = popsPerVariant[v];
-      if (m <= 0) continue;
+  for (let v = 0; v < (sets as any).length; v++) {
+    const m = popsPerVariant[v];
+    if (m <= 0) continue;
 
-      for (const im of sets[v]) {
-        const count = im.instancesCount ?? 0;
-        if (count <= 0) continue;
+    const target = sets[v];
+    if (!target) continue;
+    const list = Array.isArray(target) ? target : [target];
 
-        const take = Math.min(m, count);
-        const ids: number[] = [];
+    for (const im of list) {
+      const count = im.instancesCount ?? 0;
+      if (count <= 0) continue;
 
-        for (let j = 0; j < take; j++) ids.push(count - 1 - j);
-        im.removeInstances(...ids);
-      }
+      const take = Math.min(m, count);
+      const ids: number[] = [];
+      for (let j = 0; j < take; j++) ids.push(count - 1 - j);
+      im.removeInstances(...ids);
     }
-
-    tr.splice(diff);
-    vr.splice(diff);
   }
+
+  tr.splice(diff);
+  vr.splice(diff);
 }

@@ -54,21 +54,22 @@ export function createLightSettings(
     "Directional Light Settings"
   );
   directionalLightGui.close();
-  const shadowCamWidht = shadowConfg.distance.three.width;
-  const shadowCamFar = shadowConfg.distance.three.far;
 
   const directionalLightParams = {
-    shadowCameraWidth: shadowCamWidht,
-    shadowCameraHeight: config.scene.lighting.directional.shadow.camera.height,
-    shadowCameraNear: config.scene.lighting.directional.shadow.camera.near,
-    shadowCameraFar: shadowCamFar,
+    shadowCameraWidth: directLight.light.shadow.camera.right * 2,
+    shadowCameraHeight: directLight.light.shadow.camera.top * 2,
+    shadowCameraNear: directLight.light.shadow.camera.near,
+    shadowCameraFar: directLight.light.shadow.camera.far,
     helper: config.scene.debug.lightHelpers.directional,
+    targetX: directLight.light.target.position.x,
+    targetY: directLight.light.target.position.y,
+    targetZ: directLight.light.target.position.z,
   };
 
   directionalLightGui.addColor(directLight.light, "color").name("Light Color");
 
   directionalLightGui
-    .add(directionalLightParams, "shadowCameraWidth", 2, 95, 0.1)
+    .add(directionalLightParams, "shadowCameraWidth", 2, 500, 0.1)
     .name("Shadow Camera Width")
     .onChange((v: number) => {
       const half = v / 2;
@@ -79,33 +80,32 @@ export function createLightSettings(
         const cam = directLight.light.shadow.camera;
         cam.left = -half;
         cam.right = half;
-        cam.top = half;
-        cam.bottom = -half;
         cam.updateProjectionMatrix();
       }
       directLight.cameraHelper.update();
     });
 
   directionalLightGui
-    .add(directionalLightParams, "shadowCameraHeight", 2, 100, 0.1)
+    .add(directionalLightParams, "shadowCameraHeight", 2, 500, 0.1)
     .name("Shadow Camera Height")
     .onChange((v: number) => {
       const half = v / 2;
       const cam = directLight.light.shadow.camera;
-      cam.top = half;
-      cam.bottom = -half;
-      cam.updateProjectionMatrix();
-      directLight.cameraHelper.update();
+      if (cam instanceof OrthographicCamera) {
+        cam.top = half;
+        cam.bottom = -half;
+        cam.updateProjectionMatrix();
+        directLight.cameraHelper.update();
+      }
     });
 
   directionalLightGui
-    .add(directionalLightParams, "shadowCameraNear", 0.01, 5, 0.01)
+    .add(directionalLightParams, "shadowCameraNear", 0.01, 5, 0.1)
     .name("Shadow Camera Near")
     .onFinishChange((v: number) => {
       const cam = directLight.light.shadow.camera;
       if (v >= cam.far) {
-        directionalLightParams.shadowCameraNear = cam.far - 0.01;
-        cam.near = directionalLightParams.shadowCameraNear;
+        cam.near = cam.far - 0.01;
       } else {
         cam.near = v;
       }
@@ -114,13 +114,12 @@ export function createLightSettings(
     });
 
   directionalLightGui
-    .add(directionalLightParams, "shadowCameraFar", 10, 200, 1)
+    .add(directionalLightParams, "shadowCameraFar", 10, 500, 1)
     .name("Shadow Camera Far")
     .onFinishChange((v: number) => {
       const cam = directLight.light.shadow.camera;
       if (v <= cam.near) {
-        directionalLightParams.shadowCameraFar = cam.near + 0.01;
-        cam.far = directionalLightParams.shadowCameraFar;
+        cam.far = cam.near + 0.01;
       } else {
         cam.far = v;
       }
@@ -133,16 +132,58 @@ export function createLightSettings(
     .name("Light Intensity");
 
   directionalLightGui
-    .add(directLight.light.position, "x", -60, 60, 0.5)
-    .name("Light X");
+    .add(directLight.light.position, "x", -400, 400, 0.5)
+    .name("Light X")
+    .onChange(() => {
+      directLight.helper.update();
+      directLight.cameraHelper.update();
+    });
 
   directionalLightGui
-    .add(directLight.light.position, "y", 0, 60, 0.5)
-    .name("Light Y");
+    .add(directLight.light.position, "y", 0, 400, 0.5)
+    .name("Light Y")
+    .onChange(() => {
+      directLight.helper.update();
+      directLight.cameraHelper.update();
+    });
 
   directionalLightGui
-    .add(directLight.light.position, "z", -60, 60, 0.5)
-    .name("Light Z");
+    .add(directLight.light.position, "z", -400, 400, 0.5)
+    .name("Light Z")
+    .onChange(() => {
+      directLight.helper.update();
+      directLight.cameraHelper.update();
+    });
+
+  directionalLightGui
+    .add(directionalLightParams, "targetX", -400, 400, 0.5)
+    .name("Target X")
+    .onChange((v: number) => {
+      directLight.light.target.position.x = v;
+      directLight.light.target.updateMatrixWorld();
+      directLight.helper.update();
+      directLight.cameraHelper.update();
+    });
+
+  directionalLightGui
+    .add(directionalLightParams, "targetY", -400, 400, 0.5)
+    .name("Target Y")
+    .onChange((v: number) => {
+      directLight.light.target.position.y = v;
+      directLight.light.target.updateMatrixWorld();
+      directLight.helper.update();
+      directLight.cameraHelper.update();
+    });
+
+  directionalLightGui
+    .add(directionalLightParams, "targetZ", -400, 400, 0.5)
+    .name("Target Z")
+    .onChange((v: number) => {
+      directLight.light.target.position.z = v;
+      directLight.light.target.updateMatrixWorld();
+      directLight.helper.update();
+      directLight.cameraHelper.update();
+    });
 
   directionalLightGui
     .add(directionalLightParams, "helper")

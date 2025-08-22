@@ -39,8 +39,9 @@ const IS_DEV: boolean = import.meta.env.DEV;
 const DEV_PROFILE = config.devProfile;
 if (IS_DEV) {
   config.scene.camera.far = 500;
+  config.scene.camera.fov = 75;
   config.scene.postProcessing.fog.enabled = false;
-  config.scene.renderer.toneMappingExposure = 0.75;
+  config.scene.renderer.toneMappingExposure = 1.75;
 }
 
 //
