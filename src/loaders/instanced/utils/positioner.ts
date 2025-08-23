@@ -1,7 +1,8 @@
-import { Vector3 } from "three";
+import { Euler, Quaternion, Vector3 } from "three";
 import type { SpawnOpts } from "../../types";
+import { getRotation } from "./helpers";
 
-type positioner = () => { pos: Vector3; scl: Vector3 };
+type positioner = () => { pos: Vector3; scl: Vector3; quat: Quaternion };
 
 // Returns a reusable positioning function that spaces meshes in a radial pattern,
 // avoiding overlap using a minimum distance threshold if provided.
@@ -48,7 +49,14 @@ export function createPositioner(
 
     pos.set(x, yPosition, z);
     scl.setScalar(nScale);
+    const quat = new Quaternion().setFromEuler(
+      new Euler(
+        getRotation(opts.rotation?.x) * Math.PI,
+        getRotation(opts.rotation?.y) * Math.PI,
+        getRotation(opts.rotation?.z) * Math.PI
+      )
+    );
 
-    return { pos: pos.clone(), scl: scl.clone() };
+    return { pos, scl, quat };
   };
 }

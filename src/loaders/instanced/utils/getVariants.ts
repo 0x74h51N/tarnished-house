@@ -5,9 +5,7 @@ import { renderer } from "@/main";
 import { findAllMeshes } from "./helpers";
 
 export function getVariants({ manager, opts }: CountOpts) {
-  const { group, baseMeshes } = manager;
-
-  const sets: InstancedMesh2[] = (group.userData._sets ||= []);
+  const { sets, baseMeshes } = manager;
 
   if (!sets.length) {
     for (let v = 0; v < baseMeshes.length; v++) {
@@ -16,20 +14,17 @@ export function getVariants({ manager, opts }: CountOpts) {
       const geo = subs!.geometry as BufferGeometry;
 
       if (!geo) continue;
-
-      const mat: Material[] = subs!.materials;
+      const mat = subs!.materials.map((m) => m.clone());
 
       const inst = new InstancedMesh2(geo, mat, {
-        capacity: 1,
-        createEntities: true,
         renderer,
       });
 
+      inst.computeBVH();
       inst.castShadow = opts.castShadow;
       inst.receiveShadow = opts.receiveShadow;
 
-      group.add(inst);
-      sets.push(inst);
+      sets[v] = inst;
     }
   }
   return { sets };

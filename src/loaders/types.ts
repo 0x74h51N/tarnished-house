@@ -1,7 +1,8 @@
-import { Group, Mesh } from "three";
+import { Mesh } from "three";
 import assets from "assets.json";
 import { minMax } from "@/types/global.types";
 import { InstancedMesh2 } from "@three.ez/instanced-mesh";
+import { T } from ".";
 
 export type rotationType = minMax | number | undefined;
 
@@ -24,7 +25,8 @@ export interface SpawnOpts {
 
 export type ManagerType = {
   baseMeshes: Mesh[];
-  group: Group;
+  sets: InstancedMesh2[];
+  tr: T[];
 };
 
 export type CountOpts = {

@@ -35,7 +35,7 @@ import { AudioBundle } from "./types/global.types";
 import { createSizes } from "./utils";
 import { Bonfire } from "./prefabs";
 
-const IS_DEV: boolean = import.meta.env.DEV;
+export const IS_DEV: boolean = import.meta.env.DEV;
 const DEV_PROFILE = config.devProfile;
 if (IS_DEV) {
   config.scene.camera.far = 500;

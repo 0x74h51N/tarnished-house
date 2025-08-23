@@ -5,9 +5,7 @@ import { findAllMeshes } from "./helpers";
 import config from "config.json";
 
 export function getLODVariants({ manager, opts }: CountOpts) {
-  const { group, baseMeshes } = manager;
-
-  const sets: InstancedMesh2[] = (group.userData._sets ||= []);
+  const { sets, baseMeshes } = manager;
 
   if (!sets.length) {
     const lodDistancesCfg = Object.values(config.scene.lodDists) as number[];
@@ -22,10 +20,9 @@ export function getLODVariants({ manager, opts }: CountOpts) {
       const base = lodMerged[0];
       const baseMats = base!.materials.map((m) => m.clone());
       const inst = new InstancedMesh2(base!.geometry, baseMats, {
-        capacity: 1,
-        createEntities: true,
         renderer,
       });
+
       inst.name = variantRoot.name || `variant_${v}`;
 
       const maxK = Math.min(lodMerged.length - 1, lodDistancesCfg.length);
@@ -39,11 +36,10 @@ export function getLODVariants({ manager, opts }: CountOpts) {
         inst.addShadowLOD(alt!.geometry, dist);
       }
 
-      inst.computeBVH?.();
+      inst.computeBVH();
       inst.castShadow = opts.castShadow;
       inst.receiveShadow = opts.receiveShadow;
 
-      group.add(inst);
       sets[v] = inst;
     }
   }

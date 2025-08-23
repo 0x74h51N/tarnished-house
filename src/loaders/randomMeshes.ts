@@ -1,4 +1,4 @@
-import { Group, Mesh, Scene, LoadingManager } from "three";
+import { Mesh, Scene, LoadingManager } from "three";
 import { createGLTFLoader } from "./utils";
 import assets from "assets.json";
 import {
@@ -8,6 +8,7 @@ import {
   SpawnableObjects,
 } from "./types";
 import { spawnInstancedMesh } from "./instanced/instancedMeshes";
+import { InstancedMesh2 } from "@three.ez/instanced-mesh";
 
 export async function randomMeshes({
   scene,
@@ -23,8 +24,13 @@ export async function randomMeshes({
   const loader = createGLTFLoader(randomManager);
 
   const promises = Object.entries(spawnable).map(async ([key, cfg]) => {
-    const group = new Group();
-    const manager: ManagerType = { baseMeshes: [], group };
+    const sets: InstancedMesh2[] = [];
+
+    const manager: ManagerType = {
+      baseMeshes: [],
+      sets,
+      tr: [],
+    };
 
     try {
       const gltf = await loader.loadAsync(cfg.path);
@@ -34,7 +40,7 @@ export async function randomMeshes({
 
       spawnInstancedMesh({ manager, opts: cfg.spawn });
 
-      scene.add(manager.group);
+      manager.sets.forEach((g) => scene.add(g));
 
       acc[key as SpawnableName] = { manager, opts: cfg.spawn };
     } catch (error) {
