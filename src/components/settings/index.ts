@@ -40,6 +40,7 @@ export function settings({
     antialias,
     scene,
     syncBloom,
+    randomMeshes,
   });
   const sceneOpts = makeSceneSettings({ randomMeshes });
 

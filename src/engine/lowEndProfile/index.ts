@@ -13,9 +13,8 @@ export async function applyLowEnd() {
 
     config.scene.lighting.directional.enabled = lowEnd.moonLightEnabled;
     // Shadow
-    const shadows = config.scene.renderer.shadows;
-    deepAssign(shadows, lowEnd.shadows);
-    config.scene.renderer.maxPixelRatio = lowEnd.maxPixelRatio;
+    const renderer = config.scene.renderer;
+    deepAssign(renderer, lowEnd.renderer);
 
     //---- Asset Settings ----
 

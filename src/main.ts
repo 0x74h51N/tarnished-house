@@ -47,9 +47,8 @@ if (IS_DEV) {
 //
 // Mobile Detection & Performance Optimization
 //
-if (!(IS_DEV && DEV_PROFILE.skipLowEndOnDesktop)) {
-  await applyLowEnd();
-}
+await applyLowEnd();
+
 const showEnterButton = initIntroModal();
 
 if (IS_DEV && DEV_PROFILE.skipIntro) {

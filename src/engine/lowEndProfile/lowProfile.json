@@ -1,9 +1,12 @@
 {
   "moonLightEnabled": false,
-  "maxPixelRatio": 2,
-  "shadows": {
-    "defMapSize": 512,
-    "defDistance": "half"
+  "renderer": {
+    "maxPixelRatio": 2,
+    "defLod": "Low",
+    "shadows": {
+      "defMapSize": 512,
+      "defDistance": "Low"
+    }
   },
   "assets": {
     "floor": {

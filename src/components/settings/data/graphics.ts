@@ -12,10 +12,13 @@ export function makeGraphicsSettings({
   renderer,
   antialias,
   syncBloom,
+  randomMeshes,
 }: GraphicsSettingsParams): GeneralControl[] {
-  const shadowConfg = config.scene.renderer.shadows;
+  const rendererConf = config.scene.renderer;
+  const shadowConfg = rendererConf.shadows;
   const lightArr = [lights.fireLight!.light, lights.directLight.light];
   const defDist = shadowConfg.defDistance as keyof typeof shadowConfg.distance;
+  const defLod = rendererConf.defLod as keyof typeof rendererConf.lods;
 
   return [
     {
@@ -79,6 +82,41 @@ export function makeGraphicsSettings({
     },
     {
       type: "select",
+      id: "lodOpts",
+      label: "Level of Details",
+      options: (
+        Object.keys(rendererConf.lods) as Array<keyof typeof rendererConf.lods>
+      ).map((k) => ({
+        v: k,
+        t: k,
+        s: rendererConf.lods[k] === rendererConf.lods[defLod],
+      })),
+      onChange: (e) => {
+        const k = e.target.value as keyof typeof rendererConf.lods;
+
+        Object.values(randomMeshes).map((m) => {
+          const dists = Object.values(rendererConf.lods[k]) as Array<number>;
+          for (const inst of m.manager.sets) {
+            const info = inst.LODinfo;
+            if (!info) continue;
+
+            // inst.setFirstLODDistance(dists[0]);
+
+            const lvls = info.render?.levels ?? [];
+            for (let i = 0; i < lvls.length && i < dists.length; i++) {
+              lvls[i].distance = dists[i] * dists[i];
+            }
+
+            const slvls = info.shadowRender?.levels ?? [];
+            for (let i = 0; i < slvls.length && i < dists.length; i++) {
+              slvls[i].distance = dists[i] * dists[i];
+            }
+          }
+        });
+      },
+    },
+    {
+      type: "select",
       id: "shadowDistance",
       label: "Shadow Distance",
       options: (
@@ -87,7 +125,7 @@ export function makeGraphicsSettings({
         >
       ).map((key) => ({
         v: key,
-        t: shadowConfg.distance[key].name,
+        t: key,
         s: shadowConfg.distance[key] === shadowConfg.distance[defDist],
       })),
       onChange: (e) => {
@@ -113,9 +151,13 @@ export function makeGraphicsSettings({
       type: "select",
       id: "shadowResolution",
       label: "Shadow Resolution",
-      options: Object.keys(shadowConfg.mapSizes).map((size) => ({
+      options: (
+        Object.keys(shadowConfg.mapSizes) as Array<
+          keyof typeof shadowConfg.mapSizes
+        >
+      ).map((size) => ({
         v: Number(size),
-        t: size,
+        t: shadowConfg.mapSizes[size].name,
         s: shadowConfg.defMapSize === Number(size),
       })),
       onChange: (e) => {

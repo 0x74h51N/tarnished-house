@@ -48,31 +48,42 @@
       "toneMapping": "ACES Filmic",
       "toneMappingExposure": 0.4,
       "maxPixelRatio": 2,
+      "defLod": "High",
+      "lods": {
+        "Low": { "lod1": 35, "lod2": 60, "lod3": 85 },
+        "Medium": { "lod1": 55, "lod2": 80, "lod3": 100 },
+        "High": { "lod1": 85, "lod2": 120, "lod3": 160 },
+        "Insane": { "lod1": 100, "lod2": 170, "lod3": 210 }
+      },
       "shadows": {
         "enabled": true,
         "type": "PCFSoft",
         "defMapSize": 2048,
-        "defDistance": "full",
+        "defDistance": "High",
         "mapSizes": {
           "512": {
+            "name": "Low",
             "bias": {
               "high": 0.003,
               "normal": 0.1
             }
           },
           "1024": {
+            "name": "Medium",
             "bias": {
               "high": 0.0001,
               "normal": 0.24
             }
           },
           "2048": {
+            "name": "High",
             "bias": {
               "high": 0.0001,
               "normal": 0.2
             }
           },
           "4096": {
+            "name": "Insane",
             "bias": {
               "high": -0.0001,
               "normal": 0.05
@@ -80,23 +91,25 @@
           }
         },
         "distance": {
-          "half": {
-            "name": "Half",
+          "Low": {
             "width": 90,
             "height": 90,
             "far": 90
           },
-          "three": {
-            "name": "3/4",
+          "Medium": {
             "width": 150,
             "height": 150,
             "far": 180
           },
-          "full": {
-            "name": "Full",
+          "High": {
             "width": 200,
             "height": 200,
             "far": 250
+          },
+          "Insane": {
+            "width": 270,
+            "height": 270,
+            "far": 290
           }
         }
       }

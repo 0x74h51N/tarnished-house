@@ -8,7 +8,10 @@ export function getLODVariants({ manager, opts }: CountOpts) {
   const { sets, baseMeshes } = manager;
 
   if (!sets.length) {
-    const lodDistancesCfg = Object.values(config.scene.lodDists) as number[];
+    const rendererConf = config.scene.renderer;
+    const lodDistancesCfg = Object.values(
+      rendererConf.lods[rendererConf.defLod as keyof typeof rendererConf.lods]
+    ) as number[];
 
     for (let v = 0; v < baseMeshes.length; v++) {
       const variantRoot = baseMeshes[v];
@@ -26,6 +29,7 @@ export function getLODVariants({ manager, opts }: CountOpts) {
       inst.name = variantRoot.name || `variant_${v}`;
 
       const maxK = Math.min(lodMerged.length - 1, lodDistancesCfg.length);
+
       for (let k = 1; k <= maxK; k++) {
         const alt = lodMerged[k];
         const dist = lodDistancesCfg[k - 1];
