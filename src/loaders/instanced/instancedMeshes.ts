@@ -1,12 +1,10 @@
 import type { CountOpts } from "../types";
-import { createPositioner, getVariants, getLODVariants } from "./utils";
+import { createPositioner, getVariantsInstances } from "./utils";
 
 export function spawnInstancedMesh({ manager, opts }: CountOpts) {
   if (!manager.baseMeshes?.length) return;
 
-  const { sets } = opts.lodsCount
-    ? getLODVariants({ manager, opts })
-    : getVariants({ manager, opts });
+  const { sets } = getVariantsInstances({ manager, opts });
 
   manager.sets = sets;
 
@@ -32,7 +30,13 @@ export function spawnInstancedMesh({ manager, opts }: CountOpts) {
         obj.scale.copy(scl);
         obj.quaternion.copy(quat);
       });
+      if (sets[v].LODinfo?.render) {
+        for (const lvl of sets[v].LODinfo.render.levels) {
+          lvl.object.receiveShadow = sets[v].receiveShadow;
+        }
+      }
     }
+
     return;
   }
 

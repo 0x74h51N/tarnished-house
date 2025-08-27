@@ -16,6 +16,9 @@ export function createPositioner(
   const rMin2 = radius.min * radius.min;
   const rMax2 = radius.max * radius.max;
 
+  const tmpEuler = new Euler(0, 0, 0, "YXZ");
+  const tmpQuat = new Quaternion();
+
   const placed: [number, number][] = tr.map((t) => [t.pos.x, t.pos.z]);
 
   const pos = new Vector3();
@@ -49,14 +52,14 @@ export function createPositioner(
 
     pos.set(x, yPosition, z);
     scl.setScalar(nScale);
-    const quat = new Quaternion().setFromEuler(
-      new Euler(
-        getRotation(opts.rotation?.x) * Math.PI,
-        getRotation(opts.rotation?.y) * Math.PI,
-        getRotation(opts.rotation?.z) * Math.PI
-      )
-    );
 
-    return { pos, scl, quat };
+    const rx = getRotation(opts.rotation?.x) * Math.PI;
+    const ry = getRotation(opts.rotation?.y) * Math.PI;
+    const rz = getRotation(opts.rotation?.z) * Math.PI;
+
+    tmpEuler.set(rx, ry, rz, "YXZ");
+    tmpQuat.setFromEuler(tmpEuler);
+
+    return { pos, scl, quat: tmpQuat };
   };
 }

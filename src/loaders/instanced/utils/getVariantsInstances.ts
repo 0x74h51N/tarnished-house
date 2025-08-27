@@ -4,7 +4,7 @@ import { renderer } from "@/main";
 import { findAllMeshes } from "./helpers";
 import config from "config.json";
 
-export function getLODVariants({ manager, opts }: CountOpts) {
+export function getVariantsInstances({ manager, opts }: CountOpts) {
   const { sets, baseMeshes } = manager;
 
   if (!sets.length) {
@@ -15,12 +15,14 @@ export function getLODVariants({ manager, opts }: CountOpts) {
 
     for (let v = 0; v < baseMeshes.length; v++) {
       const variantRoot = baseMeshes[v];
-      const allLodNodes = variantRoot.children;
 
-      const lodMerged = allLodNodes.map((n) => findAllMeshes(n));
-      if (!lodMerged.length) continue;
+      const allLodNodes = variantRoot.children.length
+        ? variantRoot.children.map((n) => findAllMeshes(n))
+        : findAllMeshes(variantRoot);
+      if (!allLodNodes) continue;
 
-      const base = lodMerged[0];
+      const base = Array.isArray(allLodNodes) ? allLodNodes[0] : allLodNodes;
+
       const baseMats = base!.materials.map((m) => m.clone());
       const inst = new InstancedMesh2(base!.geometry, baseMats, {
         renderer,
@@ -28,16 +30,18 @@ export function getLODVariants({ manager, opts }: CountOpts) {
 
       inst.name = variantRoot.name || `variant_${v}`;
 
-      const maxK = Math.min(lodMerged.length - 1, lodDistancesCfg.length);
+      if (Array.isArray(allLodNodes) && opts.lodsCount) {
+        const maxK = Math.min(allLodNodes.length - 1, lodDistancesCfg.length);
 
-      for (let k = 1; k <= maxK; k++) {
-        const alt = lodMerged[k];
-        const dist = lodDistancesCfg[k - 1];
+        for (let k = 1; k <= maxK; k++) {
+          const alt = allLodNodes[k];
+          const dist = lodDistancesCfg[k - 1];
 
-        const mat = alt!.materials.map((m) => m.clone());
+          const mat = alt!.materials.map((m) => m.clone());
 
-        inst.addLOD(alt!.geometry, mat, dist);
-        inst.addShadowLOD(alt!.geometry, dist);
+          inst.addLOD(alt!.geometry, mat, dist);
+          inst.addShadowLOD(alt!.geometry, dist);
+        }
       }
 
       inst.computeBVH();

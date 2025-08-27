@@ -84,7 +84,7 @@
           "lodsCount": 3,
           "scale": {
             "min": 1.0,
-            "max": 2.7
+            "max": 3
           },
           "radius": {
             "min": 8,
@@ -126,8 +126,8 @@
           "count": 350,
           "lodsCount": 3,
           "scale": {
-            "min": 2.5,
-            "max": 5.5
+            "min": 2,
+            "max": 6.5
           },
           "radius": {
             "min": 10,
@@ -136,7 +136,7 @@
           "minDistance": 8,
           "castShadow": true,
           "receiveShadow": false,
-          "yPosition": 0.1,
+          "yPosition": 0.05,
           "rotation": {
             "y": { "min": 0, "max": 2 }
           }

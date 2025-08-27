@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // Copyright (C) 2025 Tahsin Önemli
 // This file is part of Tarnished-house. See the LICENSE file for details.
+import "@/patches/lod-patch";
 
 import config from "config.json";
 import assets from "assets.json";
@@ -171,10 +172,6 @@ const audio: AudioBundle = {
   updtMuteIcon,
 };
 
-//
-// Randomized mesh placement system (e.g. graves, trees, etc.)
-let managers: ManagerRefs | undefined;
-
 if (!IS_DEV) {
   loadingManager.onLoad = () => {
     showEnterButton(startAudio);
@@ -282,6 +279,9 @@ async function openDevGUI() {
     renderer.shadowMap.autoUpdate = !paused;
   };
 }
+//
+// Randomized mesh placement system (e.g. graves, trees, etc.)
+let managers: ManagerRefs | undefined;
 
 randomMeshes({ scene }).then((m) => {
   managers = m;

@@ -5,6 +5,7 @@ import config from "config.json";
 import { DirectionalLight, Mesh, Object3D } from "three";
 import { GraphicsSettingsParams, GeneralControl } from "../types";
 import { applyShadowSizeAndBias } from "@/engine/lights/utils";
+import { InstancedMesh2 } from "@three.ez/instanced-mesh";
 
 export function makeGraphicsSettings({
   scene,
@@ -93,23 +94,12 @@ export function makeGraphicsSettings({
       })),
       onChange: (e) => {
         const k = e.target.value as keyof typeof rendererConf.lods;
-
-        Object.values(randomMeshes).map((m) => {
+        Object.values(randomMeshes).forEach((m) => {
           const dists = Object.values(rendererConf.lods[k]) as Array<number>;
           for (const inst of m.manager.sets) {
-            const info = inst.LODinfo;
-            if (!info) continue;
-
-            // inst.setFirstLODDistance(dists[0]);
-
-            const lvls = info.render?.levels ?? [];
-            for (let i = 0; i < lvls.length && i < dists.length; i++) {
-              lvls[i].distance = dists[i] * dists[i];
-            }
-
-            const slvls = info.shadowRender?.levels ?? [];
-            for (let i = 0; i < slvls.length && i < dists.length; i++) {
-              slvls[i].distance = dists[i] * dists[i];
+            if (inst.LODinfo?.render) {
+              inst.updateAllLOD(dists);
+              inst.updateAllShadowLOD(dists);
             }
           }
         });
