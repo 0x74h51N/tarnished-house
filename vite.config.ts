@@ -17,6 +17,7 @@ export default defineConfig(() => {
         "config.json": path.resolve(__dirname, "src/config.json"),
         "assets.json": path.resolve(__dirname, "src/assets.json"),
       },
+      dedupe: ["@three.ez/instanced-mesh"],
     },
     server: {
       host: true,

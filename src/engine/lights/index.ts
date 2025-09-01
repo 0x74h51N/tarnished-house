@@ -1,7 +1,7 @@
-import { Scene, AmbientLight } from "three";
+import { type Scene, AmbientLight } from "three";
 import config from "config.json";
 import { createDirectLight } from "./directionalLight";
-import { LightBundle } from "./types";
+import type { LightBundle } from "./types";
 
 export function createLights(scene: Scene): LightBundle {
   // Ambient
@@ -18,7 +18,7 @@ export function createLights(scene: Scene): LightBundle {
 
   return {
     ambientLight,
-    directLight,
+    directLight
   };
 }
 

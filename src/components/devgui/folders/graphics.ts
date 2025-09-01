@@ -1,19 +1,19 @@
-import { WebGLRenderer, OrthographicCamera, Scene } from "three";
-import { UnrealBloomPass } from "three/examples/jsm/Addons";
 import config from "config.json";
-import GUI from "lil-gui";
-import { LightBundle } from "@/engine";
-import {
-  toneMappingMap,
-  shadowTypes,
-  ToneMappingKey,
-} from "@/types/global.types";
+import type GUI from "lil-gui";
+import type { Light, OrthographicCamera, Scene, WebGLRenderer } from "three";
+import type { UnrealBloomPass } from "three/examples/jsm/Addons";
+import type { LightBundle } from "@/engine";
 import {
   applyShadowSizeAndBias,
-  createShadowBiasProxy,
+  createShadowBiasProxy
 } from "@/engine/lights/utils";
+import {
+  shadowTypes,
+  type ToneMappingKey,
+  toneMappingMap
+} from "@/types/global.types";
 import { allMatUpdt, shadowDispose } from "@/utils";
-import { SetupGUIInterface } from "../types";
+import type { SetupGUIInterface } from "../types";
 
 export function createGraphicsSettings(
   gui: GUI,
@@ -33,7 +33,7 @@ export function createGraphicsSettings(
     shadowEnabled: shadowConfg.enabled,
     shadowType: shadowConfg.type,
     shadowMapSize: shadowMapSizes,
-    bloomParams: config.scene.postProcessing.bloom,
+    bloomParams: config.scene.postProcessing.bloom
   };
 
   const antialiasObj = { antialias };
@@ -73,19 +73,22 @@ export function createGraphicsSettings(
     .add(bloomParams, "enabled")
     .name("Enable Bloom")
     .onChange(() => syncBloom());
-  bloom
-    .add(bloomParams, "strength", 0, 5)
-    .onChange((v: number) => (bloomPass.strength = v));
-  bloom
-    .add(bloomParams, "radius", 0, 4)
-    .onChange((v: number) => (bloomPass.radius = v));
-  bloom
-    .add(bloomParams, "threshold", 0, 10)
-    .onChange((v: number) => (bloomPass.threshold = v));
+  bloom.add(bloomParams, "strength", 0, 5).onChange((v: number) => {
+    bloomPass.strength = v;
+  });
+  bloom.add(bloomParams, "radius", 0, 4).onChange((v: number) => {
+    bloomPass.radius = v;
+  });
+  bloom.add(bloomParams, "threshold", 0, 10).onChange((v: number) => {
+    bloomPass.threshold = v;
+  });
 
   // Shadows
   const { directLight, fireLight } = lights;
-  const lightArr = [lights.fireLight!.light, lights.directLight.light];
+
+  const lightArr: Light[] = [directLight.light];
+  if (fireLight) lightArr.push(fireLight.light);
+
   const shadows = graphics.addFolder("Shadows");
   shadows.close();
 
@@ -120,8 +123,9 @@ export function createGraphicsSettings(
       renderer.shadowMap.enabled = v;
       shadowDispose(lightArr);
 
-      directLight.light.castShadow = v;
-      fireLight!.light.castShadow = v;
+      lightArr.forEach((l) => {
+        l.castShadow = v;
+      });
 
       if (directLight.light.shadow && "camera" in directLight.light.shadow) {
         (directLight.light.shadow.camera as OrthographicCamera).visible = v;

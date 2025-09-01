@@ -1,6 +1,12 @@
-import type { BufferGeometry, Mesh, Object3D, Object3DEventMap } from "three";
-
-import { rotationType } from "../types";
+import {
+  type BufferGeometry,
+  type Material,
+  Mesh,
+  type Object3D,
+  type Object3DEventMap
+} from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
+import type { rotationType } from "@/loaders";
 
 /**
  * Calculates a rotation value in radians based on a fixed number or a min/max range.
@@ -24,7 +30,8 @@ export function getRotation(val?: rotationType): number {
  */
 export function centerGeometryXZ(geometry: BufferGeometry): void {
   geometry.computeBoundingBox();
-  const box = geometry.boundingBox!;
+  const box = geometry.boundingBox;
+  if (!box) return;
   const offsetX = (box.max.x + box.min.x) / 2;
   const offsetZ = (box.max.z + box.min.z) / 2;
   geometry.translate(-offsetX, 0, -offsetZ);
@@ -51,4 +58,31 @@ export function parentFinder(
     parentNode = scene;
   }
   return parentNode;
+}
+
+export function findAllMeshes(
+  node: Object3D | Mesh
+): { geometry: BufferGeometry; materials: Material[] } | null {
+  const meshes: Mesh<BufferGeometry, Material | Material[]>[] = [];
+  node.traverse((c) => {
+    if (c instanceof Mesh && c.geometry) meshes.push(c);
+  });
+  if (!meshes.length) return null;
+
+  const mats: Material[] = [];
+
+  for (const m of meshes) {
+    if (Array.isArray(m.material)) {
+      mats.push(m.material[0]);
+    } else {
+      mats.push(m.material);
+    }
+  }
+  const geos = meshes.map((m) => {
+    const g = m.geometry;
+    return g;
+  });
+
+  const merged = mergeGeometries(geos, true);
+  return { geometry: merged, materials: mats };
 }

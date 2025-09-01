@@ -1,6 +1,6 @@
-import { NestedKeys, GetValue } from "@/utils";
-import { Vector4Like, Texture, Mesh } from "three";
-import { BaseProps, BaseParticlesInterface, Particles } from "../types";
+import type { Mesh, Vector4Like } from "three";
+import type { GetValue, NestedKeys } from "@/utils";
+import type { BaseProps, Particles } from "../types";
 
 export interface NoiseParams {
   noiseScale: Vector4Like;
@@ -38,3 +38,7 @@ export interface Flame extends Particles {
   flame: Mesh;
   update: FlameUpdateFn;
 }
+
+export type FlameHandlers = {
+  [K in FlameUpdateKey]?: (v: FlameUpdateValue<K>) => void;
+};

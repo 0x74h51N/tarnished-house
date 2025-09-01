@@ -1,21 +1,21 @@
 #settings-modal {
-  background: none !important;
+  background: none;
 }
 
 #settings-modal.hidden,
 #credits-modal.hidden {
-  display: none !important;
+  display: none;
   opacity: 0;
   pointer-events: none;
 }
 
 #settings-modal .modal-content-wrapper::after {
-  content: none !important;
+  content: none;
 }
 
 #settings-modal .modal-content {
-  height: 100dvh !important;
-  border-radius: 0px !important;
+  height: 100dvh;
+  border-radius: 0px;
   display: flex;
   flex-direction: column;
   padding: 2.2rem 1.5rem 0.5rem;
@@ -23,9 +23,9 @@
 
 @media (min-width: 520px) {
   #settings-modal {
-    position: absolute !important;
-    width: unset !important;
-    height: unset !important;
+    position: absolute;
+    width: unset;
+    height: unset;
     align-items: start;
     justify-content: start;
   }
@@ -102,34 +102,38 @@
 }
 
 /* Responsive Breakpoints */
-
 @media (max-width: 850px) {
-  label {
+  .settings-content label {
     font-size: 0.95rem;
     padding: 0.3rem 0;
   }
 
-  input[type="checkbox"] {
+  .settings-content input[type="checkbox"] {
     width: 20px;
     height: 20px;
   }
-  select {
+
+  .settings-content select {
     font-size: 0.9rem;
     width: 100px;
     background-position: right 4px center;
     background-size: 14px;
   }
-  .control-label {
-    padding: 1;
+
+  .settings-content .control-label {
+    padding: 1rem;
     margin-bottom: 0.9rem;
   }
-  .range-control {
+
+  .settings-content .range-control {
     flex-wrap: wrap;
   }
-  .range-control input[type="range"] {
+
+  .settings-content .range-control input[type="range"] {
     margin: 0.5rem 0;
   }
-  .range-value {
+
+  .settings-content .range-value {
     margin-left: auto;
   }
 }
@@ -140,19 +144,19 @@
     font-size: 1.1em;
   }
 
-  .control-label {
+  .settings-content .control-label {
     padding: 0;
   }
 
-  .range-control {
-    justify-content: space-around !important;
+  .settings-content .range-control {
+    justify-content: space-around;
   }
 
-  .range-value {
-    margin-left: 1px !important;
+  .settings-content .range-value {
+    margin-left: 1px;
   }
 
-  select {
+  .settings-content select {
     width: 85px;
     font-size: 0.8rem;
     padding: 4px 22px 4px 6px;
@@ -162,7 +166,7 @@
     background-size: 12px;
   }
 
-  input[type="range"] {
+  .settings-content input[type="range"] {
     max-width: 200px;
   }
 }
@@ -173,7 +177,7 @@
     font-size: 1em;
   }
 
-  select {
+  .settings-content select {
     width: 75px;
     font-size: 0.75rem;
     padding: 3px 20px 3px 5px;
@@ -183,7 +187,7 @@
     background-size: 12px;
   }
 
-  .range-value {
+  .settings-content .range-value {
     margin-left: 5px;
     min-width: 5px;
   }

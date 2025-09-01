@@ -1,10 +1,13 @@
-import { Group, Mesh } from "three";
-import assets from "assets.json";
-import { minMax } from "@/types/global.types";
+import type { Mesh } from "three";
+import type assets from "assets.json";
+import type { minMax } from "@/types/global.types";
+import type { InstancedMesh2 } from "@three.ez/instanced-mesh";
+import type { T } from ".";
 
 export type rotationType = minMax | number | undefined;
 
-export interface SpawnOptions {
+export interface SpawnOpts {
+  lodsCount?: number;
   count: number;
   scale: minMax;
   radius: minMax;
@@ -22,12 +25,13 @@ export interface SpawnOptions {
 
 export type ManagerType = {
   baseMeshes: Mesh[];
-  group: Group;
+  sets: InstancedMesh2[];
+  tr: T[];
 };
 
 export type CountOpts = {
   manager: ManagerType;
-  opts: SpawnOptions;
+  opts: SpawnOpts;
 };
 
 type SpawnableConfig = typeof assets.models.spawnable;
@@ -35,7 +39,7 @@ export type SpawnableName = keyof SpawnableConfig;
 
 export type SpawnableType = {
   path: string;
-  spawn: SpawnOptions;
+  spawn: SpawnOpts;
 };
 
 export type SpawnableObjects = Record<SpawnableName, SpawnableType>;

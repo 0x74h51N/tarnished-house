@@ -22,8 +22,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { minMax } from "@/types/global.types";
-import { BufferGeometry, Color } from "three";
+import type { BufferGeometry, Color } from "three";
+import type { minMax } from "@/types/global.types";
 
 //Calculational helpers
 export function startPos(

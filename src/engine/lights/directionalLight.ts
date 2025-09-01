@@ -2,17 +2,17 @@ import {
   CameraHelper,
   DirectionalLight,
   DirectionalLightHelper,
-  Scene,
+  type Scene
 } from "three";
 import config from "config.json";
-import { MapSizeKey } from "@/types/global.types";
-import { DirectLight } from "./types";
+import type { MapSizeKey } from "@/types/global.types";
+import type { DirectLight } from "./types";
 
 export function createDirectLight(scene: Scene): DirectLight {
   const shadowConfg = config.scene.renderer.shadows;
   const {
     renderer: {
-      shadows: { defMapSize, defDistance, mapSizes },
+      shadows: { defMapSize, defDistance, mapSizes }
     },
     lighting: {
       directional: {
@@ -21,22 +21,25 @@ export function createDirectLight(scene: Scene): DirectLight {
         intensity: baseIntensity,
         position: { x: posX, y: posY, z: posZ },
         shadow: {
-          camera: { height: camHeight, near: camNear },
+          camera: { near: camNear }
         },
         helper: { size: helperSize },
         target: {
-          position: { x: targetX, y: targetY, z: targetZ },
-        },
-      },
-    },
+          position: { x: targetX, y: targetY, z: targetZ }
+        }
+      }
+    }
   } = config.scene;
 
   const light = new DirectionalLight(color, baseIntensity);
   light.position.set(posX, posY, posZ);
   light.castShadow = enabled;
 
-  const { width: camWidth, far: camFar } =
-    shadowConfg.distance[defDistance as keyof typeof shadowConfg.distance];
+  const {
+    height: camHeight,
+    width: camWidth,
+    far: camFar
+  } = shadowConfg.distance[defDistance as keyof typeof shadowConfg.distance];
 
   const halfW = camWidth / 2;
   const halfH = camHeight / 2;
@@ -47,7 +50,7 @@ export function createDirectLight(scene: Scene): DirectLight {
     top: halfH,
     bottom: -halfH,
     near: camNear,
-    far: camFar,
+    far: camFar
   });
 
   light.shadow.camera.updateProjectionMatrix();
@@ -66,6 +69,6 @@ export function createDirectLight(scene: Scene): DirectLight {
   return {
     light,
     helper,
-    cameraHelper,
+    cameraHelper
   };
 }

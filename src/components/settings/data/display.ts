@@ -1,11 +1,12 @@
 import config from "config.json";
-import { GeneralControl, DisplaySettingsParams } from "..";
-import { ToneMappingKey, toneMappingMap } from "@/types/global.types";
+import { byId } from "@/components/utils";
+import { type ToneMappingKey, toneMappingMap } from "@/types/global.types";
+import type { DisplaySettingsParams, GeneralControl } from "..";
 
 export function makeDisplaySettings({
   renderer,
   camera,
-  toggleStats,
+  toggleStats
 }: DisplaySettingsParams): GeneralControl[] {
   const toneVal = renderer.toneMappingExposure;
   const fovVal = config.scene.camera.fov;
@@ -18,7 +19,7 @@ export function makeDisplaySettings({
       checked: Boolean(config.scene.debug.fpsCounter),
       onChange: (e) => {
         toggleStats(e.target.checked);
-      },
+      }
     },
     {
       type: "range",
@@ -32,10 +33,10 @@ export function makeDisplaySettings({
       hide: true,
       onChange: (e) => {
         const val = +e.target.value;
-        document.getElementById("fovVal")!.textContent = val.toString();
+        byId("fovVal").textContent = val.toString();
         camera.fov = val;
         camera.updateProjectionMatrix();
-      },
+      }
     },
 
     {
@@ -49,10 +50,9 @@ export function makeDisplaySettings({
       span: "brightnessValue",
       onChange: (e) => {
         const val = +e.target.value;
-        document.getElementById("brightnessValue")!.textContent =
-          val.toString();
+        byId("brightnessValue").textContent = val.toString();
         renderer.toneMappingExposure = val;
-      },
+      }
     },
     {
       type: "select",
@@ -61,12 +61,12 @@ export function makeDisplaySettings({
       options: Object.entries(toneMappingMap).map(([k]) => ({
         v: k,
         t: k,
-        s: renderer.toneMapping == toneMappingMap[k as ToneMappingKey],
+        s: renderer.toneMapping === toneMappingMap[k as ToneMappingKey]
       })),
       onChange: (e) => {
-        const v = e.target!.value as ToneMappingKey;
+        const v = e.target.value as ToneMappingKey;
         renderer.toneMapping = toneMappingMap[v];
-      },
-    },
+      }
+    }
   ];
 }

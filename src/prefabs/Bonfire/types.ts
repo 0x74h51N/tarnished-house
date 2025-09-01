@@ -1,5 +1,5 @@
-import { Flame, PointParticles } from "@/engine";
-import { PointLight, PointLightHelper, Vector3Like } from "three";
+import type { Flame, PointParticles } from "@/engine";
+import type { PointLight, PointLightHelper, Vector3Like } from "three";
 
 export type BonfireParticles = {
   flame: Flame;

@@ -21,38 +21,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 precision highp float;
 
-in vec2  vRot; 
-in vec4  vColor;
+in vec2 vRot;
+in vec4 vColor;
 in float vSpeedRatio;
 uniform float u_stretch;
 
 out vec4 fragColor;
 
-void main() {
+void main () {
   // ---- Transform point coord to rotated local space ----
-  vec2 local  = gl_PointCoord - 0.5;
-  mat2 R      = mat2(vRot.x, -vRot.y,
-                     vRot.y,  vRot.x);
+  vec2 local = gl_PointCoord - 0.5f;
+  mat2 R = mat2 (vRot.x, - vRot.y, vRot.y, vRot.x);
   vec2 rotLoc = R * local;
 
   // ---- Speed proportional stretch ----
-  float stretch = mix(0.0, u_stretch, vSpeedRatio);
-  rotLoc.y     *= stretch;
+  float stretch = mix (0.0f, u_stretch, vSpeedRatio);
+  rotLoc.y *= stretch;
 
   // Radial falloff
-  float d       = length(rotLoc);
-  float t       = clamp(d * 2.0, 0.0, 1.0);
-  float strength = 1.0 - smoothstep(0.0, 1.0, t); // Radial fade-out
+  float d = length (rotLoc);
+  float t = clamp (d * 2.0f, 0.0f, 1.0f);
+  float strength = 1.0f - smoothstep (0.0f, 1.0f, t); // Radial fade-out
 
   // Brightness boost based on stretch factor
-  float bboost  = u_stretch * 0.5 - 1.0;
-  strength     *= 1.0 + bboost * vSpeedRatio;
+  float bboost = u_stretch * 0.5f - 1.0f;
+  strength *= 1.0f + bboost * vSpeedRatio;
 
-  vec4 col     = vColor * strength;
-  col.a        = max(strength, 0.005);
+  vec4 col = vColor * strength;
+  col.a = max (strength, 0.005f);
 
-  fragColor    = col;
+  fragColor = col;
 }

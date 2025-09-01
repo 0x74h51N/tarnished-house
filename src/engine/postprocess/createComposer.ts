@@ -1,8 +1,8 @@
-import { PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import type { PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import {
   EffectComposer,
   RenderPass,
-  UnrealBloomPass,
+  type UnrealBloomPass
 } from "three/examples/jsm/Addons";
 import config from "config.json";
 import { createBloomPass } from "./bloomPass";
@@ -25,7 +25,7 @@ export interface Composer {
 export function createComposer({
   renderer,
   scene,
-  camera,
+  camera
 }: ComposerInterface): Composer {
   scene.fog = config.scene.postProcessing.fog.enabled ? fog : null;
 

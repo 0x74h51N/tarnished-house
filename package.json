@@ -17,9 +17,13 @@
     "analyze": "ANALYZE=1 vite build",
     "prepare": "husky",
     "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write ."
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.2",
     "@playwright/test": "^1.54.2",
     "@types/node": "^24.3.0",
     "@types/three": "^0.179",
@@ -32,6 +36,7 @@
     "vite-plugin-restart": "^1.0.0"
   },
   "dependencies": {
+    "@three.ez/instanced-mesh": "^0.3.6",
     "lil-gui": "^0.20.0",
     "stats-gl": "^3.6.0",
     "three": "^0.179.1"

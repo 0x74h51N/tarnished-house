@@ -9,18 +9,13 @@ import {
   Mesh,
   RawShaderMaterial,
   TextureLoader,
-  Vector3,
+  Vector3
 } from "three";
-import vertex from "./shaders/vertex.vert";
-import frag from "./shaders/fragment.frag";
-import { Step } from "../types";
 import { createGuiUpdater, v4 } from "@/utils";
-import {
-  Flame,
-  FlameInterface,
-  FlameUpdateKey,
-  FlameUpdateValue,
-} from "./types";
+import type { Step } from "../types";
+import frag from "./shaders/fragment.frag";
+import vertex from "./shaders/vertex.vert";
+import type { Flame, FlameHandlers, FlameInterface } from "./types";
 
 /**
  * Creates a volumetric flame mesh using animated raymarching shaders.
@@ -49,15 +44,15 @@ export const createFlame = ({
   seed = Math.random() * 19.19,
   noise,
   march,
-  colorMixStr,
+  colorMixStr
 }: FlameInterface): Flame => {
   const loader = new TextureLoader();
   const fireTex = loader.load(texture);
-
-  fireTex!.flipY = false;
-  fireTex!.wrapS = fireTex!.wrapT = ClampToEdgeWrapping;
-  fireTex!.magFilter = fireTex!.minFilter = LinearFilter;
-
+  if (fireTex) {
+    fireTex.flipY = false;
+    fireTex.wrapS = fireTex.wrapT = ClampToEdgeWrapping;
+    fireTex.magFilter = fireTex.minFilter = LinearFilter;
+  }
   const geometry = new BoxGeometry(size, size * 1.45, size);
 
   const invModelMatrix = new Matrix4();
@@ -87,9 +82,9 @@ export const createFlame = ({
     u_bottom: { value: u_bottom },
 
     color: {
-      value: new Color(color),
+      value: new Color(color)
     },
-    colorMixStrength: { value: colorMixStr },
+    colorMixStrength: { value: colorMixStr }
   };
 
   const material = new RawShaderMaterial({
@@ -100,7 +95,7 @@ export const createFlame = ({
     depthWrite: false,
     uniforms,
     blending: AdditiveBlending,
-    toneMapped: false,
+    toneMapped: false
   });
 
   const flame = new Mesh(geometry, material);
@@ -118,9 +113,7 @@ export const createFlame = ({
   //
   // ------------------ GUI Updater ------------------
   //
-  const guiHandlers: {
-    [K in FlameUpdateKey]?: (value: FlameUpdateValue<K>) => void;
-  } = {
+  const guiHandlers: FlameHandlers = {
     size: (v) => {
       uniforms.scale.value.setScalar(v);
       uniforms.u_radius.value = v * 0.6;
@@ -129,7 +122,7 @@ export const createFlame = ({
     },
 
     uTimeMult: (v) => {
-      uTimeMult = v!;
+      uTimeMult = v || 1;
     },
 
     color: (v) => {
@@ -164,7 +157,7 @@ export const createFlame = ({
 
     "noise.octaves": (v) => {
       uniforms.u_octaves.value = v;
-    },
+    }
   };
 
   const update = createGuiUpdater(guiHandlers);

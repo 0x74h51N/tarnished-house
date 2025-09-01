@@ -1,6 +1,6 @@
 export function detectLowEnd(): boolean {
   const canvas = document.createElement("canvas");
-  let isLowTex,
+  let isLowTex = false,
     isLowVertUni = false;
   const gl =
     canvas.getContext("webgl") || canvas.getContext("experimental-webgl");

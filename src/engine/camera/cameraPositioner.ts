@@ -1,12 +1,13 @@
-import {
+import { IS_DEV } from "@/main";
+import type {
   CameraPositionerInterface,
   CameraPositionerReturn,
-  PositionArgs,
+  PositionArgs
 } from "./types";
 
 export function createCamPositioner({
   camera,
-  controls,
+  controls
 }: CameraPositionerInterface): CameraPositionerReturn {
   const initialCameraPos = camera.position.clone();
   const initialTarget = controls.target.clone();
@@ -17,7 +18,7 @@ export function createCamPositioner({
     camera.position.copy(cameraPos);
     camera.lookAt(controls.target);
     controls.update();
-    controls.enabled = true;
+    controls.enabled = IS_DEV;
   };
 
   const restorePosition = () => {

@@ -1,15 +1,16 @@
 export * from "./types";
 
+import { settingModalController } from "./controller";
 import {
   makeGeneralSettings,
   makeGraphicsSettings,
-  makeSceneSettings,
+  makeSceneSettings
 } from "./data";
-import { inputRender } from "./inputRender";
-import { SettingsInterface } from "./types";
-import { settingModalController } from "./controller";
 import { makeDisplaySettings } from "./data/display";
+import { inputRender } from "./inputRender";
+import type { SettingsInterface } from "./types";
 import "./styles.css";
+import { byId } from "../utils";
 
 export function settings({
   lights,
@@ -20,19 +21,19 @@ export function settings({
   scene,
   toggleStats,
   CamController,
-  syncBloom,
+  syncBloom
 }: SettingsInterface) {
-  const settingsDiv = document.getElementById("settings");
+  const settingsDiv = byId("settings");
 
   //----------------------- Settings Menu -----------------------
   //Input Controllers
   const controls = makeGeneralSettings({
-    audio,
+    audio
   });
   const display = makeDisplaySettings({
     toggleStats,
     renderer,
-    camera: CamController.camera,
+    camera: CamController.camera
   });
   const graphics = makeGraphicsSettings({
     lights,
@@ -40,11 +41,12 @@ export function settings({
     antialias,
     scene,
     syncBloom,
+    randomMeshes
   });
   const sceneOpts = makeSceneSettings({ randomMeshes });
 
   // Input Controllers Dom penetration!
-  settingsDiv!.innerHTML =
+  settingsDiv.innerHTML =
     controls.map((c) => inputRender(c)).join("") +
     "<h3>Display</h3>" +
     display.map((c) => inputRender(c)).join("") +
@@ -56,7 +58,7 @@ export function settings({
 
   //Input Event listeners
   [...controls, ...display, ...graphics, ...sceneOpts].forEach((c) => {
-    const el = document.getElementById(c.id)!;
+    const el = byId(c.id);
     const evt = c.type === "range" ? "input" : "change";
     el.addEventListener(evt, c.onChange as EventListener);
   });

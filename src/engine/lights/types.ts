@@ -1,9 +1,9 @@
-import { FireLight } from "@/prefabs";
-import {
+import type { FireLight } from "@/prefabs";
+import type {
   AmbientLight,
   CameraHelper,
   DirectionalLight,
-  DirectionalLightHelper,
+  DirectionalLightHelper
 } from "three";
 
 export type DirectLight = {

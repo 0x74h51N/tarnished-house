@@ -1,10 +1,10 @@
-import { SpawnableName } from "@/loaders";
-import { spawnMeshes } from "@/loaders/utils";
-import { GeneralControl, SceneSettingsParams } from "..";
 import assets from "assets.json";
+import { byId } from "@/components/utils";
+import { type SpawnableName, spawnInstancedMesh } from "@/loaders";
+import type { GeneralControl, SceneSettingsParams } from "..";
 
 export function makeSceneSettings({
-  randomMeshes,
+  randomMeshes
 }: SceneSettingsParams): GeneralControl[] {
   const spawnable = assets.models.spawnable;
   const arr = [] as GeneralControl[];
@@ -12,22 +12,23 @@ export function makeSceneSettings({
   for (const k in spawnable) {
     const key = k as SpawnableName;
     const managerRef = randomMeshes[key];
+    if (key.includes("grave")) continue;
     arr.push({
       type: "range",
       id: `${key}countId`,
       label: `${key}`,
       min: "1",
-      max: "150",
+      max: "1250",
       step: "1",
       value: spawnable[key].spawn.count.toString(),
       span: `${key}CountValue`,
       hide: true,
       onChange: (e) => {
         const v = +e.target.value;
-        document.getElementById(`${key}CountValue`)!.textContent = v.toString();
+        byId(`${key}CountValue`).textContent = v.toString();
         spawnable[key].spawn.count = v;
-        spawnMeshes(managerRef);
-      },
+        spawnInstancedMesh(managerRef);
+      }
     });
   }
   return arr;

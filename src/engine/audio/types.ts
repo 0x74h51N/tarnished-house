@@ -1,9 +1,8 @@
-import {
+import type {
+  AudioListener,
   AudioLoader,
   PositionalAudio,
-  Audio as ThreeAudio,
-  AudioListener,
-  Object3D,
+  Audio as ThreeAudio
 } from "three";
 
 export type PositionalOpts = {
@@ -28,7 +27,7 @@ export interface AudioAPI {
   setVol(v: number): void;
   createPositional({
     url,
-    opts,
+    opts
   }: PositionalSoundArgs): Promise<PositionalAudio>;
   createAmbience(url: string): ThreeAudio;
   resume(): Promise<void>;

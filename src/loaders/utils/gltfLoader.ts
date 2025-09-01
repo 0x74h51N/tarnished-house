@@ -1,5 +1,5 @@
 import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons";
-import { LoadingManager } from "three";
+import type { LoadingManager } from "three";
 import assets from "assets.json";
 
 export function createGLTFLoader(loadingManager: LoadingManager): GLTFLoader {

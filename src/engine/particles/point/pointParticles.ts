@@ -24,36 +24,36 @@
  */
 
 import {
-  Color,
-  Points,
-  BufferGeometry,
   AdditiveBlending,
   BufferAttribute,
-  Vector2,
-  Vector3,
+  BufferGeometry,
+  Color,
   GLSL3,
-  ShaderMaterial,
   Group,
+  Points,
+  ShaderMaterial,
+  type Texture,
   TextureLoader,
-  Texture,
+  Vector2,
+  Vector3
 } from "three";
+import { createGuiUpdater } from "@/utils";
+import type { Step } from "../types";
+import FS from "./shaders/fragment.frag";
+import SparksFS from "./shaders/sparks/fragment.frag";
+import SparkVS from "./shaders/sparks/vertex.vert";
+import VS from "./shaders/vertex.vert";
 import {
-  PointUpdateKey,
-  PointUpdateValue,
-  PointParticles,
-  SmokeOpts,
-  PointParticleInterface,
-  SparkOpts,
   isSmoke,
   isSpark,
+  type PointHandlers,
+  type PointParticleInterface,
+  type PointParticles,
+  type SmokeOpts,
+  type SparkOpts,
+  type SparkProps
 } from "./types";
-import VS from "./shaders/vertex.vert";
-import FS from "./shaders/fragment.frag";
-import SparkVS from "./shaders/sparks/vertex.vert";
-import SparksFS from "./shaders/sparks/fragment.frag";
-import { startPos, sparkVel, startVel, colUpt, markAttrFlags } from "./utils";
-import { createGuiUpdater } from "@/utils";
-import { Step } from "../types";
+import { colUpt, markAttrFlags, sparkVel, startPos, startVel } from "./utils";
 
 /**
  * Creates a GPU particle system using custom shaders and buffer attributes.
@@ -105,7 +105,7 @@ export function createPointParticles(
     startPozs,
     scaleFactor,
     uTimeMult = 1,
-    instant = true,
+    instant = true
   } = props;
   const loader = new TextureLoader();
 
@@ -117,9 +117,9 @@ export function createPointParticles(
 
   const smokeTexPath = isSmoke(props) ? props.textures : undefined;
 
-  const texture: Texture = loader.load(smokeTexPath!);
+  const texture: Texture = loader.load(smokeTexPath || "");
 
-  const isSparkV = sparkProps && sparkProps.elevDivs && sparkProps.speed;
+  const isSparkV = sparkProps?.elevDivs && sparkProps?.speed;
 
   // ------------------ BUFFERS ------------------
   const position = new Float32Array(maxCount * 3);
@@ -154,19 +154,25 @@ export function createPointParticles(
   const cUniforms = {
     resolution: { value: resolution },
     u_time: { value: 0 },
-    u_scale: { value: scaleFactor },
+    u_scale: { value: scaleFactor }
   };
 
   // -------------- Spark Uniforms -------------------
-  let { damping, stretchFact, elevDivs, waveFreq, waveAmp, speed } =
-    sparkProps ?? {};
+  let {
+    damping = 0,
+    stretchFact = 1,
+    elevDivs = { min: 0, max: 1 },
+    waveFreq = 0,
+    waveAmp = 0,
+    speed = 1
+  } = (isSparkV ? sparkProps : {}) as Partial<SparkProps>;
 
-  const sUniforms = sparkProps && {
+  const sUniforms = {
     u_damping: { value: damping },
     u_stretch: { value: stretchFact },
     u_axisRatio: { value: new Vector3(0.67, 1.0, 0.67) },
     u_wave_freq: { value: waveFreq },
-    u_wave_amp: { value: waveAmp },
+    u_wave_amp: { value: waveAmp }
   };
 
   const points = new Group();
@@ -175,7 +181,7 @@ export function createPointParticles(
   const uniforms = {
     ...sUniforms,
     ...cUniforms,
-    diffuseTexture: { value: dTex },
+    diffuseTexture: { value: dTex }
   };
 
   const material = new ShaderMaterial({
@@ -188,7 +194,7 @@ export function createPointParticles(
     depthWrite: false,
     blending: AdditiveBlending,
     dithering: true,
-    vertexColors: true,
+    vertexColors: true
   });
 
   const pts = new Points(geometry, material);
@@ -206,7 +212,7 @@ export function createPointParticles(
   function spawn(i: number, time: number) {
     const i3 = i * 3;
     startPos(startPozs, position, i3, area);
-    if (isSparkV) sparkVel(vel, i3, elevDivs!, speed!);
+    if (isSparkV) sparkVel(vel, i3, elevDivs, speed);
     else startVel(vel, i3);
     startTime[i] = time;
   }
@@ -255,14 +261,14 @@ export function createPointParticles(
   //
   function updtScreen(pr: number) {
     resolution.set(window.innerWidth * pr, window.innerHeight * pr);
+    /** */
   }
 
   //
   // ------------------ Particle Updater ------------------
   //
-  const guiHandlers: {
-    [K in PointUpdateKey | any]: (value: PointUpdateValue<K | any>) => void;
-  } = {
+
+  const guiHandlers: PointHandlers = {
     reset: () => {
       nextIndex = 0;
       spawnAccumulator = maxCount;
@@ -277,11 +283,12 @@ export function createPointParticles(
     },
 
     uTimeMult: (v) => {
-      uTimeMult = v!;
+      if (v == null) return;
+      uTimeMult = v;
     },
 
     "sparkProps.speed": (v) => {
-      speed = v!;
+      speed = v;
     },
 
     "sparkProps.elevDivs": (v) => {
@@ -296,20 +303,22 @@ export function createPointParticles(
     },
 
     sizeGrowth: (v) => {
-      sizeGrowth = v!;
-      growthArr.fill(v!);
+      if (v == null) return;
+      sizeGrowth = v;
+      growthArr.fill(v);
       markAttrFlags(geometry, ["sizeGrowth"]);
     },
 
     fadeRate: (v) => {
-      fadeRate = v!;
-      fadeArr.fill(v!);
+      if (v == null) return;
+      fadeRate = v;
+      fadeArr.fill(v);
       markAttrFlags(geometry, ["fadeRate"]);
     },
 
     opacity: (v) => {
-      opacity = v!;
-      for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = v!;
+      opacity = v;
+      for (let i = 0; i < maxCount; i++) colsArr[i * 4 + 3] = v;
       markAttrFlags(geometry, ["aColor"]);
     },
 
@@ -328,22 +337,21 @@ export function createPointParticles(
     },
 
     "sparkProps.damping": (v) => {
-      sUniforms!.u_damping.value = v;
+      sUniforms.u_damping.value = v;
     },
 
     "sparkProps.stretchFact": (v) => {
-      sUniforms!.u_stretch.value = v;
+      sUniforms.u_stretch.value = v;
     },
 
     "sparkProps.waveAmp": (v) => {
-      sUniforms!.u_wave_amp.value = v;
+      sUniforms.u_wave_amp.value = v;
     },
 
     "sparkProps.waveFreq": (v) => {
-      sUniforms!.u_wave_freq.value = v;
-    },
+      sUniforms.u_wave_freq.value = v;
+    }
   };
-
   const update = createGuiUpdater(guiHandlers);
 
   return { points, step, updtScreen, update };

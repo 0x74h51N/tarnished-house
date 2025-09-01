@@ -1,7 +1,7 @@
-import type { Group, Object3DEventMap, Texture } from "three";
-import { NestedKeys, GetValue } from "@/utils";
-import { minMax, Sizes } from "@/types/global.types";
-import { BaseProps, Particles } from "../types";
+import type { Group, Object3DEventMap } from "three";
+import type { minMax, Sizes } from "@/types/global.types";
+import type { GetValue, NestedKeys } from "@/utils";
+import type { BaseProps, Particles } from "../types";
 
 export interface SparkProps {
   damping: number;
@@ -19,6 +19,7 @@ export interface PointProps extends BaseProps {
   sizeGrowth?: number;
   fadeRate?: number;
   instant?: boolean;
+  uTimeMult?: number;
 }
 
 export interface SparkOpts extends PointProps {
@@ -48,10 +49,10 @@ export type PointUpdateKey =
 export type PointUpdateValue<K extends PointUpdateKey> = K extends "reset"
   ? boolean
   : K extends NestedKeys<SmokeOpts>
-  ? GetValue<SmokeOpts, K>
-  : K extends NestedKeys<SparkOpts>
-  ? GetValue<SparkOpts, K>
-  : never;
+    ? GetValue<SmokeOpts, K>
+    : K extends NestedKeys<SparkOpts>
+      ? GetValue<SparkOpts, K>
+      : never;
 
 export type PointUpdateFn = <K extends PointUpdateKey>(
   key: K,
@@ -69,3 +70,7 @@ export const isSmoke = (p: SmokeOpts | SparkOpts): p is SmokeOpts =>
 
 export const isSpark = (p: SmokeOpts | SparkOpts): p is SparkOpts =>
   "sparkProps" in p;
+
+export type PointHandlers = {
+  [K in PointUpdateKey]?: (v: PointUpdateValue<K>) => void;
+};

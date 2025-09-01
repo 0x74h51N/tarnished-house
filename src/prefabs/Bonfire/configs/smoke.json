@@ -5,10 +5,10 @@
   "maxCount": 45,
   "spawnRate": 1.7,
   "startPozs": { "x": 0, "y": 0.9, "z": 0 },
-  "opacity": 0.92,
+  "opacity": 0.9,
   "instant": false,
-  "color": "#444444",
-  "sizeGrowth": 0.95,
-  "fadeRate": 0.11,
-  "scaleFactor": 1.5
+  "color": "#454545",
+  "sizeGrowth": 0.9,
+  "fadeRate": 0.12,
+  "scaleFactor": 1.1
 }

@@ -1,5 +1,5 @@
 import { PositionalAudio } from "three";
-import { loadBuffer, PositionalSoundArgs, SoundCreator } from "../";
+import { loadBuffer, type PositionalSoundArgs, type SoundCreator } from "../";
 
 export const createPositionalSound = ({ loader, listener }: SoundCreator) => {
   return async function createPositional({ url, opts }: PositionalSoundArgs) {

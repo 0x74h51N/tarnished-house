@@ -21,7 +21,7 @@
     "camera": {
       "fov": 35,
       "near": 0.1,
-      "far": 90,
+      "far": 200,
       "position": {
         "x": 7,
         "y": 5,
@@ -33,12 +33,12 @@
         "rotateSpeed": 0.46,
         "minDistance": 3,
         "maxDistance": 57,
-        "minPolarAngle": 0.5236,
+        "minPolarAngle": 0.3236,
         "maxPolarAngle": 1.4165,
         "positionLimits": {
-          "x": { "min": -50, "max": 50 },
-          "y": { "min": 1.98, "max": 30 },
-          "z": { "min": -50, "max": 50 }
+          "x": { "min": -100, "max": 100 },
+          "y": { "min": 1.98, "max": 45 },
+          "z": { "min": -100, "max": 100 }
         },
         "lerpFactor": 0.67
       }
@@ -47,52 +47,68 @@
       "toneMapping": "ACES Filmic",
       "toneMappingExposure": 0.4,
       "maxPixelRatio": 2,
+      "defLod": "High",
+      "lods": {
+        "Low": { "lod1": 35, "lod2": 60, "lod3": 85 },
+        "Medium": { "lod1": 55, "lod2": 80, "lod3": 100 },
+        "High": { "lod1": 85, "lod2": 120, "lod3": 160 },
+        "Insane": { "lod1": 100, "lod2": 170, "lod3": 210 }
+      },
       "shadows": {
         "enabled": true,
         "type": "PCFSoft",
         "defMapSize": 2048,
-        "defDistance": "full",
+        "defDistance": "High",
         "mapSizes": {
           "512": {
+            "name": "Low",
             "bias": {
-              "high": 0.0009,
-              "normal": 0.15
+              "high": 0.003,
+              "normal": 0.1
             }
           },
           "1024": {
+            "name": "Medium",
             "bias": {
-              "high": -0.0007,
-              "normal": 0.05
+              "high": 0.0001,
+              "normal": 0.24
             }
           },
           "2048": {
+            "name": "High",
             "bias": {
-              "high": -0.0005,
-              "normal": 0.01
+              "high": 0.0001,
+              "normal": 0.2
             }
           },
           "4096": {
+            "name": "Insane",
             "bias": {
-              "high": -0.0005,
-              "normal": 0.02
+              "high": -0.0001,
+              "normal": 0.05
             }
           }
         },
         "distance": {
-          "half": {
-            "name": "Half",
-            "width": 50,
-            "far": 50
+          "Low": {
+            "width": 90,
+            "height": 90,
+            "far": 90
           },
-          "three": {
-            "name": "3/4",
-            "width": 65,
-            "far": 70
+          "Medium": {
+            "width": 150,
+            "height": 150,
+            "far": 180
           },
-          "full": {
-            "name": "Full",
-            "width": 100,
-            "far": 100
+          "High": {
+            "width": 200,
+            "height": 200,
+            "far": 250
+          },
+          "Insane": {
+            "width": 270,
+            "height": 270,
+            "far": 290
           }
         }
       }
@@ -100,20 +116,19 @@
     "lighting": {
       "ambient": {
         "color": "#446688",
-        "intensity": 2.4
+        "intensity": 2
       },
       "directional": {
         "enabled": true,
         "color": "#b0c4de",
         "intensity": 3.5,
         "position": {
-          "x": 4,
-          "y": 20,
-          "z": 45
+          "x": 0,
+          "y": 90,
+          "z": 105
         },
         "shadow": {
           "camera": {
-            "height": 35,
             "near": 1.0
           }
         },
@@ -122,9 +137,9 @@
         },
         "target": {
           "position": {
-            "x": 0,
+            "x": 5.5,
             "y": 0,
-            "z": -4
+            "z": 30.0
           }
         }
       }
@@ -132,16 +147,16 @@
     "postProcessing": {
       "bloom": {
         "enabled": true,
-        "strength": 0.26,
-        "radius": 0.11,
-        "threshold": 0.5
+        "strength": 0.35,
+        "radius": 0.1,
+        "threshold": 0.6
       },
       "fog": {
         "enabled": true,
         "color": "#607276",
-        "density": 0.025,
-        "near": 1.4,
-        "far": 65
+        "density": 0.035,
+        "near": 10,
+        "far": 140
       }
     },
     "audio": {
@@ -171,6 +186,6 @@
   },
   "settings": {
     "targetPos": { "x": 0.46, "y": -2, "z": -7.68 },
-    "cameraPos": { "x": -32, "y": 15.2, "z": -14.41 }
+    "cameraPos": { "x": -46, "y": 32, "z": 25.41 }
   }
 }

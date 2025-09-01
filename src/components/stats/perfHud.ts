@@ -1,5 +1,5 @@
-import { WebGLRenderer } from "three";
 import StatsGL from "stats-gl";
+import type { WebGLRenderer } from "three";
 import "./style.css";
 import { fmt } from "./utils";
 
@@ -53,10 +53,11 @@ export function createPerfHUD(opts: Options): PerfHUD {
   }
 
   function getJsHeapMB(): string {
-    const mem = (performance as Performance & {memory?: { usedJSHeapSize: number };
-                }).memory;
-    if (mem && mem.usedJSHeapSize) {
-      return (mem.usedJSHeapSize / 1048576).toFixed(1) + " MB";
+    const mem = (
+      performance as Performance & { memory?: { usedJSHeapSize: number } }
+    ).memory;
+    if (mem?.usedJSHeapSize) {
+      return `${(mem.usedJSHeapSize / 1048576).toFixed(1)} MB`;
     }
     return "n/a";
   }
@@ -67,7 +68,7 @@ export function createPerfHUD(opts: Options): PerfHUD {
     const r = renderer.info.render;
 
     const frameCalls = r.calls - prev.calls;
-    const frameTris = (r.triangles - prev.triangles);
+    const frameTris = r.triangles - prev.triangles;
     const framePoints = r.points - prev.points;
 
     prev.calls = r.calls;
