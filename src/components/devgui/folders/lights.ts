@@ -1,8 +1,7 @@
-import { Scene, OrthographicCamera } from "three";
 import config from "config.json";
-import assets from "assets.json";
-import GUI from "lil-gui";
-import { LightBundle } from "@/engine/lights/types";
+import type GUI from "lil-gui";
+import { OrthographicCamera, type Scene } from "three";
+import type { LightBundle } from "@/engine/lights/types";
 import { bonfireConf } from "@/prefabs";
 
 export function createLightSettings(
@@ -14,8 +13,6 @@ export function createLightSettings(
 
   const lightingFolder = gui.addFolder("Lighting Settings");
   lightingFolder.close();
-
-  const shadowConfg = config.scene.renderer.shadows;
 
   // Ambient Light Settings
   const ambientLightGui = lightingFolder.addFolder("Ambient Light Settings");
@@ -31,23 +28,23 @@ export function createLightSettings(
   const fireLightGui = lightingFolder.addFolder("Fire Light Settings");
   fireLightGui.close();
 
-  const fireLightParam = bonfireConf.fireLight!;
-  fireLightGui
-    .add(config.scene.debug.lightHelpers, "fire")
-    .name("Light Helper")
-    .onChange((v: boolean) => {
-      if (v) {
-        scene.add(fireLight!.helper);
-      } else {
-        scene.remove(fireLight!.helper);
-      }
-    });
+  const fireLightParam = bonfireConf.fireLight;
+  if (fireLight) {
+    fireLightGui
+      .add(config.scene.debug.lightHelpers, "fire")
+      .name("Light Helper")
+      .onChange((v: boolean) => {
+        v ? scene.add(fireLight.helper) : scene.remove(fireLight.helper);
+      });
 
-  fireLightGui.add(fireLightParam, "intensity", 0, 100, 0.1).name("Intensity");
+    fireLightGui
+      .add(fireLightParam, "intensity", 0, 100, 0.1)
+      .name("Intensity");
 
-  fireLightGui.add(fireLightParam, "distance", 0, 200, 0.1).name("Distance");
+    fireLightGui.add(fireLightParam, "distance", 0, 200, 0.1).name("Distance");
 
-  fireLightGui.add(fireLight!.light, "decay", 0, 10, 0.01).name("Decay");
+    fireLightGui.add(fireLight.light, "decay", 0, 10, 0.01).name("Decay");
+  }
 
   // Directional Light Settings
   const directionalLightGui = lightingFolder.addFolder(
@@ -63,7 +60,7 @@ export function createLightSettings(
     helper: config.scene.debug.lightHelpers.directional,
     targetX: directLight.light.target.position.x,
     targetY: directLight.light.target.position.y,
-    targetZ: directLight.light.target.position.z,
+    targetZ: directLight.light.target.position.z
   };
 
   directionalLightGui.addColor(directLight.light, "color").name("Light Color");

@@ -1,17 +1,17 @@
-import { Mesh, Scene, LoadingManager } from "three";
-import { createGLTFLoader } from "./utils";
+import type { InstancedMesh2 } from "@three.ez/instanced-mesh";
 import assets from "assets.json";
-import {
+import { LoadingManager, type Mesh, type Scene } from "three";
+import { spawnInstancedMesh } from "./instanced/instancedMeshes";
+import type {
   ManagerRefs,
   ManagerType,
   SpawnableName,
-  SpawnableObjects,
+  SpawnableObjects
 } from "./types";
-import { spawnInstancedMesh } from "./instanced/instancedMeshes";
-import { InstancedMesh2 } from "@three.ez/instanced-mesh";
+import { createGLTFLoader } from "./utils";
 
 export async function randomMeshes({
-  scene,
+  scene
 }: {
   scene: Scene;
 }): Promise<ManagerRefs> {
@@ -29,7 +29,7 @@ export async function randomMeshes({
     const manager: ManagerType = {
       baseMeshes: [],
       sets,
-      tr: [],
+      tr: []
     };
 
     try {
@@ -40,7 +40,7 @@ export async function randomMeshes({
 
       spawnInstancedMesh({ manager, opts: cfg.spawn });
 
-      manager.sets.forEach((g) => scene.add(g));
+      manager.sets.every((g) => scene.add(g));
 
       acc[key as SpawnableName] = { manager, opts: cfg.spawn };
     } catch (error) {

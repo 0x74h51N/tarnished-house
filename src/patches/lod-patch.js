@@ -82,4 +82,3 @@ import { InstancedMesh2 } from "@three.ez/instanced-mesh";
     );
   };
 })();
-export {};

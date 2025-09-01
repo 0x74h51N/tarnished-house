@@ -1,8 +1,9 @@
 import config from "config.json";
-import { GeneralControl, GeneralSettingsParams } from "..";
+import { byId } from "@/components/utils";
+import type { GeneralControl, GeneralSettingsParams } from "..";
 
 export function makeGeneralSettings({
-  audio,
+  audio
 }: GeneralSettingsParams): GeneralControl[] {
   const volumeVal =
     typeof config.scene.audio.volume === "number"
@@ -21,10 +22,10 @@ export function makeGeneralSettings({
       span: "volumeValue",
       onChange: (e) => {
         const val = +e.target.value;
-        document.getElementById("volumeValue")!.textContent = val.toString();
+        byId("volumeValue").textContent = val.toString();
         audio.setVol(val / 100);
         audio.updtMuteIcon(val / 100);
-      },
-    },
+      }
+    }
   ];
 }

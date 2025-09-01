@@ -1,5 +1,6 @@
-import { Vector3, Vector3Like, Vector4, Vector4Like } from "three";
-import { DeepPartial } from ".";
+/** biome-ignore-all lint/suspicious/noExplicitAny: This type helper I cant make w/o any! */
+import { Vector3, type Vector3Like, Vector4, type Vector4Like } from "three";
+import type { DeepPartial } from ".";
 
 export const v3 = (v: Vector3Like): Vector3 => new Vector3(v.x, v.y, v.z);
 export const v4 = (v: Vector4Like): Vector4 => new Vector4(v.x, v.y, v.z, v.w);

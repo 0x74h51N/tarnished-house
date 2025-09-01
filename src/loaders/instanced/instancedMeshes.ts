@@ -4,11 +4,11 @@ import { createPositioner, getVariantsInstances } from "./utils";
 export function spawnInstancedMesh({ manager, opts }: CountOpts) {
   if (!manager.baseMeshes?.length) return;
 
-  const { sets } = getVariantsInstances({ manager, opts });
+  const sets = getVariantsInstances({ manager, opts });
 
   manager.sets = sets;
 
-  const tr = (manager.tr ||= []);
+  const tr = manager.tr || [];
 
   const diff = opts.count - tr.length;
   if (diff === 0) return;

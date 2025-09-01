@@ -1,11 +1,11 @@
 import { SRGBColorSpace, WebGLRenderer } from "three";
 import config from "config.json";
 import {
-  ShadowTypeKey,
+  type ShadowTypeKey,
   shadowTypes,
-  Sizes,
-  ToneMappingKey,
-  toneMappingMap,
+  type Sizes,
+  type ToneMappingKey,
+  toneMappingMap
 } from "@/types/global.types";
 
 interface RendererInterface {
@@ -17,7 +17,7 @@ interface RendererInterface {
 export function createRenderer({
   sizes,
   canvas,
-  antialias,
+  antialias
 }: RendererInterface): WebGLRenderer {
   const rendererConfg = config.scene.renderer;
 
@@ -25,7 +25,7 @@ export function createRenderer({
     canvas: canvas,
     antialias: antialias,
     premultipliedAlpha: false,
-    powerPreference: "high-performance",
+    powerPreference: "high-performance"
   });
   if (!renderer.capabilities.isWebGL2) {
     throw new Error("WebGL2 required for GLSL3 shaders.");

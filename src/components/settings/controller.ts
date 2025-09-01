@@ -1,13 +1,14 @@
-import { v3 } from "@/utils";
 import config from "config.json";
-import { CamController } from "@/engine";
+import type { CamController } from "@/engine";
+import { v3 } from "@/utils";
+import { byId } from "../utils";
 
 export function settingModalController({
-  positioner,
+  positioner
 }: Pick<CamController, "positioner">) {
-  const toggleBtn = document.getElementById("settings-btn");
-  const modal = document.getElementById("settings-modal");
-  const closeBtn = document.getElementById("close-settings");
+  const toggleBtn = byId<HTMLButtonElement>("settings-btn");
+  const modal = byId<HTMLButtonElement>("settings-modal");
+  const closeBtn = byId<HTMLButtonElement>("close-settings");
 
   if (!toggleBtn || !modal || !closeBtn) return;
 
@@ -21,7 +22,7 @@ export function settingModalController({
   const showModal = () => {
     positioner.setPosition({
       cameraPos: v3(config.settings.cameraPos),
-      targetPos: v3(config.settings.targetPos),
+      targetPos: v3(config.settings.targetPos)
     });
     modal.classList.remove("hidden");
     setTimeout(() => modal.classList.add("active"), 100);

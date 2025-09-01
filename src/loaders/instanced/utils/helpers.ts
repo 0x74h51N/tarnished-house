@@ -1,12 +1,12 @@
-import { rotationType } from "@/loaders";
 import {
-  BufferGeometry,
-  Material,
+  type BufferGeometry,
+  type Material,
   Mesh,
-  Object3D,
-  Object3DEventMap,
+  type Object3D,
+  type Object3DEventMap
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
+import type { rotationType } from "@/loaders";
 
 /**
  * Calculates a rotation value in radians based on a fixed number or a min/max range.
@@ -30,7 +30,8 @@ export function getRotation(val?: rotationType): number {
  */
 export function centerGeometryXZ(geometry: BufferGeometry): void {
   geometry.computeBoundingBox();
-  const box = geometry.boundingBox!;
+  const box = geometry.boundingBox;
+  if (!box) return;
   const offsetX = (box.max.x + box.min.x) / 2;
   const offsetZ = (box.max.z + box.min.z) / 2;
   geometry.translate(-offsetX, 0, -offsetZ);

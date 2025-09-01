@@ -3,40 +3,46 @@
 // This file is part of Tarnished-house. See the LICENSE file for details.
 import "@/patches/lod-patch";
 
-import config from "config.json";
 import assets from "assets.json";
+import config from "config.json";
 import {
-  settings,
-  initIntroModal,
-  setupToggleButton,
-  initCreditsModal,
-  initScreenshotButton,
+  Color,
+  LoadingManager,
+  type PositionalAudio,
+  Scene,
+  TextureLoader
+} from "three";
+import {
+  byId,
   createPerfHUD,
-  SetupGUI,
+  initCreditsModal,
+  initIntroModal,
+  initScreenshotButton,
+  type SetupGUI,
+  settings,
+  setupToggleButton
 } from "./components";
 import {
-  Scene,
-  LoadingManager,
-  TextureLoader,
-  Color,
-  PositionalAudio,
-} from "three";
-import { loadAssets, ManagerRefs, randomMeshes } from "./loaders";
-import {
+  applyLowEnd,
   CameraController,
+  createAudio,
+  createBtn,
   createComposer,
   createLights,
   createRenderer,
-  applyLowEnd,
-  Loop,
-  createAudio,
-  createBtn,
+  Loop
 } from "./engine";
-import { AudioBundle } from "./types/global.types";
-import { createSizes } from "./utils";
+import { loadAssets, type ManagerRefs, randomMeshes } from "./loaders";
 import { Bonfire } from "./prefabs";
+import type { AudioBundle } from "./types/global.types";
+import { createSizes } from "./utils";
+
+const IS_E2E =
+  import.meta.env.VITE_E2E === "1" ||
+  new URL(location.href).searchParams.has("e2e");
 
 export const IS_DEV: boolean = import.meta.env.DEV;
+
 const DEV_PROFILE = config.devProfile;
 if (IS_DEV) {
   config.scene.camera.far = 500;
@@ -55,12 +61,8 @@ const showEnterButton = initIntroModal();
 if (IS_DEV && DEV_PROFILE.skipIntro) {
   showEnterButton();
   requestAnimationFrame(() => {
-    const btn = document.getElementById(
-      "enter-scene"
-    ) as HTMLButtonElement | null;
-    if (btn) {
-      btn.click();
-    }
+    const btn = byId<HTMLButtonElement>("enter-scene");
+    btn.click();
   });
 }
 
@@ -84,7 +86,7 @@ const texLoader = new TextureLoader(loadingManager);
 const CamController = CameraController({
   scene,
   canvas,
-  sizes,
+  sizes
 });
 
 //
@@ -95,12 +97,17 @@ const antialias = localStorage.getItem("antialias") === "true";
 
 export const renderer = createRenderer({ sizes, canvas, antialias });
 
+if (IS_E2E) {
+  window.__RENDERER__ = renderer;
+  window.__SCENE__ = scene;
+}
+
 //Postprocessing
 
 const { composer, bloomPass, syncBloom } = createComposer({
   renderer,
   scene,
-  camera: CamController.camera,
+  camera: CamController.camera
 });
 
 //
@@ -111,7 +118,7 @@ loadAssets({
   scene,
   loadingManager,
   renderer,
-  texLoader,
+  texLoader
 });
 
 //
@@ -129,8 +136,8 @@ window.addEventListener("resize", () => {
   composer.setSize(sizes.width, sizes.height);
   bloomPass.setSize(sizes.width, sizes.height);
 
-  smoke.updtScreen!(sizes.pixelRatio);
-  sparks.updtScreen!(sizes.pixelRatio);
+  smoke.updtScreen(sizes.pixelRatio);
+  sparks.updtScreen(sizes.pixelRatio);
 });
 
 //
@@ -138,7 +145,7 @@ window.addEventListener("resize", () => {
 //
 const { setVol, resume, createAmbience, createPositional } = createAudio({
   camera: CamController.camera,
-  loadingManager,
+  loadingManager
 });
 const ambianceS = createAmbience(config.sounds.ambiance);
 
@@ -169,7 +176,7 @@ muteBtn.addEventListener("click", () => setMuted(!muted), { passive: true });
 
 const audio: AudioBundle = {
   setVol,
-  updtMuteIcon,
+  updtMuteIcon
 };
 
 if (!IS_DEV) {
@@ -201,7 +208,7 @@ const { button: igniteBtn, setLabel } = await createBtn({
     ignited ? bonfire.extinguish() : bonfire.ignite();
     ignited = !ignited;
     setLabel(ignited ? "Extinguish" : "Ignite");
-  },
+  }
 });
 
 //
@@ -215,7 +222,7 @@ createPositional(audioOpts).then((s) => bonfire.attachAudio(s));
 let effect: PositionalAudio;
 createPositional({
   url: audioOpts.firestartUrl,
-  opts: { ...audioOpts.opts, loop: false, autoplay: false, volume: 1 },
+  opts: { ...audioOpts.opts, loop: false, autoplay: false, volume: 1 }
 }).then((s) => {
   bonfire.attachSfx(s);
   effect = s;
@@ -230,6 +237,10 @@ scene.add(igniteBtn);
 
 lights.fireLight = bonfire.fireLight;
 const { smoke, sparks, flame } = bonfire;
+function getManagers(): ManagerRefs {
+  if (!managers) throw new Error("managers not ready");
+  return managers;
+}
 
 //
 // Stats
@@ -242,7 +253,7 @@ if (IS_DEV && DEV_PROFILE.autoStats) {
 type SceneUpdate = (dt: number, elapsed: number) => void;
 
 const activeUpdate: SceneUpdate = (dt, elapsed) => {
-  bonfire!.step(dt, elapsed);
+  bonfire.step(dt, elapsed);
 };
 
 let runSceneUpdate: SceneUpdate = activeUpdate;
@@ -250,26 +261,35 @@ let getTimeScale: () => number = () => 1;
 
 let guiLoaded = false;
 let devGUI: SetupGUI | undefined;
+
 async function openDevGUI() {
   if (guiLoaded) return;
+  if (!managers) {
+    console.warn("DevGUI requested before managers are ready");
+    return;
+  }
   guiLoaded = true;
+
   const { initSetupGUI } = await import("./components");
+
+  const mgrs = getManagers();
 
   devGUI = initSetupGUI({
     devMode: IS_DEV,
     renderer,
     CamController,
-    randomMeshes: managers!,
+    randomMeshes: mgrs,
     antialias,
     audio,
     bloomPass,
     scene,
     lights,
     particleSystems: { flame, smoke, sparks },
-    syncBloom,
+    syncBloom
   });
+
   const r = devGUI.runtime;
-  getTimeScale = () => devGUI!.runtime.timeScale;
+  getTimeScale = () => r.timeScale;
 
   const origToggle = r.togglePause;
   r.togglePause = () => {
@@ -279,6 +299,7 @@ async function openDevGUI() {
     renderer.shadowMap.autoUpdate = !paused;
   };
 }
+
 //
 // Randomized mesh placement system (e.g. graves, trees, etc.)
 let managers: ManagerRefs | undefined;
@@ -293,18 +314,18 @@ randomMeshes({ scene }).then((m) => {
   });
 
   //
-  //Settingis
+  // Settings
   //
   settings({
     lights,
     renderer,
-    randomMeshes: managers!,
+    randomMeshes: getManagers(),
     antialias,
     audio,
     scene,
     toggleStats: hud.toggleStats,
     CamController,
-    syncBloom,
+    syncBloom
   });
 
   initScreenshotButton({ renderer, composer });
@@ -342,10 +363,3 @@ loop.addRender(() => {
 });
 
 loop.start();
-
-const IS_E2E = import.meta.env.VITE_E2E === "1";
-
-if (IS_E2E) {
-  window.__SCENE__ = scene;
-  window.__RENDERER__ = renderer;
-}

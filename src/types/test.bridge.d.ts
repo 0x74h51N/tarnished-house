@@ -5,4 +5,3 @@ declare global {
     __RENDERER__?: WebGLRenderer;
   }
 }
-export {};

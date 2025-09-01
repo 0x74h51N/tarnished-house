@@ -1,9 +1,10 @@
-import { SpawnableName, spawnInstancedMesh } from "@/loaders";
-import { GeneralControl, SceneSettingsParams } from "..";
 import assets from "assets.json";
+import { byId } from "@/components/utils";
+import { type SpawnableName, spawnInstancedMesh } from "@/loaders";
+import type { GeneralControl, SceneSettingsParams } from "..";
 
 export function makeSceneSettings({
-  randomMeshes,
+  randomMeshes
 }: SceneSettingsParams): GeneralControl[] {
   const spawnable = assets.models.spawnable;
   const arr = [] as GeneralControl[];
@@ -24,10 +25,10 @@ export function makeSceneSettings({
       hide: true,
       onChange: (e) => {
         const v = +e.target.value;
-        document.getElementById(`${key}CountValue`)!.textContent = v.toString();
+        byId(`${key}CountValue`).textContent = v.toString();
         spawnable[key].spawn.count = v;
         spawnInstancedMesh(managerRef);
-      },
+      }
     });
   }
   return arr;

@@ -1,4 +1,4 @@
-import { Sizes } from "@/types/global.types";
+import type { Sizes } from "@/types/global.types";
 import config from "config.json";
 
 export function createSizes(): Sizes {
@@ -16,7 +16,7 @@ export function createSizes(): Sizes {
         window.devicePixelRatio,
         config.scene.renderer.maxPixelRatio
       );
-    },
+    }
   };
 
   return sizes;

@@ -1,7 +1,7 @@
-import { ManagerRefs } from "@/loaders";
-import { Scene, WebGLRenderer } from "three";
-import { AudioBundle } from "@/types/global.types";
-import { CamController, Composer, LightBundle } from "@/engine";
+import type { Scene, WebGLRenderer } from "three";
+import type { CamController, Composer, LightBundle } from "@/engine";
+import type { ManagerRefs } from "@/loaders";
+import type { AudioBundle } from "@/types/global.types";
 
 type InputRangeAttributes = Pick<
   HTMLInputElement,

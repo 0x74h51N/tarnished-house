@@ -1,6 +1,6 @@
-import { AudioListener, AudioLoader, LoadingManager } from "three";
-import { AudioAPI } from "./types";
-import { CameraReturn } from "../camera";
+import { AudioListener, AudioLoader, type LoadingManager } from "three";
+import type { AudioAPI } from "./types";
+import type { CameraReturn } from "../camera";
 import { createPositionalSound, createAmbianceSound } from "./sounds";
 
 interface CreateAudio {
@@ -20,7 +20,7 @@ export function createAudio({ camera, loadingManager }: CreateAudio): AudioAPI {
 
   const createAudio = {
     loader,
-    listener,
+    listener
   };
   const createPositional = createPositionalSound(createAudio);
 

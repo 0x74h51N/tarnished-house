@@ -1,7 +1,7 @@
 const nf0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 const nf2 = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  maximumFractionDigits: 2
 });
 
 export function fmt(label: string, v: number | string, k = false) {

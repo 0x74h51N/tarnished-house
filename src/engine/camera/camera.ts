@@ -1,5 +1,5 @@
 import { CameraHelper, PerspectiveCamera } from "three";
-import { CameraOptions, CameraReturn } from "./types";
+import type { CameraOptions, CameraReturn } from "./types";
 import config from "config.json";
 
 export function createCamera({ sizes }: CameraOptions): CameraReturn {

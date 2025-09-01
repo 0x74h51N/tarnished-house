@@ -1,4 +1,4 @@
-import { AudioLoader } from "three";
+import type { AudioLoader } from "three";
 
 const bufferCache = new Map<string, AudioBuffer>();
 export const loadBuffer = async (url: string, loader: AudioLoader) => {

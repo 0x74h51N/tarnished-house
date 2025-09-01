@@ -1,8 +1,8 @@
 import { PointLight, PointLightHelper } from "three";
 import config from "config.json";
 import { animateValue } from "../../engine/lights/utils";
-import { MapSizeKey } from "@/types/global.types";
-import { FireLight } from "./types";
+import type { MapSizeKey } from "@/types/global.types";
+import type { FireLight } from "./types";
 import { bonfireConf } from "./configs";
 
 export const createFireLight = (): FireLight => {
@@ -48,7 +48,7 @@ export const createFireLight = (): FireLight => {
         lightConfg.animation.position,
         e
       );
-    },
+    }
   };
 
   return { light, helper, animator };

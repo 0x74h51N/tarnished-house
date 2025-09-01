@@ -2,20 +2,20 @@
 // Copyright (C) 2025 Tahsin Ö.
 // This file is part of Tarnished-house. See the LICENSE file for details.
 
+import type { Group, Mesh, MeshStandardMaterial } from "three";
 import {
   createFlame,
   createPointParticles,
-  Flame,
-  PointParticles,
+  type Flame,
+  type PointParticles
 } from "@/engine";
-import { type Mesh, Group, MeshStandardMaterial } from "three";
 
-import { Sizes } from "@/types/global.types";
+import type { Sizes } from "@/types/global.types";
 import { v3 } from "@/utils";
-import { BonfireOpts, FireLight } from "./types";
-import { createFireLight } from "./fireLight";
-import { flameConf, smokeConf, sparkConf, bonfireConf } from "./configs";
 import { Prefab } from "../core/PrefabActor";
+import { bonfireConf, flameConf, smokeConf, sparkConf } from "./configs";
+import { createFireLight } from "./fireLight";
+import type { BonfireOpts, FireLight } from "./types";
 
 /**
  * Bonfire Prefab
@@ -95,13 +95,13 @@ export class Bonfire extends Prefab {
     // Particles
     this._smoke = createPointParticles({
       sizes: this._sizes,
-      props: smokeConf,
+      props: smokeConf
     });
     this._snapParticle(this._smoke.points);
 
     this._sparks = createPointParticles({
       sizes: this._sizes,
-      props: sparkConf,
+      props: sparkConf
     });
     this._snapParticle(this._sparks.points);
 
@@ -146,7 +146,7 @@ export class Bonfire extends Prefab {
         sparkConf.spawnRate *
         bonfireConf.particleFx.sparks.spawnRamp.fromFactor,
       to: sparkConf.spawnRate,
-      dur: bonfireConf.particleFx.sparks.spawnRamp.dur,
+      dur: bonfireConf.particleFx.sparks.spawnRamp.dur
     });
 
     // Attach root
@@ -157,27 +157,32 @@ export class Bonfire extends Prefab {
     this._ease((v) => this._sparks.update("uTimeMult", v), {
       from: bonfireConf.particleFx.uTimeMult.ignite.from,
       to: bonfireConf.particleFx.uTimeMult.ignite.to,
-      dur: this._cooldown * bonfireConf.timings.cooldownEaseIgnite,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseIgnite
     });
     this._ease((v) => this._smoke.update("uTimeMult", v), {
       from: bonfireConf.particleFx.uTimeMult.ignite.from,
       to: bonfireConf.particleFx.uTimeMult.ignite.to,
-      dur: this._cooldown * bonfireConf.timings.cooldownEaseIgnite,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseIgnite
     });
 
     // Light decay
-    this._easeOut((v) => (this._fireLight.light.decay = v), {
-      from: bonfireConf.fireLight.decayStart,
-      to: bonfireConf.fireLight.decay,
-      dur: bonfireConf.timings.decayEaseInDur,
-    });
+    this._easeOut(
+      (v) => {
+        this._fireLight.light.decay = v;
+      },
+      {
+        from: bonfireConf.fireLight.decayStart,
+        to: bonfireConf.fireLight.decay,
+        dur: bonfireConf.timings.decayEaseInDur
+      }
+    );
 
     // Flame growth
     this._root.attach(this._flame.flame);
     this._easeOut((v) => this._flame.update("size", v), {
       from: bonfireConf.flame.initialSize,
       to: flameConf.size,
-      dur: bonfireConf.timings.flameSizeIgniteDur,
+      dur: bonfireConf.timings.flameSizeIgniteDur
     });
 
     // Flame Y
@@ -193,16 +198,26 @@ export class Bonfire extends Prefab {
     );
 
     // Emissive intensity animation for sword & hilt
-    this._ease((v) => (this._sword.emissiveIntensity = v), {
-      from: this._sword.emissiveIntensity,
-      to: bonfireConf.swordEmiFx.to,
-      dur: bonfireConf.swordEmiFx.dur,
-    });
-    this._ease((v) => (this._hilt.emissiveIntensity = v), {
-      from: this._hilt.emissiveIntensity,
-      to: bonfireConf.swordEmiFx.to * 0.5,
-      dur: bonfireConf.swordEmiFx.dur,
-    });
+    this._ease(
+      (v) => {
+        this._sword.emissiveIntensity = v;
+      },
+      {
+        from: this._sword.emissiveIntensity,
+        to: bonfireConf.swordEmiFx.to,
+        dur: bonfireConf.swordEmiFx.dur
+      }
+    );
+    this._ease(
+      (v) => {
+        this._hilt.emissiveIntensity = v;
+      },
+      {
+        from: this._hilt.emissiveIntensity,
+        to: bonfireConf.swordEmiFx.to * 0.5,
+        dur: bonfireConf.swordEmiFx.dur
+      }
+    );
   }
 
   /**
@@ -229,20 +244,20 @@ export class Bonfire extends Prefab {
     this._easeOut((v) => this._smoke.update("uTimeMult", v), {
       from: bonfireConf.particleFx.uTimeMult.extinguish.from,
       to: bonfireConf.particleFx.uTimeMult.extinguish.to,
-      dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish
     });
 
     this._easeOut((v) => this._sparks.update("uTimeMult", v), {
       from: bonfireConf.particleFx.uTimeMult.extinguish.from,
       to: bonfireConf.particleFx.uTimeMult.extinguish.to,
-      dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish,
+      dur: this._cooldown * bonfireConf.timings.cooldownEaseExtinguish
     });
 
     // Flame size
     this._easeOut((v) => this._flame.update("size", v), {
       from: flameConf.size,
       to: 0,
-      dur: bonfireConf.timings.flameSizeExtinguishDur,
+      dur: bonfireConf.timings.flameSizeExtinguishDur
     });
 
     // Flame Y
@@ -257,45 +272,65 @@ export class Bonfire extends Prefab {
       {
         from: startY,
         to: startY - bonfireConf.dy,
-        dur: bonfireConf.timings.flamePosDur,
+        dur: bonfireConf.timings.flamePosDur
       }
     );
 
     // Light decay
-    this._easeOut((v) => (this._fireLight.light.decay = v), {
-      from: bonfireConf.fireLight.decay,
-      to: bonfireConf.fireLight.decayExtinguishTo,
-      dur: bonfireConf.timings.decayExtinguishDur,
-    });
+    this._easeOut(
+      (v) => {
+        this._fireLight.light.decay = v;
+      },
+      {
+        from: bonfireConf.fireLight.decay,
+        to: bonfireConf.fireLight.decayExtinguishTo,
+        dur: bonfireConf.timings.decayExtinguishDur
+      }
+    );
 
     // Light intensity fade
-    this._easeOut((v) => (this._fireLight.light.intensity = v), {
-      from: this._fireLight.light.intensity * 0.5,
-      to: bonfireConf.fireLight.minIntensity,
-      dur: Math.max(
-        this._sword.emissiveIntensity * 0.7,
-        bonfireConf.swordEmiFx.dur * 0.5
-      ),
-    });
+    this._easeOut(
+      (v) => {
+        this._fireLight.light.intensity = v;
+      },
+      {
+        from: this._fireLight.light.intensity * 0.5,
+        to: bonfireConf.fireLight.minIntensity,
+        dur: Math.max(
+          this._sword.emissiveIntensity * 0.7,
+          bonfireConf.swordEmiFx.dur * 0.5
+        )
+      }
+    );
 
     // Emissive fade out
-    this._easeOut((v) => (this._sword.emissiveIntensity = v), {
-      from: this._sword.emissiveIntensity,
-      to: 0,
-      dur: Math.max(
-        this._sword.emissiveIntensity,
-        bonfireConf.swordEmiFx.dur * 0.6
-      ),
-    });
+    this._easeOut(
+      (v) => {
+        this._sword.emissiveIntensity = v;
+      },
+      {
+        from: this._sword.emissiveIntensity,
+        to: 0,
+        dur: Math.max(
+          this._sword.emissiveIntensity,
+          bonfireConf.swordEmiFx.dur * 0.6
+        )
+      }
+    );
 
-    this._easeOut((v) => (this._hilt.emissiveIntensity = v), {
-      from: this._hilt.emissiveIntensity,
-      to: 0,
-      dur: Math.max(
-        this._hilt.emissiveIntensity,
-        bonfireConf.swordEmiFx.dur * 0.6
-      ),
-    });
+    this._easeOut(
+      (v) => {
+        this._hilt.emissiveIntensity = v;
+      },
+      {
+        from: this._hilt.emissiveIntensity,
+        to: 0,
+        dur: Math.max(
+          this._hilt.emissiveIntensity,
+          bonfireConf.swordEmiFx.dur * 0.6
+        )
+      }
+    );
   }
 
   /**

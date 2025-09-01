@@ -90,7 +90,8 @@
   gap: 1.2rem;
   grid-template-columns: 1fr 1fr;
 }
-a {
+.asset-list a,
+#thanks-list a {
   text-decoration: none;
   color: var(--color-gold);
   transition: color 0.2s;
@@ -109,7 +110,7 @@ a:hover {
 
 #thanks-list {
   padding-top: 20px;
-  font-size: 1.2em !important;
+  font-size: 1.2em;
   font-family: "IM Fell English SC", serif;
   max-width: 450px;
   width: 340px;

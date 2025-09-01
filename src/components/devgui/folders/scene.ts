@@ -1,15 +1,19 @@
 import assets from "assets.json";
-import GUI from "lil-gui";
-import { ManagerRefs, SpawnableName, spawnInstancedMesh } from "@/loaders";
+import type GUI from "lil-gui";
 import {
+  type BufferAttribute,
+  type Mesh,
   MeshStandardMaterial,
   PlaneGeometry,
-  Texture,
-  BufferAttribute,
   RepeatWrapping,
-  Scene,
-  Mesh,
+  type Scene,
+  type Texture
 } from "three";
+import {
+  type ManagerRefs,
+  type SpawnableName,
+  spawnInstancedMesh
+} from "@/loaders";
 
 type FloorMesh = Mesh<PlaneGeometry, MeshStandardMaterial>;
 
@@ -51,8 +55,8 @@ export function createSceneSettings(
   const asset = floor.userData.asset;
   const tex = floor.userData.textures as Record<string, Texture>;
 
-  const folder = sceneOptions.addFolder("Floor");
-  folder.close();
+  const floorFldr = sceneOptions.addFolder("Floor");
+  floorFldr.close();
 
   function rebuildGeometry() {
     const g = new PlaneGeometry(
@@ -62,10 +66,11 @@ export function createSceneSettings(
       Math.max(1, Math.floor(asset.geometry.heightSegments))
     );
     g.setAttribute("uv2", (g.getAttribute("uv") as BufferAttribute).clone());
-
-    floor!.geometry.dispose();
-    floor!.geometry = g;
-    floor!.rotation.x = -Math.PI * 0.5;
+    if (floor) {
+      floor.geometry.dispose();
+      floor.geometry = g;
+      floor.rotation.x = -Math.PI * 0.5;
+    }
   }
 
   function applyRepeat() {
@@ -77,24 +82,24 @@ export function createSceneSettings(
     });
   }
 
-  folder
+  floorFldr
     .add(asset.geometry, "width", 10, 2000, 1)
     .name("Width")
     .onFinishChange(rebuildGeometry);
-  folder
+  floorFldr
     .add(asset.geometry, "height", 10, 2000, 1)
     .name("Height")
     .onFinishChange(rebuildGeometry);
-  folder
+  floorFldr
     .add(asset.geometry, "widthSegments", 1, 2048, 1)
     .name("Width Segs")
     .onFinishChange(rebuildGeometry);
-  folder
+  floorFldr
     .add(asset.geometry, "heightSegments", 1, 2048, 1)
     .name("Height Segs")
     .onFinishChange(rebuildGeometry);
 
-  folder
+  floorFldr
     .add(floor.material, "displacementScale", 0, 1, 0.005)
     .name("Displacement")
     .onChange((v: number) => {
@@ -102,16 +107,16 @@ export function createSceneSettings(
       floor.material.needsUpdate = true;
     });
 
-  folder
+  floorFldr
     .add(asset.textures, "repeat", 1, 128, 1)
     .name("Repeat")
     .onFinishChange(applyRepeat);
 
-  folder.add(floor.scale, "x", 0.01, 10, 0.01).name("Scale X");
-  folder.add(floor.scale, "y", 0.01, 10, 0.01).name("Scale Y");
-  folder.add(floor.scale, "z", 0.01, 10, 0.01).name("Scale Z");
+  floorFldr.add(floor.scale, "x", 0.01, 10, 0.01).name("Scale X");
+  floorFldr.add(floor.scale, "y", 0.01, 10, 0.01).name("Scale Y");
+  floorFldr.add(floor.scale, "z", 0.01, 10, 0.01).name("Scale Z");
 
-  folder
+  floorFldr
     .addColor(asset, "color")
     .name("Color")
     .onChange((v: string) => {
@@ -119,11 +124,13 @@ export function createSceneSettings(
       floor.material.needsUpdate = true;
     });
 
-  folder
+  floorFldr
     .add(floor.material, "wireframe")
     .name("Wireframe")
-    .onChange(() => (floor.material.needsUpdate = true));
-  folder.add(floor, "receiveShadow").name("Receive Shadow");
+    .onChange(() => {
+      floor.material.needsUpdate = true;
+    });
+  floorFldr.add(floor, "receiveShadow").name("Receive Shadow");
 
   applyRepeat();
 }

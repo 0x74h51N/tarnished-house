@@ -1,5 +1,6 @@
-import { WebGLRenderer } from "three";
-import { EffectComposer } from "three/examples/jsm/Addons";
+import type { WebGLRenderer } from "three";
+import type { EffectComposer } from "three/examples/jsm/Addons";
+import { byId } from "../utils";
 
 interface ScreenshotOptions {
   renderer: WebGLRenderer;
@@ -8,9 +9,9 @@ interface ScreenshotOptions {
 
 export function initScreenshotButton({
   renderer,
-  composer,
+  composer
 }: ScreenshotOptions) {
-  const btn = document.getElementById("photo-shot")!;
+  const btn = byId("photo-shot");
 
   const canvas = renderer.domElement;
 

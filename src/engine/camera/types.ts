@@ -1,5 +1,5 @@
-import { CameraHelper, PerspectiveCamera, Scene, Vector3 } from "three";
-import { OrbitControls } from "three/examples/jsm/Addons";
+import type { CameraHelper, PerspectiveCamera, Scene, Vector3 } from "three";
+import type { OrbitControls } from "three/examples/jsm/Addons";
 
 export interface CameraOptions {
   sizes: { width: number; height: number };
@@ -44,7 +44,7 @@ export interface CameraPositionerReturn {
 }
 export type CamPositionerFn = ({
   camera,
-  controls,
+  controls
 }: CameraPositionerInterface) => CameraPositionerReturn;
 export interface CameraSystemOptions {
   scene: Scene;

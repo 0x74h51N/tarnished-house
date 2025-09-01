@@ -1,21 +1,21 @@
 import assets from "assets.json";
-import { createGLTFLoader } from "./utils";
-import type { GLTF } from "three/examples/jsm/Addons";
 import {
-  Scene,
-  LoadingManager,
-  WebGLRenderer,
-  TextureLoader,
-  SRGBColorSpace,
-  RepeatWrapping,
-  PlaneGeometry,
-  MeshStandardMaterial,
-  Mesh,
-  LinearMipmapLinearFilter,
   LinearFilter,
-  Object3D,
+  LinearMipmapLinearFilter,
+  type LoadingManager,
+  Mesh,
+  MeshStandardMaterial,
+  type Object3D,
+  PlaneGeometry,
+  RepeatWrapping,
+  type Scene,
+  SRGBColorSpace,
+  type TextureLoader,
+  type WebGLRenderer
 } from "three";
+import type { GLTF } from "three/examples/jsm/Addons";
 import { Bonfire } from "@/prefabs";
+import { createGLTFLoader } from "./utils";
 
 interface LoadAssetsInterface {
   scene: Scene;
@@ -28,7 +28,7 @@ export function loadAssets({
   scene,
   loadingManager,
   renderer,
-  texLoader,
+  texLoader
 }: LoadAssetsInterface) {
   const gltfLoader = createGLTFLoader(loadingManager);
 
@@ -63,7 +63,7 @@ export function loadAssets({
     roughnessMap: textures.armTex,
     displacementMap: textures.displacementMap,
     displacementScale: floorAsset.displacementScale,
-    color: floorAsset.color,
+    color: floorAsset.color
   });
 
   const floor = new Mesh(floorGeometry, floorMaterial);

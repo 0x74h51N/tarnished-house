@@ -1,13 +1,13 @@
 const IS_DEV: boolean = import.meta.env.DEV;
 
-import { Vector3 } from "three";
 import config from "config.json";
-import { ControlOptions, ControlReturn, DevUpdateFn } from "./types";
+import { Vector3 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons";
+import type { ControlOptions, ControlReturn } from "./types";
 
 export function setupControls({
   camera,
-  canvas,
+  canvas
 }: ControlOptions): ControlReturn {
   const controls = new OrbitControls(camera, canvas);
   const cfg = config.scene.camera.controls;
@@ -22,8 +22,6 @@ export function setupControls({
   controls.maxDistance = cfg.maxDistance;
   controls.minPolarAngle = cfg.minPolarAngle;
   controls.maxPolarAngle = cfg.maxPolarAngle;
-
-  let devUpdate: DevUpdateFn;
 
   if (IS_DEV) {
     controls.minDistance = 0.01;
@@ -56,7 +54,7 @@ export function setupControls({
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
 
-  devUpdate = (dt: number) => {
+  const devUpdate = (dt: number) => {
     if (pressed.size === 0) return;
 
     camera.getWorldDirection(fwd);

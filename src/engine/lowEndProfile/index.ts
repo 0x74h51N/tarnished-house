@@ -1,5 +1,5 @@
 import { detectLowEnd } from "./detectLowEnd";
-import { SpawnableName } from "@/loaders";
+import type { SpawnableName } from "@/loaders";
 import config from "config.json";
 import assets from "assets.json";
 import lowEnd from "./lowProfile.json";

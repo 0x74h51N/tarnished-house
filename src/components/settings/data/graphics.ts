@@ -1,11 +1,10 @@
-import { fog } from "@/engine/postprocess/fog";
-import { ShadowTypeKey, shadowTypes } from "@/types/global.types";
-import { allMatUpdt, shadowDispose } from "@/utils";
 import config from "config.json";
-import { DirectionalLight, Mesh, Object3D } from "three";
-import { GraphicsSettingsParams, GeneralControl } from "../types";
+import { DirectionalLight, type Light } from "three";
 import { applyShadowSizeAndBias } from "@/engine/lights/utils";
-import { InstancedMesh2 } from "@three.ez/instanced-mesh";
+import { fog } from "@/engine/postprocess/fog";
+import { type ShadowTypeKey, shadowTypes } from "@/types/global.types";
+import { allMatUpdt, shadowDispose } from "@/utils";
+import type { GeneralControl, GraphicsSettingsParams } from "../types";
 
 export function makeGraphicsSettings({
   scene,
@@ -13,11 +12,14 @@ export function makeGraphicsSettings({
   renderer,
   antialias,
   syncBloom,
-  randomMeshes,
+  randomMeshes
 }: GraphicsSettingsParams): GeneralControl[] {
   const rendererConf = config.scene.renderer;
   const shadowConfg = rendererConf.shadows;
-  const lightArr = [lights.fireLight!.light, lights.directLight.light];
+
+  const lightArr: Light[] = [lights.directLight.light];
+  lights.fireLight && lightArr.push(lights.fireLight.light);
+
   const defDist = shadowConfg.defDistance as keyof typeof shadowConfg.distance;
   const defLod = rendererConf.defLod as keyof typeof rendererConf.lods;
 
@@ -30,7 +32,7 @@ export function makeGraphicsSettings({
       onChange: (e) => {
         localStorage.setItem("antialias", String(e.target.checked));
         window.location.reload();
-      },
+      }
     },
     {
       type: "checkbox",
@@ -40,7 +42,7 @@ export function makeGraphicsSettings({
       onChange: (e) => {
         config.scene.postProcessing.bloom.enabled = e.target.checked;
         syncBloom();
-      },
+      }
     },
     {
       type: "checkbox",
@@ -50,7 +52,7 @@ export function makeGraphicsSettings({
       onChange: (e) => {
         const v = e.target.checked;
         scene.fog = v ? fog : null;
-      },
+      }
     },
     {
       type: "checkbox",
@@ -60,11 +62,13 @@ export function makeGraphicsSettings({
       onChange: (e) => {
         const v = e.target.checked;
         shadowDispose(lightArr);
-        lightArr.forEach((l) => (l.castShadow = v));
+        lightArr.forEach((l) => {
+          l.castShadow = v;
+        });
         renderer.shadowMap.enabled = v;
         renderer.shadowMap.needsUpdate = true;
         allMatUpdt(scene);
-      },
+      }
     },
     {
       type: "checkbox",
@@ -79,7 +83,7 @@ export function makeGraphicsSettings({
         v
           ? scene.add(lights.directLight.light)
           : scene.remove(lights.directLight.light);
-      },
+      }
     },
     {
       type: "select",
@@ -90,7 +94,7 @@ export function makeGraphicsSettings({
       ).map((k) => ({
         v: k,
         t: k,
-        s: rendererConf.lods[k] === rendererConf.lods[defLod],
+        s: rendererConf.lods[k] === rendererConf.lods[defLod]
       })),
       onChange: (e) => {
         const k = e.target.value as keyof typeof rendererConf.lods;
@@ -103,7 +107,7 @@ export function makeGraphicsSettings({
             }
           }
         });
-      },
+      }
     },
     {
       type: "select",
@@ -116,7 +120,7 @@ export function makeGraphicsSettings({
       ).map((key) => ({
         v: key,
         t: key,
-        s: shadowConfg.distance[key] === shadowConfg.distance[defDist],
+        s: shadowConfg.distance[key] === shadowConfg.distance[defDist]
       })),
       onChange: (e) => {
         const sel = e.target.value as keyof typeof shadowConfg.distance;
@@ -135,7 +139,7 @@ export function makeGraphicsSettings({
         dir.shadow.camera.far = o.far;
         dir.shadow.camera.updateProjectionMatrix();
         renderer.shadowMap.needsUpdate = true;
-      },
+      }
     },
     {
       type: "select",
@@ -148,14 +152,14 @@ export function makeGraphicsSettings({
       ).map((size) => ({
         v: Number(size),
         t: shadowConfg.mapSizes[size].name,
-        s: shadowConfg.defMapSize === Number(size),
+        s: shadowConfg.defMapSize === Number(size)
       })),
       onChange: (e) => {
         const res = +e.target.value;
         shadowDispose(lightArr);
         applyShadowSizeAndBias(lights, Number(res), shadowConfg.mapSizes);
         renderer.shadowMap.needsUpdate = true;
-      },
+      }
     },
     {
       type: "select",
@@ -164,7 +168,7 @@ export function makeGraphicsSettings({
       options: Object.entries(shadowTypes).map(([k]) => ({
         v: k,
         t: k,
-        s: renderer.shadowMap.type === shadowTypes[k as ShadowTypeKey],
+        s: renderer.shadowMap.type === shadowTypes[k as ShadowTypeKey]
       })),
       onChange: (e) => {
         const v = e.target.value as ShadowTypeKey;
@@ -172,7 +176,7 @@ export function makeGraphicsSettings({
         renderer.shadowMap.type = shadowTypes[v];
         renderer.shadowMap.needsUpdate = true;
         allMatUpdt(scene);
-      },
-    },
+      }
+    }
   ];
 }

@@ -23,7 +23,6 @@
 // Chrome-based browsers may produce visual glitches when using mediump precision in this shader.
 precision highp float;
 
-
 uniform sampler2D diffuseTexture;
 
 in vec4 vColor;
@@ -32,18 +31,19 @@ in float vFade;
 in float vage;
 out vec4 fragColor;
 
-void main() {
-if (vage <= 0.0) discard;
+void main () {
+    if (vage <= 0.0f)
+        discard;
 
-vec2 coords = (gl_PointCoord - 0.5) * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x) + 0.5;
+    vec2 coords = (gl_PointCoord - 0.5f) * mat2 (vAngle.x, vAngle.y, - vAngle.y, vAngle.x) + 0.5f;
 
-vec4 col = texture(diffuseTexture, coords) * vColor;
-float fade = clamp(1.0 - vFade, 0.0, 1.0);
+    vec4 col = texture (diffuseTexture, coords) * vColor;
+    float fade = clamp (1.0f - vFade, 0.0f, 1.0f);
 
-col.rgb *= fade;    
-col.a   *= fade;   
+    col.rgb *= fade;
+    col.a *= fade;
 
-col.a = max(col.a, 0.005);
+    col.a = max (col.a, 0.005f);
 
-fragColor = col;
+    fragColor = col;
 }

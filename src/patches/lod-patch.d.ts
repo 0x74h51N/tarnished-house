@@ -1,5 +1,6 @@
 // lod-patch.d.ts
 import "@three.ez/instanced-mesh";
+import type { Mesh, Object3D } from "three";
 
 declare module "@three.ez/instanced-mesh" {
   export type LODLevel = number;
@@ -8,7 +9,7 @@ declare module "@three.ez/instanced-mesh" {
     levels: Array<{
       distance: number;
       hysteresis?: number;
-      object: any;
+      object: Object3D | Mesh;
     }>;
     count?: number[];
   }

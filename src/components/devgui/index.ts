@@ -1,18 +1,17 @@
 export * from "./types";
 
 import GUI from "lil-gui";
-import config from "config.json";
+import type { SetupGUIInterface } from ".";
 import {
-  createHelpers,
-  createGraphicsSettings,
-  createLightSettings,
-  createSceneSettings,
   createCameraSettings,
+  createGraphicsSettings,
+  createHelpers,
+  createLightSettings,
   createParticleSettings,
+  createSceneSettings
 } from "./folders";
-import { SetupGUIInterface } from ".";
-import { SetupGUI } from "./types";
 import { createGeneral } from "./folders/general";
+import type { SetupGUI } from "./types";
 
 export function initSetupGUI({
   devMode,
@@ -25,7 +24,7 @@ export function initSetupGUI({
   lights,
   scene,
   particleSystems,
-  syncBloom,
+  syncBloom
 }: SetupGUIInterface): SetupGUI {
   // Initialize GUI
   const gui = new GUI({ title: "Settings" }).close();
@@ -61,7 +60,7 @@ export function initSetupGUI({
   createSceneSettings(gui, randomMeshes, scene);
 
   const { camera, cameraHelper } = CamController;
-  createCameraSettings(gui, scene, camera, cameraHelper!);
+  cameraHelper && createCameraSettings(gui, scene, camera, cameraHelper);
 
   createParticleSettings(gui, particleSystems);
 

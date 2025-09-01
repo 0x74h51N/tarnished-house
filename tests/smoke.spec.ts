@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+/** biome-ignore-all lint/style/noNonNullAssertion: Test */
+import { expect, test } from "@playwright/test";
 import { renderReady } from "./helpers";
 
 test("WebGL canvas&context test", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?e2e");
 
   const hasCanvas = await page.locator("canvas.webgl").count();
   expect(hasCanvas).toBeGreaterThan(0);
@@ -26,26 +27,26 @@ test("WebGL canvas&context test", async ({ page }) => {
 });
 
 test("Renderer first render", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?e2e");
   await renderReady(page);
 
   const tris = await page.evaluate(() => {
-    const w = window as unknown as {
+    const w = window as {
       __RENDERER__?: { info?: { render?: { triangles?: number } } };
     };
-    return w.__RENDERER__?.info?.render?.triangles ?? 0;
+    return w.__RENDERER__?.info?.render?.triangles;
   });
   expect(tris).toBeGreaterThan(0);
 });
 
 test("Static object render control [Bonfire]", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?e2e");
 
   await page.waitForFunction(
     () => {
       type Obj = { name?: string };
       type SceneLike = { traverse(cb: (o: Obj) => void): void };
-      const w = window as unknown as { __SCENE__?: SceneLike };
+      const w = window as { __SCENE__?: SceneLike };
       const s = w.__SCENE__;
       if (!s) return false;
       let found = false;
@@ -111,14 +112,30 @@ test("Static object render control [Bonfire]", async ({ page }) => {
       name: String(r.name ?? ""),
       visible: !!r.visible,
       meshCount,
-      pointsAttached,
+      pointsAttached
     };
   });
 
   expect(detail).not.toBeNull();
-  const d = detail!;
+  const d = detail;
+  expect(d!.name.startsWith("bonfire_")).toBeTruthy();
+  expect(d!.visible).toBeTruthy();
+  expect(d!.meshCount).toBeGreaterThan(0);
+});
 
-  expect(d.name.startsWith("bonfire_")).toBeTruthy();
-  expect(d.visible).toBeTruthy();
-  expect(d.meshCount).toBeGreaterThan(0);
+test.beforeEach(async ({ page }, testInfo) => {
+  page.on("pageerror", (err) =>
+    testInfo.attach("pageerror", {
+      body: String(err),
+      contentType: "text/plain"
+    })
+  );
+  page.on("console", (msg) => {
+    if (["error", "warning"].includes(msg.type())) {
+      testInfo.attach(`console:${msg.type()}`, {
+        body: msg.text(),
+        contentType: "text/plain"
+      });
+    }
+  });
 });

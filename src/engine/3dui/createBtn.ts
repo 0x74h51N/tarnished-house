@@ -1,12 +1,12 @@
 import {
+  type Camera,
+  CanvasTexture,
   Mesh,
-  PlaneGeometry,
   MeshBasicMaterial,
+  PlaneGeometry,
   Raycaster,
   Vector2,
-  Camera,
-  CanvasTexture,
-  Vector3Like,
+  type Vector3Like
 } from "three";
 import { roundRect } from "./utils";
 
@@ -29,20 +29,20 @@ export async function createBtn({
   width,
   height,
   rotation,
-  fontFamily = "UnifrakturCook",
+  fontFamily = "UnifrakturCook"
 }: BtnOpts) {
   const W = 512,
     H = 128;
   const cv = document.createElement("canvas");
   cv.width = W;
   cv.height = H;
-  const ctx = cv.getContext("2d")!;
+  const ctx = cv.getContext("2d");
 
   const tex = new CanvasTexture(cv);
   const mat = new MeshBasicMaterial({
     map: tex,
     transparent: true,
-    depthWrite: false,
+    depthWrite: false
   });
 
   const button = new Mesh(new PlaneGeometry(width, height), mat);
@@ -51,31 +51,33 @@ export async function createBtn({
 
   let currentLabel = label;
 
-  const draw = () => {
-    const gold = "#ffd700";
-    ctx.clearRect(0, 0, W, H);
+  const draw = ctx
+    ? () => {
+        const gold = "#ffd700";
+        ctx.clearRect(0, 0, W, H);
 
-    ctx.fillStyle = "rgba(12,12,16,0.72)";
-    roundRect(ctx, 12, 12, W - 24, H - 24, 16, true, false);
+        ctx.fillStyle = "rgba(12,12,16,0.72)";
+        roundRect(ctx, 12, 12, W - 24, H - 24, 16, true, false);
 
-    ctx.strokeStyle = gold;
-    ctx.lineWidth = 6;
-    roundRect(ctx, 12, 12, W - 24, H - 24, 16, false, true);
+        ctx.strokeStyle = gold;
+        ctx.lineWidth = 6;
+        roundRect(ctx, 12, 12, W - 24, H - 24, 16, false, true);
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.shadowColor = "#000";
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = gold;
-    ctx.strokeStyle = "#2a1a00";
-    ctx.lineWidth = 2;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowColor = "#000";
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = gold;
+        ctx.strokeStyle = "#2a1a00";
+        ctx.lineWidth = 2;
 
-    ctx.font = `72px "${fontFamily}", serif`;
-    ctx.fillText(currentLabel, W * 0.5, H * 0.52);
-    ctx.strokeText(currentLabel, W * 0.5, H * 0.52);
+        ctx.font = `72px "${fontFamily}", serif`;
+        ctx.fillText(currentLabel, W * 0.5, H * 0.52);
+        ctx.strokeText(currentLabel, W * 0.5, H * 0.52);
 
-    tex.needsUpdate = true; // ✅
-  };
+        tex.needsUpdate = true;
+      }
+    : () => {};
 
   draw();
   (document as Document).fonts?.ready?.then(() => draw()).catch(() => {});
@@ -83,11 +85,11 @@ export async function createBtn({
   const setLabel = (s: string) => {
     if (s === currentLabel) return;
     currentLabel = s;
-    button.name = s + "Button";
+    button.name = `${s}Button`;
     draw();
   };
 
-  button.name = label + "Button";
+  button.name = `${label}Button`;
   button.rotation.set(rotation.x, rotation.y, rotation.z);
   button.renderOrder = 10;
 

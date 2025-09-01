@@ -11,7 +11,9 @@
 #loading-screen {
   background-color: var(--color-bg-dark);
   opacity: 1;
-  transition: opacity 0.6s ease-in-out, background-color 1.6s ease-out;
+  transition:
+    opacity 0.6s ease-in-out,
+    background-color 1.6s ease-out;
 }
 
 #loading-screen.trans {
@@ -46,8 +48,8 @@
   width: 150px;
   height: 60px;
   font-size: 1.8em;
-  border-top-left-radius: 8px !important;
-  border-bottom-right-radius: 8px !important;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 1s ease;
@@ -90,8 +92,10 @@
   color: var(--color-gold);
   font-size: 2rem;
   letter-spacing: 3px;
-  text-shadow: 0 2px 12px #000, 0 0 8px var(--color-gold-shadow);
-  font-family: "UnifrakturCook", "Old English Text MT", "Goudy Medieval";
+  text-shadow:
+    0 2px 12px #000,
+    0 0 8px var(--color-gold-shadow);
+  font-family: "UnifrakturCook", "Old English Text MT", "Goudy Medieval", serif;
   animation: pulse 0.8s infinite alternate;
 }
 @keyframes pulse {
@@ -104,8 +108,8 @@
 }
 
 #intro-text {
-  color: var(--color-text) !important;
-  font-family: "UnifrakturCook", "Old English Text MT", "Goudy Medieval";
+  color: var(--color-text);
+  font-family: "UnifrakturCook", "Old English Text MT", "Goudy Medieval", serif;
   font-size: 1.4rem;
   text-align: center;
   letter-spacing: 1.5px;
@@ -117,7 +121,7 @@
 }
 
 #intro-text em {
-  color: var(--color-gold) !important;
+  color: var(--color-gold);
 }
 
 /* Responsive Breakpoints */
@@ -152,7 +156,7 @@
     min-height: 100dvh;
   }
   #intro-modal .modal-content {
-    align-content: center !important;
-    min-height: auto !important;
+    align-content: center;
+    min-height: auto;
   }
 }

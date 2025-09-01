@@ -1,1 +1,17 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running lint..."
+npm run lint
+status=$?
+
+if [ $status -ne 0 ]; then
+  echo "Lint errors found"
+  exit 1
+fi
+
+echo "Formatting..."
+npm run format
+
+echo "Running tests..."
 npm run test

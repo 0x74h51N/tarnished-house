@@ -1,7 +1,7 @@
-import GUI from "lil-gui";
-import { AudioBundle } from "@/types/global.types";
+import type GUI from "lil-gui";
+import type { AudioBundle } from "@/types/global.types";
 import config from "config.json";
-import { RuntimeCtrl } from "../types";
+import type { RuntimeCtrl } from "../types";
 
 export function createGeneral(gui: GUI, audio: AudioBundle): RuntimeCtrl {
   let paused = false;
@@ -11,14 +11,14 @@ export function createGeneral(gui: GUI, audio: AudioBundle): RuntimeCtrl {
     togglePause: () => {
       paused = !paused;
     },
-    timeScale: 1,
+    timeScale: 1
   };
 
   const buttons = {
     pauseOrResume: () => {
       runtime.togglePause();
       pauseCtrl.name(runtime.isPaused() ? "Resume" : "Pause");
-    },
+    }
   };
   const pauseCtrl = gui.add(buttons, "pauseOrResume").name("Pause");
 

@@ -8,8 +8,8 @@ import config from "config.json";
 
 // shadowmap size and bias utils
 import { AmbientLight } from "three";
-import { LightBundle } from "./types";
-import { MapSizeKey, MapSizes } from "@/types/global.types";
+import type { LightBundle } from "./types";
+import type { MapSizeKey, MapSizes } from "@/types/global.types";
 
 export function applyShadowSizeAndBias(
   bundle: LightBundle,
@@ -53,6 +53,6 @@ export function createShadowBiasProxy(bundle: LightBundle, mapSizes: MapSizes) {
       const k = currentShadowKey(bundle);
       mapSizes[k].bias.normal = v;
       applyShadowSizeAndBias(bundle, Number(k), mapSizes);
-    },
+    }
   };
 }

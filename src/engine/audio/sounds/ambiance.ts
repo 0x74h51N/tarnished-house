@@ -1,5 +1,5 @@
 import { Audio as ThreeAudio } from "three";
-import { SoundCreator } from "..";
+import type { SoundCreator } from "..";
 
 export const createAmbianceSound = ({ listener, loader }: SoundCreator) => {
   return function createAmbience(url: string) {

@@ -1,10 +1,10 @@
-import { WebGLRenderer, Scene, AxesHelper, GridHelper } from "three";
-import { UnrealBloomPass } from "three/examples/jsm/Addons";
-import { ManagerRefs } from "@/loaders";
-import { CamController, Composer, LightBundle } from "@/engine";
-import { AudioBundle } from "@/types/global.types";
-import { BonfireParticles } from "@/prefabs";
-import GUI from "lil-gui";
+import type { WebGLRenderer, Scene, AxesHelper, GridHelper } from "three";
+import type { UnrealBloomPass } from "three/examples/jsm/Addons";
+import type { ManagerRefs } from "@/loaders";
+import type { CamController, Composer, LightBundle } from "@/engine";
+import type { AudioBundle } from "@/types/global.types";
+import type { BonfireParticles } from "@/prefabs";
+import type GUI from "lil-gui";
 
 export interface SetupGUIInterface {
   devMode: boolean;

@@ -1,3 +1,4 @@
+import type config from "config.json";
 import {
   ACESFilmicToneMapping,
   BasicShadowMap,
@@ -7,10 +8,8 @@ import {
   PCFShadowMap,
   PCFSoftShadowMap,
   ReinhardToneMapping,
-  VSMShadowMap,
+  VSMShadowMap
 } from "three";
-
-import config from "config.json";
 
 //
 // Min max value slapper type
@@ -22,7 +21,7 @@ export const shadowTypes = {
   Basic: BasicShadowMap,
   PCF: PCFShadowMap,
   PCFSoft: PCFSoftShadowMap,
-  VSM: VSMShadowMap,
+  VSM: VSMShadowMap
 } as const;
 
 export type ShadowTypeMap = typeof shadowTypes;
@@ -36,7 +35,7 @@ export const toneMappingMap = {
   Linear: LinearToneMapping,
   Reinhard: ReinhardToneMapping,
   Cineon: CineonToneMapping,
-  "ACES Filmic": ACESFilmicToneMapping,
+  "ACES Filmic": ACESFilmicToneMapping
 } as const;
 
 export type ToneMappingMap = typeof toneMappingMap;

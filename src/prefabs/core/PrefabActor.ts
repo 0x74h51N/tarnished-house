@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: GPL-3.0
+/** biome-ignore-all lint/complexity/noThisInStatic: this is good for abstract */
 // Copyright (C) 2025 Tahsin Ö.
 // This file is part of Tarnished-house. See the LICENSE file for details.
 
 import {
-  BufferGeometry,
-  BufferGeometryEventMap,
+  type BufferGeometry,
+  type BufferGeometryEventMap,
   Group,
-  Material,
-  Mesh,
-  NormalBufferAttributes,
-  Object3DEventMap,
-  Points,
-  PositionalAudio,
-  Quaternion,
-  Vector3,
+  type Material,
+  type Mesh,
+  type NormalBufferAttributes,
   type Object3D,
+  type Object3DEventMap,
+  type PositionalAudio,
+  Quaternion,
+  Vector3
 } from "three";
 import type { Sizes } from "@/types/global.types";
 
-type ActorCtor<T extends Prefab, O> = new (sizes: Sizes, opts: O) => T;
+type ActorCtor<T extends Prefab, O> = abstract new (sizes: Sizes, opts: O) => T;
 
 interface PrefabStatics {
   _template: Object3D;
@@ -31,7 +31,7 @@ interface PrefabStatics {
 /* Base class for spawnable scene objects with audio,    */
 /* particle helpers, and easing utilities                */
 /* ===================================================== */
-export class Prefab extends Group {
+export abstract class Prefab extends Group {
   protected _root: Group;
   protected _sizes: Sizes;
 
@@ -60,11 +60,9 @@ export class Prefab extends Group {
    * @sideEffects    - updates template's world matrix, resolves internal ready promise.
    */
   static setTemplate(this: PrefabStatics, template: Object3D): void {
-    if (!this._ready) {
-      this._ready = new Promise<void>(
-        (resolve) => (this._resolveReady = resolve)
-      );
-    }
+    this._ready ??= new Promise<void>((resolve) => {
+      this._resolveReady = resolve;
+    });
     this._template = template;
     this._template.updateMatrixWorld(true);
     this._resolveReady?.();
@@ -83,13 +81,13 @@ export class Prefab extends Group {
     sizes: Sizes,
     opts: O
   ): Promise<T> {
-    if (!this._ready) {
-      this._ready = new Promise<void>(
-        (resolve) => (this._resolveReady = resolve)
-      );
-    }
+    this._ready ??= new Promise<void>((resolve) => {
+      this._resolveReady = resolve;
+    });
     if (!this._template) await this._ready;
-    return new this(sizes, opts);
+
+    const Ctor = this as unknown as new (sizes: Sizes, opts: O) => T;
+    return new Ctor(sizes, opts);
   }
 
   /**
@@ -241,7 +239,7 @@ export class Prefab extends Group {
     const tick = (dt: number) => {
       t += dt;
       const k = t >= dur ? 1 : t / dur;
-      const e = 1 - Math.pow(1 - k, 3); // cubic-out
+      const e = 1 - (1 - k) ** 3; // cubic-out
       set(from + (to - from) * e);
       return k === 1;
     };

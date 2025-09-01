@@ -1,6 +1,6 @@
-import { PerspectiveCamera, CameraHelper, Scene } from "three";
+import type { PerspectiveCamera, CameraHelper, Scene } from "three";
 import config from "config.json";
-import GUI from "lil-gui";
+import type GUI from "lil-gui";
 
 export function createCameraSettings(
   gui: GUI,
@@ -15,7 +15,7 @@ export function createCameraSettings(
     cameraX: config.scene.camera.position.x,
     cameraY: config.scene.camera.position.y,
     cameraZ: config.scene.camera.position.z,
-    cameraHelper: config.scene.debug.cameraHelper,
+    cameraHelper: config.scene.debug.cameraHelper
   };
 
   const cameraGui = gui.addFolder("Camera Settings");

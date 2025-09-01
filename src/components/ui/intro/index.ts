@@ -1,10 +1,11 @@
 import config from "config.json";
 import { introText } from "./text";
 import "./styles.css";
+import { byId } from "@/components/utils";
 
 export function initIntroModal(): (fn?: () => void) => void {
-  const introTextEl = document.getElementById("intro-text")!;
-  const introModal = document.getElementById("intro-modal")!;
+  const introTextEl = byId("intro-text");
+  const introModal = byId("intro-modal");
 
   introTextEl.innerHTML = introText;
 
@@ -14,10 +15,10 @@ export function initIntroModal(): (fn?: () => void) => void {
     });
   }, 1);
 
-  const btnContainer = document.getElementById("btn-container")!;
-  const loadingScreen = document.getElementById("loading-screen")!;
-  const loader = document.getElementById("loader")!;
-  const enterBtn = document.getElementById("enter-scene") as HTMLButtonElement;
+  const btnContainer = byId("btn-container");
+  const loadingScreen = byId("loading-screen");
+  const loader = byId("loader");
+  const enterBtn = byId("enter-scene") as HTMLButtonElement;
   const uiConfig = config.scene.ui.transitions;
 
   return function showEnterButton(fn?: () => void) {
@@ -35,7 +36,7 @@ export function initIntroModal(): (fn?: () => void) => void {
     enterBtn.addEventListener("click", () => {
       loadingScreen.classList.add("hidden");
       btnContainer.classList.remove("hidden");
-      fn && fn();
+      fn?.();
       setTimeout(() => {
         loadingScreen.style.display = "none";
       }, uiConfig.loadingScreen);

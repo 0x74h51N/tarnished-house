@@ -1,8 +1,8 @@
-import { Mesh } from "three";
-import assets from "assets.json";
-import { minMax } from "@/types/global.types";
-import { InstancedMesh2 } from "@three.ez/instanced-mesh";
-import { T } from ".";
+import type { Mesh } from "three";
+import type assets from "assets.json";
+import type { minMax } from "@/types/global.types";
+import type { InstancedMesh2 } from "@three.ez/instanced-mesh";
+import type { T } from ".";
 
 export type rotationType = minMax | number | undefined;
 
