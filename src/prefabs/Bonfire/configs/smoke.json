@@ -8,7 +8,7 @@
   "opacity": 0.9,
   "instant": false,
   "color": "#454545",
-  "sizeGrowth": 0.9,
+  "sizeGrowth": 1.15,
   "fadeRate": 0.12,
   "scaleFactor": 1.1
 }

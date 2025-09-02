@@ -1,10 +1,10 @@
+import config from "config.json";
 import type { PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import {
   EffectComposer,
   RenderPass,
   type UnrealBloomPass
-} from "three/examples/jsm/Addons";
-import config from "config.json";
+} from "three/examples/jsm/Addons.js";
 import { createBloomPass } from "./bloomPass";
 import { fog } from "./fog";
 

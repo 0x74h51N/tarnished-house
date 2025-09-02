@@ -1,5 +1,5 @@
 import type { WebGLRenderer } from "three";
-import type { EffectComposer } from "three/examples/jsm/Addons";
+import type { EffectComposer } from "three/examples/jsm/Addons.js";
 import { byId } from "../utils";
 
 interface ScreenshotOptions {

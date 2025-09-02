@@ -13,6 +13,7 @@ import {
 } from "three";
 import { createGuiUpdater, v4 } from "@/utils";
 import type { Step } from "../types";
+import { stripUnusedAttrs } from "../utils";
 import frag from "./shaders/fragment.frag";
 import vertex from "./shaders/vertex.vert";
 import type { Flame, FlameHandlers, FlameInterface } from "./types";
@@ -161,6 +162,8 @@ export const createFlame = ({
   };
 
   const update = createGuiUpdater(guiHandlers);
+
+  stripUnusedAttrs(flame.geometry);
 
   return { flame, step, update };
 };

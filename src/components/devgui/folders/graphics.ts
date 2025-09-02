@@ -1,7 +1,7 @@
 import config from "config.json";
 import type GUI from "lil-gui";
 import type { Light, OrthographicCamera, Scene, WebGLRenderer } from "three";
-import type { UnrealBloomPass } from "three/examples/jsm/Addons";
+import type { UnrealBloomPass } from "three/examples/jsm/Addons.js";
 import type { LightBundle } from "@/engine";
 import {
   applyShadowSizeAndBias,

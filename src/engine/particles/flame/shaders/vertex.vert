@@ -8,8 +8,9 @@ in vec3 position;
 
 out vec3 vWorldPos;
 
-void main () {
-    gl_Position = projectionMatrix * modelViewMatrix * vec4 (position, 1.0f);
+void main()
+{
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0f);
 
-    vWorldPos = (modelMatrix * vec4 (position, 1.0f)).xyz;
+    vWorldPos = (modelMatrix * vec4(position, 1.0f)).xyz;
 }

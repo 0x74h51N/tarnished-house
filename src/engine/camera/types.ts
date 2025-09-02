@@ -1,5 +1,5 @@
 import type { CameraHelper, PerspectiveCamera, Scene, Vector3 } from "three";
-import type { OrbitControls } from "three/examples/jsm/Addons";
+import type { OrbitControls } from "three/examples/jsm/Addons.js";
 
 export interface CameraOptions {
   sizes: { width: number; height: number };

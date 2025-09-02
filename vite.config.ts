@@ -1,9 +1,9 @@
-import { defineConfig } from "vite";
-import restart from "vite-plugin-restart";
-import checker from "vite-plugin-checker";
+import path from "node:path";
 import { visualizer } from "rollup-plugin-visualizer";
+import { defineConfig } from "vite";
+import checker from "vite-plugin-checker";
 import glsl from "vite-plugin-glsl";
-import path from "path";
+import restart from "vite-plugin-restart";
 
 export default defineConfig(() => {
   const shouldAnalyze = process.env.ANALYZE === "1";
@@ -15,15 +15,13 @@ export default defineConfig(() => {
         "@": path.resolve(__dirname, "src"),
         components: path.resolve(__dirname, "src/components"),
         "config.json": path.resolve(__dirname, "src/config.json"),
-        "assets.json": path.resolve(__dirname, "src/assets.json"),
+        "assets.json": path.resolve(__dirname, "src/assets.json")
       },
-      dedupe: ["@three.ez/instanced-mesh"],
+      dedupe: ["@three.ez/instanced-mesh"]
     },
     server: {
       host: true,
-      open: !(
-        "SANDBOX_URL" in process.env || "CODESANDBOX_HOST" in process.env
-      ),
+      open: !("SANDBOX_URL" in process.env || "CODESANDBOX_HOST" in process.env)
     },
     build: {
       outDir: "../dist",
@@ -32,10 +30,10 @@ export default defineConfig(() => {
       rollupOptions: {
         output: {
           manualChunks: {
-            three: ["three"],
-          },
-        },
-      },
+            three: ["three"]
+          }
+        }
+      }
     },
     plugins: [
       glsl(),
@@ -46,8 +44,8 @@ export default defineConfig(() => {
           open: true,
           filename: "stats.html",
           gzipSize: true,
-          brotliSize: true,
-        }),
-    ].filter(Boolean),
+          brotliSize: true
+        })
+    ].filter(Boolean)
   };
 });

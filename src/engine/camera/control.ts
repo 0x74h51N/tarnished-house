@@ -2,7 +2,7 @@ const IS_DEV: boolean = import.meta.env.DEV;
 
 import config from "config.json";
 import { Vector3 } from "three";
-import { OrbitControls } from "three/examples/jsm/Addons";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
 import type { ControlOptions, ControlReturn } from "./types";
 
 export function setupControls({

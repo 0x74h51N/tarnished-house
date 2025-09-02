@@ -13,7 +13,7 @@ import {
   type TextureLoader,
   type WebGLRenderer
 } from "three";
-import type { GLTF } from "three/examples/jsm/Addons";
+import type { GLTF } from "three/examples/jsm/Addons.js";
 import { Bonfire } from "@/prefabs";
 import { createGLTFLoader } from "./utils";
 

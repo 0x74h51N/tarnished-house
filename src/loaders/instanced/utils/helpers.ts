@@ -5,7 +5,7 @@ import {
   type Object3D,
   type Object3DEventMap
 } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { rotationType } from "@/loaders";
 
 /**
