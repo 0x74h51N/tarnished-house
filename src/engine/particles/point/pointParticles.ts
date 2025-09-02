@@ -31,7 +31,7 @@ import {
   GLSL3,
   Group,
   Points,
-  ShaderMaterial,
+  RawShaderMaterial,
   type Texture,
   TextureLoader,
   Vector2,
@@ -138,10 +138,13 @@ export function createPointParticles(
   geometry.setAttribute("velocity", new BufferAttribute(vel, 3));
   geometry.setAttribute("startTime", new BufferAttribute(startTime, 1));
   geometry.setAttribute("size", new BufferAttribute(sizeArr, 1));
-  geometry.setAttribute("sizeGrowth", new BufferAttribute(growthArr, 1));
-  geometry.setAttribute("fadeRate", new BufferAttribute(fadeArr, 1));
-  geometry.setAttribute("angle", new BufferAttribute(anglesArr, 1));
   geometry.setAttribute("aColor", new BufferAttribute(colsArr, 4));
+
+  if (isSmoke(props)) {
+    geometry.setAttribute("sizeGrowth", new BufferAttribute(growthArr, 1));
+    geometry.setAttribute("fadeRate", new BufferAttribute(fadeArr, 1));
+    geometry.setAttribute("angle", new BufferAttribute(anglesArr, 1));
+  }
 
   const POS_VEL_TIME_KEYS = ["position", "velocity", "startTime"];
 
@@ -184,7 +187,7 @@ export function createPointParticles(
     diffuseTexture: { value: dTex }
   };
 
-  const material = new ShaderMaterial({
+  const material = new RawShaderMaterial({
     glslVersion: GLSL3,
     uniforms,
     vertexShader: isSparkV ? SparkVS : VS,

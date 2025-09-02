@@ -74,6 +74,7 @@
       "sparks": {
         "maxCount": 18,
         "spawnRate": 4,
+        "size": 0.12,
         "sparkProps": {
           "waveFreq": 2.8,
           "waveAmp": 0.12
