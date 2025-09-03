@@ -10,7 +10,7 @@ export function createMoonCSM(scene: Scene, camera: PerspectiveCamera) {
       shadows: { defMapSize, defMaxFar, maxFar, mapSizes }
     },
     lighting: {
-      directional: { color, position, target, intensity }
+      directional: { color, position, target, intensity, enabled }
     }
   } = config.scene;
   const normalBias = mapSizes[defMapSize.toString() as MapSizeKey].bias.normal;
@@ -31,6 +31,8 @@ export function createMoonCSM(scene: Scene, camera: PerspectiveCamera) {
 
   const moonColor = new Color(color);
   csm.lights.forEach((l) => {
+    l.visible = enabled;
+    l.castShadow = enabled;
     l.color.copy(moonColor);
     l.shadow.normalBias = normalBias;
   });

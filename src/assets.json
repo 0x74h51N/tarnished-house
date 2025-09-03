@@ -2,19 +2,19 @@
   "decoder": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
   "floor": {
     "color": "#cccccc",
-    "displacementScale": 0.145,
+    "displacementScale": 0.125,
     "textures": {
       "baseColor": "./floor/textures/ground-diff.avif",
       "normalMap": "./floor/textures/ground-norm.avif",
       "armTex": "./floor/textures/ground-arm.avif",
       "displacementMap": "./floor/textures/ground-disp.avif",
-      "repeat": 44
+      "repeat": 150
     },
     "geometry": {
-      "width": 470,
-      "height": 470,
-      "widthSegments": 500,
-      "heightSegments": 500
+      "width": 1100,
+      "height": 1100,
+      "widthSegments": 900,
+      "heightSegments": 900
     }
   },
   "models": {
@@ -58,16 +58,16 @@
       "trees": {
         "path": "./trees/trees.gltf",
         "spawn": {
-          "count": 750,
+          "count": 1500,
           "lodsCount": 3,
           "yPosition": -0.11,
           "scale": {
             "min": 0.5,
-            "max": 1.5
+            "max": 1.65
           },
           "radius": {
-            "min": 16,
-            "max": 245
+            "min": 18,
+            "max": 530
           },
           "minDistance": 10,
           "castShadow": true,
@@ -80,15 +80,15 @@
       "bushes": {
         "path": "./bushes/bushLod.gltf",
         "spawn": {
-          "count": 700,
+          "count": 1200,
           "lodsCount": 3,
           "scale": {
             "min": 1.0,
-            "max": 3
+            "max": 2.5
           },
           "radius": {
             "min": 8,
-            "max": 200
+            "max": 480
           },
           "minDistance": 1,
           "castShadow": true,
@@ -123,7 +123,7 @@
       "branches": {
         "path": "./branches/branches.gltf",
         "spawn": {
-          "count": 350,
+          "count": 800,
           "lodsCount": 3,
           "scale": {
             "min": 2,
@@ -131,7 +131,7 @@
           },
           "radius": {
             "min": 10,
-            "max": 200
+            "max": 430
           },
           "minDistance": 8,
           "castShadow": true,

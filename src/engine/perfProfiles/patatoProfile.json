@@ -1,21 +1,52 @@
 {
-  "moonLightEnabled": false,
-  "renderer": {
-    "maxPixelRatio": 2,
-    "defLod": "Patato",
-    "shadows": {
-      "defMapSize": 512,
-      "defMaxFar": "Patato"
+  "scene": {
+    "camera": {
+      "fov": 33,
+      "near": 0.1,
+      "far": 140,
+      "position": {
+        "x": 7,
+        "y": 2,
+        "z": 15
+      },
+      "controls": {
+        "positionLimits": {
+          "x": { "min": -170, "max": 170 },
+          "y": { "min": 1.98, "max": 50 },
+          "z": { "min": -170, "max": 170 }
+        }
+      }
+    },
+    "renderer": {
+      "defLod": "Patato",
+      "shadows": {
+        "defMapSize": 512,
+        "defMaxFar": "Patato"
+      }
+    },
+    "lighting": {
+      "directional": {
+        "enabled": false
+      }
+    },
+    "postProcessing": {
+      "fog": {
+        "near": 6,
+        "far": 80
+      }
     }
   },
   "assets": {
     "floor": {
+      "displacementScale": 0.1,
       "textures": {
-        "repeat": 20
+        "repeat": 30
       },
       "geometry": {
-        "widthSegments": 100,
-        "heightSegments": 100
+        "width": 450,
+        "height": 450,
+        "widthSegments": 180,
+        "heightSegments": 180
       }
     },
     "spawnables": {
@@ -24,16 +55,16 @@
           "count": 200,
           "radius": {
             "min": 15,
-            "max": 150
+            "max": 200
           }
         }
       },
       "bushes": {
         "spawn": {
-          "count": 65,
+          "count": 80,
           "radius": {
             "min": 9,
-            "max": 90
+            "max": 140
           },
           "receiveShadow": false
         }
@@ -50,10 +81,10 @@
       },
       "branches": {
         "spawn": {
-          "count": 50,
+          "count": 80,
           "radius": {
             "min": 8,
-            "max": 80
+            "max": 170
           },
           "castShadow": false,
           "receiveShadow": false

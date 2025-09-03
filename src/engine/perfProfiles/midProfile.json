@@ -1,0 +1,107 @@
+{
+  "scene": {
+    "camera": {
+      "fov": 35,
+      "near": 0.1,
+      "far": 150,
+      "position": {
+        "x": 7,
+        "y": 3,
+        "z": 14
+      },
+      "controls": {
+        "positionLimits": {
+          "x": { "min": -220, "max": 220 },
+          "y": { "min": 1.98, "max": 50 },
+          "z": { "min": -220, "max": 220 }
+        }
+      }
+    },
+    "renderer": {
+      "defLod": "Patato",
+      "shadows": {
+        "defMapSize": 1024,
+        "defMaxFar": "Medium"
+      }
+    },
+    "postProcessing": {
+      "fog": {
+        "near": 8,
+        "far": 85
+      }
+    }
+  },
+  "assets": {
+    "floor": {
+      "displacementScale": 0.1,
+      "textures": {
+        "repeat": 40
+      },
+      "geometry": {
+        "width": 750,
+        "height": 750,
+        "widthSegments": 500,
+        "heightSegments": 500
+      }
+    },
+    "spawnables": {
+      "trees": {
+        "spawn": {
+          "count": 480,
+          "radius": {
+            "min": 15,
+            "max": 300
+          }
+        }
+      },
+      "bushes": {
+        "spawn": {
+          "count": 200,
+          "radius": {
+            "min": 9,
+            "max": 270
+          },
+          "receiveShadow": false
+        }
+      },
+      "graves": {
+        "spawn": {
+          "count": 45,
+          "radius": {
+            "min": 10,
+            "max": 60
+          }
+        }
+      },
+      "branches": {
+        "spawn": {
+          "count": 140,
+          "radius": {
+            "min": 8,
+            "max": 250
+          },
+          "castShadow": false,
+          "receiveShadow": false
+        }
+      }
+    },
+    "particles": {
+      "flame": {
+        "noise": {
+          "magnitude": 2.24
+        },
+        "march": { "iterations": 18 }
+      },
+      "smoke": {
+        "maxCount": 25
+      },
+      "sparks": {
+        "maxCount": 33,
+        "sparkProps": {
+          "waveFreq": 2.8,
+          "waveAmp": 0.12
+        }
+      }
+    }
+  }
+}

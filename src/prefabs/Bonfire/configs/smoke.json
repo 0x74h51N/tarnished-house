@@ -5,7 +5,7 @@
   "maxCount": 45,
   "spawnRate": 1.7,
   "startPozs": { "x": 0, "y": 0.9, "z": 0 },
-  "opacity": 0.9,
+  "opacity": 0.93,
   "instant": false,
   "color": "#454545",
   "sizeGrowth": 1.15,
