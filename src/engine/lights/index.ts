@@ -1,9 +1,13 @@
-import { type Scene, AmbientLight } from "three";
 import config from "config.json";
-import { createDirectLight } from "./directionalLight";
+import { AmbientLight, type Scene } from "three";
+import type { CamController } from "../camera";
+import { createMoonCSM } from "./cascadedMoonLight";
 import type { LightBundle } from "./types";
 
-export function createLights(scene: Scene): LightBundle {
+export function createLights(
+  scene: Scene,
+  CamController: CamController
+): LightBundle {
   // Ambient
   const ambientLight = new AmbientLight(
     config.scene.lighting.ambient.color,
@@ -12,14 +16,11 @@ export function createLights(scene: Scene): LightBundle {
   scene.add(ambientLight);
 
   // Directional
-  const directLight = createDirectLight(scene);
-
-  // Fire point light
+  const directLight = createMoonCSM(scene, CamController.camera);
 
   return {
     ambientLight,
     directLight
   };
 }
-
 export * from "./types";

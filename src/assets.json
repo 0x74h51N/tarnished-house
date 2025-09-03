@@ -135,7 +135,7 @@
           },
           "minDistance": 8,
           "castShadow": true,
-          "receiveShadow": false,
+          "receiveShadow": true,
           "yPosition": 0.05,
           "rotation": {
             "y": { "min": 0, "max": 2 }

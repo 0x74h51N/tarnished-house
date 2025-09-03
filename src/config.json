@@ -3,7 +3,7 @@
     "skipIntro": true,
     "autoOpenGUI": true,
     "autoStats": true,
-    "skipLowEndOnDesktop": true,
+    "skipEndOnDesktop": true,
     "startAudioMuted": true
   },
   "helpers": {
@@ -49,39 +49,51 @@
       "maxPixelRatio": 2,
       "defLod": "High",
       "lods": {
-        "Low": { "lod1": 35, "lod2": 60, "lod3": 85 },
+        "Patato": { "lod1": 35, "lod2": 60, "lod3": 85 },
         "Medium": { "lod1": 55, "lod2": 80, "lod3": 100 },
         "High": { "lod1": 85, "lod2": 120, "lod3": 160 },
-        "Insane": { "lod1": 100, "lod2": 170, "lod3": 210 }
+        "Ultra": { "lod1": 90, "lod2": 140, "lod3": 210 },
+        "Insane": { "lod1": 120, "lod2": 200, "lod3": 230 }
       },
       "shadows": {
         "enabled": true,
-        "type": "PCFSoft",
+        "type": "PCF",
         "defMapSize": 2048,
-        "defDistance": "High",
+        "defMaxFar": "High",
+        "bias": {
+          "high": 0,
+          "normal": 0.3
+        },
         "mapSizes": {
           "512": {
-            "name": "Low",
+            "name": "Patato",
             "bias": {
               "high": 0.003,
-              "normal": 0.1
+              "normal": 0.3
             }
           },
           "1024": {
             "name": "Medium",
             "bias": {
               "high": 0.0001,
-              "normal": 0.24
+              "normal": 0.4
             }
           },
           "2048": {
             "name": "High",
             "bias": {
               "high": 0.0001,
-              "normal": 0.2
+              "normal": 0.1
             }
           },
           "4096": {
+            "name": "Ultra",
+            "bias": {
+              "high": -0.0001,
+              "normal": 0.05
+            }
+          },
+          "5125": {
             "name": "Insane",
             "bias": {
               "high": -0.0001,
@@ -89,27 +101,12 @@
             }
           }
         },
-        "distance": {
-          "Low": {
-            "width": 90,
-            "height": 90,
-            "far": 90
-          },
-          "Medium": {
-            "width": 150,
-            "height": 150,
-            "far": 180
-          },
-          "High": {
-            "width": 200,
-            "height": 200,
-            "far": 250
-          },
-          "Insane": {
-            "width": 270,
-            "height": 270,
-            "far": 290
-          }
+        "maxFar": {
+          "Patato": 90,
+          "Medium": 140,
+          "High": 165,
+          "Ultra": 190,
+          "Insane": 250
         }
       }
     },
@@ -126,14 +123,6 @@
           "x": 0,
           "y": 90,
           "z": 105
-        },
-        "shadow": {
-          "camera": {
-            "near": 1.0
-          }
-        },
-        "helper": {
-          "size": 1
         },
         "target": {
           "position": {

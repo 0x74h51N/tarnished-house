@@ -2,10 +2,10 @@
   "moonLightEnabled": false,
   "renderer": {
     "maxPixelRatio": 2,
-    "defLod": "Low",
+    "defLod": "Patato",
     "shadows": {
       "defMapSize": 512,
-      "defDistance": "Low"
+      "defMaxFar": "Patato"
     }
   },
   "assets": {

@@ -35,7 +35,7 @@ import {
 import { loadAssets, type ManagerRefs, randomMeshes } from "./loaders";
 import { Bonfire } from "./prefabs";
 import type { AudioBundle } from "./types/global.types";
-import { createSizes } from "./utils";
+import { createSizes, setMatsCMS } from "./utils";
 
 const IS_E2E =
   import.meta.env.VITE_E2E === "1" ||
@@ -192,7 +192,7 @@ if (!IS_DEV) {
 // Lights
 //
 
-const lights = createLights(scene);
+const lights = createLights(scene, CamController);
 
 //
 // Ignite Button
@@ -242,6 +242,8 @@ function getManagers(): ManagerRefs {
   return managers;
 }
 
+setMatsCMS(lights.directLight, scene);
+
 //
 // Stats
 const hud = createPerfHUD({ renderer, container: document.body });
@@ -257,7 +259,6 @@ const activeUpdate: SceneUpdate = (dt, elapsed) => {
 };
 
 let runSceneUpdate: SceneUpdate = activeUpdate;
-let getTimeScale: () => number = () => 1;
 
 let guiLoaded = false;
 let devGUI: SetupGUI | undefined;
@@ -289,7 +290,6 @@ async function openDevGUI() {
   });
 
   const r = devGUI.runtime;
-  getTimeScale = () => r.timeScale;
 
   const origToggle = r.togglePause;
   r.togglePause = () => {
@@ -306,6 +306,7 @@ let managers: ManagerRefs | undefined;
 
 randomMeshes({ scene }).then((m) => {
   managers = m;
+  setMatsCMS(lights.directLight, scene);
 
   if (IS_DEV && DEV_PROFILE.autoOpenGUI) openDevGUI();
 
@@ -332,7 +333,6 @@ randomMeshes({ scene }).then((m) => {
 });
 
 //---------------------------------------------------
-
 //
 //
 // Main loop
@@ -351,10 +351,12 @@ const controlUpdt: (d: number) => void = IS_DEV
 loop.addUpdate((delta, elapsed) => {
   CamController.controls.update();
   controlUpdt(delta);
+
   CamController.camera.updateMatrix();
 
-  const dtScaled = delta * getTimeScale();
-  runSceneUpdate(dtScaled, elapsed);
+  lights.directLight.update();
+
+  runSceneUpdate(delta, elapsed);
 });
 
 loop.addRender(() => {

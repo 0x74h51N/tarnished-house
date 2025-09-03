@@ -1,17 +1,13 @@
 import config from "config.json";
 import type GUI from "lil-gui";
-import type { Light, OrthographicCamera, Scene, WebGLRenderer } from "three";
+import type { Light, Scene, WebGLRenderer } from "three";
 import type { UnrealBloomPass } from "three/examples/jsm/Addons.js";
 import type { LightBundle } from "@/engine";
 import {
   applyShadowSizeAndBias,
   createShadowBiasProxy
 } from "@/engine/lights/utils";
-import {
-  shadowTypes,
-  type ToneMappingKey,
-  toneMappingMap
-} from "@/types/global.types";
+import { type ToneMappingKey, toneMappingMap } from "@/types/global.types";
 import { allMatUpdt, shadowDispose } from "@/utils";
 import type { SetupGUIInterface } from "../types";
 
@@ -86,13 +82,13 @@ export function createGraphicsSettings(
   // Shadows
   const { directLight, fireLight } = lights;
 
-  const lightArr: Light[] = [directLight.light];
+  const lightArr: Light[] = [...directLight.lights];
   if (fireLight) lightArr.push(fireLight.light);
 
   const shadows = graphics.addFolder("Shadows");
   shadows.close();
 
-  const biasProxy = createShadowBiasProxy(lights, shadowMapSizes);
+  const biasProxy = createShadowBiasProxy(lightArr, shadowMapSizes);
 
   const highCtrl = shadows
     .add(biasProxy, "high", -0.05, 0.05, 0.0001)
@@ -110,7 +106,7 @@ export function createGraphicsSettings(
     .name("Shadow Resolution")
     .onChange((v: number) => {
       shadowDispose(lightArr);
-      applyShadowSizeAndBias(lights, v, shadowMapSizes);
+      applyShadowSizeAndBias(lightArr, v, shadowMapSizes);
       highCtrl.updateDisplay();
       normalCtrl.updateDisplay();
       renderer.shadowMap.needsUpdate = true;
@@ -126,22 +122,6 @@ export function createGraphicsSettings(
       lightArr.forEach((l) => {
         l.castShadow = v;
       });
-
-      if (directLight.light.shadow && "camera" in directLight.light.shadow) {
-        (directLight.light.shadow.camera as OrthographicCamera).visible = v;
-        renderer.shadowMap.needsUpdate = true;
-      }
-      allMatUpdt(scene);
-    });
-
-  shadows
-    .add(graphicsParams, "shadowType", Object.keys(shadowTypes))
-    .name("Shadow Type")
-    .onChange((v: string) => {
-      shadowDispose(lightArr);
-      renderer.shadowMap.type = shadowTypes[v as keyof typeof shadowTypes];
-      renderer.shadowMap.needsUpdate = true;
-
       allMatUpdt(scene);
     });
 }

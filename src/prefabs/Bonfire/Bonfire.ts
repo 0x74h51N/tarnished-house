@@ -81,7 +81,12 @@ export class Bonfire extends Prefab {
     this._hilt = (root.getObjectByName("hilt") as Mesh)
       .material as MeshStandardMaterial;
 
-    (root.getObjectByName("floor") as Mesh).renderOrder = 3;
+    const floor = root.getObjectByName("floor") as Mesh;
+    floor.renderOrder = 3;
+    floor.receiveShadow = true;
+
+    const stones = root.getObjectByName("stones") as Mesh;
+    stones.castShadow = true;
 
     // Transform
     this.scale.setScalar(opts.scale);

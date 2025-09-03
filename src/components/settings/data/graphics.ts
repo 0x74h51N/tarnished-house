@@ -1,8 +1,8 @@
 import config from "config.json";
-import { DirectionalLight, type Light } from "three";
+import type { Light } from "three";
 import { applyShadowSizeAndBias } from "@/engine/lights/utils";
 import { fog } from "@/engine/postprocess/fog";
-import { type ShadowTypeKey, shadowTypes } from "@/types/global.types";
+import type { MapSizeKey } from "@/types/global.types";
 import { allMatUpdt, shadowDispose } from "@/utils";
 import type { GeneralControl, GraphicsSettingsParams } from "../types";
 
@@ -17,10 +17,10 @@ export function makeGraphicsSettings({
   const rendererConf = config.scene.renderer;
   const shadowConfg = rendererConf.shadows;
 
-  const lightArr: Light[] = [lights.directLight.light];
+  const lightArr: Light[] = [...lights.directLight.lights];
   lights.fireLight && lightArr.push(lights.fireLight.light);
 
-  const defDist = shadowConfg.defDistance as keyof typeof shadowConfg.distance;
+  const defDist = shadowConfg.defMaxFar as keyof typeof shadowConfg.maxFar;
   const defLod = rendererConf.defLod as keyof typeof rendererConf.lods;
 
   return [
@@ -79,10 +79,10 @@ export function makeGraphicsSettings({
         const v = e.target.checked;
         config.scene.lighting.directional.enabled = v;
         shadowDispose(lightArr);
-        lights.directLight.light.castShadow = v;
-        v
-          ? scene.add(lights.directLight.light)
-          : scene.remove(lights.directLight.light);
+        lights.directLight.lights.forEach((l) => {
+          l.visible = v;
+          l.castShadow = v;
+        });
       }
     },
     {
@@ -111,71 +111,36 @@ export function makeGraphicsSettings({
     },
     {
       type: "select",
-      id: "shadowDistance",
-      label: "Shadow Distance",
+      id: "shadowQuality",
+      label: "Shadow Quality",
       options: (
-        Object.keys(shadowConfg.distance) as Array<
-          keyof typeof shadowConfg.distance
+        Object.keys(shadowConfg.maxFar) as Array<
+          keyof typeof shadowConfg.maxFar
         >
       ).map((key) => ({
         v: key,
         t: key,
-        s: shadowConfg.distance[key] === shadowConfg.distance[defDist]
+        s: shadowConfg.maxFar[key] === shadowConfg.maxFar[defDist]
       })),
       onChange: (e) => {
-        const sel = e.target.value as keyof typeof shadowConfg.distance;
-        const o = shadowConfg.distance[sel];
+        const v = e.target.value;
+        const o = shadowConfg.maxFar[v as keyof typeof shadowConfg.maxFar];
+        const res = Object.keys(shadowConfg.mapSizes).find(
+          (k) => shadowConfg.mapSizes[k as MapSizeKey].name === v
+        );
         if (!o) return;
         shadowDispose(lightArr);
-        const dir = lightArr.find(
-          (l) => l instanceof DirectionalLight
-        ) as DirectionalLight;
-        const half = o.width / 2;
-        const halfH = o.height / 2;
-        dir.shadow.camera.left = -half;
-        dir.shadow.camera.right = half;
-        dir.shadow.camera.bottom = -halfH;
-        dir.shadow.camera.top = halfH;
-        dir.shadow.camera.far = o.far;
-        dir.shadow.camera.updateProjectionMatrix();
-        renderer.shadowMap.needsUpdate = true;
-      }
-    },
-    {
-      type: "select",
-      id: "shadowResolution",
-      label: "Shadow Resolution",
-      options: (
-        Object.keys(shadowConfg.mapSizes) as Array<
-          keyof typeof shadowConfg.mapSizes
-        >
-      ).map((size) => ({
-        v: Number(size),
-        t: shadowConfg.mapSizes[size].name,
-        s: shadowConfg.defMapSize === Number(size)
-      })),
-      onChange: (e) => {
-        const res = +e.target.value;
-        shadowDispose(lightArr);
-        applyShadowSizeAndBias(lights, Number(res), shadowConfg.mapSizes);
-        renderer.shadowMap.needsUpdate = true;
-      }
-    },
-    {
-      type: "select",
-      id: "shadowType",
-      label: "Shadow Type",
-      options: Object.entries(shadowTypes).map(([k]) => ({
-        v: k,
-        t: k,
-        s: renderer.shadowMap.type === shadowTypes[k as ShadowTypeKey]
-      })),
-      onChange: (e) => {
-        const v = e.target.value as ShadowTypeKey;
-        shadowDispose(lightArr);
-        renderer.shadowMap.type = shadowTypes[v];
-        renderer.shadowMap.needsUpdate = true;
+        lights.directLight.maxFar = o;
+
+        applyShadowSizeAndBias(lightArr, Number(res), shadowConfg.mapSizes);
+
+        lights.directLight.lights.forEach((l) => {
+          l.shadow.needsUpdate = true;
+        });
+        lights.directLight.updateFrustums();
+
         allMatUpdt(scene);
+        renderer.shadowMap.needsUpdate = true;
       }
     }
   ];

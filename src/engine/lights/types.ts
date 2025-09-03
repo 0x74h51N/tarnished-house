@@ -1,10 +1,11 @@
-import type { FireLight } from "@/prefabs";
 import type {
   AmbientLight,
   CameraHelper,
   DirectionalLight,
   DirectionalLightHelper
 } from "three";
+import type { CSM } from "three/examples/jsm/Addons.js";
+import type { FireLight } from "@/prefabs";
 
 export type DirectLight = {
   light: DirectionalLight;
@@ -15,5 +16,5 @@ export type DirectLight = {
 export type LightBundle = {
   ambientLight: AmbientLight;
   fireLight?: FireLight;
-  directLight: DirectLight;
+  directLight: CSM;
 };

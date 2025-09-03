@@ -1,9 +1,9 @@
-import { PointLight, PointLightHelper } from "three";
 import config from "config.json";
-import { animateValue } from "../../engine/lights/utils";
+import { PointLight, PointLightHelper } from "three";
 import type { MapSizeKey } from "@/types/global.types";
-import type { FireLight } from "./types";
+import { animateValue } from "../../engine/lights/utils";
 import { bonfireConf } from "./configs";
+import type { FireLight } from "./types";
 
 export const createFireLight = (): FireLight => {
   const { defMapSize, mapSizes } = config.scene.renderer.shadows;
