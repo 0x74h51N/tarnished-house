@@ -1,0 +1,31 @@
+{
+  "fov": 35,
+  "near": 0.1,
+  "far": 200,
+  "position": {
+    "x": 7,
+    "y": 3,
+    "z": 11
+  },
+  "controls": {
+    "minPolarAngle": 0.2618,
+    "maxPolarAngle": 2.7925,
+    "mouseSens": 0.0006,
+    "moveSpeed": 6,
+    "moveTau": 0.12,
+    "sprintMult": 1.7,
+    "dead": 0.01,
+    "mobileLook": {
+      "turnTau": 0.01,
+      "lookDead": 0.26
+    },
+    "touchSens": 0.005,
+    "lookTau": 0.1,
+    "positionLimits": {
+      "x": { "min": -320, "max": 320 },
+      "y": { "min": 1.98, "max": 50 },
+      "z": { "min": -320, "max": 320 }
+    },
+    "lerpFactor": 0.67
+  }
+}

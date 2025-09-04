@@ -22,3 +22,17 @@ export function deepAssign<T>(target: T, src: DeepPartial<T>): T {
   }
   return target;
 }
+
+export function classIncludes(el: Element, className: string, cb: () => void) {
+  if (el.classList.contains(className)) {
+    cb();
+    return;
+  }
+  const mo = new MutationObserver(() => {
+    if (el.classList.contains(className)) {
+      mo.disconnect();
+      cb();
+    }
+  });
+  mo.observe(el, { attributes: true, attributeFilter: ["class"] });
+}

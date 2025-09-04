@@ -1,6 +1,7 @@
-import type { PerspectiveCamera, CameraHelper, Scene } from "three";
 import config from "config.json";
 import type GUI from "lil-gui";
+import type { CameraHelper, PerspectiveCamera, Scene } from "three";
+import { camCnfg } from "@/engine";
 
 export function createCameraSettings(
   gui: GUI,
@@ -9,12 +10,12 @@ export function createCameraSettings(
   cameraHelper: CameraHelper
 ) {
   const cameraParams = {
-    cameraFov: config.scene.camera.fov,
-    cameraNear: config.scene.camera.near,
-    cameraFar: config.scene.camera.far,
-    cameraX: config.scene.camera.position.x,
-    cameraY: config.scene.camera.position.y,
-    cameraZ: config.scene.camera.position.z,
+    cameraFov: camCnfg.fov,
+    cameraNear: camCnfg.near,
+    cameraFar: camCnfg.far,
+    cameraX: camCnfg.position.x,
+    cameraY: camCnfg.position.y,
+    cameraZ: camCnfg.position.z,
     cameraHelper: config.scene.debug.cameraHelper
   };
 

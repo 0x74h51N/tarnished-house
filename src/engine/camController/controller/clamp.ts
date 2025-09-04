@@ -1,16 +1,16 @@
-import config from "config.json";
 import { MathUtils } from "three";
+import { camCnfg } from "..";
 import type { ClampFn, ClampRtrn } from "./types";
 
 export function createClamp({ camera }: ClampFn): ClampRtrn {
-  const controlsConfig = config.scene.camera.controls;
+  const cnfg = camCnfg.controls;
   const limits = {
-    minY: controlsConfig.positionLimits.y.min,
-    maxY: controlsConfig.positionLimits.y.max,
-    minX: controlsConfig.positionLimits.x.min,
-    maxX: controlsConfig.positionLimits.x.max,
-    minZ: controlsConfig.positionLimits.z.min,
-    maxZ: controlsConfig.positionLimits.z.max
+    minY: cnfg.positionLimits.y.min,
+    maxY: cnfg.positionLimits.y.max,
+    minX: cnfg.positionLimits.x.min,
+    maxX: cnfg.positionLimits.x.max,
+    minZ: cnfg.positionLimits.z.min,
+    maxZ: cnfg.positionLimits.z.max
   };
 
   function clampAxis(axis: "x" | "y" | "z") {
@@ -19,7 +19,7 @@ export function createClamp({ camera }: ClampFn): ClampRtrn {
     camera.position[axis] = MathUtils.lerp(
       camera.position[axis],
       MathUtils.clamp(camera.position[axis], min, max),
-      controlsConfig.lerpFactor
+      cnfg.lerpFactor
     );
   }
   const clampCameraPosition = () => {

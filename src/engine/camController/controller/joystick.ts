@@ -56,9 +56,23 @@ export function createJoystick({
     vec.y = 0;
     vec.mag = 0;
   });
+  const show = () => {
+    zone.style.display = "block";
+    zone.style.pointerEvents = "auto";
+  };
+
+  const hide = () => {
+    zone.style.display = "none";
+    zone.style.pointerEvents = "none";
+    vec.x = 0;
+    vec.y = 0;
+    vec.mag = 0;
+  };
 
   return {
     get: () => vec,
+    show,
+    hide,
     destroy: () => {
       manager.destroy();
       zone.remove();

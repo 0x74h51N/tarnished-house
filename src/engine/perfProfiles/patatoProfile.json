@@ -1,22 +1,22 @@
 {
-  "scene": {
-    "camera": {
-      "fov": 33,
-      "near": 0.1,
-      "far": 140,
-      "position": {
-        "x": 7,
-        "y": 2,
-        "z": 15
-      },
-      "controls": {
-        "positionLimits": {
-          "x": { "min": -170, "max": 170 },
-          "y": { "min": 1.98, "max": 50 },
-          "z": { "min": -170, "max": 170 }
-        }
-      }
+  "camera": {
+    "fov": 33,
+    "near": 0.1,
+    "far": 140,
+    "position": {
+      "x": 7,
+      "y": 2,
+      "z": 15
     },
+    "controls": {
+      "positionLimits": {
+        "x": { "min": -170, "max": 170 },
+        "y": { "min": 1.98, "max": 50 },
+        "z": { "min": -170, "max": 170 }
+      }
+    }
+  },
+  "scene": {
     "renderer": {
       "defLod": "Patato",
       "shadows": {

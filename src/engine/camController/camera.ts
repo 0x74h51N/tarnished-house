@@ -1,18 +1,19 @@
-import { CameraHelper, PerspectiveCamera } from "three";
-import type { CameraOptions, CameraReturn } from "./types";
 import config from "config.json";
+import { CameraHelper, PerspectiveCamera } from "three";
+import { camCnfg } from ".";
+import type { CameraOptions, CameraReturn } from "./types";
 
 export function createCamera({ sizes }: CameraOptions): CameraReturn {
   const camera = new PerspectiveCamera(
-    config.scene.camera.fov,
+    camCnfg.fov,
     sizes.width / sizes.height,
-    config.scene.camera.near,
-    config.scene.camera.far
+    camCnfg.near,
+    camCnfg.far
   );
   camera.position.set(
-    config.scene.camera.position.x,
-    config.scene.camera.position.y,
-    config.scene.camera.position.z
+    camCnfg.position.x,
+    camCnfg.position.y,
+    camCnfg.position.z
   );
 
   let cameraHelper = null;

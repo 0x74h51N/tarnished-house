@@ -3,6 +3,7 @@ import config from "config.json";
 import type { SpawnableName } from "@/loaders";
 import { flameConf, smokeConf, sparkConf } from "@/prefabs";
 import { deepAssign } from "@/utils";
+import { camCnfg } from "..";
 import { detectPerf } from "./detect";
 import midJSON from "./midProfile.json";
 import patatoJSON from "./patatoProfile.json";
@@ -18,6 +19,9 @@ export async function applyPerfProfile() {
 
   const profile = (tier === "patato" ? patatoJSON : midJSON) as PerfProfile;
   console.log(tier, " detected!");
+
+  // Controls
+  if (profile.camera) deepAssign(camCnfg, profile.camera);
 
   // Scene
   if (profile.scene) deepAssign(config.scene, profile.scene);

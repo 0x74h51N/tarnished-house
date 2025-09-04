@@ -1,5 +1,6 @@
 import config from "config.json";
 import { byId } from "@/components/utils";
+import { camCnfg } from "@/engine";
 import type { GeneralControl, GeneralSettingsParams } from "..";
 
 export function makeGeneralSettings({
@@ -10,7 +11,8 @@ export function makeGeneralSettings({
       ? config.scene.audio.volume * 100
       : 0;
 
-  return [
+  const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  const controls: GeneralControl[] = [
     {
       type: "range",
       id: "volume",
@@ -21,11 +23,46 @@ export function makeGeneralSettings({
       value: volumeVal.toString(),
       span: "volumeValue",
       onChange: (e) => {
-        const val = +e.target.value;
-        byId("volumeValue").textContent = val.toString();
-        audio.setVol(val / 100);
-        audio.updtMuteIcon(val / 100);
+        const v = +e.target.value;
+        byId("volumeValue").textContent = v.toString();
+        audio.setVol(v / 100);
+        audio.updtMuteIcon(v / 100);
       }
     }
   ];
+  if (isTouch) {
+    controls.push({
+      type: "range",
+      id: "touchSens",
+      label: "Look Sensitivity",
+      min: "0.1",
+      max: "1",
+      step: "0.01",
+      value: (camCnfg.controls.touchSens * 100).toFixed(2),
+      span: "sensValue",
+      onChange: (e) => {
+        const v = +e.target.value;
+        camCnfg.controls.touchSens = v / 100;
+        byId("sensValue").textContent = v.toFixed(2);
+      }
+    });
+  } else {
+    controls.push({
+      type: "range",
+      id: "mouseSens",
+      label: "Mouse Sensitivity",
+      min: "0.1",
+      max: "1",
+      step: "0.01",
+      value: (camCnfg.controls.mouseSens * 1000).toFixed(2),
+      span: "sensValue",
+      onChange: (e) => {
+        const v = +e.target.value;
+        camCnfg.controls.mouseSens = v / 1000;
+        byId("sensValue").textContent = v.toFixed(2);
+      }
+    });
+  }
+
+  return controls;
 }

@@ -1,5 +1,6 @@
 import config from "config.json";
 import { byId } from "@/components/utils";
+import { camCnfg } from "@/engine";
 import { type ToneMappingKey, toneMappingMap } from "@/types/global.types";
 import type { DisplaySettingsParams, GeneralControl } from "..";
 
@@ -9,7 +10,7 @@ export function makeDisplaySettings({
   toggleStats
 }: DisplaySettingsParams): GeneralControl[] {
   const toneVal = renderer.toneMappingExposure;
-  const fovVal = config.scene.camera.fov;
+  const fovVal = camCnfg.fov;
 
   return [
     {
