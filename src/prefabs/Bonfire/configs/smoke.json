@@ -1,14 +1,14 @@
 {
   "textures": "./smoke/smoke1.png",
   "area": 0.26,
-  "size": 0.42,
-  "maxCount": 45,
-  "spawnRate": 1.7,
-  "startPozs": { "x": 0, "y": 0.9, "z": 0 },
-  "opacity": 0.93,
+  "size": 0.55,
+  "maxCount": 60,
+  "spawnRate": 2,
+  "startPozs": { "x": 0, "y": 0.94, "z": 0 },
+  "opacity": 1,
   "instant": false,
   "color": "#454545",
-  "sizeGrowth": 1.15,
-  "fadeRate": 0.12,
+  "sizeGrowth": 1.2,
+  "fadeRate": 0.11,
   "scaleFactor": 1.1
 }

@@ -37,8 +37,9 @@ import {
   Vector2,
   Vector3
 } from "three";
-import { createGuiUpdater } from "@/utils";
+import { createGuiUpdater, v3 } from "@/utils";
 import type { Step } from "../types";
+import { cullingBounds } from "../utils";
 import FS from "./shaders/fragment.frag";
 import SparksFS from "./shaders/sparks/fragment.frag";
 import SparkVS from "./shaders/sparks/vertex.vert";
@@ -201,6 +202,13 @@ export function createPointParticles(
   });
 
   const pts = new Points(geometry, material);
+
+  const center = v3(props.startPozs);
+  const rxz = 10;
+  const H = 15;
+
+  cullingBounds(geometry, center, rxz, H);
+
   pts.renderOrder = 4;
   points.add(pts);
 

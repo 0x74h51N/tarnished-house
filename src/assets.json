@@ -2,13 +2,13 @@
   "decoder": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
   "floor": {
     "color": "#cccccc",
-    "displacementScale": 0.125,
+    "displacementScale": 0.13,
     "textures": {
       "baseColor": "./floor/textures/ground-diff.avif",
       "normalMap": "./floor/textures/ground-norm.avif",
       "armTex": "./floor/textures/ground-arm.avif",
       "displacementMap": "./floor/textures/ground-disp.avif",
-      "repeat": 150
+      "repeat": 170
     },
     "geometry": {
       "width": 1100,
@@ -21,11 +21,12 @@
     "house": {
       "path": "./abandoned_house/house.gltf",
       "position": {
-        "x": 0.02,
+        "x": 8,
         "y": 0.25,
-        "z": -12
+        "z": -14
       },
-      "scale": 2.5,
+      "rotation": { "y": -110 },
+      "scale": 4,
       "castShadow": true,
       "receiveShadow": true
     },
@@ -43,11 +44,11 @@
         }
       },
       "inst-1": {
-        "scale": 2.55,
+        "scale": 3.34,
         "position": {
           "x": -0.55,
           "y": 0.093,
-          "z": 2
+          "z": 8
         },
         "rotation": { "x": 0, "y": 0, "z": 0 },
         "castShadow": true,
@@ -58,18 +59,18 @@
       "trees": {
         "path": "./trees/trees.gltf",
         "spawn": {
-          "count": 1500,
+          "count": 1400,
           "lodsCount": 3,
-          "yPosition": -0.11,
+          "yPosition": -0.1,
           "scale": {
-            "min": 0.5,
-            "max": 1.65
+            "min": 0.7,
+            "max": 3
           },
           "radius": {
-            "min": 18,
+            "min": 35,
             "max": 530
           },
-          "minDistance": 10,
+          "minDistance": 15,
           "castShadow": true,
           "receiveShadow": true,
           "rotation": {
@@ -84,10 +85,10 @@
           "lodsCount": 3,
           "scale": {
             "min": 1.0,
-            "max": 2.5
+            "max": 2.25
           },
           "radius": {
-            "min": 8,
+            "min": 14,
             "max": 480
           },
           "minDistance": 1,
@@ -103,11 +104,11 @@
         "spawn": {
           "count": 55,
           "scale": {
-            "min": 0.21,
-            "max": 0.22
+            "min": 0.23,
+            "max": 0.24
           },
           "radius": {
-            "min": 14,
+            "min": 16,
             "max": 55
           },
           "minDistance": 3,
@@ -127,7 +128,7 @@
           "lodsCount": 3,
           "scale": {
             "min": 2,
-            "max": 6.5
+            "max": 6
           },
           "radius": {
             "min": 10,

@@ -27,7 +27,8 @@ export function makeGraphicsSettings({
     {
       type: "checkbox",
       id: "antialiasing",
-      label: "Antialiasing (will restart)",
+      label: "Antialiasing",
+      tooltip: "Will restart",
       checked: antialias,
       onChange: (e) => {
         localStorage.setItem("antialias", String(e.target.checked));

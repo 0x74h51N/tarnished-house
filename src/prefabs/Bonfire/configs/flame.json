@@ -1,19 +1,19 @@
 {
-  "size": 1.4,
-  "uTimeMult": 4.65,
-  "startPozs": { "x": 0, "y": 0.1, "z": 0 },
+  "size": 1.65,
+  "uTimeMult": 1,
+  "startPozs": { "x": 0, "y": 0.29, "z": 0 },
   "color": "#ff0000",
   "noise": {
-    "noiseScale": { "x": 0.7, "y": 1.62, "z": 0.7, "w": 0.29 },
-    "magnitude": 2.8,
+    "noiseScale": { "x": 0.73, "y": 1.3, "z": 0.73, "w": 1.53 },
+    "magnitude": 1.92,
     "lacunarity": 1.54,
     "gain": 0.53,
     "octaves": 3
   },
   "march": {
-    "iterations": 25,
+    "iterations": 27,
     "rayStepFactor": 0.0288
   },
-  "colorMixStr": 0.65,
+  "colorMixStr": 0.6,
   "texture": "./fire.png"
 }

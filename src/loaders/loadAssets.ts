@@ -3,6 +3,7 @@ import {
   LinearFilter,
   LinearMipmapLinearFilter,
   type LoadingManager,
+  MathUtils,
   Mesh,
   MeshStandardMaterial,
   type Object3D,
@@ -109,6 +110,7 @@ export function loadAssets({
         mat.needsUpdate = true;
       }
     });
+    house.rotateY(MathUtils.degToRad(houseAsset.rotation.y));
     scene.add(house);
   });
 

@@ -1,8 +1,7 @@
-const IS_DEV: boolean = import.meta.env.DEV;
-
 import { Vector3 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { byId } from "@/components";
+import { IS_DEV } from "@/main";
 import { camCnfg } from "../";
 import { type InputProvider, KeyboardInput, TouchInput } from "./input";
 import type { ControlOptions, ControlReturn } from "./types";

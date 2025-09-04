@@ -3,6 +3,7 @@ import { byId } from "@/components/utils";
 import { camCnfg } from "@/engine";
 import { type ToneMappingKey, toneMappingMap } from "@/types/global.types";
 import type { DisplaySettingsParams, GeneralControl } from "..";
+import { isFullscreen, setFullscreen } from "../utils";
 
 export function makeDisplaySettings({
   renderer,
@@ -23,11 +24,21 @@ export function makeDisplaySettings({
       }
     },
     {
+      type: "checkbox",
+      id: "fullScreen",
+      label: "FullScreen",
+      checked: isFullscreen(),
+      onChange: async (e) => {
+        const on = e.target.checked;
+        await setFullscreen(on, document.documentElement);
+      }
+    },
+    {
       type: "range",
       id: "fov",
       label: "Cam FOV",
-      min: "25",
-      max: "90",
+      min: "20",
+      max: "75",
       step: "1",
       value: fovVal.toString(),
       span: "fovVal",
@@ -49,6 +60,7 @@ export function makeDisplaySettings({
       step: "0.1",
       value: toneVal.toString(),
       span: "brightnessValue",
+      hide: true,
       onChange: (e) => {
         const val = +e.target.value;
         byId("brightnessValue").textContent = val.toString();

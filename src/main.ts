@@ -43,7 +43,9 @@ const IS_E2E =
   import.meta.env.VITE_E2E === "1" ||
   new URL(location.href).searchParams.has("e2e");
 
-export const IS_DEV: boolean = import.meta.env.DEV;
+export const IS_DEV: boolean =
+  new URLSearchParams(window.location.search).has("dev") ||
+  import.meta.env.DEVKEY;
 
 const DEV_PROFILE = config.devProfile;
 if (IS_DEV) {

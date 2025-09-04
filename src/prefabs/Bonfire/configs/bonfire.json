@@ -38,17 +38,17 @@
   "fireLight": {
     "color": "#ffae42",
     "position": { "x": 0, "y": 0.3, "z": 0 },
-    "intensity": 35,
-    "minIntensity": 0.5,
-    "distance": 12.5,
-    "decay": 0.8,
+    "intensity": 30,
+    "minIntensity": 0.1,
+    "distance": 30,
+    "decay": 0.6,
 
-    "decayStart": 2,
-    "decayExtinguishTo": 2.5,
+    "decayStart": 1,
+    "decayExtinguishTo": 1.5,
     "animation": {
-      "intensity": { "speed": 12, "amplitude": 4 },
-      "position": { "speed": 11, "amplitude": 0.05 },
-      "distance": { "speed": 10, "amplitude": 1 }
+      "intensity": { "speed": 10, "amplitude": 3 },
+      "position": { "speed": 11, "amplitude": 0.01 },
+      "distance": { "speed": 9, "amplitude": 2 }
     },
     "helper": { "size": 0.2 }
   }

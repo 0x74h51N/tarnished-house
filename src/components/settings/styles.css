@@ -12,6 +12,14 @@
 #settings-modal .modal-content-wrapper::after {
   content: none;
 }
+.control-tip {
+  font-size: 0.6em;
+  vertical-align: super;
+  line-height: 1;
+  margin-left: 4px;
+  cursor: help;
+  font-weight: 700;
+}
 
 #settings-modal .modal-content {
   height: 100dvh;
@@ -43,14 +51,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
     cursor: pointer;
     margin-bottom: 1.2rem;
   }
 
   label:has(input[type="checkbox"]) {
     justify-content: flex-start;
-    gap: 10px;
   }
 
   input[type="range"] {
@@ -64,6 +70,7 @@
     width: 18px;
     height: 18px;
     accent-color: var(--color-gold);
+    margin-right: 10px;
   }
 
   select {
@@ -121,7 +128,6 @@
   }
 
   .settings-content .control-label {
-    padding: 1rem;
     margin-bottom: 0.9rem;
   }
 
@@ -131,6 +137,7 @@
 
   .settings-content .range-control input[type="range"] {
     margin: 0.5rem 0;
+    margin-left: 0.3rem;
   }
 
   .settings-content .range-value {
@@ -146,10 +153,6 @@
 
   .settings-content .control-label {
     padding: 0;
-  }
-
-  .settings-content .range-control {
-    justify-content: space-around;
   }
 
   .settings-content .range-value {

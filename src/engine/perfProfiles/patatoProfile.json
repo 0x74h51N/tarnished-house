@@ -2,11 +2,11 @@
   "camera": {
     "fov": 33,
     "near": 0.1,
-    "far": 140,
+    "far": 130,
     "position": {
-      "x": 7,
-      "y": 2,
-      "z": 15
+      "x": 2,
+      "y": 5.1,
+      "z": 20
     },
     "controls": {
       "positionLimits": {
@@ -52,9 +52,9 @@
     "spawnables": {
       "trees": {
         "spawn": {
-          "count": 200,
+          "count": 330,
           "radius": {
-            "min": 15,
+            "min": 27,
             "max": 200
           }
         }
@@ -94,7 +94,7 @@
     "particles": {
       "flame": {
         "noise": {
-          "magnitude": 1.98
+          "magnitude": 1.8
         },
         "march": { "iterations": 12 }
       },

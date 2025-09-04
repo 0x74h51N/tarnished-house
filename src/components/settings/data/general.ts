@@ -34,32 +34,34 @@ export function makeGeneralSettings({
     controls.push({
       type: "range",
       id: "touchSens",
-      label: "Look Sensitivity",
+      label: "Sensitivity",
+      tooltip: "Mouse Sensitivity",
       min: "0.1",
       max: "1",
       step: "0.01",
-      value: (camCnfg.controls.touchSens * 100).toFixed(2),
+      value: (camCnfg.controls.touchSens * 100).toFixed(1),
       span: "sensValue",
       onChange: (e) => {
         const v = +e.target.value;
         camCnfg.controls.touchSens = v / 100;
-        byId("sensValue").textContent = v.toFixed(2);
+        byId("sensValue").textContent = v.toFixed(1);
       }
     });
   } else {
     controls.push({
       type: "range",
       id: "mouseSens",
-      label: "Mouse Sensitivity",
+      label: "Sensitivity",
+      tooltip: "Look Sensitivity",
       min: "0.1",
       max: "1",
       step: "0.01",
-      value: (camCnfg.controls.mouseSens * 1000).toFixed(2),
+      value: (camCnfg.controls.mouseSens * 1000).toFixed(1),
       span: "sensValue",
       onChange: (e) => {
         const v = +e.target.value;
         camCnfg.controls.mouseSens = v / 1000;
-        byId("sensValue").textContent = v.toFixed(2);
+        byId("sensValue").textContent = v.toFixed(1);
       }
     });
   }

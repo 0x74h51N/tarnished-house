@@ -3,9 +3,9 @@
   "near": 0.1,
   "far": 200,
   "position": {
-    "x": 7,
-    "y": 3,
-    "z": 11
+    "x": 2,
+    "y": 5.2,
+    "z": 20
   },
   "controls": {
     "minPolarAngle": 0.2618,

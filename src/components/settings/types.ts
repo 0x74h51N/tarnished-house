@@ -19,6 +19,7 @@ export interface BaseControl<E extends HTMLElement> {
   type: string;
   id: string;
   label: string;
+  tooltip?: string;
   onChange(e: Event & { target: E }): void;
 }
 

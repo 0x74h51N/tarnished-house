@@ -3,11 +3,6 @@
     "fov": 35,
     "near": 0.1,
     "far": 150,
-    "position": {
-      "x": 7,
-      "y": 3,
-      "z": 14
-    },
     "controls": {
       "positionLimits": {
         "x": { "min": -220, "max": 220 },
@@ -47,9 +42,9 @@
     "spawnables": {
       "trees": {
         "spawn": {
-          "count": 480,
+          "count": 520,
           "radius": {
-            "min": 15,
+            "min": 30,
             "max": 300
           }
         }

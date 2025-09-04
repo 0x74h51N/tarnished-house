@@ -61,14 +61,14 @@
               "normal": 0.1
             }
           },
-          "4096": {
+          "3072": {
             "name": "Ultra",
             "bias": {
               "high": -0.0001,
               "normal": 0.05
             }
           },
-          "5125": {
+          "4096": {
             "name": "Insane",
             "bias": {
               "high": -0.0001,
@@ -77,11 +77,11 @@
           }
         },
         "maxFar": {
-          "Patato": 90,
-          "Medium": 140,
-          "High": 165,
+          "Patato": 85,
+          "Medium": 110,
+          "High": 160,
           "Ultra": 190,
-          "Insane": 250
+          "Insane": 240
         }
       }
     },
@@ -93,7 +93,7 @@
       "directional": {
         "enabled": true,
         "color": "#b0c4de",
-        "intensity": 3.5,
+        "intensity": 3.6,
         "position": {
           "x": 0,
           "y": 90,
@@ -111,7 +111,7 @@
     "postProcessing": {
       "bloom": {
         "enabled": true,
-        "strength": 0.35,
+        "strength": 0.5,
         "radius": 0.1,
         "threshold": 0.6
       },
