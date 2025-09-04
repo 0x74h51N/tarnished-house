@@ -1,7 +1,7 @@
 import { AudioListener, AudioLoader, type LoadingManager } from "three";
+import type { CameraReturn } from "../camController";
+import { createAmbianceSound, createPositionalSound } from "./sounds";
 import type { AudioAPI } from "./types";
-import type { CameraReturn } from "../camera";
-import { createPositionalSound, createAmbianceSound } from "./sounds";
 
 interface CreateAudio {
   camera: CameraReturn["camera"];
@@ -33,5 +33,5 @@ export function createAudio({ camera, loadingManager }: CreateAudio): AudioAPI {
   return { setVol, createPositional, createAmbience, resume };
 }
 
-export * from "./utils";
 export * from "./types";
+export * from "./utils";

@@ -24,21 +24,27 @@
       "far": 200,
       "position": {
         "x": 7,
-        "y": 5,
+        "y": 3,
         "z": 11
       },
       "controls": {
-        "dampingFactor": 0.089,
-        "panSpeed": 0.5,
-        "rotateSpeed": 0.46,
-        "minDistance": 3,
-        "maxDistance": 57,
-        "minPolarAngle": 0.3236,
-        "maxPolarAngle": 1.4165,
+        "minPolarAngle": 0.2618,
+        "maxPolarAngle": 2.7925,
+        "mouseSens": 0.0006,
+        "moveSpeed": 6,
+        "moveTau": 0.12,
+        "sprintMult": 1.7,
+        "dead": 0.01,
+        "mobileLook": {
+          "turnTau": 0.01,
+          "lookDead": 0.26,
+          "forwardBias": 0.5
+        },
+        "lookTau": 0.1,
         "positionLimits": {
-          "x": { "min": -100, "max": 100 },
-          "y": { "min": 1.98, "max": 45 },
-          "z": { "min": -100, "max": 100 }
+          "x": { "min": -320, "max": 320 },
+          "y": { "min": 1.98, "max": 50 },
+          "z": { "min": -320, "max": 320 }
         },
         "lerpFactor": 0.67
       }
@@ -144,8 +150,8 @@
         "enabled": true,
         "color": "#607276",
         "density": 0.035,
-        "near": 10,
-        "far": 140
+        "near": 11,
+        "far": 160
       }
     },
     "audio": {
@@ -175,6 +181,6 @@
   },
   "settings": {
     "targetPos": { "x": 0.46, "y": -2, "z": -7.68 },
-    "cameraPos": { "x": -46, "y": 32, "z": 25.41 }
+    "cameraPos": { "x": -46, "y": 10, "z": 25.41 }
   }
 }

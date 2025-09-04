@@ -282,7 +282,8 @@ h3 {
   /* Buttons */
   .btn-container {
     right: 15px;
-    bottom: 15px;
+    bottom: unset;
+    top: 15px;
   }
   .btn {
     font-size: 1rem;

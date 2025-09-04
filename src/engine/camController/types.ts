@@ -1,5 +1,6 @@
 import type { CameraHelper, PerspectiveCamera, Scene, Vector3 } from "three";
 import type { OrbitControls } from "three/examples/jsm/Addons.js";
+import type { ClampRtrn, ControlReturn } from "./controller";
 
 export interface CameraOptions {
   sizes: { width: number; height: number };
@@ -8,24 +9,6 @@ export interface CameraOptions {
 export interface CameraReturn {
   camera: PerspectiveCamera;
   cameraHelper: CameraHelper | null;
-}
-
-export interface ControlOptions {
-  camera: PerspectiveCamera;
-  canvas: HTMLCanvasElement;
-}
-export type DevUpdateFn = ((dt: number) => void) | undefined;
-export interface ControlReturn {
-  controls: OrbitControls;
-  devUpdate?: DevUpdateFn;
-}
-
-export interface ClampFn {
-  camera: PerspectiveCamera;
-}
-
-export interface ClampRtrn {
-  clampCameraPosition: () => void;
 }
 
 export interface CameraPositionerInterface {
@@ -52,6 +35,4 @@ export interface CameraSystemOptions {
   sizes: { width: number; height: number };
 }
 
-export interface CamController extends CameraReturn, ControlReturn, ClampRtrn {
-  positioner: CameraPositionerReturn;
-}
+export interface CamController extends CameraReturn, ControlReturn, ClampRtrn {}

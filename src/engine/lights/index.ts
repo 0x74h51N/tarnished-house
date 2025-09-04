@@ -1,6 +1,6 @@
 import config from "config.json";
 import { AmbientLight, type Scene } from "three";
-import type { CamController } from "../camera";
+import type { CamController } from "../camController";
 import { createMoonCSM } from "./cascadedMoonLight";
 import type { LightBundle } from "./types";
 

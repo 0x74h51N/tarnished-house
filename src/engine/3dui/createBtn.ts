@@ -4,15 +4,12 @@ import {
   Mesh,
   MeshBasicMaterial,
   PlaneGeometry,
-  Raycaster,
-  Vector2,
   type Vector3Like
 } from "three";
-import { roundRect } from "./utils";
+import type { RayCast } from "../interaction";
+import { drawRectangle } from "./drawRectangle";
 
 type BtnOpts = {
-  camera: Camera;
-  canvas: HTMLCanvasElement;
   onClick: () => void;
   label: string;
   width: number;
@@ -22,17 +19,31 @@ type BtnOpts = {
 };
 
 export async function createBtn({
+  btnOpts,
+  ray,
   camera,
-  canvas,
-  onClick,
-  label,
-  width,
-  height,
-  rotation,
-  fontFamily = "UnifrakturCook"
-}: BtnOpts) {
+  canvas
+}: {
+  btnOpts: BtnOpts;
+  ray: RayCast;
+  camera: Camera;
+  canvas: HTMLCanvasElement;
+}) {
+  const {
+    onClick,
+    label,
+    width,
+    height,
+    rotation,
+    fontFamily = "UnifrakturCook"
+  } = btnOpts;
+
   const W = 512,
     H = 128;
+  const btnColor = "#ffd700";
+  const btnBg = "rgba(12,12,16,0.72)";
+  const btnRadius = 16;
+
   const cv = document.createElement("canvas");
   cv.width = W;
   cv.height = H;
@@ -51,92 +62,91 @@ export async function createBtn({
 
   let currentLabel = label;
 
-  const draw = ctx
-    ? () => {
-        const gold = "#ffd700";
-        ctx.clearRect(0, 0, W, H);
+  const refresh = () => {
+    if (!ctx) return;
+    drawRectangle({
+      ctx,
+      W,
+      H,
+      label: currentLabel,
+      fontFamily,
+      tex,
+      color: btnColor,
+      bg: btnBg,
+      radius: btnRadius
+    });
+  };
 
-        ctx.fillStyle = "rgba(12,12,16,0.72)";
-        roundRect(ctx, 12, 12, W - 24, H - 24, 16, true, false);
+  refresh();
 
-        ctx.strokeStyle = gold;
-        ctx.lineWidth = 6;
-        roundRect(ctx, 12, 12, W - 24, H - 24, 16, false, true);
-
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.shadowColor = "#000";
-        ctx.shadowBlur = 8;
-        ctx.fillStyle = gold;
-        ctx.strokeStyle = "#2a1a00";
-        ctx.lineWidth = 2;
-
-        ctx.font = `72px "${fontFamily}", serif`;
-        ctx.fillText(currentLabel, W * 0.5, H * 0.52);
-        ctx.strokeText(currentLabel, W * 0.5, H * 0.52);
-
-        tex.needsUpdate = true;
-      }
-    : () => {};
-
-  draw();
-  (document as Document).fonts?.ready?.then(() => draw()).catch(() => {});
+  (document as Document).fonts?.ready?.then(() => refresh()).catch(() => {});
 
   const setLabel = (s: string) => {
     if (s === currentLabel) return;
     currentLabel = s;
     button.name = `${s}Button`;
-    draw();
+    refresh();
   };
-
-  button.name = `${label}Button`;
-  button.rotation.set(rotation.x, rotation.y, rotation.z);
-  button.renderOrder = 10;
-
-  const ray = new Raycaster();
-  const ndc = new Vector2();
   let hovered = false;
 
-  const toNDC = (ev: PointerEvent) => {
-    const r = canvas.getBoundingClientRect();
-    ndc.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
-    ndc.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
-  };
+  const isLocked = () => document.pointerLockElement === canvas;
 
-  const hitTest = () => {
-    ray.setFromCamera(ndc, camera);
-    return ray.intersectObject(button, true).length > 0;
-  };
-
-  const onMove = (ev: PointerEvent) => {
-    toNDC(ev);
-    const h = hitTest();
-    if (h !== hovered) {
-      hovered = h;
+  const applyHoverVisual = (isHover: boolean) => {
+    if (isHover !== hovered) {
+      hovered = isHover;
       const s = hovered ? 1.1 : 1.0;
       button.scale.set(s, 1, s);
       mat.needsUpdate = true;
-      canvas.style.cursor = hovered ? "pointer" : "";
+      if (!isLocked()) canvas.style.cursor = hovered ? "pointer" : "";
     }
   };
 
-  const onDown = (ev: PointerEvent) => {
-    toNDC(ev);
-    if (hitTest()) {
-      onClick?.();
+  const onMove = (pointerEvent: PointerEvent) => {
+    if (isLocked() && pointerEvent.pointerType !== "touch") return;
+    ray.setNdcFromEvent({ pointerEvent, canvas });
+    applyHoverVisual(ray.hitTest({ camera, target: button }));
+  };
+
+  const onDown = (pointerEvent: PointerEvent) => {
+    if (pointerEvent.pointerType === "touch") {
+      ray.setNdcFromEvent({ pointerEvent, canvas });
+      if (ray.hitTest({ camera, target: button })) onClick?.();
+      return;
+    }
+    if (isLocked()) {
+      if (ray.hitTest({ camera, target: button })) onClick?.();
+    } else {
+      ray.setNdcFromEvent({ pointerEvent, canvas });
+      if (ray.hitTest({ camera, target: button })) onClick?.();
+    }
+  };
+
+  const onPlc = () => {
+    if (isLocked()) {
+      applyHoverVisual(ray.hitTest({ camera, target: button }));
+    } else {
+      canvas.style.cursor = hovered ? "pointer" : "";
     }
   };
 
   canvas.addEventListener("pointermove", onMove);
   canvas.addEventListener("pointerdown", onDown);
+  document.addEventListener("pointerlockchange", onPlc);
+
+  const update = () => {
+    if (isLocked()) {
+      applyHoverVisual(ray.hitTest({ camera, target: button }));
+    }
+  };
 
   const dispose = () => {
     canvas.removeEventListener("pointermove", onMove);
     canvas.removeEventListener("pointerdown", onDown);
+    document.removeEventListener("pointerlockchange", onPlc);
     tex.dispose();
     mat.dispose();
     button.geometry.dispose?.();
   };
 
-  return { button, dispose, setLabel };
+  return { button, dispose, setLabel, update };
 }

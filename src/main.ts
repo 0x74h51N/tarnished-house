@@ -23,10 +23,11 @@ import {
   setupToggleButton
 } from "./components";
 import {
-  applyLowEnd,
+  applyPerfProfile,
   CameraController,
   createAudio,
   createBtn,
+  createCenterDot,
   createComposer,
   createLights,
   createRenderer,
@@ -54,7 +55,7 @@ if (IS_DEV) {
 //
 // Mobile Detection & Performance Optimization
 //
-await applyLowEnd();
+await applyPerfProfile();
 
 const showEnterButton = initIntroModal();
 
@@ -194,21 +195,29 @@ if (!IS_DEV) {
 
 const lights = createLights(scene, CamController);
 
+const ray = createCenterDot(canvas);
 //
 // Ignite Button
 let ignited = false;
-const { button: igniteBtn, setLabel } = await createBtn({
+const {
+  button: igniteBtn,
+  setLabel,
+  update
+} = await createBtn({
+  btnOpts: {
+    width: 0.65,
+    height: 0.23,
+    label: "Ignite",
+    rotation: { x: -Math.PI / 2, y: 0, z: 0 },
+    onClick: () => {
+      ignited ? bonfire.extinguish() : bonfire.ignite();
+      ignited = !ignited;
+      setLabel(ignited ? "Extinguish" : "Ignite");
+    }
+  },
+  ray: ray.rayCast,
   camera: CamController.camera,
-  canvas,
-  width: 0.65,
-  height: 0.23,
-  label: "Ignite",
-  rotation: { x: -Math.PI / 2, y: 0, z: 0 },
-  onClick: () => {
-    ignited ? bonfire.extinguish() : bonfire.ignite();
-    ignited = !ignited;
-    setLabel(ignited ? "Extinguish" : "Ignite");
-  }
+  canvas
 });
 
 //
@@ -342,9 +351,9 @@ randomMeshes({ scene }).then((m) => {
 const loop = new Loop();
 
 const controlUpdt: (d: number) => void = IS_DEV
-  ? (d) => CamController.devUpdate?.(d)
+  ? (d) => CamController.controller?.(d)
   : (d) => {
-      CamController.devUpdate?.(d);
+      CamController.controller?.(d);
       CamController.clampCameraPosition();
     };
 
@@ -353,7 +362,7 @@ loop.addUpdate((delta, elapsed) => {
   controlUpdt(delta);
 
   CamController.camera.updateMatrix();
-
+  update();
   lights.directLight.update();
 
   runSceneUpdate(delta, elapsed);

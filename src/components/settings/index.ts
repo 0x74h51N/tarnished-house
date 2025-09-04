@@ -65,5 +65,5 @@ export function settings({
   //----------------------------------------------
 
   //Settings Modal Button Slapper
-  settingModalController({ positioner: CamController.positioner });
+  settingModalController();
 }
