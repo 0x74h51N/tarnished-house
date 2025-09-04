@@ -1,5 +1,5 @@
-import type { Sizes } from "@/types/global.types";
 import config from "config.json";
+import type { Sizes } from "@/types/global.types";
 
 export function createSizes(): Sizes {
   const sizes: Sizes = {

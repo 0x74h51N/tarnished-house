@@ -22,57 +22,42 @@ export function createPerfHUD(opts: Options): PerfHUD {
   const holder = document.createElement("div");
   wrap.appendChild(holder);
 
-  let textDiv: HTMLDivElement | null = null;
-  if (IS_DEV) {
-    wrap.className = "perf-hud";
-
-    holder.className = "perf-hud-stats";
-    textDiv = document.createElement("div");
-    textDiv.className = "perf-hud-text";
-    wrap.appendChild(textDiv);
-  }
-
   let mounted = false;
-  const prev = { calls: 0, triangles: 0, points: 0 };
 
   const stats = new StatsGL({ trackGPU: IS_DEV, minimal: !IS_DEV });
   stats.init(renderer);
 
-  function mount() {
-    if (mounted) return;
-    holder.appendChild(stats.dom);
-    container.appendChild(wrap);
-    mounted = true;
+  let initPrev: (() => void) | null = null;
 
-    if (IS_DEV) {
-      const r = renderer.info.render;
-      prev.calls = r.calls;
-      prev.triangles = r.triangles;
-      prev.points = r.points;
-    }
-  }
-
-  function unmount() {
-    if (!mounted) return;
-    wrap.remove();
-    mounted = false;
-  }
+  let updateOverlay: () => void;
 
   function getJsHeapMB(): string {
     const mem = (
       performance as Performance & { memory?: { usedJSHeapSize: number } }
     ).memory;
-    if (mem?.usedJSHeapSize)
-      return `${(mem.usedJSHeapSize / 1048576).toFixed(1)} MB`;
-    return "n/a";
+    return mem?.usedJSHeapSize
+      ? `${(mem.usedJSHeapSize / 1048576).toFixed(1)} MB`
+      : "n/a";
   }
 
-  function updateOverlay() {
-    if (!mounted) return;
-
-    if (IS_DEV && textDiv) {
+  if (IS_DEV) {
+    wrap.className = "perf-hud";
+    holder.className = "perf-hud-stats";
+    const textDiv = document.createElement("div");
+    textDiv.className = "perf-hud-text";
+    wrap.appendChild(textDiv);
+    const prev = { calls: 0, triangles: 0, points: 0 };
+    initPrev = () => {
       const r = renderer.info.render;
+      prev.calls = r.calls;
+      prev.triangles = r.triangles;
+      prev.points = r.points;
+    };
 
+    updateOverlay = () => {
+      if (!mounted) return;
+
+      const r = renderer.info.render;
       const frameCalls = r.calls - prev.calls;
       const frameTris = r.triangles - prev.triangles;
       const framePoints = r.points - prev.points;
@@ -92,8 +77,28 @@ export function createPerfHUD(opts: Options): PerfHUD {
         fmt("Geometries", geos) +
         fmt("Textures", texs) +
         fmt("Heap (JS)", heap);
-    }
-    stats.update();
+
+      stats.update();
+    };
+  } else {
+    updateOverlay = () => {
+      if (!mounted) return;
+      stats.update();
+    };
+  }
+
+  function mount() {
+    if (mounted) return;
+    holder.appendChild(stats.dom);
+    container.appendChild(wrap);
+    mounted = true;
+    if (initPrev) initPrev();
+  }
+
+  function unmount() {
+    if (!mounted) return;
+    wrap.remove();
+    mounted = false;
   }
 
   function toggleStats(show: boolean) {
