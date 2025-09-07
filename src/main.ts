@@ -32,6 +32,7 @@ import {
   createComposer,
   createLights,
   createRenderer,
+  createTerrain,
   Loop,
   Player
 } from "./engine";
@@ -135,10 +136,12 @@ const { composer, bloomPass, syncBloom } = createComposer({
 // ASSET LOADING
 // Load static models and textures
 //
+const terrain = createTerrain({ texLoader, scene, renderer });
+
 loadAssets({
   scene,
   loadingManager,
-  texLoader
+  renderer
 });
 
 //
@@ -355,7 +358,8 @@ randomMeshes({ scene }).then((m) => {
     scene,
     toggleStats: hud.toggleStats,
     CamController,
-    syncBloom
+    syncBloom,
+    terrain
   });
 
   // const sets = [];

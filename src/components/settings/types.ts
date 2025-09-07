@@ -1,3 +1,4 @@
+import type { InstancedMesh2 } from "@three.ez/instanced-mesh";
 import type { Scene, WebGLRenderer } from "three";
 import type { CamController, Composer, LightBundle } from "@/engine";
 import type { ManagerRefs } from "@/loaders";
@@ -54,6 +55,7 @@ export interface SettingsInterface {
   toggleStats: (show: boolean) => void;
   CamController: CamController;
   syncBloom: Composer["syncBloom"];
+  terrain: InstancedMesh2;
 }
 export type GeneralSettingsParams = Pick<SettingsInterface, "audio">;
 
@@ -73,6 +75,7 @@ export type GraphicsSettingsParams = Pick<
   | "syncBloom"
   | "randomMeshes"
   | "CamController"
+  | "terrain"
 >;
 
 export type SceneSettingsParams = Pick<SettingsInterface, "randomMeshes">;

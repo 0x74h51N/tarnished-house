@@ -81,4 +81,101 @@ import { InstancedMesh2 } from "@three.ez/instanced-mesh";
       hysteresis
     );
   };
+
+  InstancedMesh2.prototype.removeLOD = function (
+    levelIndex,
+    removeObject = true
+  ) {
+    const info = this.LODinfo;
+    const list = info?.render;
+    if (!list?.levels) throw new Error("Invalid LOD list.");
+
+    const n = list.levels.length;
+    if (levelIndex < 0 || levelIndex >= n) throw new Error("Level index OOB");
+    if (n > 1 && levelIndex === 0)
+      throw new Error("Cannot remove LOD0 while others exist");
+
+    // Remove whole list if only LOD0 remains
+    const [removed] = list.levels.splice(levelIndex, 1);
+    list.count?.splice?.(levelIndex, 1);
+    if (list.levels.length <= 1) info.render = null;
+
+    const obj = removed.object;
+
+    // Mirror remove on shadow list if that index exists
+    const shadow = this.LODinfo?.shadowRender;
+    if (shadow?.levels && levelIndex < shadow.levels.length) {
+      shadow.levels.splice(levelIndex, 1);
+      shadow.count?.splice?.(levelIndex, 1);
+      if (shadow.levels.length === 0) this.LODinfo.shadowRender = null;
+    }
+
+    // Remove LOD object
+    if (removeObject && obj !== this) {
+      this.remove(obj);
+      const idx = info.objects?.indexOf(obj) ?? -1;
+      if (idx !== -1) info.objects.splice(idx, 1);
+      this.disposeLOD(obj);
+    }
+
+    return this;
+  };
+
+  InstancedMesh2.prototype.disposeLOD = (object) => {
+    object.geometry.dispose();
+    const mat = object.material;
+    if (Array.isArray(mat)) for (const m of mat) m.dispose();
+    else mat.dispose();
+  };
+
+  InstancedMesh2.prototype.removeAllLODs = function (
+    removeObjects = true,
+    dispose = true
+  ) {
+    const info = this.LODinfo;
+    if (!info) return this;
+
+    const render = info.render;
+    const shadow = info.shadowRender;
+
+    const toRemove = [];
+
+    if (render?.levels?.length) {
+      for (const lvl of render.levels) {
+        const obj = lvl?.object;
+        if (obj && obj !== this) toRemove.push(obj);
+      }
+    }
+
+    if (shadow?.levels?.length) {
+      for (const lvl of shadow.levels) {
+        const obj = lvl?.object;
+        if (obj && obj !== this && !toRemove.includes(obj)) toRemove.push(obj);
+      }
+    }
+
+    if (render) {
+      if (render.levels) render.levels.length = 0;
+      if (render.count?.splice) render.count.length = 0;
+      info.render = null;
+    }
+    if (shadow) {
+      if (shadow.levels) shadow.levels.length = 0;
+      if (shadow.count?.splice) shadow.count.length = 0;
+      info.shadowRender = null;
+    }
+    for (const obj of toRemove) {
+      if (removeObjects) {
+        this.remove(obj);
+        const arr = info.objects;
+        if (arr) {
+          const idx = arr.indexOf(obj);
+          if (idx !== -1) arr.splice(idx, 1);
+        }
+      }
+      if (dispose) this.disposeLOD(obj);
+    }
+
+    return this;
+  };
 })();

@@ -5,13 +5,11 @@ import {
   type LoadingManager,
   MathUtils,
   Mesh,
-  MeshStandardMaterial,
+  type MeshStandardMaterial,
   type Object3D,
-  PlaneGeometry,
-  RepeatWrapping,
   type Scene,
   SRGBColorSpace,
-  type TextureLoader
+  type WebGLRenderer
 } from "three";
 import type { GLTF } from "three/examples/jsm/Addons.js";
 import { Bonfire } from "@/prefabs";
@@ -20,58 +18,15 @@ import { createGLTFLoader } from "./utils";
 interface LoadAssetsInterface {
   scene: Scene;
   loadingManager: LoadingManager;
-  texLoader: TextureLoader;
+  renderer: WebGLRenderer;
 }
 
 export function loadAssets({
   scene,
   loadingManager,
-  texLoader
+  renderer
 }: LoadAssetsInterface) {
   const gltfLoader = createGLTFLoader(loadingManager);
-
-  //
-  //   ─── Floor ─────────────────────────────────────────────────────────
-  //
-
-  const floorAsset = assets.floor;
-  const { repeat, ...texPaths } = floorAsset.textures;
-
-  const textures = Object.fromEntries(
-    Object.entries(texPaths).map(([key, path]) => {
-      const tex = texLoader.load(path);
-      if (key === "baseColor") tex.colorSpace = SRGBColorSpace;
-
-      tex.repeat.set(repeat, repeat);
-      tex.wrapS = RepeatWrapping;
-      tex.wrapT = RepeatWrapping;
-
-      return [key, tex];
-    })
-  );
-  const floorGeometry = new PlaneGeometry(
-    ...Object.values(floorAsset.geometry)
-  );
-  const floorMaterial = new MeshStandardMaterial({
-    transparent: true,
-    map: textures.baseColor,
-    normalMap: textures.normalMap,
-    aoMap: textures.armTex,
-    metalnessMap: textures.armTex,
-    roughnessMap: textures.armTex,
-    displacementMap: textures.displacementMap,
-    displacementScale: floorAsset.displacementScale,
-    color: floorAsset.color
-  });
-
-  const floor = new Mesh(floorGeometry, floorMaterial);
-  floor.name = "Floor";
-  floor.userData.textures = textures;
-  floor.userData.asset = floorAsset;
-  floor.receiveShadow = true;
-  floor.rotation.x = -Math.PI * 0.5;
-
-  scene.add(floor);
 
   //
   // ─── HOUSE ─────────────────────────────────────────────────────────

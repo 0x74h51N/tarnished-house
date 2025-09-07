@@ -1,10 +1,17 @@
+import type { InstancedMesh2 } from "@three.ez/instanced-mesh";
 import config from "config.json";
-import type { Light } from "three";
-import { camCnfg } from "@/engine";
+import type { Light, MeshStandardMaterial } from "three";
+import {
+  camCnfg,
+  createTerrain,
+  disposeTerrain,
+  type TQKey,
+  terrainCnf
+} from "@/engine";
 import { applyShadowSizeAndBias } from "@/engine/lights/utils";
 import { fog } from "@/engine/postprocess/fog";
 import type { QualityKeys } from "@/types/global.types";
-import { allMatUpdt, shadowDispose } from "@/utils";
+import { allMatUpdt, setMatsCSM, shadowDispose } from "@/utils";
 import type { GeneralControl, GraphicsSettingsParams } from "../types";
 import { applySceneAniso } from "../utils";
 
@@ -15,7 +22,8 @@ export function makeGraphicsSettings({
   antialias,
   syncBloom,
   randomMeshes,
-  CamController
+  CamController,
+  terrain
 }: GraphicsSettingsParams): GeneralControl[] {
   const rendererConf = config.scene.renderer;
   const shadowConfg = rendererConf.shadows;
@@ -33,7 +41,7 @@ export function makeGraphicsSettings({
   for (let v = anisoCap; v > 1; v >>= 1) anisotropyFilters.push(v);
 
   let currentAniso = anisoCap / 2;
-
+  const lodKey = rendererConf.defLod as QualityKeys;
   return [
     {
       type: "checkbox",
@@ -166,6 +174,44 @@ export function makeGraphicsSettings({
 
         allMatUpdt(scene);
         renderer.shadowMap.needsUpdate = true;
+      }
+    },
+    {
+      type: "select",
+      id: "terrainQuality",
+      label: "Terrain Quality",
+      options: (
+        Object.keys(terrainCnf.quality) as Array<
+          keyof typeof terrainCnf.quality
+        >
+      ).map((key) => ({
+        v: key,
+        t: key,
+        s: key === terrainCnf.defQuality
+      })),
+      onChange: (e) => {
+        const v = e.target.value as TQKey;
+        const old = scene.getObjectByName("terrain") as InstancedMesh2;
+        const mat = (
+          Array.isArray(old.material) ? old.material[0] : old.material
+        ) as MeshStandardMaterial;
+
+        delete mat.userData.__csmPatched;
+
+        const next = createTerrain({
+          texLoader: mat,
+          scene,
+          renderer,
+          quality: v,
+          lodKey
+        });
+
+        disposeTerrain(old);
+        scene.remove(old);
+
+        terrain = next;
+        setMatsCSM(lights.csmLight.csm, next);
+        allMatUpdt(scene);
       }
     },
     {

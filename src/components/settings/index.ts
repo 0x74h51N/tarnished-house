@@ -21,7 +21,8 @@ export function settings({
   scene,
   toggleStats,
   CamController,
-  syncBloom
+  syncBloom,
+  terrain
 }: SettingsInterface) {
   const settingsDiv = byId("settings");
 
@@ -42,7 +43,8 @@ export function settings({
     scene,
     syncBloom,
     randomMeshes,
-    CamController
+    CamController,
+    terrain
   });
   const sceneOpts = makeSceneSettings({ randomMeshes });
 

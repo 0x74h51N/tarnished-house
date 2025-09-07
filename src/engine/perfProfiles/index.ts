@@ -3,7 +3,7 @@ import config from "config.json";
 import type { SpawnableName } from "@/loaders";
 import { flameConf, smokeConf, sparkConf } from "@/prefabs";
 import { deepAssign } from "@/utils";
-import { camCnfg } from "..";
+import { camCnfg, terrainCnf } from "..";
 import { detectPerf } from "./detect";
 import midJSON from "./midProfile.json";
 import patatoJSON from "./potatoProfile.json";
@@ -43,7 +43,6 @@ export async function applyPerfProfile() {
     }
   }
 
-  // Floor
-  const floor = profile.assets?.floor;
-  if (floor) deepAssign(assets.floor, floor);
+  // Terrain
+  deepAssign(terrainCnf, profile.terrain);
 }

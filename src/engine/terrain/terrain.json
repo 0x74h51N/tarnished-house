@@ -1,0 +1,80 @@
+{
+  "color": "#cccccc",
+  "textures": {
+    "baseColor": "./floor/textures/ground-diff.avif",
+    "normalMap": "./floor/textures/ground-norm.avif",
+    "armTex": "./floor/textures/ground-arm.avif",
+    "displacementMap": "./floor/textures/ground-disp.avif"
+  },
+  "repeat": 3,
+  "defQuality": "High",
+  "displacementScale": 0.14,
+  "tileCount": 70,
+  "quality": {
+    "Patato": {
+      "geometry": {
+        "width": 35,
+        "height": 35,
+        "widthSegments": 80,
+        "heightSegments": 80
+      },
+      "LOD": {
+        "LOD1": { "w": 20, "h": 20 },
+        "LOD2": { "w": 8, "h": 8 },
+        "LOD3": { "w": 1, "h": 1 }
+      }
+    },
+    "Medium": {
+      "geometry": {
+        "width": 30,
+        "height": 30,
+        "widthSegments": 200,
+        "heightSegments": 200
+      },
+      "LOD": {
+        "LOD1": { "w": 50, "h": 50 },
+        "LOD2": { "w": 15, "h": 15 },
+        "LOD3": { "w": 1, "h": 1 }
+      }
+    },
+    "High": {
+      "geometry": {
+        "width": 30,
+        "height": 30,
+        "widthSegments": 300,
+        "heightSegments": 300
+      },
+      "LOD": {
+        "LOD1": { "w": 70, "h": 70 },
+        "LOD2": { "w": 20, "h": 20 },
+        "LOD3": { "w": 1, "h": 1 }
+      }
+    },
+    "Ultra": {
+      "geometry": {
+        "width": 25,
+        "height": 25,
+        "widthSegments": 400,
+        "heightSegments": 400
+      },
+      "LOD": {
+        "LOD1": { "w": 80, "h": 80 },
+        "LOD2": { "w": 35, "h": 35 },
+        "LOD3": { "w": 1, "h": 1 }
+      }
+    },
+    "Insane": {
+      "geometry": {
+        "width": 20,
+        "height": 20,
+        "widthSegments": 500,
+        "heightSegments": 500
+      },
+      "LOD": {
+        "LOD1": { "w": 100, "h": 100 },
+        "LOD2": { "w": 50, "h": 50 },
+        "LOD3": { "w": 1, "h": 1 }
+      }
+    }
+  }
+}
