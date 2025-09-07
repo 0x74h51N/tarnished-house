@@ -1,3 +1,4 @@
+import { IS_DEV } from "@/main";
 import { classIncludes } from "@/utils";
 import { createJoystick } from "./joystick";
 import { expLerp } from "./utils";
@@ -41,7 +42,8 @@ export class KeyboardInput implements InputProvider {
     }
   };
   private onCanvasClick = () => {
-    if (!this.isLocked() && this.isActive()) this.canvas.requestPointerLock();
+    if (!this.isLocked() && !IS_DEV && this.isActive())
+      this.canvas.requestPointerLock();
   };
   private onPLC = () => {
     const locked = this.isLocked();

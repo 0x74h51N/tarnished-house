@@ -24,51 +24,51 @@
       "maxPixelRatio": 2,
       "defLod": "High",
       "lods": {
-        "Patato": { "lod1": 35, "lod2": 60, "lod3": 85 },
-        "Medium": { "lod1": 55, "lod2": 80, "lod3": 100 },
-        "High": { "lod1": 85, "lod2": 120, "lod3": 160 },
-        "Ultra": { "lod1": 90, "lod2": 140, "lod3": 210 },
-        "Insane": { "lod1": 120, "lod2": 200, "lod3": 230 }
+        "Patato": { "lod1": 35, "lod2": 60, "lod3": 95 },
+        "Medium": { "lod1": 55, "lod2": 70, "lod3": 110 },
+        "High": { "lod1": 85, "lod2": 120, "lod3": 170 },
+        "Ultra": { "lod1": 90, "lod2": 140, "lod3": 240 },
+        "Insane": { "lod1": 120, "lod2": 200, "lod3": 280 }
       },
       "shadows": {
         "enabled": true,
-        "type": "PCF",
-        "defMapSize": 2048,
+        "type": "PCFSoft",
+        "defMapSize": 1024,
         "defMaxFar": "High",
         "bias": {
           "high": 0,
           "normal": 0.3
         },
         "mapSizes": {
-          "512": {
+          "256": {
             "name": "Patato",
             "bias": {
               "high": 0.003,
               "normal": 0.3
             }
           },
-          "1024": {
+          "512": {
             "name": "Medium",
             "bias": {
               "high": 0.0001,
               "normal": 0.4
             }
           },
-          "2048": {
+          "1024": {
             "name": "High",
             "bias": {
               "high": 0.0001,
               "normal": 0.1
             }
           },
-          "3072": {
+          "2048": {
             "name": "Ultra",
             "bias": {
               "high": -0.0001,
               "normal": 0.05
             }
           },
-          "4096": {
+          "3072": {
             "name": "Insane",
             "bias": {
               "high": -0.0001,
@@ -77,11 +77,11 @@
           }
         },
         "maxFar": {
-          "Patato": 85,
-          "Medium": 110,
-          "High": 160,
-          "Ultra": 190,
-          "Insane": 240
+          "Patato": 90,
+          "Medium": 190,
+          "High": 280,
+          "Ultra": 350,
+          "Insane": 440
         }
       }
     },

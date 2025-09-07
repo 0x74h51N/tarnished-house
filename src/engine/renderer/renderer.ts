@@ -1,9 +1,9 @@
-import { SRGBColorSpace, WebGLRenderer } from "three";
 import config from "config.json";
+import { SRGBColorSpace, WebGLRenderer } from "three";
 import {
   type ShadowTypeKey,
-  shadowTypes,
   type Sizes,
+  shadowTypes,
   type ToneMappingKey,
   toneMappingMap
 } from "@/types/global.types";

@@ -6,7 +6,6 @@ import { camCnfg } from "../";
 import { type InputProvider, KeyboardInput, TouchInput } from "./input";
 import type { ControlOptions, ControlReturn } from "./types";
 import { angDelta, expLerp } from "./utils";
-
 export function setupControls({
   camera,
   canvas
@@ -20,8 +19,9 @@ export function setupControls({
     moveSpeed,
     sprintMult
   } = camCnfg.controls;
+
   const controls = new OrbitControls(camera, canvas);
-  controls.enabled = false;
+  controls.enabled = IS_DEV || false;
 
   const loadingScreen = byId("loading-screen");
   const isActive = () =>
@@ -61,39 +61,65 @@ export function setupControls({
   let sx = 0,
     sz = 0;
 
-  const controller = (dt: number) => {
-    const { moveX, moveY, lookX, lookY, sprint } = input.sample(dt);
+  let controller: (dt: number) => void;
 
-    sx = expLerp(sx, moveX, moveTau, dt);
-    sz = expLerp(sz, moveY, moveTau, dt);
+  if (IS_DEV) {
+    const up = new Vector3(0, 1, 0),
+      fwd = new Vector3(),
+      right = new Vector3(),
+      tmp = new Vector3();
 
-    // look target
-    tYaw -= lookX;
-    tPitch += lookY;
-    if (tPitch > maxPitch) tPitch = maxPitch;
-    if (tPitch < minPitch) tPitch = minPitch;
+    controller = (dt: number) => {
+      const { moveX: mx, moveY: mz, sprint } = input.sample(dt);
+      controls.update();
+      camera.getWorldDirection(fwd).normalize();
+      right.copy(fwd).cross(up).normalize();
 
-    // look smoothing
-    const aLook = 1 - Math.exp(-dt / lookTau);
-    yaw += angDelta(yaw, tYaw) * aLook;
-    pitch = expLerp(pitch, tPitch, lookTau, dt);
-    camera.rotation.set(pitch, yaw, 0, "YXZ");
+      const k = (sprint ? 8 : 2) * moveSpeed * dt;
+      tmp
+        .copy(fwd)
+        .multiplyScalar(mz)
+        .addScaledVector(right, mx)
+        .multiplyScalar(k);
+      camera.position.add(tmp);
+      controls.target.add(tmp);
+    };
+  } else {
+    controller = (dt: number) => {
+      const { moveX, moveY, lookX, lookY, sprint } = input.sample(dt);
 
-    // translate
-    const fwdX = -Math.sin(yaw),
-      fwdZ = -Math.cos(yaw);
-    const rightX = Math.cos(yaw),
-      rightZ = -Math.sin(yaw);
-    const base = moveSpeed;
-    const spd = (sprint ? base * (sprintMult * (IS_DEV ? 2 : 1)) : base) * dt;
+      sx = expLerp(sx, moveX, moveTau, dt);
+      sz = expLerp(sz, moveY, moveTau, dt);
 
-    if (Math.hypot(sx, sz) > 1e-3) {
-      const dx = sz * fwdX + sx * rightX;
-      const dz = sz * fwdZ + sx * rightZ;
-      camera.position.x += dx * spd;
-      camera.position.z += dz * spd;
-    }
-  };
+      // look target
+      tYaw -= lookX;
+      tPitch += lookY;
+      if (tPitch > maxPitch) tPitch = maxPitch;
+      if (tPitch < minPitch) tPitch = minPitch;
+
+      // look smoothing
+      const aLook = 1 - Math.exp(-dt / lookTau);
+      yaw += angDelta(yaw, tYaw) * aLook;
+      pitch = expLerp(pitch, tPitch, lookTau, dt);
+      camera.rotation.set(pitch, yaw, 0, "YXZ");
+
+      // translate
+      const fwdX = -Math.sin(yaw),
+        fwdZ = -Math.cos(yaw);
+      const rightX = Math.cos(yaw),
+        rightZ = -Math.sin(yaw);
+
+      const base = moveSpeed;
+      const spd = (sprint ? base * sprintMult : base) * dt;
+
+      if (Math.hypot(sx, sz) > 1e-3) {
+        const dx = sz * fwdX + sx * rightX;
+        const dz = sz * fwdZ + sx * rightZ;
+        camera.position.x += dx * spd;
+        camera.position.z += dz * spd;
+      }
+    };
+  }
 
   return { controls, controller };
 }
