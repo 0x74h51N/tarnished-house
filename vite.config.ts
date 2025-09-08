@@ -1,12 +1,9 @@
 import path from "node:path";
-import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
-import checker from "vite-plugin-checker";
 import glsl from "vite-plugin-glsl";
 import restart from "vite-plugin-restart";
 
 export default defineConfig(() => {
-  const shouldAnalyze = process.env.ANALYZE === "1";
   return {
     root: "src/",
     publicDir: "../static/",
@@ -35,17 +32,6 @@ export default defineConfig(() => {
         }
       }
     },
-    plugins: [
-      glsl(),
-      restart({ restart: ["../static/**"] }),
-      checker({ typescript: true }),
-      shouldAnalyze &&
-        visualizer({
-          open: true,
-          filename: "stats.html",
-          gzipSize: true,
-          brotliSize: true
-        })
-    ].filter(Boolean)
+    plugins: [glsl(), restart({ restart: ["../static/**"] })].filter(Boolean)
   };
 });

@@ -45,10 +45,6 @@ export class KeyboardInput implements InputProvider {
     if (!this.isLocked() && !IS_DEV && this.isActive())
       this.canvas.requestPointerLock();
   };
-  private onPLC = () => {
-    const locked = this.isLocked();
-    this.canvas.style.cursor = locked ? "none" : "";
-  };
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -56,7 +52,6 @@ export class KeyboardInput implements InputProvider {
     private isActive: () => boolean
   ) {
     this.canvas.addEventListener("click", this.onCanvasClick);
-    document.addEventListener("pointerlockchange", this.onPLC);
     document.addEventListener("mousemove", this.onMouseMove);
     window.addEventListener("keydown", this.onEsc);
     window.addEventListener("keydown", this.onKeyDown);
@@ -96,7 +91,6 @@ export class KeyboardInput implements InputProvider {
 
   destroy() {
     this.canvas.removeEventListener("click", this.onCanvasClick);
-    document.removeEventListener("pointerlockchange", this.onPLC);
     document.removeEventListener("mousemove", this.onMouseMove);
     window.removeEventListener("keydown", this.onEsc);
     window.removeEventListener("keydown", this.onKeyDown);

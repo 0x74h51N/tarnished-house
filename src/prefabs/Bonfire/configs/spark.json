@@ -1,17 +1,17 @@
 {
-  "color": "#FF0000",
+  "color": "#FF4400",
   "area": 0.3,
-  "size": 0.11,
+  "size": 0.1,
   "maxCount": 45,
   "spawnRate": 6.2,
   "startPozs": { "x": 0, "y": 0.65, "z": 0 },
   "scaleFactor": 1,
   "sparkProps": {
-    "damping": 0.55,
+    "damping": 0.47,
     "elevDivs": { "min": 5, "max": 2 },
-    "stretchFact": 12,
+    "stretchFact": 10,
     "waveFreq": 3,
     "waveAmp": 0.134,
-    "speed": 5.1
+    "speed": 5.25
   }
 }

@@ -1,36 +1,19 @@
 import { Raycaster, Vector2 } from "three";
-import opts from "./interaction.json";
 import type {
   CenterDot,
   RayCast,
   RayHitTestParams,
   RayNdcFromEvent
 } from "./types";
+import "./styles.css";
 
 export function createCenterDot(canvas: HTMLCanvasElement): CenterDot {
-  const { size, color, outline, outlinePx, opacity, zIndex } = opts;
-
   const el = document.createElement("div");
-
-  Object.assign(el.style, {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: `${size}px`,
-    height: `${size}px`,
-    borderRadius: "50%",
-    background: color,
-    boxShadow: `0 0 0 ${outlinePx}px ${outline}`,
-    opacity: opacity,
-    pointerEvents: "none",
-    zIndex: zIndex,
-    display: "none"
-  });
+  el.className = "center-dot";
   document.body.appendChild(el);
 
-  const show = () => el.style.setProperty("display", "block", "important");
-  const hide = () => el.style.setProperty("display", "none", "important");
+  const show = () => el.classList.add("show");
+  const hide = () => el.classList.remove("show");
 
   const ray = new Raycaster();
   const ndc = new Vector2(0, 0);
@@ -48,9 +31,11 @@ export function createCenterDot(canvas: HTMLCanvasElement): CenterDot {
   const onPlc = () => {
     centerMode = isLockedNow();
     if (centerMode) {
+      canvas.style.cursor = "none";
       ndc.set(0, 0);
       show();
     } else {
+      canvas.style.cursor = "";
       hide();
     }
   };

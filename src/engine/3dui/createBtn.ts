@@ -105,6 +105,7 @@ export async function createBtn({
     if (isLocked() && pointerEvent.pointerType !== "touch") return;
     ray.setNdcFromEvent({ pointerEvent, canvas });
     applyHoverVisual(ray.hitTest({ camera, target: button }));
+    canvas.style.cursor = hovered ? "pointer" : "";
   };
 
   const onDown = (pointerEvent: PointerEvent) => {
@@ -114,24 +115,15 @@ export async function createBtn({
       return;
     }
     if (isLocked()) {
-      if (ray.hitTest({ camera, target: button })) onClick?.();
+      if (hovered) onClick?.();
     } else {
       ray.setNdcFromEvent({ pointerEvent, canvas });
-      if (ray.hitTest({ camera, target: button })) onClick?.();
-    }
-  };
-
-  const onPlc = () => {
-    if (isLocked()) {
-      applyHoverVisual(ray.hitTest({ camera, target: button }));
-    } else {
-      canvas.style.cursor = hovered ? "pointer" : "";
+      if (hovered) onClick?.();
     }
   };
 
   canvas.addEventListener("pointermove", onMove);
   canvas.addEventListener("pointerdown", onDown);
-  document.addEventListener("pointerlockchange", onPlc);
 
   const update = () => {
     if (isLocked()) {
@@ -142,7 +134,6 @@ export async function createBtn({
   const dispose = () => {
     canvas.removeEventListener("pointermove", onMove);
     canvas.removeEventListener("pointerdown", onDown);
-    document.removeEventListener("pointerlockchange", onPlc);
     tex.dispose();
     mat.dispose();
     button.geometry.dispose?.();

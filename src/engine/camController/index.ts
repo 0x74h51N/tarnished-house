@@ -22,6 +22,6 @@ export function CameraController({
   };
 }
 
-export { default as camCnfg } from "./config.json";
+export { default as camCnfg } from "./camController.json";
 export * from "./controller";
 export * from "./types";

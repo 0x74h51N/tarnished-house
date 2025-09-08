@@ -23,10 +23,10 @@
       "position": {
         "x": 8,
         "y": 0.25,
-        "z": -14
+        "z": -13
       },
-      "rotation": { "y": -110 },
-      "scale": 4,
+      "rotation": { "y": -100 },
+      "scale": 4.2,
       "castShadow": true,
       "receiveShadow": true
     },

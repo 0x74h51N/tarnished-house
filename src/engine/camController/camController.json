@@ -1,7 +1,7 @@
 {
   "fov": 35,
   "near": 0.1,
-  "far": 250,
+  "far": 600,
   "position": {
     "x": 2,
     "y": 5.2,
@@ -11,7 +11,7 @@
     "minPolarAngle": 0.2618,
     "maxPolarAngle": 2.7925,
     "mouseSens": 0.0006,
-    "moveSpeed": 6,
+    "moveSpeed": 7,
     "moveTau": 0.12,
     "sprintMult": 1.7,
     "dead": 0.01,

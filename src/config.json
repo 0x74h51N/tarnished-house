@@ -77,11 +77,11 @@
           }
         },
         "maxFar": {
-          "Patato": 90,
-          "Medium": 190,
-          "High": 280,
-          "Ultra": 350,
-          "Insane": 440
+          "Patato": 100,
+          "Medium": 220,
+          "High": 320,
+          "Ultra": 450,
+          "Insane": 600
         }
       }
     },

@@ -1,8 +1,8 @@
 # Tarnished House
 
-Procedural haunted scene built with Three.js, TypeScript & GLSL featuring random mesh generation, optimized assets, custom particle effects, and basic mobile support.
+This scene built with Three.js, TypeScript & GLSL. What started as a simple learning scene project has grown into a custom mini game engine with random mesh generation, custom particle effects, optimized lighing systems with cascaded shadows, smooth mobile and desktop controllers, settings ui, and different optimization profiles.
 
-![capture_1754956951170](https://github.com/user-attachments/assets/db83bf29-aa6d-4aec-a2bf-f663a076080d)
+
 
 ## Overview
 
@@ -22,32 +22,54 @@ While the original idea was inspired by the Three.js Journey Haunted House lesso
 ```
 .
 ├── src
-│   ├── assets.json              // Asset options
-│   ├── config.json              // Global configuration file
+│   ├── assets.json     
+│   ├── config.json        
 │   ├── components               // UI-related DOM elements and interaction handlers
-│   │   ├── audio                // Sound toggle button and UI controls
-│   │   ├── devgui               // Developer GUI (debug panels)
+│   │   ├── audio                
+│   │   ├── devgui               
 │   │   ├── photo
-│   │   ├── settings             // Settings panel and user config management
-│   │   └── ui                   // General UI elements like loading and intro modals
+│   │   ├── settings             
+│   │   └── ui                 
 │   ├── engine                   // Core engine logic and rendering
-│   │   ├── 3dui                 // 3d world interaction buttons etc.
+│   │   ├── 3dui                 // 3D world UI interaction buttons, etc.
 │   │   ├── audio                // 3D audio system and sound sources
-│   │   ├── camera               // Camera setup and user controls
-│   │   ├── lights               // Lighting setup including firelight and ambient
-│   │   ├── lowEndProfile        // Mobile and lowEnd pc detech & change onfigs
-│   │   ├── particles            // Particle systems flame and point particles (smoke, sparks)
-│   │   ├── postprocess          // Post-processing effects like bloom and fog
-│   │   └── renderer             // Render loop and WebGL renderer creation
-│   ├── loaders                  // Asset loaders for models, textures, and placement (random or static)
+│   │   ├── camController        // Camera setup and user controls
+│   │   │   └── controller       // CamLock and touchscreen nipple controllers
+│   │   ├── interaction          // Raycast systems
+│   │   ├── lights               // Cascaded shadows and other lights
+│   │   ├── particles
+│   │   │   ├── flame
+│   │   │   └── point
+│   │   ├── perfProfiles         // Mobile/low-end PC detection & config switching
+│   │   ├── postprocess        
+│   │   └── renderer             // Render loop and WebGL renderer
+│   ├── loaders
+│   │   └── instanced            // Instanced meshes and LOD variants for objects
 │   ├── prefabs                  // Reusable scene entities, that package models with behavior and effects
 │   │   └── Bonfire
 │   ├── style.css
 │   ├── main.ts
-│   ├── types.ts                 // Shared TypeScript types
+│   ├── types.ts                
 │   └── utils                    // General utilities and helpers
-
+└── tests
 ```
+## TODO
+- [x] Increase foliage object counts and optimize with **instancedMesh**  
+- [x] Implement sun/moon lighting with cascaded shadows across the map (with optimizations)  
+- [ ] Procedural terrain generation: tile-based, slopes, texture sets by height/slope  
+- [ ] Add different anti-alising methods (MSAA, FXAA etc.)
+- [ ] Make more realistic shadows for CSM
+- [ ] Add Ambient Occlusion with SSAO
+- [ ] Add a lake or river with a custom water shader  
+- [ ] Enhance scene composition and add new foliage assets  
+- [ ] Integrate **Rapier** for physics and object colliders  
+- [ ] Improve performance profiles and overall optimization  
+- [ ] Add a **main character** with basic walk/run animations  
+- [ ] Add **enemy NPCs** with animations  
+- [ ] Build **NPC AI systems** with **YUKA**  
+- [ ] Implement core gameplay mechanics  
+- [ ] Implement **combat systems and animations**  
+- [ ] Add sounds and FXs
 
 ## Credits
 
