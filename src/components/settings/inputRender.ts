@@ -22,7 +22,7 @@ export const inputRender = (c: GeneralControl) => {
       </label>`
       : c.type === "select"
         ? `<label class="control-label select-control">
-        ${c.label}${tipSup}
+        <div>${c.label}${tipSup}</div>
         <select id="${c.id}">
           ${c.options
             .map(

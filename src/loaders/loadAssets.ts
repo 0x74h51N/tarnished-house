@@ -11,8 +11,7 @@ import {
   RepeatWrapping,
   type Scene,
   SRGBColorSpace,
-  type TextureLoader,
-  type WebGLRenderer
+  type TextureLoader
 } from "three";
 import type { GLTF } from "three/examples/jsm/Addons.js";
 import { Bonfire } from "@/prefabs";
@@ -21,14 +20,12 @@ import { createGLTFLoader } from "./utils";
 interface LoadAssetsInterface {
   scene: Scene;
   loadingManager: LoadingManager;
-  renderer: WebGLRenderer;
   texLoader: TextureLoader;
 }
 
 export function loadAssets({
   scene,
   loadingManager,
-  renderer,
   texLoader
 }: LoadAssetsInterface) {
   const gltfLoader = createGLTFLoader(loadingManager);
@@ -93,19 +90,16 @@ export function loadAssets({
       if (child instanceof Mesh) {
         child.castShadow = houseAsset.castShadow;
         child.receiveShadow = houseAsset.receiveShadow;
-        const mat = child.material;
+        const mat = child.material as MeshStandardMaterial;
         if (mat.map) {
-          mat.map.encoding = SRGBColorSpace;
-          mat.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          mat.map.colorSpace = SRGBColorSpace;
           mat.map.minFilter = LinearMipmapLinearFilter;
           mat.map.magFilter = LinearFilter;
           mat.map.generateMipmaps = false;
         }
         if (mat.normalMap) {
-          mat.normalMap.anisotropy = renderer.capabilities.getMaxAnisotropy();
           mat.normalMap.minFilter = LinearMipmapLinearFilter;
           mat.normalMap.magFilter = LinearFilter;
-          mat.normalMap.generateMipmaps = false;
         }
         mat.needsUpdate = true;
       }

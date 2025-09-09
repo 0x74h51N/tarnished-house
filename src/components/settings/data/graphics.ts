@@ -5,6 +5,7 @@ import { fog } from "@/engine/postprocess/fog";
 import type { MapSizeKey } from "@/types/global.types";
 import { allMatUpdt, shadowDispose } from "@/utils";
 import type { GeneralControl, GraphicsSettingsParams } from "../types";
+import { applySceneAniso } from "../utils";
 
 export function makeGraphicsSettings({
   scene,
@@ -22,6 +23,13 @@ export function makeGraphicsSettings({
 
   const defDist = shadowConfg.defMaxFar as keyof typeof shadowConfg.maxFar;
   const defLod = rendererConf.defLod as keyof typeof rendererConf.lods;
+
+  // Anisoptic Filter
+  const anisoCap = renderer.capabilities.getMaxAnisotropy();
+  const anisotropyFilters: number[] = [];
+  for (let v = anisoCap; v > 1; v >>= 1) anisotropyFilters.push(v);
+
+  let currentAniso = anisoCap / 2;
 
   return [
     {
@@ -141,6 +149,23 @@ export function makeGraphicsSettings({
         lights.directLight.updateFrustums();
 
         allMatUpdt(scene);
+        renderer.shadowMap.needsUpdate = true;
+      }
+    },
+    {
+      type: "select",
+      id: "antisotropyFilter",
+      label: "Ansotropic Filt.",
+      tooltip: "Textures Ansotropic Filtering",
+      options: anisotropyFilters.map((v) => ({
+        v: v.toString(),
+        t: `X${v}`,
+        s: v === currentAniso
+      })),
+      onChange: (e) => {
+        const value = Number(e.target.value);
+        currentAniso = value;
+        applySceneAniso(scene, value);
         renderer.shadowMap.needsUpdate = true;
       }
     }

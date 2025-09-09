@@ -121,7 +121,6 @@ const { composer, bloomPass, syncBloom } = createComposer({
 loadAssets({
   scene,
   loadingManager,
-  renderer,
   texLoader
 });
 

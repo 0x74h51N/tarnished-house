@@ -1,3 +1,11 @@
+import {
+  LinearFilter,
+  LinearMipmapLinearFilter,
+  Mesh,
+  type MeshStandardMaterial,
+  type Scene
+} from "three";
+import type { TextureKeys } from "@/types/global.types";
 import { byId } from "..";
 
 export function isFullscreen(): boolean {
@@ -49,4 +57,26 @@ export async function lockEscKey(): Promise<boolean> {
 
 export function unlockKeyboard(): void {
   navigator.keyboard?.unlock();
+}
+
+export function applySceneAniso(scene: Scene, v: number) {
+  scene.traverse((o) => {
+    if (o instanceof Mesh) {
+      const mats = Array.isArray(o.material) ? o.material : [o.material];
+      mats.forEach((mat: MeshStandardMaterial) => {
+        for (const key of Object.keys(mat) as TextureKeys[]) {
+          const tex = mat[key];
+          if (tex?.isTexture && !tex.isRenderTargetTexture) {
+            if (tex.anisotropy !== v) {
+              tex.anisotropy = v;
+              tex.generateMipmaps = true;
+              tex.minFilter = LinearMipmapLinearFilter;
+              tex.magFilter = LinearFilter;
+              tex.needsUpdate = true;
+            }
+          }
+        }
+      });
+    }
+  });
 }

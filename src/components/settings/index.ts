@@ -57,11 +57,21 @@ export function settings({
     "<br /><em>Secrets lie beneath<br />Should thy fingers recall<br />the first glyph of help twice</em>";
 
   //Input Event listeners
-  [...controls, ...display, ...graphics, ...sceneOpts].forEach((c) => {
-    const el = byId(c.id);
-    const evt = c.type === "range" ? "input" : "change";
-    el.addEventListener(evt, c.onChange as EventListener);
-  });
+  const handlers = Object.fromEntries(
+    [...controls, ...display, ...graphics, ...sceneOpts].map((c) => [
+      c.id,
+      c.onChange as EventListener
+    ])
+  );
+
+  function handleEvent(e: Event) {
+    const el = (e.target as HTMLElement).closest<HTMLElement>("input, select");
+    if (!el?.id) return;
+    handlers[el.id]?.(e);
+  }
+  settingsDiv.addEventListener("input", handleEvent);
+  settingsDiv.addEventListener("change", handleEvent);
+
   //----------------------------------------------
 
   //Settings Modal Button Slapper

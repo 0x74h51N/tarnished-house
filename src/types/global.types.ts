@@ -4,10 +4,12 @@ import {
   BasicShadowMap,
   CineonToneMapping,
   LinearToneMapping,
+  type MeshStandardMaterial,
   NoToneMapping,
   PCFShadowMap,
   PCFSoftShadowMap,
   ReinhardToneMapping,
+  type Texture,
   VSMShadowMap
 } from "three";
 
@@ -60,3 +62,12 @@ export interface Sizes {
 export type MapSizes = typeof config.scene.renderer.shadows.mapSizes;
 
 export type MapSizeKey = keyof MapSizes;
+
+export type TextureKeys = {
+  [K in keyof MeshStandardMaterial]: MeshStandardMaterial[K] extends
+    | Texture
+    | null
+    | undefined
+    ? K
+    : never;
+}[keyof MeshStandardMaterial];
