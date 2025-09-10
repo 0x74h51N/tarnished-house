@@ -1,6 +1,6 @@
 import { MathUtils } from "three";
-import { camCnfg } from "..";
-import type { ClampFn, ClampRtrn } from "./types";
+import { camCnfg } from ".";
+import type { ClampFn, ClampRtrn } from "./controller/types";
 
 export function createClamp({ camera }: ClampFn): ClampRtrn {
   const cnfg = camCnfg.controls;

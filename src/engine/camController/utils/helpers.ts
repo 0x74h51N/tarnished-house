@@ -1,4 +1,4 @@
-import type { StaticPosition } from "./types";
+import type { StaticPosition } from "../controller/types";
 
 export function applyAnchors(
   el: HTMLElement,

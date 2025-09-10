@@ -2,8 +2,8 @@ import nipplejs, {
   type JoystickManager,
   type JoystickOutputData
 } from "nipplejs";
-import type { JoystickArgs } from "./types";
-import { applyAnchors } from "./utils";
+import type { JoystickArgs } from "../controller/types";
+import { applyAnchors } from "./helpers";
 
 let num = 0;
 export function createJoystick({

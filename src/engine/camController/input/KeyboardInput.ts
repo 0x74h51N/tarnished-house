@@ -1,22 +1,6 @@
 import { IS_DEV } from "@/main";
-import { classIncludes } from "@/utils";
-import { createJoystick } from "./joystick";
-import { expLerp } from "./utils";
+import type { InputProvider, InputSample } from "./types";
 
-export type InputSample = {
-  moveX: number;
-  moveY: number;
-  lookX: number; // rad/s,
-  lookY: number; // rad/s,
-  sprint: boolean;
-};
-
-export interface InputProvider {
-  sample(dt: number): InputSample;
-  destroy(): void;
-}
-
-/* ---------------- Keyboard & Mouse ---------------- */
 export class KeyboardInput implements InputProvider {
   private pressed = new Set<string>();
   private lookDX = 0;
@@ -95,85 +79,5 @@ export class KeyboardInput implements InputProvider {
     window.removeEventListener("keydown", this.onEsc);
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);
-  }
-}
-
-/* ---------------- Touch (Dual Joystick) ---------------- */
-export class TouchInput implements InputProvider {
-  private lxs = 0; // look x smoothed
-  private lys = 0; // look y smoothed
-  private left = createJoystick({
-    size: 120,
-    position: { left: "70px", bottom: "80px" }
-  });
-  private right = createJoystick({
-    size: 120,
-    position: { right: "70px", bottom: "80px" }
-  });
-
-  constructor(
-    private mobileLook: {
-      lookDead: number;
-      turnTau: number;
-      expo?: number;
-    },
-    private getSensitivity: () => number,
-    private isActive: () => boolean,
-    loadingScreen: HTMLElement | null
-  ) {
-    this.left.hide();
-    this.right.hide();
-    const showIfActive = () => {
-      if (this.isActive()) {
-        this.left.show();
-        this.right.show();
-      }
-    };
-    showIfActive();
-    if (loadingScreen) {
-      classIncludes(loadingScreen, "hidden", () => {
-        showIfActive();
-      });
-    }
-  }
-
-  sample(dt: number): InputSample {
-    const mv = this.left.get();
-    let mx = mv.x,
-      mz = mv.y;
-    const len = Math.hypot(mx, mz);
-    if (len > 1) {
-      mx /= len;
-      mz /= len;
-    }
-
-    // look smoothing + non-linear gain
-    const { lookDead, turnTau, expo = 1.6 } = this.mobileLook;
-    const lv = this.right.get();
-    this.lxs = expLerp(this.lxs, lv.x, turnTau, dt);
-    this.lys = expLerp(this.lys, lv.y, turnTau, dt);
-
-    const mag = Math.hypot(this.lxs, this.lys);
-    let lookX = 0,
-      lookY = 0;
-    if (mag > lookDead) {
-      const norm = (mag - lookDead) / (1 - lookDead);
-      const gain = Math.min(1, Math.max(0, norm)) ** expo;
-
-      const sens = this.getSensitivity();
-
-      const yawRate = Math.PI * sens;
-      const pitchRate = Math.PI * sens;
-
-      lookX = this.lxs * yawRate * gain;
-      lookY = this.lys * pitchRate * gain;
-    }
-
-    return { moveX: mx, moveY: mz, lookX, lookY, sprint: false };
-  }
-
-  destroy() {
-    this.left.destroy();
-    this.right.destroy();
   }
 }

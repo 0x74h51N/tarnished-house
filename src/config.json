@@ -17,6 +17,10 @@
     "gridDivisions": 100,
     "gridPositionY": 0.15
   },
+  "player": {
+    "height": 7,
+    "radius": 0.15
+  },
   "scene": {
     "renderer": {
       "toneMapping": "ACES Filmic",

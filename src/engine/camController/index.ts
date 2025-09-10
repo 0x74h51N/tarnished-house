@@ -1,5 +1,6 @@
 import { createCamera } from "./camera";
-import { createClamp, setupControls } from "./controller";
+import { createClamp, createFPSController } from "./controller";
+import { createFreeController } from "./controller/freeController";
 import type { CamController, CameraSystemOptions } from "./types";
 
 export function CameraController({
@@ -10,14 +11,15 @@ export function CameraController({
   const { camera, cameraHelper } = createCamera({ sizes });
   scene.add(camera);
 
-  const { controls, controller } = setupControls({ camera, canvas });
+  const FreeController = createFreeController({ camera, canvas });
+  const FPSController = createFPSController({ camera, canvas });
   const { clampCameraPosition } = createClamp({ camera });
 
   return {
     camera,
     cameraHelper,
-    controls,
-    controller,
+    FreeController,
+    FPSController,
     clampCameraPosition
   };
 }

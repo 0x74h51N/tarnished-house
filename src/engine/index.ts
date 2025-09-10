@@ -5,5 +5,6 @@ export * from "./interaction";
 export * from "./lights";
 export * from "./particles";
 export * from "./perfProfiles";
+export * from "./player";
 export * from "./postprocess/createComposer";
 export * from "./renderer";

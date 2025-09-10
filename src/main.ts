@@ -32,7 +32,8 @@ import {
   createComposer,
   createLights,
   createRenderer,
-  Loop
+  Loop,
+  Player
 } from "./engine";
 import { loadAssets, type ManagerRefs, randomMeshes } from "./loaders";
 import { Bonfire } from "./prefabs";
@@ -84,7 +85,7 @@ const loadingManager = new LoadingManager();
 const texLoader = new TextureLoader(loadingManager);
 
 //
-// Camera & Orbit Control
+// Camera & Control
 //
 
 const CamController = CameraController({
@@ -92,6 +93,22 @@ const CamController = CameraController({
   canvas,
   sizes
 });
+
+//
+// Player
+//
+
+const player = new Player({
+  height: config.player.height,
+  radius: config.player.radius,
+  camera: CamController.camera,
+  controller: CamController.FPSController
+});
+player.setPosition(
+  CamController.camera.position.x,
+  0,
+  CamController.camera.position.z
+);
 
 //
 // renderer
@@ -248,6 +265,7 @@ scene.add(igniteBtn);
 
 lights.fireLight = bonfire.fireLight;
 const { smoke, sparks, flame } = bonfire;
+
 function getManagers(): ManagerRefs {
   if (!managers) throw new Error("managers not ready");
   return managers;
@@ -331,7 +349,7 @@ randomMeshes({ scene }).then((m) => {
   settings({
     lights,
     renderer,
-    randomMeshes: getManagers(),
+    randomMeshes: managers,
     antialias,
     audio,
     scene,
@@ -339,6 +357,22 @@ randomMeshes({ scene }).then((m) => {
     CamController,
     syncBloom
   });
+
+  // const sets = [];
+  // for (const key in managers) {
+  //   if (key === "bushes" || key === "branches") continue;
+  //   const m = managers[key as keyof ManagerRefs];
+  //   if (!m?.manager?.sets) continue;
+  //   for (const s of m.manager.sets) {
+  //     sets.push(s);
+  //   }
+  // }
+  // const collider = createColliderController(sets);
+  /**
+   * TODO
+   * Deprecate the instancedMesh2
+   * Create own instancedMesh system w/three-mesh-bvh
+   */
 
   initScreenshotButton({ renderer, composer });
 });
@@ -353,14 +387,13 @@ randomMeshes({ scene }).then((m) => {
 const loop = new Loop();
 
 const controlUpdt: (d: number) => void = IS_DEV
-  ? (d) => CamController.controller?.(d)
+  ? (d) => CamController.FreeController.controller?.(d)
   : (d) => {
-      CamController.controller?.(d);
+      player.update(d);
       CamController.clampCameraPosition();
     };
 
 loop.addUpdate((delta, elapsed) => {
-  CamController.controls.update();
   controlUpdt(delta);
 
   CamController.camera.updateMatrix();
