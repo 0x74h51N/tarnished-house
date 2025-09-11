@@ -49,7 +49,8 @@ function collectMaterials(root: Object3D): Set<Material> {
   return out;
 }
 
-export function setMatsCMS(csm: CSM, root: Object3D) {
+export function setMatsCSM(csm: CSM, root: Object3D) {
+  csm.update();
   const mats = collectMaterials(root);
   mats.forEach((mat) => {
     const key = "__csmPatched";

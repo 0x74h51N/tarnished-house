@@ -28,64 +28,56 @@
       "maxPixelRatio": 2,
       "defLod": "High",
       "lods": {
-        "Patato": { "lod1": 35, "lod2": 60, "lod3": 95 },
-        "Medium": { "lod1": 55, "lod2": 70, "lod3": 110 },
-        "High": { "lod1": 85, "lod2": 120, "lod3": 170 },
-        "Ultra": { "lod1": 90, "lod2": 140, "lod3": 240 },
-        "Insane": { "lod1": 120, "lod2": 200, "lod3": 280 }
+        "Potato": { "lod1": 50, "lod2": 100, "lod3": 150 },
+        "Medium": { "lod1": 100, "lod2": 160, "lod3": 210 },
+        "High": { "lod1": 160, "lod2": 210, "lod3": 280 },
+        "Ultra": { "lod1": 210, "lod2": 280, "lod3": 340 },
+        "Insane": { "lod1": 280, "lod2": 340, "lod3": 400 }
       },
       "shadows": {
         "enabled": true,
         "type": "PCFSoft",
-        "defMapSize": 1024,
-        "defMaxFar": "High",
+        "defMapSize": "High",
         "bias": {
           "high": 0,
           "normal": 0.3
         },
         "mapSizes": {
-          "256": {
-            "name": "Patato",
+          "Potato": {
+            "mapSize": 256,
             "bias": {
               "high": 0.003,
               "normal": 0.3
             }
           },
-          "512": {
-            "name": "Medium",
+          "Medium": {
+            "mapSize": 512,
             "bias": {
               "high": 0.0001,
               "normal": 0.4
             }
           },
-          "1024": {
-            "name": "High",
+          "High": {
+            "mapSize": 1024,
             "bias": {
               "high": 0.0001,
               "normal": 0.1
             }
           },
-          "2048": {
-            "name": "Ultra",
+          "Ultra": {
+            "mapSize": 2048,
             "bias": {
               "high": -0.0001,
               "normal": 0.05
             }
           },
-          "3072": {
-            "name": "Insane",
+          "Insane": {
+            "mapSize": 3072,
             "bias": {
               "high": -0.0001,
               "normal": 0.05
             }
           }
-        },
-        "maxFar": {
-          "Patato": 100,
-          "Medium": 220,
-          "High": 320,
-          "Ultra": 450,
-          "Insane": 600
         }
       }
     },
@@ -122,9 +114,8 @@
       "fog": {
         "enabled": true,
         "color": "#607276",
-        "density": 0.035,
-        "near": 11,
-        "far": 160
+        "near": 8,
+        "farRatio": 0.55
       }
     },
     "audio": {

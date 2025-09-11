@@ -2,6 +2,7 @@ import { InstancedMesh2 } from "@three.ez/instanced-mesh";
 import config from "config.json";
 import type { CountOpts, ManagerType } from "@/loaders/types";
 import { renderer } from "@/main";
+import type { QualityKeys } from "@/types/global.types";
 import { findAllMeshes } from "./helpers";
 
 export function getVariantsInstances({
@@ -13,7 +14,7 @@ export function getVariantsInstances({
   if (!sets.length) {
     const rendererConf = config.scene.renderer;
     const lodDistancesCfg = Object.values(
-      rendererConf.lods[rendererConf.defLod as keyof typeof rendererConf.lods]
+      rendererConf.lods[rendererConf.defLod as QualityKeys]
     ) as number[];
 
     for (let v = 0; v < baseMeshes.length; v++) {

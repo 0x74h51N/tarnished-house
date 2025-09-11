@@ -38,7 +38,7 @@ import {
 import { loadAssets, type ManagerRefs, randomMeshes } from "./loaders";
 import { Bonfire } from "./prefabs";
 import type { AudioBundle } from "./types/global.types";
-import { createSizes, setMatsCMS } from "./utils";
+import { createSizes, setMatsCSM } from "./utils";
 
 const IS_E2E =
   import.meta.env.VITE_E2E === "1" ||
@@ -50,7 +50,6 @@ export const IS_DEV: boolean =
 
 const DEV_PROFILE = config.devProfile;
 if (IS_DEV) {
-  camCnfg.far = 500;
   camCnfg.fov = 75;
   config.scene.postProcessing.fog.enabled = false;
   config.scene.renderer.toneMappingExposure = 1.75;
@@ -118,6 +117,7 @@ const antialias = localStorage.getItem("antialias") === "true";
 
 export const renderer = createRenderer({ sizes, canvas, antialias });
 
+// For tests
 if (IS_E2E) {
   window.__RENDERER__ = renderer;
   window.__SCENE__ = scene;
@@ -212,17 +212,13 @@ if (!IS_DEV) {
 // Lights
 //
 
-const lights = createLights(scene, CamController);
+const lights = createLights(scene, CamController, player);
 
 const ray = createCenterDot(canvas);
 //
 // Ignite Button
 let ignited = false;
-const {
-  button: igniteBtn,
-  setLabel,
-  update
-} = await createBtn({
+const bonfireBtn = await createBtn({
   btnOpts: {
     width: 0.65,
     height: 0.23,
@@ -231,7 +227,7 @@ const {
     onClick: () => {
       ignited ? bonfire.extinguish() : bonfire.ignite();
       ignited = !ignited;
-      setLabel(ignited ? "Extinguish" : "Ignite");
+      bonfireBtn.setLabel(ignited ? "Extinguish" : "Ignite");
     }
   },
   ray: ray.rayCast,
@@ -258,10 +254,10 @@ createPositional({
 
 scene.add(bonfire);
 
-igniteBtn.position.copy(bonfire.position);
-igniteBtn.position.z += 2.0;
+bonfireBtn.button.position.copy(bonfire.position);
+bonfireBtn.button.position.z += 2.0;
 
-scene.add(igniteBtn);
+scene.add(bonfireBtn.button);
 
 lights.fireLight = bonfire.fireLight;
 const { smoke, sparks, flame } = bonfire;
@@ -271,7 +267,7 @@ function getManagers(): ManagerRefs {
   return managers;
 }
 
-setMatsCMS(lights.directLight, scene);
+setMatsCSM(lights.csmLight.csm, scene);
 
 //
 // Stats
@@ -335,8 +331,12 @@ let managers: ManagerRefs | undefined;
 
 randomMeshes({ scene }).then((m) => {
   managers = m;
-  setMatsCMS(lights.directLight, scene);
 
+  setMatsCSM(lights.csmLight.csm, scene);
+  lights.csmLight.csm.update();
+  lights.csmLight.csm.lights.forEach((dl) => {
+    dl.shadow.needsUpdate = true;
+  });
   if (IS_DEV && DEV_PROFILE.autoOpenGUI) openDevGUI();
 
   window.addEventListener("keydown", (e) => {
@@ -397,10 +397,19 @@ loop.addUpdate((delta, elapsed) => {
   controlUpdt(delta);
 
   CamController.camera.updateMatrix();
-  update();
-  lights.directLight.update();
+
+  bonfireBtn.update(); //ray test
+
+  lights.csmLight.csm.update();
 
   runSceneUpdate(delta, elapsed);
+
+  if (lights.csmShadowGate.shouldUpdate()) {
+    lights.csmLight.csm.update();
+    lights.csmLight.csm.lights.forEach((dl) => {
+      dl.shadow.needsUpdate = true;
+    });
+  }
 });
 
 loop.addRender(() => {

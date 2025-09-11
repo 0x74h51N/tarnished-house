@@ -10,7 +10,7 @@ export class Player {
   public readonly radius: number;
 
   private readonly cam: PerspectiveCamera;
-  private readonly ctrl: FPSController;
+  readonly ctrl: FPSController;
   private readonly followRatio: number;
 
   private readonly _size = new Vector3();

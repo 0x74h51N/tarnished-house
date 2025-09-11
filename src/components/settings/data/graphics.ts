@@ -1,8 +1,9 @@
 import config from "config.json";
 import type { Light } from "three";
+import { camCnfg } from "@/engine";
 import { applyShadowSizeAndBias } from "@/engine/lights/utils";
 import { fog } from "@/engine/postprocess/fog";
-import type { MapSizeKey } from "@/types/global.types";
+import type { QualityKeys } from "@/types/global.types";
 import { allMatUpdt, shadowDispose } from "@/utils";
 import type { GeneralControl, GraphicsSettingsParams } from "../types";
 import { applySceneAniso } from "../utils";
@@ -13,16 +14,18 @@ export function makeGraphicsSettings({
   renderer,
   antialias,
   syncBloom,
-  randomMeshes
+  randomMeshes,
+  CamController
 }: GraphicsSettingsParams): GeneralControl[] {
   const rendererConf = config.scene.renderer;
   const shadowConfg = rendererConf.shadows;
+  const postProcessCnf = config.scene.postProcessing;
 
-  const lightArr: Light[] = [...lights.directLight.lights];
+  const lightArr: Light[] = [...lights.csmLight.csm.lights];
   lights.fireLight && lightArr.push(lights.fireLight.light);
 
-  const defDist = shadowConfg.defMaxFar as keyof typeof shadowConfg.maxFar;
-  const defLod = rendererConf.defLod as keyof typeof rendererConf.lods;
+  const defMApSize = shadowConfg.defMapSize as QualityKeys;
+  const defLod = rendererConf.defLod as QualityKeys;
 
   // Anisoptic Filter
   const anisoCap = renderer.capabilities.getMaxAnisotropy();
@@ -77,6 +80,7 @@ export function makeGraphicsSettings({
         renderer.shadowMap.enabled = v;
         renderer.shadowMap.needsUpdate = true;
         allMatUpdt(scene);
+        lights.csmLight.syncToCam(CamController.camera);
       }
     },
     {
@@ -88,7 +92,7 @@ export function makeGraphicsSettings({
         const v = e.target.checked;
         config.scene.lighting.directional.enabled = v;
         shadowDispose(lightArr);
-        lights.directLight.lights.forEach((l) => {
+        lights.csmLight.csm.lights.forEach((l) => {
           l.visible = v;
           l.castShadow = v;
         });
@@ -96,17 +100,37 @@ export function makeGraphicsSettings({
     },
     {
       type: "select",
-      id: "lodOpts",
-      label: "Level of Details",
-      options: (
-        Object.keys(rendererConf.lods) as Array<keyof typeof rendererConf.lods>
-      ).map((k) => ({
+      id: "viewDistance",
+      label: "View Distance",
+      tooltip: "Camera View Distance",
+      options: (Object.keys(camCnfg.camFar) as Array<QualityKeys>).map((k) => ({
         v: k,
         t: k,
-        s: rendererConf.lods[k] === rendererConf.lods[defLod]
+        s: camCnfg.camFar[k] === camCnfg.camFar[camCnfg.defFar as QualityKeys]
       })),
       onChange: (e) => {
-        const k = e.target.value as keyof typeof rendererConf.lods;
+        const k = e.target.value as QualityKeys;
+        const far = camCnfg.camFar[k];
+        CamController.camera.far = far;
+        CamController.camera.updateProjectionMatrix();
+        CamController.camera.updateMatrixWorld();
+        if (scene.fog) fog.far = far * postProcessCnf.fog.farRatio;
+        lights.csmLight.syncToCam(CamController.camera);
+      }
+    },
+    {
+      type: "select",
+      id: "lodOpts",
+      label: "Level of Details",
+      options: (Object.keys(rendererConf.lods) as Array<QualityKeys>).map(
+        (k) => ({
+          v: k,
+          t: k,
+          s: rendererConf.lods[k] === rendererConf.lods[defLod]
+        })
+      ),
+      onChange: (e) => {
+        const k = e.target.value as QualityKeys;
         Object.values(randomMeshes).forEach((m) => {
           const dists = Object.values(rendererConf.lods[k]) as Array<number>;
           for (const inst of m.manager.sets) {
@@ -122,31 +146,23 @@ export function makeGraphicsSettings({
       type: "select",
       id: "shadowQuality",
       label: "Shadow Quality",
-      options: (
-        Object.keys(shadowConfg.maxFar) as Array<
-          keyof typeof shadowConfg.maxFar
-        >
-      ).map((key) => ({
-        v: key,
-        t: key,
-        s: shadowConfg.maxFar[key] === shadowConfg.maxFar[defDist]
-      })),
+      options: (Object.keys(shadowConfg.mapSizes) as Array<QualityKeys>).map(
+        (key) => ({
+          v: key,
+          t: key,
+          s: shadowConfg.mapSizes[key] === shadowConfg.mapSizes[defMApSize]
+        })
+      ),
       onChange: (e) => {
-        const v = e.target.value;
-        const o = shadowConfg.maxFar[v as keyof typeof shadowConfg.maxFar];
-        const res = Object.keys(shadowConfg.mapSizes).find(
-          (k) => shadowConfg.mapSizes[k as MapSizeKey].name === v
-        );
-        if (!o) return;
+        const k = e.target.value as QualityKeys;
+
         shadowDispose(lightArr);
-        lights.directLight.maxFar = o;
+        applyShadowSizeAndBias(lightArr, k, shadowConfg.mapSizes);
 
-        applyShadowSizeAndBias(lightArr, Number(res), shadowConfg.mapSizes);
-
-        lights.directLight.lights.forEach((l) => {
+        lights.csmLight.csm.lights.forEach((l) => {
           l.shadow.needsUpdate = true;
         });
-        lights.directLight.updateFrustums();
+        lights.csmLight.csm.updateFrustums();
 
         allMatUpdt(scene);
         renderer.shadowMap.needsUpdate = true;

@@ -1,13 +1,6 @@
 {
   "camera": {
-    "fov": 33,
-    "near": 0.1,
-    "far": 130,
-    "position": {
-      "x": 2,
-      "y": 5.1,
-      "z": 20
-    },
+    "defFar": "Potato",
     "controls": {
       "positionLimits": {
         "x": { "min": -170, "max": 170 },
@@ -18,10 +11,9 @@
   },
   "scene": {
     "renderer": {
-      "defLod": "Patato",
+      "defLod": "Potato",
       "shadows": {
-        "defMapSize": 512,
-        "defMaxFar": "Patato"
+        "defMapSize": "Potato"
       }
     },
     "lighting": {

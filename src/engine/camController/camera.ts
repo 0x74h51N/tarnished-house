@@ -1,5 +1,6 @@
 import config from "config.json";
 import { CameraHelper, PerspectiveCamera } from "three";
+import type { QualityKeys } from "@/types/global.types";
 import { camCnfg } from ".";
 import type { CameraOptions, CameraReturn } from "./types";
 
@@ -8,7 +9,7 @@ export function createCamera({ sizes }: CameraOptions): CameraReturn {
     camCnfg.fov,
     sizes.width / sizes.height,
     camCnfg.near,
-    camCnfg.far
+    camCnfg.camFar[camCnfg.defFar as QualityKeys]
   );
   camera.position.set(
     camCnfg.position.x,

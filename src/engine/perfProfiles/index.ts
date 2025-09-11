@@ -6,7 +6,7 @@ import { deepAssign } from "@/utils";
 import { camCnfg } from "..";
 import { detectPerf } from "./detect";
 import midJSON from "./midProfile.json";
-import patatoJSON from "./patatoProfile.json";
+import patatoJSON from "./potatoProfile.json";
 
 type PerfProfile = typeof patatoJSON;
 

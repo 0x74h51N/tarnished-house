@@ -66,7 +66,13 @@ export type DisplaySettingsParams = Pick<
 
 export type GraphicsSettingsParams = Pick<
   SettingsInterface,
-  "scene" | "lights" | "renderer" | "antialias" | "syncBloom" | "randomMeshes"
+  | "scene"
+  | "lights"
+  | "renderer"
+  | "antialias"
+  | "syncBloom"
+  | "randomMeshes"
+  | "CamController"
 >;
 
 export type SceneSettingsParams = Pick<SettingsInterface, "randomMeshes">;

@@ -12,6 +12,7 @@ import {
   type Texture,
   VSMShadowMap
 } from "three";
+import type { camCnfg } from "@/engine";
 
 //
 // Min max value slapper type
@@ -60,8 +61,10 @@ export interface Sizes {
 }
 
 export type MapSizes = typeof config.scene.renderer.shadows.mapSizes;
+export type LodOpts = typeof config.scene.renderer.lods;
+export type CamFarOpts = typeof camCnfg.camFar;
 
-export type MapSizeKey = keyof MapSizes;
+export type QualityKeys = keyof CamFarOpts & keyof MapSizes & keyof LodOpts;
 
 export type TextureKeys = {
   [K in keyof MeshStandardMaterial]: MeshStandardMaterial[K] extends

@@ -59,7 +59,7 @@
       "trees": {
         "path": "./trees/trees.gltf",
         "spawn": {
-          "count": 1400,
+          "count": 1000,
           "lodsCount": 3,
           "yPosition": -0.1,
           "scale": {
@@ -68,7 +68,7 @@
           },
           "radius": {
             "min": 35,
-            "max": 530
+            "max": 550
           },
           "minDistance": 15,
           "castShadow": true,

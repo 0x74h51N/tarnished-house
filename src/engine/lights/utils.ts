@@ -1,3 +1,7 @@
+import config from "config.json";
+import { AmbientLight, type Light } from "three";
+import type { MapSizes, QualityKeys } from "@/types/global.types";
+
 //fireLight animation
 export const animateValue = (
   base: number,
@@ -5,35 +9,44 @@ export const animateValue = (
   elapsed: number
 ) => base + Math.sin(elapsed * speed) * amplitude;
 
-import config from "config.json";
-
+//
 // shadowmap size and bias utils
-import { AmbientLight, type Light } from "three";
-import type { MapSizeKey, MapSizes } from "@/types/global.types";
-
 export function applyShadowSizeAndBias(
   lights: Light[],
-  size: number,
+  qualityKey: QualityKeys,
   mapSizes: MapSizes
 ) {
-  const key = size.toString() as MapSizeKey;
-  const { normal } = mapSizes[key].bias;
+  const { bias, mapSize } = mapSizes[qualityKey];
 
   for (const l of lights) {
     if (l instanceof AmbientLight) continue;
     if (l.shadow) {
-      l.shadow.mapSize.set(size, size);
-      l.shadow.normalBias = normal;
+      l.shadow.mapSize.set(mapSize, mapSize);
+      l.shadow.normalBias = bias.normal;
     }
   }
 }
 
-function currentShadowKey(lights: Light[]): MapSizeKey {
+function currentShadowKey(lights: Light[]): QualityKeys {
+  const { mapSizes, defMapSize } = config.scene.renderer.shadows;
+
+  let size: number | undefined;
   for (const l of lights) {
     if (l instanceof AmbientLight) continue;
-    if (l.shadow) return l.shadow.mapSize.x.toString() as MapSizeKey;
+    if (l.shadow?.mapSize) {
+      size = l.shadow.mapSize.x;
+      break;
+    }
   }
-  return config.scene.renderer.shadows.defMapSize.toString() as MapSizeKey;
+  if (size == null) return defMapSize as QualityKeys;
+
+  for (const [key, val] of Object.entries(mapSizes) as [
+    QualityKeys,
+    { mapSize: number }
+  ][]) {
+    if (val.mapSize === size) return key;
+  }
+  return defMapSize as QualityKeys;
 }
 
 export function createShadowBiasProxy(lights: Light[], mapSizes: MapSizes) {
@@ -44,7 +57,7 @@ export function createShadowBiasProxy(lights: Light[], mapSizes: MapSizes) {
     set high(v: number) {
       const k = currentShadowKey(lights);
       mapSizes[k].bias.high = v;
-      applyShadowSizeAndBias(lights, Number(k), mapSizes);
+      applyShadowSizeAndBias(lights, k, mapSizes);
     },
     get normal() {
       return mapSizes[currentShadowKey(lights)].bias.normal;
@@ -52,7 +65,7 @@ export function createShadowBiasProxy(lights: Light[], mapSizes: MapSizes) {
     set normal(v: number) {
       const k = currentShadowKey(lights);
       mapSizes[k].bias.normal = v;
-      applyShadowSizeAndBias(lights, Number(k), mapSizes);
+      applyShadowSizeAndBias(lights, k, mapSizes);
     }
   };
 }

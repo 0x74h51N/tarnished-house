@@ -1,17 +1,24 @@
 {
   "fov": 35,
   "near": 0.1,
-  "far": 600,
+  "defFar": "High",
   "position": {
     "x": 2,
     "y": 5.2,
     "z": 20
   },
+  "camFar": {
+    "Potato": 200,
+    "Medium": 350,
+    "High": 500,
+    "Ultra": 600,
+    "Insane": 800
+  },
   "controls": {
     "minPolarAngle": 0.2618,
     "maxPolarAngle": 2.7925,
     "mouseSens": 0.0006,
-    "moveSpeed": 7,
+    "moveSpeed": 8,
     "moveTau": 0.12,
     "sprintMult": 1.7,
     "dead": 0.01,

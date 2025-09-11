@@ -1,19 +1,24 @@
 import config from "config.json";
 import { Color, type PerspectiveCamera, type Scene } from "three";
 import { CSM } from "three/addons/csm/CSM.js";
-import type { MapSizeKey } from "@/types/global.types";
+import type { QualityKeys } from "@/types/global.types";
 import { v3 } from "@/utils";
+import type { CSMLight, SyncToCam } from "../types";
 
-export function createMoonCSM(scene: Scene, camera: PerspectiveCamera) {
+export function createMoonCSM(
+  scene: Scene,
+  camera: PerspectiveCamera
+): CSMLight {
   const {
     renderer: {
-      shadows: { defMapSize, defMaxFar, maxFar, mapSizes }
+      shadows: { defMapSize, mapSizes }
     },
     lighting: {
       directional: { color, position, target, intensity, enabled }
     }
   } = config.scene;
-  const normalBias = mapSizes[defMapSize.toString() as MapSizeKey].bias.normal;
+  const defMapS = mapSizes[defMapSize as QualityKeys];
+
   const P = v3(position);
   const T = v3(target.position);
   const lightDir = T.clone().sub(P).normalize();
@@ -23,8 +28,8 @@ export function createMoonCSM(scene: Scene, camera: PerspectiveCamera) {
     cascades: 3,
     mode: "practical",
     lightNear: 1,
-    maxFar: maxFar[defMaxFar as keyof typeof maxFar],
-    shadowMapSize: defMapSize,
+    maxFar: camera.far,
+    shadowMapSize: defMapS.mapSize,
     lightDirection: lightDir,
     lightIntensity: intensity
   });
@@ -34,8 +39,18 @@ export function createMoonCSM(scene: Scene, camera: PerspectiveCamera) {
     l.visible = enabled;
     l.castShadow = enabled;
     l.color.copy(moonColor);
-    l.shadow.normalBias = normalBias;
+    l.shadow.normalBias = defMapS.bias.normal;
+    l.shadow.autoUpdate = false;
   });
+  csm.fade = true;
 
-  return csm;
+  const syncToCam: SyncToCam = (camera) => {
+    csm.maxFar = camera.far;
+    csm.updateFrustums();
+    csm.update();
+    csm.lights.forEach((l) => {
+      l.shadow.needsUpdate = true;
+    });
+  };
+  return { csm, syncToCam };
 }

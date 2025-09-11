@@ -7,7 +7,11 @@ import {
   applyShadowSizeAndBias,
   createShadowBiasProxy
 } from "@/engine/lights/utils";
-import { type ToneMappingKey, toneMappingMap } from "@/types/global.types";
+import {
+  type QualityKeys,
+  type ToneMappingKey,
+  toneMappingMap
+} from "@/types/global.types";
 import { allMatUpdt, shadowDispose } from "@/utils";
 import type { SetupGUIInterface } from "../types";
 
@@ -80,9 +84,9 @@ export function createGraphicsSettings(
   });
 
   // Shadows
-  const { directLight, fireLight } = lights;
+  const { csmLight, fireLight } = lights;
 
-  const lightArr: Light[] = [...directLight.lights];
+  const lightArr: Light[] = [...csmLight.csm.lights];
   if (fireLight) lightArr.push(fireLight.light);
 
   const shadows = graphics.addFolder("Shadows");
@@ -101,10 +105,10 @@ export function createGraphicsSettings(
     .add(
       graphicsParams,
       "shadowMapSize",
-      Object.keys(shadowMapSizes).map(Number)
+      Object.keys(shadowMapSizes).map(String)
     )
     .name("Shadow Resolution")
-    .onChange((v: number) => {
+    .onChange((v: QualityKeys) => {
       shadowDispose(lightArr);
       applyShadowSizeAndBias(lightArr, v, shadowMapSizes);
       highCtrl.updateDisplay();
