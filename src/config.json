@@ -60,22 +60,22 @@
           "High": {
             "mapSize": 1024,
             "bias": {
-              "high": 0.0001,
-              "normal": 0.1
+              "high": -0.0001,
+              "normal": 0.17
             }
           },
           "Ultra": {
             "mapSize": 2048,
             "bias": {
               "high": -0.0001,
-              "normal": 0.05
+              "normal": 0.08
             }
           },
           "Insane": {
             "mapSize": 3072,
             "bias": {
               "high": -0.0001,
-              "normal": 0.05
+              "normal": 0.1
             }
           }
         }

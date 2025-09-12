@@ -12,7 +12,7 @@
     "Medium": 350,
     "High": 500,
     "Ultra": 600,
-    "Insane": 800
+    "Insane": 750
   },
   "controls": {
     "minPolarAngle": 0.2618,
