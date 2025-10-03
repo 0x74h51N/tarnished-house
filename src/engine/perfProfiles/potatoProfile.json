@@ -1,4 +1,9 @@
 {
+  "terrain": {
+    "defQuality": "Patato",
+    "displacementScale": 0.1,
+    "tileCount": 50
+  },
   "camera": {
     "defFar": "Potato",
     "controls": {
@@ -29,18 +34,6 @@
     }
   },
   "assets": {
-    "floor": {
-      "displacementScale": 0.1,
-      "textures": {
-        "repeat": 30
-      },
-      "geometry": {
-        "width": 450,
-        "height": 450,
-        "widthSegments": 180,
-        "heightSegments": 180
-      }
-    },
     "spawnables": {
       "trees": {
         "spawn": {

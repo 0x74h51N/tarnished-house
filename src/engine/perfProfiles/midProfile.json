@@ -1,4 +1,9 @@
 {
+  "terrain": {
+    "defQuality": "Medium",
+    "displacementScale": 0.12,
+    "tileCount": 60
+  },
   "camera": {
     "defFar": "Medium",
     "controls": {
@@ -24,18 +29,6 @@
     }
   },
   "assets": {
-    "floor": {
-      "displacementScale": 0.1,
-      "textures": {
-        "repeat": 40
-      },
-      "geometry": {
-        "width": 750,
-        "height": 750,
-        "widthSegments": 500,
-        "heightSegments": 500
-      }
-    },
     "spawnables": {
       "trees": {
         "spawn": {

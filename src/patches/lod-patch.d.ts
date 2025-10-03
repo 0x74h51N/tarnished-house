@@ -20,6 +20,8 @@ declare module "@three.ez/instanced-mesh" {
       distances?: number[],
       hysteresis?: number | number[]
     ): this;
+    removeLOD(levelIndex: number, removeObject?: boolean): this;
+    removeAllLODs(removeObjects?: boolean, dispose?: boolean): this;
     /** @internal */ updateAllLevels(
       renderList: LODRenderList,
       distances: number[] | null,
@@ -31,5 +33,6 @@ declare module "@three.ez/instanced-mesh" {
       distance: number,
       hysteresis: number
     ): this;
+    /** @internal */ disposeLOD(object: InstancedMesh2);
   }
 }

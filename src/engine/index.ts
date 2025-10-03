@@ -8,3 +8,4 @@ export * from "./perfProfiles";
 export * from "./player";
 export * from "./postprocess/createComposer";
 export * from "./renderer";
+export * from "./terrain";

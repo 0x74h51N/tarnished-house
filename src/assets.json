@@ -1,22 +1,5 @@
 {
   "decoder": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
-  "floor": {
-    "color": "#cccccc",
-    "displacementScale": 0.13,
-    "textures": {
-      "baseColor": "./floor/textures/ground-diff.avif",
-      "normalMap": "./floor/textures/ground-norm.avif",
-      "armTex": "./floor/textures/ground-arm.avif",
-      "displacementMap": "./floor/textures/ground-disp.avif",
-      "repeat": 170
-    },
-    "geometry": {
-      "width": 1100,
-      "height": 1100,
-      "widthSegments": 900,
-      "heightSegments": 900
-    }
-  },
   "models": {
     "house": {
       "path": "./abandoned_house/house.gltf",
