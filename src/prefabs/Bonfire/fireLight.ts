@@ -1,6 +1,6 @@
 import config from "config.json";
 import { PointLight, PointLightHelper } from "three";
-import type { MapSizeKey } from "@/types/global.types";
+import type { QualityKeys } from "@/types/global.types";
 import { animateValue } from "../../engine/lights/utils";
 import { bonfireConf } from "./configs";
 import type { FireLight } from "./types";
@@ -8,6 +8,7 @@ import type { FireLight } from "./types";
 export const createFireLight = (): FireLight => {
   const { defMapSize, mapSizes } = config.scene.renderer.shadows;
   const lightConfg = bonfireConf.fireLight;
+  const mapSize = mapSizes[defMapSize as QualityKeys].mapSize;
 
   const light = new PointLight(
     lightConfg.color,
@@ -17,10 +18,9 @@ export const createFireLight = (): FireLight => {
   );
 
   light.castShadow = true;
-  light.shadow.mapSize.set(defMapSize, defMapSize);
-  light.shadow.bias = mapSizes[defMapSize.toString() as MapSizeKey].bias.high;
-  light.shadow.normalBias =
-    mapSizes[defMapSize.toString() as MapSizeKey].bias.normal;
+  light.shadow.mapSize.set(mapSize, mapSize);
+  light.shadow.bias = mapSizes[defMapSize as QualityKeys].bias.high;
+  light.shadow.normalBias = mapSizes[defMapSize as QualityKeys].bias.normal;
 
   light.position.set(
     lightConfg.position.x,
